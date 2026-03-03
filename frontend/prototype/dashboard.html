@@ -79,41 +79,163 @@
         overflow-y: auto;
       }
 
+      /* Accordion Menu Styles */
+      .nav-group {
+        margin-bottom: 8px;
+      }
+
+      .nav-heading {
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+
+      .nav-heading:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-heading .nav-icon {
+        margin-right: 14px;
+        color: #94a3b8;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-heading:hover .nav-icon {
+        color: #cbd5e1;
+      }
+
+      .nav-heading .fa-chevron-down {
+        font-size: 0.75rem;
+        transition: transform 0.3s ease;
+        color: #64748b;
+      }
+
+      /* 展開狀態的 Heading */
+      .nav-group.expanded .nav-heading {
+        color: #fff;
+      }
+      .nav-group.expanded .nav-heading .nav-icon {
+        color: var(--primary-color);
+      }
+      .nav-group.expanded .nav-heading .fa-chevron-down {
+        transform: rotate(-180deg);
+      }
+
+      .nav-submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.15
+        ); /* Slightly darker bg for submenu */
+      }
+
+      .nav-group.expanded .nav-submenu {
+        max-height: 1200px; /* 足夠大的數值以應付大量展開 */
+      }
+
+      .submenu-category {
+        padding: 16px 24px 8px 57px;
+        font-size: 0.75rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
       .menu-item {
-        padding: 14px 24px;
+        padding: 10px 24px 10px 58px; /* 左縮排以對齊 */
+        display: block;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-decoration: none;
+        position: relative;
+        border-left: 3px solid transparent;
+      }
+
+      .menu-item::before {
+        content: "";
+        position: absolute;
+        left: 32px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: #64748b;
+        transition: background-color 0.2s;
+      }
+
+      .menu-item:hover {
+        color: #fff;
+        background-color: var(--sidebar-hover);
+      }
+
+      .menu-item:hover::before {
+        background-color: #cbd5e1;
+      }
+
+      .menu-item.active {
+        color: #fff;
+        background-color: var(--sidebar-hover);
+        border-left-color: var(--primary-color);
+        font-weight: 500;
+      }
+
+      .menu-item.active::before {
+        background-color: var(--primary-color);
+        box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+      }
+
+      /* 單純無展開的選項 */
+      .single-item {
+        padding: 12px 24px;
         display: flex;
         align-items: center;
         cursor: pointer;
         transition: all 0.2s ease;
         font-size: 0.95rem;
         color: #cbd5e1;
-        border-left: 3px solid transparent;
-      }
-
-      .menu-item:hover {
-        background-color: var(--sidebar-hover);
-        color: #fff;
-      }
-
-      .menu-item.active {
-        background-color: var(--sidebar-hover);
-        color: #fff;
-        border-left-color: var(--primary-color);
         font-weight: 500;
+        border-left: 3px solid transparent;
+        text-decoration: none;
       }
 
-      .menu-item i.fa-fw {
+      .single-item:hover {
+        color: #fff;
+        background-color: var(--sidebar-hover);
+      }
+
+      .single-item .nav-icon {
         margin-right: 14px;
         color: #94a3b8;
         font-size: 1.1rem;
-        transition: color 0.2s ease;
+        width: 20px;
+        text-align: center;
       }
 
-      .menu-item:hover i.fa-fw {
-        color: #cbd5e1;
+      .single-item.active {
+        color: #fff;
+        background-color: var(--sidebar-hover);
+        border-left-color: var(--primary-color);
       }
 
-      .menu-item.active i.fa-fw {
+      .single-item.active .nav-icon {
         color: var(--primary-color);
       }
 
@@ -482,21 +604,142 @@
       <div class="sidebar-header">
         <i class="fa-solid fa-mountain-sun"></i> 登山一站式
       </div>
-      <div class="sidebar-menu">
-        <div class="menu-item active">
-          <i class="fa-solid fa-chart-line fa-fw"></i> 總覽儀表板
+      <div class="sidebar-menu" id="sidebar-menu">
+        <!-- Dashboard Item -->
+        <a href="#" class="single-item active">
+          <i class="fa-solid fa-chart-pie nav-icon"></i>
+          <span>營運總覽</span>
+        </a>
+
+        <!-- Group 1: 案件審查與管理 -->
+        <div class="nav-group">
+          <div
+            class="nav-heading"
+            onclick="this.parentElement.classList.toggle('expanded')"
+          >
+            <div style="display: flex; align-items: center">
+              <i class="fa-solid fa-list-check nav-icon"></i> 案件審查與管理
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="nav-submenu">
+            <div class="submenu-category">審核與發證</div>
+            <a href="#" class="menu-item">雪霸入園申請審核</a>
+            <a href="#" class="menu-item">玉管處入園資料審核</a>
+            <a href="#" class="menu-item">太管處入園資料審核</a>
+            <a href="#" class="menu-item">雪霸許可證列印</a>
+            <a href="#" class="menu-item">許可證注意事項維護</a>
+
+            <div class="submenu-category">名額查詢與抽籤</div>
+            <a href="#" class="menu-item">外籍保留名額查詢</a>
+            <a href="#" class="menu-item">活動保留名額查詢</a>
+            <a href="#" class="menu-item">民眾抽籤</a>
+            <a href="#" class="menu-item">民眾抽籤(單日往返路線)</a>
+            <a href="#" class="menu-item">宿營地抽籤及公告</a>
+            <a href="#" class="menu-item">宿營地抽籤結果維護</a>
+
+            <div class="submenu-category">宿營資源</div>
+            <a href="#" class="menu-item">雪霸宿營地查詢</a>
+            <a href="#" class="menu-item">宿營地床位重排</a>
+          </div>
         </div>
-        <div class="menu-item">
-          <i class="fa-solid fa-folder-open fa-fw"></i> 案件審查
+
+        <!-- Group 2: 現場查核與違規 -->
+        <div class="nav-group">
+          <div
+            class="nav-heading"
+            onclick="this.parentElement.classList.toggle('expanded')"
+          >
+            <div style="display: flex; align-items: center">
+              <i class="fa-solid fa-user-shield nav-icon"></i> 現場查核與違規
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="nav-submenu">
+            <div class="submenu-category">入園查核</div>
+            <a href="#" class="menu-item">查核實際入園情形</a>
+            <a href="#" class="menu-item">查核實際入園情形(太管)</a>
+            <a href="#" class="menu-item">查核實際入園情形(雪霸)</a>
+            <a href="#" class="menu-item">排雲山莊查核</a>
+            <a href="#" class="menu-item">排雲山莊供水紀錄</a>
+
+            <div class="submenu-category">違規與事故</div>
+            <a href="#" class="menu-item">違規事項管理</a>
+            <a href="#" class="menu-item">違規案件(黑名單)維護</a>
+            <a href="#" class="menu-item">山域事故</a>
+            <a href="#" class="menu-item">回傳座標列表</a>
+          </div>
         </div>
-        <div class="menu-item">
-          <i class="fa-solid fa-users fa-fw"></i> 角色與單位管理
+
+        <!-- Group 3: 營運規則設定 -->
+        <div class="nav-group">
+          <div
+            class="nav-heading"
+            onclick="this.parentElement.classList.toggle('expanded')"
+          >
+            <div style="display: flex; align-items: center">
+              <i class="fa-solid fa-sliders nav-icon"></i> 營運規則設定
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="nav-submenu">
+            <div class="submenu-category">路線與地圖</div>
+            <a href="#" class="menu-item">規則設定</a>
+            <a href="#" class="menu-item">節點管理</a>
+            <a href="#" class="menu-item">其他路線類別設定</a>
+            <a href="#" class="menu-item">禁止進出登山口設定</a>
+            <a href="#" class="menu-item">KML維護管理</a>
+            <a href="#" class="menu-item">KML路徑關聯管理</a>
+
+            <div class="submenu-category">期間與管制</div>
+            <a href="#" class="menu-item">假日設定</a>
+            <a href="#" class="menu-item">太魯閣非上班日設定</a>
+            <a href="#" class="menu-item">雪季設定</a>
+            <a href="#" class="menu-item">花季設定</a>
+            <a href="#" class="menu-item">禁止外籍提前申請設定</a>
+            <a href="#" class="menu-item">禁止申請時間(抽籤時間)</a>
+            <a href="#" class="menu-item">太魯閣候補關閉設定</a>
+
+            <div class="submenu-category">國別與退費</div>
+            <a href="#" class="menu-item">國別設定</a>
+            <a href="#" class="menu-item">可申請退費日期設定</a>
+          </div>
         </div>
-        <div class="menu-item">
-          <i class="fa-solid fa-map-location-dot fa-fw"></i> 路線參數設定
-        </div>
-        <div class="menu-item">
-          <i class="fa-solid fa-ban fa-fw"></i> 違規事項管理
+
+        <!-- Group 4: 系統與基礎模組 -->
+        <div class="nav-group">
+          <div
+            class="nav-heading"
+            onclick="this.parentElement.classList.toggle('expanded')"
+          >
+            <div style="display: flex; align-items: center">
+              <i class="fa-solid fa-server nav-icon"></i> 系统與基礎模組
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="nav-submenu">
+            <div class="submenu-category">組織與權限</div>
+            <a href="#" class="menu-item">單位管理</a>
+            <a href="#" class="menu-item">角色管理</a>
+            <a href="#" class="menu-item">帳號管理</a>
+
+            <div class="submenu-category">通訊設定</div>
+            <a href="#" class="menu-item">電子郵件設定</a>
+            <a href="#" class="menu-item">Email簡訊類別維護</a>
+            <a href="#" class="menu-item">Email範例維護</a>
+            <a href="#" class="menu-item">emailNotifyMaintain</a>
+
+            <div class="submenu-category">App推播</div>
+            <a href="#" class="menu-item">推播類別維護</a>
+            <a href="#" class="menu-item">推播維護</a>
+            <a href="#" class="menu-item">推播裝置清單</a>
+
+            <div class="submenu-category">內容與多媒體</div>
+            <a href="#" class="menu-item">注意事項</a>
+            <a href="#" class="menu-item">太魯閣審核回覆範本</a>
+            <a href="#" class="menu-item">片語詞庫</a>
+            <a href="#" class="menu-item">登山安全影片</a>
+          </div>
         </div>
       </div>
     </aside>
