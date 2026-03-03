@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        width: 720pt;
+        height: 405pt;
+        margin: 0;
+        padding: 0;
+        background: #f8fafc;
+        font-family: "Noto Sans TC", Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .content {
+        width: 620pt;
+        text-align: center;
+      }
+      h1 {
+        color: #1e293b;
+        font-size: 32pt;
+        margin-bottom: 30pt;
+        font-weight: bold;
+      }
+      .flex-box {
+        display: flex;
+        justify-content: space-around;
+        gap: 20pt;
+      }
+      .panel {
+        background: #ffffff;
+        padding: 25pt;
+        border-radius: 10pt;
+        width: 260pt;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
+        text-align: left;
+        border-top: 4pt solid #3b82f6;
+      }
+      .panel.accent {
+        border-top-color: #f59e0b;
+      }
+      h3 {
+        color: #1e293b;
+        font-size: 18pt;
+        margin: 0 0 10pt 0;
+      }
+      ul {
+        margin: 0;
+        padding-left: 20pt;
+      }
+      li {
+        color: #475569;
+        font-size: 15pt;
+        line-height: 1.5;
+        margin-bottom: 8pt;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>通用狀態定義與未來規劃</h1>
+
+      <div class="flex-box">
+        <div class="panel">
+          <h3>通用狀態 (States)</h3>
+          <ul>
+            <li>
+              <b>載入中 (Loading)</b>：全面採用骨架屏 (Skeleton
+              Screen)，提升流暢感。
+            </li>
+            <li>
+              <b>無資料 (Empty State)</b
+              >：中央置放友善圖文提示，不留破格爛表頭。
+            </li>
+            <li><b>破壞性警告</b>：紅色 Modal 進行二次防呆確認。</li>
+          </ul>
+        </div>
+
+        <div class="panel accent">
+          <h3>未來規劃 (Next Steps)</h3>
+          <ul>
+            <li>案件審查(明細) 介面極簡化佈局設計。</li>
+            <li>系統管理表單 (Forms) 雙欄/單欄最佳化。</li>
+            <li>建立共用 UI 元件庫指南 (Button, Modal, Input 等規格)。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

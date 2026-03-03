@@ -17,11 +17,11 @@
     <style>
       /* CSS reset and custom variables */
       :root {
-        --primary-color: #3b82f6; /* Modern Blue */
-        --primary-dark: #2563eb;
-        --sidebar-bg: #1e293b; /* Dark slate */
+        --primary-color: #10b981; /* Emerald Green */
+        --primary-dark: #059669; /* Darker Emerald */
+        --sidebar-bg: #0f172a; /* Even darker slate to contrast green */
         --sidebar-text: #e2e8f0;
-        --sidebar-hover: #334155;
+        --sidebar-hover: #1e293b;
         --bg-color: #f8fafc; /* Very light slate for content bg */
         --card-bg: #ffffff;
         --text-main: #0f172a;
@@ -199,7 +199,7 @@
 
       .menu-item.active::before {
         background-color: var(--primary-color);
-        box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); /* Emerald Green glow */
       }
 
       /* 單純無展開的選項 */
@@ -355,7 +355,7 @@
 
       .filter-input:focus {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1); /* Emerald Green glow */
       }
 
       .filter-input[disabled] {
@@ -382,13 +382,13 @@
       .btn-primary {
         background-color: var(--primary-color);
         color: #fff;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.15);
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15); /* Emerald Green shadow */
       }
 
       .btn-primary:hover {
         background-color: var(--primary-dark);
         transform: translateY(-1px);
-        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); /* Emerald Green shadow */
       }
 
       .btn-outline {
@@ -453,7 +453,7 @@
       }
 
       .icon-primary {
-        background: #eff6ff;
+        background: #ecfdf5; /* Light emerald bg */
         color: var(--primary-color);
       }
       .icon-warning {

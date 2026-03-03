@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        width: 720pt;
+        height: 405pt;
+        margin: 0;
+        padding: 0;
+        background: #1e293b;
+        font-family: "Noto Sans TC", Arial, sans-serif;
+        display: flex;
+      }
+      .content {
+        margin: 40pt 50pt;
+        width: 620pt;
+      }
+      h1 {
+        color: #ffffff;
+        font-size: 32pt;
+        margin-bottom: 10pt;
+        border-bottom: 3pt solid #3b82f6;
+        padding-bottom: 10pt;
+      }
+      .layout {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30pt;
+      }
+      .left-col {
+        width: 280pt;
+      }
+      .right-col {
+        width: 320pt;
+        background: #ffffff;
+        padding: 20pt;
+        border-radius: 12pt;
+      }
+      h3 {
+        color: #3b82f6;
+        font-size: 20pt;
+        margin: 0 0 15pt 0;
+      }
+      p {
+        color: #cbd5e1;
+        font-size: 16pt;
+        line-height: 1.5;
+        margin: 0 0 15pt 0;
+      }
+      ul {
+        padding-left: 20pt;
+        margin: 0;
+      }
+      li {
+        color: #334155;
+        font-size: 15pt;
+        margin-bottom: 10pt;
+        font-weight: bold;
+      }
+      .sub {
+        color: #64748b;
+        font-size: 13pt;
+        font-weight: normal;
+        margin-top: 2pt;
+        margin-bottom: 4pt;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>側邊導覽列 (Sidebar) - 架構重組</h1>
+
+      <div class="layout">
+        <div class="left-col">
+          <h3>手風琴折疊選單</h3>
+          <p>取代舊有 TreeView，徹底解決 51 項功能平鋪造成的視覺壓迫感。</p>
+          <h3>視覺降噪</h3>
+          <p>
+            採用深灰 (Dark Slate) 與現代藍，配以 FontAwesome
+            專業圖示提示，消滅廉價感。
+          </p>
+        </div>
+
+        <div class="right-col">
+          <h3 style="color: #1e293b; margin-bottom: 10pt">
+            五大核心模組 (5 Modules)
+          </h3>
+          <ul>
+            <li>
+              1. 營運總覽
+              <div class="sub">首頁儀表板入口</div>
+            </li>
+            <li>
+              2. 案件審查與管理
+              <div class="sub">審核發證、抽籤、名額、宿營</div>
+            </li>
+            <li>
+              3. 現場查核與違規
+              <div class="sub">入園實際查核、違規紀錄、事故記錄</div>
+            </li>
+            <li>
+              4. 營運規則設定
+              <div class="sub">路線、假日管制、國別與退費機制</div>
+            </li>
+            <li>
+              5. 系統與基礎模組
+              <div class="sub">人員權限、推播、郵件範本、公告片段</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
