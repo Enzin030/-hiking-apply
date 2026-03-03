@@ -2,96 +2,74 @@
 
 ## 1. 專案概述 (Project Overview)
 
-本專案為「115登山一站式」入口網的全面改版。旨在整合入山、入園等各項登山申請服務，為使用者打造極簡、直覺、且資訊架構清晰的整合型入口網，同時針對後台提供審查一致性的管理介面 (RBAC設計)。
+本專案為「115登山一站式」入口網的全面改版。旨在整合入山、入園等各項登山申請服務，為使用者打造極簡、直覺、且資訊架構清晰的整合型入口網。目前階段將專注於「現有系統的 UI/UX 操作邏輯與版面分析」，暫不涉入前後端技術實作與資料庫架構設計。
 
 ---
 
-## 2. 系統架構簡介 (System Architecture)
+## 2. 核心 UI/UX 設計規範 (UI/UX Guidelines)
 
-- **Frontend (前端)**：使用 React (TypeScript) + Vite 進行建置。採用 Vanilla CSS 搭配 CSS Modules 實現極簡風範，並引入 FontAwesome 提供向量圖示。
-- **Backend (後端)**：RESTful API + JWT Token 授權機制。
-- **Database (資料庫)**：預計採用關聯式資料庫 (RDBMS) 或現有政府內部資料庫。
+介面設計嚴格遵循「極簡美學 (Minimalism)」，透過純白背景與中性色調 (如灰階、深藍)，引導使用者的視覺焦點直接落在核心數據與待辦事項上。
 
----
-
-## 3. UI/UX 操作動線 (User Flow)
-
-介面奉行「極簡美學 (Minimalism)」，透過純白背景與中性色調 (如灰階、深藍)，引導使用者的視覺焦點直接落在「待辦事項」與「資訊」上。
-
-### 3.1 前台動線 (Frontend Web)
-
-1. **Landing Page (首頁)**
-   - 全版焦點圖搭配極簡文字 (Mission Statement) 與搜尋框。
-   - `fa-solid fa-search` 尋找路線、山脈資訊。
-2. **Login / SSO (登入)**
-   - 支援一般帳號或政府單一登入 (SSO)。
-3. **User Dashboard (會員中心/我的申請)**
-   - 狀態卡片區分：[草稿]、[審核中]、[已核准]、[已退件]。
-   - 以 Data Grid 顯示申請單，每筆資料帶有動作選項 (`fa-solid fa-pen`, `fa-solid fa-eye`)。
-4. **Application Form (一站式申請流程)**
-   - 採 Step-by-Step 嚮導模式 (Wizard)：
-     - Step 1: 選擇路線 (`fa-solid fa-map-location-dot`)
-     - Step 2: 填寫資料 (`fa-solid fa-file-lines`)
-     - Step 3: 確認送出 (`fa-solid fa-check`)
-
-### 3.2 後台動線 (Admin Portal)
-
-1. **Review Dashboard (審查儀表板)**
-   - 列出待審查案件 (高對比度提示待處理事項)。
-2. **Application Detail (案件明細與審查)**
-   - 左側資訊檢視，右側審查意見輸入與決行 (Approve / Reject)。
+1. **資訊層級 (Data Hierarchy)**：
+   - 使用不同的字體粗細、大小與灰階對比，取代傳統的框線或高彩度背景區隔。
+   - 數值與關鍵指標靠右對齊，並依據重要性給予重點提示色。
+2. **無雜訊介面 (Noise-Free Interface)**：
+   - 大量留白，移除不必要的裝飾性元素與網格線。
+   - 禁止使用任何蘋果或系統內建 Emoji，所有圖示一律採用 FontAwesome 或 Bootstrap Icons，維持專業一致性。
+3. **一致的狀態回饋 (Consistent Feedback)**：
+   - 所有操作皆需有明確的狀態提示（Idle, Loading, Error, Empty），不拋出未經設計的系統原⽣錯誤畫面。
 
 ---
 
-## 4. 狀態定義 (State Management Definitions)
+## 3. 現有系統 UI/UX 分析：營運儀表板 (Dashboard)
 
-為求開發順利，前端元件必須對應以下四種基礎狀態：
+根據現有系統 `儀錶板.md` 的功能，進行新版 UI/UX 佈局與互動設計規劃。
 
-1. **Idle / Normal (常態)**
-   - 系統靜止狀態，所有資料已就緒。
-2. **Loading (載入中)**
-   - 操作時顯示 Skeleton Screen 或 Spinner (`fa-solid fa-circle-notch fa-spin`)。
-   - 阻擋按鈕重複點擊 (Button Disabled)。
-3. **Empty (空資料)**
-   - 當 API 回傳為空時，介面顯示圖示與提示文案 (如：`fa-solid fa-box-open`「目前無待處理您的申請資料」)。不可出現任何突兀的反白或空白。
-4. **Error (錯誤 / 例外狀態)**
-   - 發生網路錯誤或邏輯錯誤時的警示訊息。
-   - 使用紅色或橘色基調的 Toast 提示 (`fa-solid fa-circle-exclamation`「資料載入失敗，請稍後再試」)。
+### 3.1 角色權限與視圖邏輯 (RBAC UI Behavior)
+
+儀表板的切換依賴使用者身分，UI 須在無形中約束操作：
+
+- **總管理者**：具備全局視野，「管理單位」選單預設 `[全部單位]`，可自由切換。
+- **各園管理者**：「管理單位」下拉選單以 Disabled 狀態呈現（或轉為唯獨文字標籤），降低不必要的介面認知負擔。
+
+### 3.2 佈局結構規劃 (Layout Structure)
+
+頁面採用由上至下 (Top-Down) 的資訊過濾與總覽設計。
+
+#### 區塊一：全局數據篩選器 (Global Filter Bar)
+
+- **UI 佈局**：位於頁面最上方，背景為純白配置，底部僅帶有極淡的灰線 (`border-bottom: 1px solid #E0E0E0`) 用於區隔內容，不使用突兀的陰影。
+- **元件互動**：
+  - 查詢區間 (Date Range) 預設為系統當日 (Today)，提供快捷按鈕（如：今日、本週、本月）。
+  - 按鈕樣式：
+    - 主操作：`<button class="btn-primary"> <i class="bi bi-search"></i> 查詢 </button>` (實心深色，強調視覺重心)。
+    - 次操作：`<button class="btn-outline"> <i class="bi bi-download"></i> 匯出報表 </button>` (空心外框，避免喧賓奪主)。
+
+#### 區塊二：營運數據卡片區 (KPI Cards)
+
+採用 4 欄式 (Col-3) 網格佈局，卡片呈現純白底色，邊框設計極淡或隱形，搭配微小的 Hover 浮升動畫增強互動感。
+
+| 指標               | Icon 規範                                                | UI 狀態設計與資料層級                                                                                                           |
+| :----------------- | :------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| **今日申請隊伍數** | `<i class="bi bi-file-text text-primary"></i>`           | 數值採用大字體 (e.g. 36px)；若較昨日成長，右方緊跟微小的 `<i class="bi bi-arrow-up-right text-success"></i>` 圖示及百分比字樣。 |
+| **待處理案件**     | `<i class="bi bi-clock-history text-warning"></i>`       | 數值為 0 時呈現淺灰色，大於 0 時數字轉為強調色 (Warning)，並於卡片邊緣增加極細微的高亮度提示。                                  |
+| **設施滿載警示**   | `<i class="bi bi-exclamation-triangle text-danger"></i>` | 僅列出達 100% 的宿營地；若無滿載，該區塊數值顯示「0」，並以淺灰色字體標記「目前無滿載設施」，維持版面一致不留白洞。             |
+| **違規攔截數**     | `<i class="bi bi-shield-slash text-secondary"></i>`      | 顯示系統自動比對的黑名單攔截件數，字體顏色以中性色為主，避免造成過度警告感。                                                    |
+
+#### 區塊三：數據統計列表 (Data Grid)
+
+摒棄傳統厚重資料表設計，改以清爽的 Data Grid 呈現明細。
+
+- **表頭設計 (Sticky Header)**：固定於畫面滾動頂部，背景色設為極淺灰 (`#F8F9FA` 或更淺)，無垂直網格線。
+- **互動設計**：表頭支援點擊排序，提供清楚的排序狀態指標 `<i class="bi bi-arrow-down-up"></i>`；滑鼠 Hover 單一行 (Row) 時，給予極淡的背景色反饋。
+- **數值排版**：所有統計數值（申請隊伍、核准隊伍等）一律**靠右對齊**，方便視覺比對；數值若為 `0`，則將字體顏色淡化為淺灰色 (`#BDBDBD`)，降低視覺干擾。
+- **狀態空白處理 (Empty State)**：若查詢無資料，需在 Table 正中央顯示清晰的圖文提示（如 `<i class="fa-solid fa-box-open"></i>` 加上「目前無相關數據」），不顯示破損的表框。
 
 ---
 
-## 5. 權限角色邏輯 (RBAC - Role-Based Access Control)
+## 4. 通用狀態定義 (Generic State UI)
 
-| 角色 (Role)                   | 權限說明 (Permissions)                             | 可見視圖 (Visible Views)         |
-| :---------------------------- | :------------------------------------------------- | :------------------------------- |
-| **Guest** (訪客)              | 僅可瀏覽公開路線與常見問題                         | Landing, Public Info             |
-| **User** (一般民眾)           | 可送出申請、查詢自己歷史紀錄、修改個人設定         | User Dashboard, Form Wizard      |
-| **Reviewer** (審查委員)       | 檢視分派案件、填寫審查意見、核准/退回操作          | Web/Admin Dashboard (限自己轄區) |
-| **System Admin** (系統管理員) | 擁有全系統最高權限，可管理使用者與所有角色配置設定 | Admin Control Panel              |
+前端介面處理上述各區塊時，須考量以下狀態：
 
----
-
-## 6. API 資料結構與通訊協定概念 (API Design Constraints)
-
-- Request Headers 必須帶有 `Authorization: Bearer <token>`
-- Response 統一包裹格式如下：
-
-```json
-{
-  "success": true,
-  "code": 200,
-  "message": "請求成功",
-  "data": { ... }
-}
-```
-
-- 若發生錯誤，一律回傳 4xx / 5xx HTTP 狀態碼，並於 Response 回應：
-
-```json
-{
-  "success": false,
-  "code": 403,
-  "message": "權限不足，無法執行此操作",
-  "data": null
-}
-```
+1. **Loading (載入中)**：卡片與列表資料尚未回傳前，顯示 Skeleton Screen (骨架屏)，避免畫面突然閃爍。
+2. **Error (錯誤)**：若特定圖表或卡片載入失敗，應於局部顯示錯誤提示按鈕 (Retrying)，不阻礙其他正常區塊的操作。
