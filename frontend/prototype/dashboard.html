@@ -19,11 +19,12 @@
         theme: {
           extend: {
             colors: {
-              primary: "#588E3C", // 頂端主視覺綠
+              primary: "#388E3C", // 頂端主視覺綠
               primaryDark: "#2E7D32",
               sidebarBg: "#FFFFFF", // 主背景為白
               sidebarHover: "#F1F8E9", // 左側選單 hover
               sidebarActive: "#E8F5E9", // 左側選單選中 (第一層底色)
+              sidebarActiveSecondary: "rgba(46, 125, 50, 0.08)",
               sidebarTextActive: "#2E7D32",
               currentItemBg: "rgba(46, 125, 50, 0.08)", // 第三層選中透明度底色
               bgLight: "#F8F9FA", // 右側內容區些微灰底，凸顯白色卡片
@@ -114,7 +115,7 @@
               <div class="pl-11 pr-4 py-1 space-y-1">
                 <a
                   href="#"
-                  class="block px-3 py-1.5 text-sm text-primary font-bold"
+                  class="block py-1.5 text-xs text-primary font-bold"
                   >申請審核</a
                 >
                 <a
@@ -134,7 +135,7 @@
                 >
                 <a
                   href="#"
-                  class="block px-3 py-1.5 text-sm text-textMuted bg-sidebarActive rounded font-medium"
+                  class="block px-3 py-1.5 text-sm text-textMuted bg-sidebarActiveSecondary rounded font-medium"
                   >許可證管理</a
                 >
                 <a
@@ -149,7 +150,7 @@
                 >
                 <a
                   href="#"
-                  class="block px-3 py-1.5 text-sm text-primary font-bold mt-2"
+                  class="block py-1.5 text-xs text-primary font-bold"
                   >名額管理</a
                 >
                 <a

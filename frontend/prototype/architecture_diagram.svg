@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 750" width="800" height="750">
+    <!-- SVG 堆疊圖設計 -->
+    <style>
+        .purple-box { fill: #f4edff; stroke: #a885ff; stroke-width: 1px; rx: 5px; ry: 5px; }
+        .yellow-box { fill: #ffffe6; stroke: #c4b759; stroke-width: 1px; rx: 5px; ry: 5px; }
+        .line { stroke: #333; stroke-width: 1px; }
+        .text { fill: #333333; font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; font-size: 16px; text-anchor: middle; dominant-baseline: central; }
+    </style>
+
+    <!-- 直向連接線 -->
+    <line x1="400" y1="90" x2="400" y2="140" class="line" />
+    <line x1="400" y1="280" x2="400" y2="330" class="line" />
+    <line x1="400" y1="380" x2="400" y2="430" class="line" />
+    <line x1="400" y1="480" x2="400" y2="530" class="line" />
+    <line x1="400" y1="580" x2="400" y2="630" class="line" />
+
+    <!-- 頁首功能列 -->
+    <rect x="330" y="40" width="140" height="50" class="purple-box" />
+    <text x="400" y="65" class="text">頁首功能列</text>
+
+    <!-- 英雄區 (外框) -->
+    <rect x="120" y="140" width="560" height="140" class="yellow-box" />
+    <text x="400" y="165" class="text">英雄區</text>
+
+    <!-- 英雄區內的橫向連接線 -->
+    <line x1="270" y1="215" x2="330" y2="215" class="line" />
+    <line x1="470" y1="215" x2="530" y2="215" class="line" />
+
+    <!-- 英雄區內的區塊 -->
+    <rect x="130" y="190" width="140" height="50" class="purple-box" />
+    <text x="200" y="215" class="text">申請查詢區</text>
+
+    <rect x="330" y="190" width="140" height="50" class="purple-box" />
+    <text x="400" y="215" class="text">搜尋路線框</text>
+
+    <rect x="530" y="190" width="140" height="50" class="purple-box" />
+    <text x="600" y="215" class="text">快速申請入口區</text>
+
+    <!-- 下方各區塊 -->
+    <rect x="330" y="330" width="140" height="50" class="purple-box" />
+    <text x="400" y="355" class="text">最新公告區</text>
+
+    <rect x="330" y="430" width="140" height="50" class="purple-box" />
+    <text x="400" y="455" class="text">申請流程區</text>
+
+    <rect x="330" y="530" width="140" height="50" class="purple-box" />
+    <text x="400" y="555" class="text">常見問題區</text>
+
+    <!-- 頁尾 -->
+    <rect x="330" y="630" width="140" height="50" class="purple-box" />
+    <text x="400" y="655" class="text">頁尾</text>
+</svg>
