@@ -11,15 +11,24 @@
     />
     <style>
       :root {
-        --bg-color: #f8fafc; /* 極簡淺灰背景 */
-        --primary-bg: #e0e7ff; /* 溫和的淡紫色/靛色 */
-        --primary-border: #8b5cf6;
-        --secondary-bg: #fef3c7; /* 溫和的淡黃色 */
-        --secondary-border: #f59e0b;
-        --text-color: #334155;
+        /* 參考「臺灣登山申請一站式服務網」畫面的自然山林配色 */
+        --bg-color: #f4f6f0; /* 整體極淺綠色背景 */
+
+        /* 一般區塊顏色 (類似登入框的湖水綠/深孔雀綠) */
+        --primary-bg: #298c76;
+        --primary-border: #1e6b5a;
+
+        /* 英雄區最外框顏色 (類似大背景的橄欖綠/抹茶綠) */
+        --secondary-bg: #bacb84;
+        --secondary-border: #9fb26c;
+
+        /* 文字顏色 */
+        --text-light: #ffffff;
+        --text-dark: #2c3e1e;
+
         --font-family: "Inter", "PingFang TC", "Microsoft JhengHei", sans-serif;
         --box-shadow:
-          0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* 輕微柔和陰影 */
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         --radius: 8px; /* 圓角 */
       }
 
@@ -43,16 +52,16 @@
         align-items: center;
       }
 
-      /* 預設區塊樣式 (單一區塊) */
+      /* 預設區塊樣式 (單一橫條) */
       .block-primary {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 300px; /* 固定寬度讓上下對齊 */
+        width: 320px; /* 固定寬度讓上下對齊 */
         height: 60px;
         background-color: var(--primary-bg);
         border: 2px solid var(--primary-border);
-        color: var(--text-color);
+        color: var(--text-light);
         font-weight: 600;
         font-size: 1.1rem;
         border-radius: var(--radius);
@@ -61,19 +70,22 @@
         text-align: center;
       }
 
-      .block-primary:hover {
+      .block-primary:hover,
+      .hero-item:hover,
+      .hero-item-tall:hover {
         transform: translateY(-2px);
+        box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15);
       }
 
-      /* 英雄區最外層容器 (包覆三個子區塊) */
+      /* 英雄區最外層容器 (左右並排) */
       .hero-container {
         display: flex;
         justify-content: center;
-        align-items: center;
-        gap: 24px;
-        width: 100%; /* 英雄區較寬 */
-        max-width: 700px;
-        padding: 30px 20px;
+        align-items: stretch; /* 讓左右等高 */
+        gap: 20px;
+        width: 100%;
+        max-width: 660px; /* 寬度稍微加寬以容納左右配置 */
+        padding: 35px 20px 25px;
         background-color: var(--secondary-bg);
         border: 2px solid var(--secondary-border);
         border-radius: var(--radius);
@@ -84,26 +96,53 @@
       /* 英雄區左上角標籤 */
       .hero-label {
         position: absolute;
-        top: -12px;
+        top: -14px;
         left: 20px;
-        background-color: var(--secondary-bg);
-        border: 2px solid var(--secondary-border);
-        padding: 2px 12px;
-        border-radius: 12px;
+        background-color: var(--secondary-border);
+        padding: 4px 14px;
+        border-radius: 14px;
         font-size: 0.85rem;
         font-weight: 600;
-        color: var(--secondary-border);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
-      /* 英雄區內的子區塊 */
-      .hero-item {
+      /* 左側：申請查詢區 (長高型) */
+      .hero-left {
         flex: 1;
-        max-width: 200px;
-        height: 60px;
+        display: flex;
+        min-height: 140px; /* 配合右側兩個區塊加間距的高度 */
+      }
+
+      .hero-item-tall {
+        width: 100%;
         background-color: var(--primary-bg);
         border: 2px solid var(--primary-border);
-        color: var(--text-color);
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-radius: var(--radius);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: var(--box-shadow);
+        transition: transform 0.2s ease;
+      }
+
+      /* 右側：搜尋路線框 + 快速申請入口區 (上下堆疊) */
+      .hero-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .hero-item {
+        flex: 1; /* 平分垂直空間 */
+        width: 100%;
+        background-color: var(--primary-bg);
+        border: 2px solid var(--primary-border);
+        color: var(--text-light);
         font-weight: 600;
         font-size: 1rem;
         border-radius: var(--radius);
@@ -114,24 +153,18 @@
         transition: transform 0.2s ease;
       }
 
-      .hero-item:hover {
-        transform: translateY(-2px);
-      }
-
       /* RWD 適應手機版 */
       @media (max-width: 600px) {
         .hero-container {
-          flex-direction: column; /* 手機版改為直列 */
+          flex-direction: column; /* 手機版全部改為直列 */
           padding: 40px 20px 20px;
           width: 90%;
         }
-        .hero-item {
-          width: 100%;
-          max-width: none;
-        }
         .block-primary {
           width: 90%;
-          max-width: 300px;
+        }
+        .hero-left {
+          min-height: 60px;
         }
       }
     </style>
@@ -141,12 +174,20 @@
       <!-- 第一層 -->
       <div class="block-primary">頁首功能列</div>
 
-      <!-- 第二層: 英雄區 (大框包小框) -->
+      <!-- 第二層: 英雄區 (左邊長條，右邊上下兩塊) -->
       <div class="hero-container">
         <span class="hero-label">英雄區</span>
-        <div class="hero-item">申請查詢區</div>
-        <div class="hero-item">搜尋路線框</div>
-        <div class="hero-item">快速申請入口區</div>
+
+        <!-- 左側 -->
+        <div class="hero-left">
+          <div class="hero-item-tall">申請查詢區</div>
+        </div>
+
+        <!-- 右側 -->
+        <div class="hero-right">
+          <div class="hero-item">搜尋路線框</div>
+          <div class="hero-item">快速申請入口區</div>
+        </div>
       </div>
 
       <!-- 第三~六層 -->
