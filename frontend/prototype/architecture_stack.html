@@ -26,25 +26,20 @@
         --text-light: #ffffff;
         --text-dark: #2c3e1e;
 
-        --font-family: "Inter", "PingFang TC", "Microsoft JhengHei", sans-serif;
-        --box-shadow:
-          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --radius: 8px; /* 圓角 */
-      }
-
-      * {
-        box-sizing: border-box;
+        --font-family: "Noto sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+        --box-shadow: none; /* 移除陰影讓它看起來更像平面圖表 */
+        --radius: 12px; /* 增加圓角讓它看起來更柔和 */
       }
 
       body {
         margin: 0;
-        padding: 40px;
-        background-color: var(--bg-color);
+        padding: 20px; /* 減少 padding 方便嵌入 */
+        background-color: transparent; /* 背景透明以融入 md 預設背景 */
         font-family: var(--font-family);
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
+        min-height: auto; /* 移除全螢幕高度限制 */
       }
 
       .stack-container {
@@ -63,15 +58,14 @@
         align-items: center;
         width: 100%; /* 與外層等寬 */
         max-width: 700px; /* 統一最大寬度 */
-        height: 60px;
+        height: 50px; /* 稍微降低高度 */
         background-color: var(--primary-bg);
-        border: 2px solid var(--primary-border);
+        border: none; /* 移除邊框更清爽 */
         color: var(--text-light);
-        font-weight: 600;
-        font-size: 1.1rem;
+        font-weight: 500; /* 字體稍微調輕 */
+        font-size: 1rem;
         border-radius: var(--radius);
         box-shadow: var(--box-shadow);
-        transition: transform 0.2s ease;
         text-align: center;
       }
 
@@ -90,9 +84,9 @@
         gap: 20px;
         width: 100%;
         max-width: 700px; /* 統一最大寬度 */
-        padding: 35px 20px 25px;
+        padding: 30px 16px 20px;
         background-color: var(--secondary-bg);
-        border: 2px solid var(--secondary-border);
+        border: none; /* 移除邊框 */
         border-radius: var(--radius);
         box-shadow: var(--box-shadow);
         position: relative;
@@ -101,15 +95,17 @@
       /* 英雄區左上角標籤 */
       .hero-label {
         position: absolute;
-        top: -14px;
-        left: 20px;
-        background-color: var(--secondary-border);
-        padding: 4px 14px;
-        border-radius: 14px;
-        font-size: 0.85rem;
+        top: -12px;
+        left: 16px;
+        background-color: var(
+          --secondary-bg
+        ); /* 與背景同色系，使其看起來像標籤 */
+        padding: 2px 12px;
+        border-radius: 12px;
+        font-size: 0.8rem;
         font-weight: 600;
-        color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: var(--text-dark); /* 深綠色文字 */
+        box-shadow: none;
       }
 
       /* 左側：申請查詢區 (長高型) */
@@ -122,16 +118,15 @@
       .hero-item-tall {
         width: 100%;
         background-color: var(--primary-bg);
-        border: 2px solid var(--primary-border);
+        border: none;
         color: var(--text-light);
-        font-weight: 600;
-        font-size: 1.1rem;
+        font-weight: 500;
+        font-size: 1rem;
         border-radius: var(--radius);
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: var(--box-shadow);
-        transition: transform 0.2s ease;
       }
 
       /* 右側：搜尋路線框 + 快速申請入口區 (上下堆疊) */
@@ -146,16 +141,15 @@
         flex: 1; /* 平分垂直空間 */
         width: 100%;
         background-color: var(--primary-bg);
-        border: 2px solid var(--primary-border);
+        border: none;
         color: var(--text-light);
-        font-weight: 600;
-        font-size: 1rem;
+        font-weight: 500;
+        font-size: 0.95rem; /* 字體再小一點以容納上下空間 */
         border-radius: var(--radius);
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: var(--box-shadow);
-        transition: transform 0.2s ease;
       }
 
       /* RWD 適應手機版 */
