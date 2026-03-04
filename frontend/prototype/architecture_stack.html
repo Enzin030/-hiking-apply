@@ -32,6 +32,10 @@
         --radius: 8px; /* 圓角 */
       }
 
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
         padding: 40px;
@@ -57,7 +61,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 320px; /* 固定寬度讓上下對齊 */
+        width: 100%; /* 與外層等寬 */
+        max-width: 700px; /* 統一最大寬度 */
         height: 60px;
         background-color: var(--primary-bg);
         border: 2px solid var(--primary-border);
@@ -84,7 +89,7 @@
         align-items: stretch; /* 讓左右等高 */
         gap: 20px;
         width: 100%;
-        max-width: 660px; /* 寬度稍微加寬以容納左右配置 */
+        max-width: 700px; /* 統一最大寬度 */
         padding: 35px 20px 25px;
         background-color: var(--secondary-bg);
         border: 2px solid var(--secondary-border);
