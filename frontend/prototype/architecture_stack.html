@@ -11,25 +11,33 @@
     />
     <style>
       :root {
-        /* 參考「臺灣登山申請一站式服務網」畫面的自然山林配色 */
-        --bg-color: #f4f6f0; /* 整體極淺綠色背景 */
+        /* 新版參考圖配色 */
+        --bg-color: transparent;
 
-        /* 一般區塊顏色 (類似登入框的湖水綠/深孔雀綠) */
-        --primary-bg: #70afa1;
-        --primary-border: #6ca397;
+        /* 一般區塊顏色 (深湖水綠) */
+        --primary-bg: #358f7a;
+        --primary-border: #226152; /* 較深的邊框色 */
 
-        /* 英雄區最外框顏色 (類似大背景的橄欖綠/抹茶綠) */
-        --secondary-bg: #bacb84;
-        --secondary-border: #9fb26c;
+        /* 英雄區最外框顏色 (橄欖綠/抹茶綠) */
+        --secondary-bg: #bcd086;
+        --secondary-border: #9fb36d;
+
+        /* 英雄區標籤顏色 */
+        --label-bg: #a6bb72;
+        --label-border: #8d9f61;
 
         /* 文字顏色 */
         --text-light: #ffffff;
-        --text-dark: #2c3e1e;
+        --text-dark: #ffffff;
 
         --font-family:
           "Noto sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-        --box-shadow: none; /* 移除陰影讓它看起來更像平面圖表 */
-        --radius: 12px; /* 增加圓角讓它看起來更柔和 */
+        /* 加入明顯的下降陰影創造厚度，以及些微的模糊陰影 */
+        --box-shadow:
+          0 4px 0px var(--primary-border), 0 5px 6px rgba(0, 0, 0, 0.15);
+        --hero-shadow:
+          0 4px 0px var(--secondary-border), 0 5px 6px rgba(0, 0, 0, 0.1);
+        --radius: 6px; /* 稍微縮小圓角，讓邊框更立體 */
       }
 
       body {
@@ -59,15 +67,16 @@
         align-items: center;
         width: 100%; /* 與外層等寬 */
         max-width: 700px; /* 統一最大寬度 */
-        height: 50px; /* 稍微降低高度 */
+        height: 54px; /* 稍微增加高度 */
         background-color: var(--primary-bg);
-        border: none; /* 移除邊框更清爽 */
+        border: 1px solid var(--primary-border); /* 加上細邊框 */
         color: var(--text-light);
-        font-weight: 500; /* 字體稍微調輕 */
-        font-size: 1rem;
+        font-weight: bold; /* 字體加粗 */
+        font-size: 1.05rem;
         border-radius: var(--radius);
         box-shadow: var(--box-shadow);
         text-align: center;
+        margin-bottom: 4px; /* 為厚度陰影預留空間 */
       }
 
       .block-primary:hover,
@@ -82,15 +91,17 @@
         display: flex;
         justify-content: center;
         align-items: stretch; /* 讓左右等高 */
-        gap: 20px;
+        gap: 16px; /* 縮小左右間距 */
         width: 100%;
         max-width: 700px; /* 統一最大寬度 */
         padding: 30px 16px 20px;
         background-color: var(--secondary-bg);
-        border: none; /* 移除邊框 */
+        border: 1px solid var(--secondary-border); /* 加上外框 */
         border-radius: var(--radius);
-        box-shadow: var(--box-shadow);
+        box-shadow: var(--hero-shadow);
         position: relative;
+        margin-bottom: 4px; /* 為厚度陰影預留空間 */
+        margin-top: 12px;
       }
 
       /* 英雄區左上角標籤 */
@@ -98,13 +109,14 @@
         position: absolute;
         top: -14px;
         left: 20px;
-        background-color: var(--secondary-border);
-        padding: 4px 14px;
-        border-radius: 14px;
+        background-color: var(--label-bg);
+        border: 1px solid var(--label-border);
+        padding: 4px 16px;
+        border-radius: 16px;
         font-size: 0.85rem;
-        font-weight: 600;
-        color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-weight: bold;
+        color: var(--text-dark);
+        box-shadow: 0 3px 0px var(--label-border);
       }
 
       /* 左側：申請查詢區 (長高型) */
@@ -117,15 +129,16 @@
       .hero-item-tall {
         width: 100%;
         background-color: var(--primary-bg);
-        border: none;
+        border: 1px solid var(--primary-border);
         color: var(--text-light);
-        font-weight: 500;
-        font-size: 1rem;
+        font-weight: bold;
+        font-size: 1.05rem;
         border-radius: var(--radius);
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: var(--box-shadow);
+        margin-bottom: 4px; /* 為厚度陰影預留空間 */
       }
 
       /* 右側：搜尋路線框 + 快速申請入口區 (上下堆疊) */
@@ -140,15 +153,16 @@
         flex: 1; /* 平分垂直空間 */
         width: 100%;
         background-color: var(--primary-bg);
-        border: none;
+        border: 1px solid var(--primary-border);
         color: var(--text-light);
-        font-weight: 500;
+        font-weight: bold;
         font-size: 0.95rem; /* 字體再小一點以容納上下空間 */
         border-radius: var(--radius);
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: var(--box-shadow);
+        margin-bottom: 4px; /* 為厚度陰影預留空間 */
       }
 
       /* RWD 適應手機版 */
