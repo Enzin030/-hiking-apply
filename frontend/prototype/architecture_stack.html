@@ -15,8 +15,8 @@
         --bg-color: #f4f6f0; /* 整體極淺綠色背景 */
 
         /* 一般區塊顏色 (類似登入框的湖水綠/深孔雀綠) */
-        --primary-bg: #298c76;
-        --primary-border: #1e6b5a;
+        --primary-bg: #70afa1;
+        --primary-border: #6ca397;
 
         /* 英雄區最外框顏色 (類似大背景的橄欖綠/抹茶綠) */
         --secondary-bg: #bacb84;
@@ -26,7 +26,8 @@
         --text-light: #ffffff;
         --text-dark: #2c3e1e;
 
-        --font-family: "Noto sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+        --font-family:
+          "Noto sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
         --box-shadow: none; /* 移除陰影讓它看起來更像平面圖表 */
         --radius: 12px; /* 增加圓角讓它看起來更柔和 */
       }
@@ -95,17 +96,15 @@
       /* 英雄區左上角標籤 */
       .hero-label {
         position: absolute;
-        top: -12px;
-        left: 16px;
-        background-color: var(
-          --secondary-bg
-        ); /* 與背景同色系，使其看起來像標籤 */
-        padding: 2px 12px;
-        border-radius: 12px;
-        font-size: 0.8rem;
+        top: -14px;
+        left: 20px;
+        background-color: var(--secondary-border);
+        padding: 4px 14px;
+        border-radius: 14px;
+        font-size: 0.85rem;
         font-weight: 600;
-        color: var(--text-dark); /* 深綠色文字 */
-        box-shadow: none;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       /* 左側：申請查詢區 (長高型) */
@@ -156,14 +155,14 @@
       @media (max-width: 600px) {
         .hero-container {
           flex-direction: column; /* 手機版全部改為直列 */
-          padding: 40px 20px 20px;
-          width: 90%;
+          padding: 30px 16px 16px;
+          width: 100%;
         }
         .block-primary {
-          width: 90%;
+          width: 100%;
         }
         .hero-left {
-          min-height: 60px;
+          min-height: 50px;
         }
       }
     </style>
