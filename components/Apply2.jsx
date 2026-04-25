@@ -123,11 +123,6 @@ function Page2App() {
                 <div>
                   <h2>請先閱讀以下說明後，始可進行後續之申請作業</h2>
                   <p>為了您的登山安全與行政審核作業順利，請逐項閱讀並勾選每組事項。完成所有勾選後，下方「同意並下一步」按鈕即可使用。</p>
-                  <div className="p2-intro-meta">
-                    <span><i className="fa-regular fa-clock"></i>預估閱讀時間 約 5 分鐘</span>
-                    <span><i className="ph-bold ph-list-checks"></i>共 {total} 組事項</span>
-                    <span><i className="ph-bold ph-translate"></i>另提供 <a href="#" style={{color: "var(--national-700)", textDecoration: "underline"}}>EN / 日本語</a> 版本</span>
-                  </div>
                 </div>
               </div>
 

@@ -111,6 +111,9 @@ a { color: inherit; }
 .th-step-label .lbl-title {
   font-size: 14px; font-weight: 700; color: var(--slate-400);
 }
+.th-step-label .lbl-sub {
+  font-size: 12px; color: var(--slate-400);
+}
 /* 進行中：白底，標示當前步驟 */
 .th-step.is-current {
   background: #fff;
@@ -119,7 +122,7 @@ a { color: inherit; }
   background: var(--national-700); color: #fff;
 }
 .th-step.is-current .lbl-title { color: var(--national-700); font-weight: 700; }
-.th-step.is-current .lbl-sub { color: var(--slate-600); }
+.th-step.is-current .lbl-sub { color: var(--slate-600); font-weight: 500; }
 /* 已完成：白底，成功綠勾號 */
 .th-step.is-done { background: #fff; }
 .th-step.is-done .th-step-num {
@@ -128,6 +131,7 @@ a { color: inherit; }
   border: 1.5px solid var(--success-border);
 }
 .th-step.is-done .lbl-title { color: var(--slate-700); }
+.th-step.is-done .lbl-sub { color: var(--slate-500); font-weight: 500; }
 .th-step.is-done .th-step-num::before {
   content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900;
   font-size: 11px;

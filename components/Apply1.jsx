@@ -74,7 +74,7 @@ function Page1App() {
 
           <h2 className="th-section-title">
             登山路線選擇
-            <span className="th-section-title-sub">挑選您要前往的山岳，系統會自動帶入需要的入園與入山許可</span>
+            <span className="th-section-title-sub"></span>
           </h2>
 
           <div className="p1-layout">

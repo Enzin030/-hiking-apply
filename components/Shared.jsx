@@ -89,7 +89,7 @@ function Stepper({ current }) {
           <div key={s.n} className={`th-step ${cls}`}>
             <span className="th-step-num"><span>{s.n}</span></span>
             <div className="th-step-label">
-              <span className="lbl-title">步驟 {s.n}・{s.title}</span>
+              <span className="lbl-title">{s.title}</span>
               <span className="lbl-sub">{s.sub}</span>
             </div>
           </div>
