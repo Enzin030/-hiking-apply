@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>臺灣登山申請一站式服務網</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              // 系統主色調
+              national: {
+                50: "#f2fbf5",
+                100: "#e1f6e8",
+                500: "#22c55e",
+                600: "#16a34a",
+                700: "#587a68",
+                800: "#166534",
+                900: "#14532d",
+              },
+              // 設計稿特製色
+              "custom-btn-blue": "#3b5f8f", // 查詢按鈕的沉穩藍
+              "custom-footer": "#243447", // 頁尾深藍灰
+              "custom-sub-footer": "#334155", // 頁尾底層灰
+              "custom-filter-active": "#587a68", // 公告啟用標籤的灰綠色
+              "custom-bg-gray": "#f5f7f2", // 常見問答區的淺灰綠底色
+            },
+            fontFamily: {
+              sans: ["Noto Sans TC", "sans-serif"],
+              serif: ["Noto Serif TC", "serif"],
+            },
+            boxShadow: {
+              header: "0 2px 10px rgba(0,0,0,0.05)",
+              card: "0 4px 20px rgba(0,0,0,0.08)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* 隱藏原生捲軸但保持可滑動 */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      /* 圖片懸停放大特效 */
+      .hover-zoom img {
+        transition: transform 0.5s ease;
+      }
+      .hover-zoom:hover img {
+        transform: scale(1.08);
+      }
+
+      /* 模擬柔和的漸層群山背景 */
+      .mountain-gradient-bg {
+        background: linear-gradient(
+          to bottom,
+          #ffffff 0%,
+          #f4f9f2 40%,
+          #e2f1e4 70%,
+          #cadcce 100%
+        );
+      }
+
+      /* 隱藏橫向輪播的捲軸，但保留滑動功能 */
+      .hide-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+      }
+    </style>
+  </head>
+  <body class="text-slate-800 antialiased bg-white">
+    <header
+      class="w-full bg-white sticky top-0 z-50 shadow-header border-b border-slate-100 py-3"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+          <div
+            class="flex items-center shrink-0 cursor-pointer hover:opacity-90 transition"
+          >
+            <img src="logo.png" alt="Logo" class="h-16 w-auto mr-3" />
+            <h1
+              class="font-serif font-bold text-2xl text-slate-800 tracking-wide mt-1"
+            >
+              <span class="text-3xl"
+                >臺灣<span class="text-[#587a68]">登山申請</span></span
+              >一站式服務網
+            </h1>
+          </div>
+
+          <div class="flex flex-col items-end gap-3 hidden lg:flex">
+            <div
+              class="flex items-center gap-3 text-[14px] text-slate-500 font-regular"
+            >
+              <a href="#" class="hover:text-national-700 transition"
+                >網站導覽</a
+              >
+              <div class="w-[2px] h-3 bg-slate-300"></div>
+              <a href="#" class="hover:text-national-700 transition">警特報</a>
+              <div class="w-[2px] h-3 bg-slate-300"></div>
+              <a href="#" class="hover:text-national-700 transition">RSS</a>
+              <div class="w-[2px] h-3 bg-slate-300"></div>
+              <button
+                class="hover:text-national-700 transition flex items-center gap-1.5"
+              >
+                <i class="ph ph-globe text-[14px] relative top-[1px]"></i> 語言
+              </button>
+              <div class="w-[2px] h-3 bg-slate-300"></div>
+              <button
+                class="hover:text-national-700 transition flex items-center gap-1.5 ml-1"
+              >
+                <i
+                  class="ph-bold ph-magnifying-glass text-[15px] relative top-[1px]"
+                ></i>
+              </button>
+            </div>
+
+            <nav class="flex items-center gap-6">
+              <a
+                href="#"
+                class="text-slate-600 hover:text-national-700 font-regular transition text-[18px]"
+                >公佈欄</a
+              >
+              <a
+                href="#"
+                class="text-slate-600 hover:text-national-700 font-regular transition text-[18px]"
+                >登山申請</a
+              >
+              <a
+                href="#"
+                class="text-slate-600 hover:text-national-700 font-regular transition text-[18px]"
+                >登山須知</a
+              >
+              <a
+                href="#"
+                class="text-slate-600 hover:text-national-700 font-regular transition text-[18px]"
+                >登山路線開放狀態</a
+              >
+              <a
+                href="#"
+                class="text-slate-600 hover:text-national-700 font-regular transition text-[18px]"
+                >宿營地與床位查詢</a
+              >
+              <a
+                href="#"
+                class="text-slate-600 hover:text-national-700 font-regular transition text-[18px]"
+                >旅遊登山資訊</a
+              >
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+<div class="relative pt-6 pb-16 lg:pt-10 lg:pb-24 overflow-hidden">
+      <div class="absolute inset-0 z-0 bg-slate-100">
+        <img src="hero-bg.png" alt="背景群山" class="w-full h-full object-cover opacity-80" onerror="this.style.display='none'" />
+        <div class="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/30 backdrop-blur-[1px]"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+          
+          <div class="lg:col-span-8 relative flex flex-col">
+            
+            <div class="mb-6 bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-md border border-slate-100 flex items-center gap-3">
+              <div class="relative flex-grow">
+                <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
+                <input type="text" placeholder="請輸入路線名稱" class="w-full pl-12 pr-4 py-3 bg-transparent focus:outline-none text-[15px] text-slate-800 placeholder-slate-400 font-medium" />
+              </div>
+              <button class="shrink-0 w-full sm:w-auto bg-[#587a68] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#456353] transition shadow-md flex items-center justify-center gap-2 text-[15px]">
+                <i class="fa-solid fa-route text-[14px] relative top-[1px]"></i> 查詢路線
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5 flex-grow">
+              
+              <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-56 sm:h-auto min-h-[220px] bg-slate-300">
+                <img src="route-yushan.png" alt="玉山" class="absolute inset-0 w-full h-full object-cover transition transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1588662660098-b8fc7fcd881c?auto=format&fit=crop&w=800&q=80'" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span class="inline-block bg-[#5F7F68]/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[14px] font-normal mb-2.5 border border-[#5F7F68]/50">玉山國家公園</span>
+                  <h3 class="text-2xl font-medium mb-2 tracking-wide">玉山主峰</h3>
+                  <div class="flex items-center gap-4 text-[13px] opacity-90 font-medium">
+                    <span class="flex items-center gap-1.5"><i class="ph-bold ph-mountains text-white/70"></i> 3,952m</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-white/70"></i> 2天1夜</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-56 sm:h-auto min-h-[220px] bg-slate-300">
+                <img src="route-wuling.png" alt="武陵四秀" class="absolute inset-0 w-full h-full object-cover transition transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1552423312-326b52c047de?auto=format&fit=crop&w=800&q=80'" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span class="inline-block bg-[#5F7F68]/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[14px] font-normal mb-2.5 border border-[#5F7F68]/50">雪霸國家公園</span>
+                  <h3 class="text-2xl font-medium mb-2 tracking-wide">武陵四秀</h3>
+                  <div class="flex items-center gap-4 text-[13px] opacity-90 font-medium">
+                    <span class="flex items-center gap-1.5"><i class="ph-bold ph-mountains text-white/70"></i> 3,524m</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-white/70"></i> 3天2夜</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-56 sm:h-auto min-h-[220px] bg-slate-300">
+                <img src="route-qilai.png" alt="奇萊" class="absolute inset-0 w-full h-full object-cover transition transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1589136777351-fdc9c8cb25ed?auto=format&fit=crop&w=800&q=80'" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span class="inline-block bg-[#5F7F68]/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[14px] font-normal mb-2.5 border border-[#5F7F68]/50">太魯閣國家公園</span>
+                  <h3 class="text-2xl font-medium mb-2 tracking-wide">奇萊</h3>
+                  <div class="flex items-center gap-4 text-[13px] opacity-90 font-medium">
+                    <span class="flex items-center gap-1.5"><i class="ph-bold ph-mountains text-white/70"></i> 3,607m</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-white/70"></i> 3天2夜</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-56 sm:h-auto min-h-[220px] bg-slate-300">
+                <img src="route-nanheng.png" alt="南橫三山" class="absolute inset-0 w-full h-full object-cover transition transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1518090001007-8e67a6d3f237?auto=format&fit=crop&w=800&q=80'" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                <div class="absolute bottom-5 left-5 right-5 text-white">
+                  <span class="inline-block bg-[#5F7F68]/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[14px] font-normal mb-2.5 border border-[#5F7F68]/50">玉山國家公園</span>
+                  <h3 class="text-2xl font-medium mb-2 tracking-wide">南橫三山</h3>
+                  <div class="flex items-center gap-4 text-[13px] opacity-90 font-medium">
+                    <span class="flex items-center gap-1.5"><i class="ph-bold ph-mountains text-white/70"></i> 3,222m</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left text-white/70"></i> 2天1夜</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="flex justify-center gap-2.5 mt-6 mb-2">
+              <button class="w-2.5 h-2.5 rounded-full bg-[#F2F2F2] shadow-md cursor-pointer"></button>
+              <button class="w-2.5 h-2.5 rounded-full bg-[#F2F2F2]/30 hover:bg-[#5F7F68]/60 transition cursor-pointer"></button>
+              <button class="w-2.5 h-2.5 rounded-full bg-[#F2F2F2]/30 hover:bg-[#5F7F68]/60 transition cursor-pointer"></button>
+            </div>
+          </div>
+<div class="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden flex flex-col h-full border border-slate-200">
+            
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-5 shrink-0">
+              
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2 text-[#5F7F68]">
+                  <i class="ph-fill ph-check-circle text-[18px]"></i>
+                  <span class="text-[15px] font-bold tracking-wide">目前可收件</span>
+                </div>
+                <div class="text-red-500 text-[13px] font-medium">
+                  * 玉山於辦理抽籤期間則暫停申請
+                </div>
+              </div>
+            <!--
+              <div class="mb-4">
+                <span class="text-slate-400 text-[11px] tracking-wide">
+                  收件時段 (UTC+8：07:00 ~ 23:00)
+                </span>
+              </div>-->
+              
+ 
+              <div class="flex items-center justify-between  pt-3">
+                <div class="block text-[13px] font-bold text-slate-600 mb-1.5">現在時間：
+                <span id="system-clock" class="text-slate-600 text-[13px] font-medium tracking-tight">2026-03-24 23:12:14</span>
+            </div>
+        </div>
+
+            </div>
+
+            <div class="p-6 flex flex-col flex-grow">
+              <form class="space-y-5 flex flex-col h-full">
+                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-[13px] font-bold text-slate-600 mb-1.5">單位</label>
+                    <select class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-[14px] text-slate-800 focus:ring-1 focus:ring-slate-400 focus:outline-none shadow-sm transition">
+                      <option selected>太魯閣國家公園管理處</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-bold text-slate-600 mb-1.5">路線</label>
+                    <select class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-[14px] text-slate-800 focus:ring-1 focus:ring-slate-400 focus:outline-none shadow-sm transition">
+                      <option selected>奇萊</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-bold text-slate-600 mb-1.5">次路線</label>
+                    <select class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-[14px] text-slate-800 focus:ring-1 focus:ring-slate-400 focus:outline-none shadow-sm transition">
+                      <option selected>奇萊主、北峰線</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-[13px] font-bold text-slate-600 mb-1.5">預計入園日期</label>
+                    <input type="text" value="2026-03-09" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-[14px] text-slate-800 focus:ring-1 focus:ring-slate-400 focus:outline-none shadow-sm" />
+                  </div>
+                </div>
+
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                    <h4 class="text-emerald-800 text-[13px] font-bold mb-4">可申請期限</h4>
+                    <div class="space-y-3">
+                        <span class="text-[13px] font-bold mb-4">2026-01-11 07:00 ~ 2026-03-06 23:00</span>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                  <button type="button" class="w-full bg-[#587a68] text-white py-3 rounded-lg font-medium hover:bg-[#456353] transition shadow-md flex items-center justify-center gap-2 text-[15px]">
+                    <i class="ph-bold ph-magnifying-glass text-[15px] relative top-[1px]"></i> 查詢可申請日期
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <section
+      class="relative bg-[url('bulletin-bg.png')] bg-cover bg-center py-16 border-t border-slate-100"
+    >
+      <div class="absolute inset-0 bg-white/30 backdrop-blur-[1px]"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+          <h3
+            class="text-2xl font-bold text-slate-800 border-l-4 border-custom-filter-active pl-4"
+            style="font-family: 'Noto Serif TC', serif"
+          >
+            最新公告
+          </h3>
+          <a
+            href="#"
+            class="text-slate-600 hover:text-slate-900 font-bold transition flex items-center gap-2 text-[15px]"
+          >
+            查看更多 <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="flex flex-col lg:flex-row lg:items-start justify-start gap-6 mb-8">
+                
+                <div class="flex flex-wrap gap-2.5">
+                    <button class="px-5 py-1.5 rounded-full bg-custom-filter-active text-white text-[14px] font-bold shadow-sm transition">全部</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white text-slate-600 text-[14px] font-medium hover:bg-slate-50 transition border border-slate-200 shadow-sm">玉山國家公園</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white text-slate-600 text-[14px] font-medium hover:bg-slate-50 transition border border-slate-200 shadow-sm">太魯閣國家公園</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white text-slate-600 text-[14px] font-medium hover:bg-slate-50 transition border border-slate-200 shadow-sm">雪霸國家公園</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white text-slate-600 text-[14px] font-medium hover:bg-slate-50 transition border border-slate-200 shadow-sm">林業及自然保育署</button>
+                    <button class="px-5 py-1.5 rounded-full bg-white text-slate-600 text-[14px] font-medium hover:bg-slate-50 transition border border-slate-200 shadow-sm">警政署</button>
+                </div>
+            </div>
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <ul class="divide-y divide-slate-100">
+            
+            <li class="px-5 py-4 hover:bg-slate-50 transition cursor-pointer group flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+              <div class="shrink-0 md:w-[90px]">
+                <span class="text-slate-500 text-[14px] font-medium tracking-wide">2026-03-09</span>
+              </div>
+              
+              <div class="shrink-0 md:w-[130px]">
+                <span class="bg-green-50 text-green-700 text-[12px] font-medium px-2.5 py-1 rounded border border-green-100/50 inline-block text-center">太魯閣國家公園</span>
+              </div>
+              
+              <div class="flex-grow flex items-center gap-2 min-w-0">
+                <i class="ph-fill ph-push-pin text-red-500 text-[15px] shrink-0 transform -rotate-45"></i>
+                <h4 class="text-[15px] font-medium text-slate-800 group-hover:text-[#587a68] transition truncate">
+                  公告115年4月1日起至4月19日辦理奇萊稜線新山屋吊掛作業
+                </h4>
+              </div>
+            </li>
+
+            <li class="px-5 py-4 hover:bg-slate-50 transition cursor-pointer group flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+              <div class="shrink-0 md:w-[90px]">
+                <span class="text-slate-500 text-[14px] font-medium tracking-wide">2026-03-05</span>
+              </div>
+              
+              <div class="shrink-0 md:w-[130px]">
+                <span class="bg-green-50 text-green-700 text-[12px] font-medium px-2.5 py-1 rounded border border-green-100/50 inline-block text-center">雪霸國家公園</span>
+              </div>
+              
+              <div class="flex-grow flex items-center gap-2 min-w-0">
+                <i class="ph-fill ph-push-pin text-red-500 text-[15px] shrink-0 transform -rotate-45"></i>
+                <h4 class="text-[15px] font-medium text-slate-800 group-hover:text-[#587a68] transition truncate">
+                  115年雪霸國家公園清明連假期間入園申請注意事項
+                </h4>
+              </div>
+            </li>
+
+            <li class="px-5 py-4 hover:bg-slate-50 transition cursor-pointer group flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+              <div class="shrink-0 md:w-[90px]">
+                <span class="text-slate-500 text-[14px] font-medium tracking-wide">2026-03-04</span>
+              </div>
+              
+              <div class="shrink-0 md:w-[130px]">
+                <span class="bg-green-50 text-green-700 text-[12px] font-medium px-2.5 py-1 rounded border border-green-100/50 inline-block text-center">林業及自然保育署</span>
+              </div>
+              
+              <div class="flex-grow flex items-center gap-2 min-w-0">
+                <i class="ph-fill ph-push-pin text-red-500 text-[15px] shrink-0 transform -rotate-45"></i>
+                <h4 class="text-[15px] font-medium text-slate-800 group-hover:text-[#587a68] transition truncate">
+                  【嘉明湖國家步道】在「臺灣登山一站式」申請住宿訂單相關說明
+                </h4>
+              </div>
+            </li>
+
+            <li class="px-5 py-4 hover:bg-slate-50 transition cursor-pointer group flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+              <div class="shrink-0 md:w-[90px]">
+                <span class="text-slate-500 text-[14px] font-medium tracking-wide">2026-01-30</span>
+              </div>
+              
+              <div class="shrink-0 md:w-[130px]">
+                <span class="bg-green-50 text-green-700 text-[12px] font-medium px-2.5 py-1 rounded border border-green-100/50 inline-block text-center">玉山國家公園</span>
+              </div>
+              
+              <div class="flex-grow flex items-center gap-2 min-w-0">
+                <div class="w-[15px] shrink-0"></div>
+                <h4 class="text-[15px] font-medium text-slate-800 group-hover:text-[#587a68] transition truncate">
+                  排雲山莊容宿量調整措施延長辦理通知
+                </h4>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-[url('qa-bg.png')] py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <h3
+            class="text-2xl font-bold text-slate-800 border-l-4 border-custom-filter-active pl-4"
+            style="font-family: 'Noto Serif TC', serif"
+          >
+            常見問答
+          </h3>
+          <a
+            href="#"
+            class="text-slate-600 hover:text-slate-900 font-bold transition flex items-center gap-2 text-[15px]"
+          >
+            查看更多 <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="space-y-4">
+          <details
+            class="bg-white rounded-xl shadow-sm border border-white group overflow-hidden"
+            open
+          >
+            <summary
+              class="font-bold text-[15px] cursor-pointer list-none p-5 flex justify-between items-center text-slate-800 group-open:text-[#587a68] hover:text-[#587a68] transition-colors"
+            >
+              外籍人士沒有台灣身分證，該如何申請？
+              <span
+                class="transition-transform duration-300 group-open:rotate-180 text-slate-400 group-open:text-[#587a68]"
+                ><i class="fa-solid fa-chevron-down"></i
+              ></span>
+            </summary>
+            <div
+              class="px-5 pb-5 text-[14px] text-slate-600 leading-relaxed border-t border-slate-50 pt-4"
+            >
+              一般路線請於入園日之 5 天至 2
+              個月前提出申請。若為熱門需抽籤路線（如玉山主峰、雪山主峰），請依各國家公園管理處之抽籤規定時程辦理，建議提早
+              1-2
+              個月關注抽籤資訊。外籍人士填寫時請選擇「護照」，並輸入護照號碼。
+            </div>
+          </details>
+
+          <details
+            class="bg-white rounded-xl shadow-sm border border-white group overflow-hidden"
+          >
+            <summary
+              class="font-bold text-[15px] cursor-pointer list-none p-5 flex justify-between items-center text-slate-800 group-open:text-[#587a68] hover:text-[#587a68] transition-colors"
+            >
+              申請通過後，如果隊員臨時無法前往可以換人嗎？
+              <span
+                class="transition-transform duration-300 group-open:rotate-180 text-slate-400 group-open:text-[#587a68]"
+                ><i class="fa-solid fa-chevron-down"></i
+              ></span>
+            </summary>
+            <div
+              class="px-5 pb-5 text-[14px] text-slate-600 leading-relaxed border-t border-slate-50 pt-4"
+            >
+              這是一段測試內容。系統規定核准後原則上不可任意更換人員，若有特殊情況請依照各國家公園的異動規定辦理，或於規定時間內取消原申請後重新送件。
+            </div>
+          </details>
+
+          <details
+            class="bg-white rounded-xl shadow-sm border border-white group overflow-hidden"
+          >
+            <summary
+              class="font-bold text-[15px] cursor-pointer list-none p-5 flex justify-between items-center text-slate-800 group-open:text-[#587a68] hover:text-[#587a68] transition-colors"
+            >
+              申請編號忘記了該怎麼辦？
+              <span
+                class="transition-transform duration-300 group-open:rotate-180 text-slate-400 group-open:text-[#587a68]"
+                ><i class="fa-solid fa-chevron-down"></i
+              ></span>
+            </summary>
+            <div
+              class="px-5 pb-5 text-[14px] text-slate-600 leading-relaxed border-t border-slate-50 pt-4"
+            >
+              您可以點擊頁面右上角的「忘記申請編號？」，輸入您申請時填寫的電子郵件或身分證字號，系統將會重新發送申請編號至您的信箱。
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+    <footer class="bg-[#243447] pt-12 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col lg:flex-row justify-between gap-12 lg:gap-10 mb-10"
+        >
+          <div class="w-full lg:max-w-[65%] flex flex-col sm:flex-row gap-6">
+            <div class="shrink-0">
+              <div
+                class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm"
+              >
+                <img src="logo.png" alt="Logo" class="h-16 w-auto" />
+              </div>
+            </div>
+            <div class="w-full">
+              <div
+                class="flex flex-col xl:flex-row xl:items-end justify-between mb-4 gap-2 border-b border-transparent pb-[2px]"
+              >
+                <h3
+                  class="font-serif font-bold text-xl text-white tracking-wide leading-none"
+                >
+                  臺灣登山申請一站式服務網
+                </h3>
+                <span
+                  class="text-slate-400 text-[13px] leading-none mb-1 xl:mb-0"
+                >
+                  最後更新日期：2026-03-23
+                </span>
+              </div>
+              <p
+                class="text-[13px] leading-relaxed text-slate-400 text-justify"
+              >
+                本網站乃整合國家公園署之玉山、雪霸、太魯閣國家公園登山申請，林業及自然保育署之天池、嘉明湖、向陽、檜谷山屋營地及自然保護(留)區、野生動物保護區，以及警政署入山申請等服務。本站提供統一之申請入口，後續再由各機關個別審核。如有申請相關問題，歡迎透過聯絡我們向指定機關聯繫，謝謝。
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col sm:flex-row gap-16 lg:gap-20 xl:gap-28 shrink-0 mt-4 lg:mt-0 lg:mr-8 xl:mr-16"
+          >
+            <div>
+              <h4
+                class="text-white font-bold text-[15px] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none"
+              >
+                服務專區
+              </h4>
+              <ul class="space-y-3 text-[14px]">
+                <li>
+                  <a
+                    href="#"
+                    class="text-slate-400 hover:text-white transition-colors"
+                    >常見問答</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-slate-400 hover:text-white transition-colors"
+                    >聯絡我們</a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4
+                class="text-white font-bold text-[15px] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none"
+              >
+                政策宣告
+              </h4>
+              <ul class="space-y-3 text-[14px]">
+                <li>
+                  <a
+                    href="#"
+                    class="text-slate-400 hover:text-white transition-colors"
+                    >隱私權宣告</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-slate-400 hover:text-white transition-colors"
+                    >資訊安全政策</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-slate-400 hover:text-white transition-colors"
+                    >資料開放宣告</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-custom-sub-footer py-5 border-t border-slate-700/50 w-full"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div
+            class="flex flex-col md:flex-row justify-between items-center w-full gap-4 text-[13px] text-slate-400"
+          >
+            <div class="font-medium text-slate-300 shrink-0">
+              Copyright © 內政部國家公園署 著作權所有
+            </div>
+            <div class="flex items-center justify-end gap-3 text-right">
+              <span>建議使用 Chrome、Edge 或 Safari 瀏覽器</span>
+              <span class="hidden sm:inline opacity-30">|</span>
+              <span>建議螢幕解析度 1440 x 960 以上</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+  <script>
+      function updateSystemClock() {
+        const now = new Date();
+        
+        // 格式化為 YYYY-MM-DD
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        
+        // 格式化為 HH:mm:ss
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        
+        const clockElement = document.getElementById('system-clock');
+        if (clockElement) {
+          clockElement.textContent = formattedTime;
+        }
+      }
+
+      // 網頁載入時立刻更新一次
+      updateSystemClock();
+      // 每秒更新一次
+      setInterval(updateSystemClock, 1000);
+    </script>
+</html>

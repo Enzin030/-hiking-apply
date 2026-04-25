@@ -5,7 +5,7 @@ function Header({ active }) {
     <header className="w-full bg-white sticky top-0 z-50 shadow-[0_2px_10px_rgba(0,0,0,0.05)] border-b border-slate-100 py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <div className="flex items-center shrink-0 cursor-pointer hover:opacity-90 transition">
+          <div className="flex items-center shrink-0 cursor-pointer hover:opacity-90 transition" onClick={() => window.location.href = "index.html"}>
             <img src="assets/logo.png" alt="Logo" className="h-16 w-auto mr-3" />
             <h1 className="font-serif font-bold text-2xl text-slate-800 tracking-wide mt-1">
               <span className="text-3xl">臺灣<span className="text-[#587a68]">登山申請</span></span>一站式服務網
@@ -31,16 +31,14 @@ function Header({ active }) {
 
             <nav className="flex items-center gap-6">
               {[
-                { key: "bulletin", label: "公佈欄" },
-                { key: "apply",    label: "登山申請" },
-                { key: "info",     label: "登山須知" },
-                { key: "status",   label: "登山路線開放狀態" },
-                { key: "campsite", label: "宿營地與床位查詢" },
-                { key: "travel",   label: "旅遊登山資訊" },
-              ].map(({ key, label }) => (
+                { key: "home",     label: "首頁", url: "index.html" },
+                { key: "apply",    label: "登山申請", url: "apply-1.html" },
+                { key: "status",   label: "路線開放狀態", url: "#" },
+                { key: "campsite", label: "宿營地查詢", url: "#" },
+              ].map(({ key, label, url }) => (
                 <a
                   key={key}
-                  href="#"
+                  href={url}
                   className={`font-medium transition text-[18px] ${
                     active === key
                       ? "text-[#587a68]"

@@ -315,7 +315,7 @@ function Page3App() {
                   系統會自動暫存您填寫的內容，可關閉再回來繼續編輯
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button className="th-btn th-btn-ghost"><i className="fa-solid fa-arrow-left"></i> 上一步</button>
+                  <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-2.html"}><i className="fa-solid fa-arrow-left"></i> 上一步</button>
                   <button className="th-btn th-btn-ghost">儲存草稿</button>
                   <button className="th-btn th-btn-primary" disabled={!allOk}
                     onClick={() => alert("送出申請")}>

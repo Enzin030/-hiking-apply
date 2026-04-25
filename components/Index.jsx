@@ -142,7 +142,7 @@ function IndexApp() {
       </div>
 
       {/* ── 最新公告 ── */}
-      <section className="relative py-16 border-t border-slate-100">
+      <section className="relative bg-[url('assets/bulletin-bg.png')] bg-cover bg-center py-16 border-t border-slate-100">
         <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px]"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex items-center justify-between mb-8">
@@ -175,8 +175,9 @@ function IndexApp() {
       </section>
 
       {/* ── 常見問答 ── */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-[url('assets/qa-bg.png')] bg-cover bg-center py-16">
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold text-slate-800 border-l-4 border-[#587a68] pl-4" style={{ fontFamily: "'Noto Serif TC', serif" }}>常見問答</h3>
             <a href="#" className="text-slate-600 hover:text-slate-900 font-bold transition flex items-center gap-2 text-[15px]">查看更多 <i className="fa-solid fa-arrow-right"></i></a>

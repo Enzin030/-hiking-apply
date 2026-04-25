@@ -242,11 +242,11 @@ function Page2App() {
             </label>
 
             <div className="p2-footbar-actions">
-              <button className="th-btn th-btn-ghost">
+              <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-1.html"}>
                 <i className="fa-solid fa-arrow-left"></i>上一步
               </button>
               <button className="th-btn th-btn-primary" disabled={!canSubmit}
-                onClick={() => alert("進入頁面三：行程登記")}>
+                onClick={() => window.location.href = "apply-3.html"}>
                 同意並下一步<i className="fa-solid fa-arrow-right"></i>
               </button>
             </div>

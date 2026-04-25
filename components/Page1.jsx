@@ -227,7 +227,7 @@ function RouteCard({ r }) {
   };
   const s = statusMap[r.status];
   return (
-    <article className="p1-route" onClick={() => alert("進入：" + r.name)}>
+    <article className="p1-route" onClick={() => window.location.href = "apply-2.html"}>
       <div className="p1-route-thumb">
         <img src={r.image} alt="" />
         <span className="p1-route-diff">第 {r.diff} 級</span>
