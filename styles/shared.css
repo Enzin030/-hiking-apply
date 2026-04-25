@@ -113,7 +113,7 @@ a { color: inherit; }
 .th-step-label .lbl-sub {
   font-size: 12px; color: var(--slate-400); margin-top: 2px;
 }
-.th-step.is-current { background: var(--bg-mist); }
+.th-step.is-current { background: #fff; }
 .th-step.is-current .th-step-num { background: var(--national-700); color: #fff; }
 .th-step.is-current .lbl-title { color: var(--national-700); }
 .th-step.is-current .lbl-sub { color: var(--slate-600); }
@@ -168,7 +168,7 @@ a { color: inherit; }
 
 /* ============ PAGE WRAP ============ */
 .th-page {
-  background: var(--bg-mist);
+  background: #fff;
   min-height: 100vh;
   padding-bottom: 80px;
 }

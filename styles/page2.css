@@ -13,7 +13,7 @@
 
 /* ===== INTRO BANNER ===== */
 .p2-intro {
-  background: linear-gradient(135deg, #fff 0%, var(--bg-mist) 100%);
+  background: #fff;
   border: 1px solid var(--bg-mist-2);
   border-radius: 16px;
   padding: 24px 28px;
@@ -133,7 +133,7 @@
 .p2-clause-num {
   flex-shrink: 0;
   width: 22px; height: 22px; border-radius: 4px;
-  background: var(--bg-mist); color: var(--national-700);
+  background: #fff; color: var(--national-700);
   font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   line-height: 1;
@@ -161,7 +161,7 @@
 .p2-sec-ack {
   margin-top: 16px;
   padding: 14px 16px;
-  background: var(--bg-mist);
+  background: #fff;
   border: 1px solid var(--bg-mist-2);
   border-radius: 10px;
   display: flex; align-items: center; gap: 12px;
@@ -297,7 +297,7 @@
 .p2-footbar-status .num { font-weight: 700; color: var(--national-700); font-size: 16px; }
 .p2-footbar-icon {
   width: 32px; height: 32px; border-radius: 9999px;
-  background: var(--bg-mist); color: var(--national-700);
+  background: #fff; color: var(--national-700);
   display: flex; align-items: center; justify-content: center;
   font-size: 14px;
 }
@@ -310,7 +310,7 @@
 .p2-master-ack {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 10px 16px;
-  background: var(--bg-mist); border: 1px solid var(--bg-mist-2);
+  background: #fff; border: 1px solid var(--bg-mist-2);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px; color: var(--slate-700);
