@@ -23,7 +23,6 @@ function Header({ active }) {
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5">
                 <i className="ph ph-globe text-[14px] relative top-[1px]"></i> 語言
               </button>
-              <div className="w-[2px] h-3 bg-slate-300"></div>
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5 ml-1">
                 <i className="ph-bold ph-magnifying-glass text-[15px] relative top-[1px]"></i>
               </button>

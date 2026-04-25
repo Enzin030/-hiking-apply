@@ -15,9 +15,9 @@
 /* ============ FILTER SIDEBAR ============ */
 .p1-filters {
   background: #fff;
-  border: 1px solid var(--slate-100);
+  border: 1px solid var(--slate-200);
   border-radius: 16px;
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-md);
   padding: 4px 0;
   position: sticky; top: 96px;
 }
@@ -70,7 +70,7 @@
 }
 
 .p1-difficulty-row {
-  display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
 }
 .p1-diff {
   padding: 8px 4px; border: 1px solid var(--slate-200);

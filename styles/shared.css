@@ -85,7 +85,7 @@ a { color: inherit; }
 .th-stepper {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 0;
-  background: #fff; border: 1px solid var(--slate-200);
+  background: var(--slate-50); border: 1px solid var(--slate-200);
   border-radius: 12px; overflow: hidden;
   box-shadow: var(--sh-sm);
   margin-bottom: 32px;
@@ -94,30 +94,39 @@ a { color: inherit; }
   position: relative;
   padding: 16px 20px;
   display: flex; align-items: center; gap: 12px;
-  background: #fff;
+  background: transparent;
   border-right: 1px solid var(--slate-200);
 }
 .th-step:last-child { border-right: none; }
+/* 未完成步驟：數字與文字刻意降色，視覺上退至背景 */
 .th-step-num {
   width: 28px; height: 28px; border-radius: 9999px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--slate-100); color: var(--slate-500);
+  background: var(--slate-100); color: var(--slate-400);
   font-weight: 700; font-size: 13px; flex-shrink: 0;
 }
 .th-step-label {
   display: flex; flex-direction: column; line-height: 1.3;
 }
 .th-step-label .lbl-title {
-  font-size: 14px; font-weight: 700; color: var(--slate-500);
+  font-size: 14px; font-weight: 700; color: var(--slate-400);
 }
-.th-step-label .lbl-sub {
-  font-size: 12px; color: var(--slate-400); margin-top: 2px;
+/* 進行中：白底，標示當前步驟 */
+.th-step.is-current {
+  background: #fff;
 }
-.th-step.is-current { background: #fff; }
-.th-step.is-current .th-step-num { background: var(--national-700); color: #fff; }
-.th-step.is-current .lbl-title { color: var(--national-700); }
+.th-step.is-current .th-step-num {
+  background: var(--national-700); color: #fff;
+}
+.th-step.is-current .lbl-title { color: var(--national-700); font-weight: 700; }
 .th-step.is-current .lbl-sub { color: var(--slate-600); }
-.th-step.is-done .th-step-num { background: #fff; color: var(--national-700); border: 1.5px solid var(--national-700); }
+/* 已完成：白底，成功綠勾號 */
+.th-step.is-done { background: #fff; }
+.th-step.is-done .th-step-num {
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border: 1.5px solid var(--success-border);
+}
 .th-step.is-done .lbl-title { color: var(--slate-700); }
 .th-step.is-done .th-step-num::before {
   content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900;
@@ -127,7 +136,7 @@ a { color: inherit; }
 
 /* ============ SECTION TITLE ============ */
 .th-section-title {
-  font-family: var(--font-serif); font-weight: 700;
+  font-family: var(--font-sans); font-weight: 700;
   font-size: 22px; line-height: 1.2;
   color: var(--fg-1);
   border-left: 4px solid var(--filter-active);
@@ -177,7 +186,7 @@ a { color: inherit; }
   padding: 0 32px;
 }
 .th-page-title {
-  font-family: var(--font-serif); font-weight: 700;
+  font-family: var(--font-sans); font-weight: 700;
   font-size: 28px; line-height: 1.2;
   color: var(--fg-1); margin: 0 0 24px;
   letter-spacing: var(--tracking-wide);
