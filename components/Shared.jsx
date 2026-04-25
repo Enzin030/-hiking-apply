@@ -31,15 +31,17 @@ function Header({ active }) {
 
             <nav className="flex items-center gap-6">
               {[
-                { key: "home",     label: "首頁", url: "index.html" },
+                { key: "bulletin", label: "公佈欄", url: "index.html" },
                 { key: "apply",    label: "登山申請", url: "apply-1.html" },
-                { key: "status",   label: "路線開放狀態", url: "#" },
-                { key: "campsite", label: "宿營地查詢", url: "#" },
+                { key: "notice",   label: "登山須知", url: "#" },
+                { key: "status",   label: "登山路線開放狀態", url: "#" },
+                { key: "campsite", label: "宿營地與床位查詢", url: "#" },
+                { key: "info",     label: "旅遊登山資訊", url: "#" },
               ].map(({ key, label, url }) => (
                 <a
                   key={key}
                   href={url}
-                  className={`font-medium transition text-[18px] ${
+                  className={`font-medium transition text-[18px] whitespace-nowrap ${
                     active === key
                       ? "text-[#587a68]"
                       : "text-slate-600 hover:text-[#587a68]"

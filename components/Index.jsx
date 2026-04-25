@@ -39,7 +39,7 @@ function IndexApp() {
 
   return (
     <div className="text-slate-800 antialiased bg-white">
-      <Header active="home" />
+      <Header active="bulletin" />
 
       {/* ── Hero ── */}
       <div className="relative pt-6 pb-16 lg:pt-10 lg:pb-24 overflow-hidden">
