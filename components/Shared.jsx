@@ -15,14 +15,15 @@ function Header({ active }) {
           <div className="flex-col items-end gap-3 hidden lg:flex">
             <div className="flex items-center gap-3 text-[14px] text-slate-500">
               <a href="#" className="hover:text-[#587a68] transition">網站導覽</a>
-              <div className="w-[2px] h-3 bg-slate-300"></div>
+              <div className="w-[1px] h-3 bg-slate-300"></div>
               <a href="#" className="hover:text-[#587a68] transition">警特報</a>
-              <div className="w-[2px] h-3 bg-slate-300"></div>
+              <div className="w-[1px] h-3 bg-slate-300"></div>
               <a href="#" className="hover:text-[#587a68] transition">RSS</a>
-              <div className="w-[2px] h-3 bg-slate-300"></div>
+              <div className="w-[1px] h-3 bg-slate-300"></div>
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5">
                 <i className="ph ph-globe text-[14px] relative top-[1px]"></i> 語言
               </button>
+              <div className="w-[1px] h-3 bg-slate-300"></div>
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5 ml-1">
                 <i className="ph-bold ph-magnifying-glass text-[15px] relative top-[1px]"></i>
               </button>
