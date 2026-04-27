@@ -15,6 +15,7 @@
 .p2-intro {
   background: #fff;
   border: 1px solid var(--bg-mist-2);
+  box-shadow: var(--sh-card);
   border-radius: 16px;
   padding: 24px 28px;
   margin-bottom: 24px;
@@ -260,28 +261,13 @@
 .p2-toc-list li.is-acked .p2-toc-dot span { display: none; }
 .p2-toc-list li.is-acked button { color: var(--slate-500); }
 
-.p2-toc-actions {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--slate-100);
-  display: flex; flex-direction: column; gap: 8px;
-}
-.p2-toc-mini {
-  font-size: 12px; color: var(--fg-3);
-  display: inline-flex; align-items: center; gap: 6px;
-  cursor: pointer; background: none; border: none; padding: 4px 6px;
-  text-decoration: none;
-}
-.p2-toc-mini:hover { color: var(--national-700); }
-.p2-toc-mini i { font-size: 11px; }
-
 /* ===== STICKY FOOTER BAR ===== */
 .p2-footbar {
   position: sticky; bottom: 0; z-index: 30;
   margin: 24px -32px 0;
-  background: var(--bg-mist);
-  border-top: 2px solid var(--bg-mist-2);
-  box-shadow: 0 -6px 28px rgba(0,0,0,0.12);
+  background: #fff;
+  border-top: 1px solid var(--slate-200);
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.1);
   padding: 16px 32px;
   display: flex; justify-content: space-between; align-items: center;
   gap: 16px;
@@ -310,14 +296,14 @@
 .p2-master-ack {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 10px 16px;
-  background: #fff; border: 1px solid var(--bg-mist-2);
+  background: var(--slate-50); border: 1px solid var(--slate-200);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px; color: var(--slate-700);
   transition: .15s;
   user-select: none;
 }
-.p2-master-ack:hover { background: var(--bg-mist-2); }
+.p2-master-ack:hover { background: #fff; border-color: var(--national-100); }
 .p2-master-ack input { display: none; }
 .p2-master-ack-box {
   width: 18px; height: 18px; border-radius: 4px;

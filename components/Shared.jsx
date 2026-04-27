@@ -7,7 +7,7 @@ function Header({ active }) {
         <div className="flex justify-between items-center">
           <div className="flex items-center shrink-0 cursor-pointer hover:opacity-90 transition" onClick={() => window.location.href = "index.html"}>
             <img src="assets/logo.png" alt="Logo" className="h-16 w-auto mr-3" />
-            <h1 className="font-serif font-bold text-2xl text-slate-800 tracking-wide mt-1">
+            <h1 className="font-serif font-extrabold text-2xl text-slate-800 tracking-wide mt-1">
               <span className="text-3xl">臺灣<span className="text-[#587a68]">登山申請</span></span>一站式服務網
             </h1>
           </div>
@@ -76,23 +76,27 @@ function Breadcrumb({ trail }) {
 
 function Stepper({ current }) {
   const steps = [
-    { n: 1, title: "選擇路線", sub: "挑選目的地與管理機關" },
-    { n: 2, title: "閱讀同意書", sub: "了解申請須知" },
-    { n: 3, title: "行程登記", sub: "填寫隊員與行程" },
-    { n: 4, title: "申請完成", sub: "送出並等待審核" },
+    { n: 1, title: "選擇路線" },
+    { n: 2, title: "閱讀同意書" },
+    { n: 3, title: "行程登記" },
+    { n: 4, title: "申請完成" },
   ];
   return (
     <div className="th-stepper">
-      {steps.map((s) => {
+      {steps.map((s, i) => {
         const cls = s.n < current ? "is-done" : s.n === current ? "is-current" : "";
         return (
-          <div key={s.n} className={`th-step ${cls}`}>
-            <span className="th-step-num"><span>{s.n}</span></span>
-            <div className="th-step-label">
-              <span className="lbl-title">{s.title}</span>
-              <span className="lbl-sub">{s.sub}</span>
+          <React.Fragment key={s.n}>
+            <div className={`th-step ${cls}`}>
+              <span className="th-step-num"><span>{s.n}</span></span>
+              <div className="th-step-label">
+                <span className="lbl-title">{s.title}</span>
+              </div>
             </div>
-          </div>
+            {i < steps.length - 1 && (
+              <div className={`th-step-line ${s.n < current ? "is-done" : ""}`}></div>
+            )}
+          </React.Fragment>
         );
       })}
     </div>

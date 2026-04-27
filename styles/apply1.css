@@ -315,6 +315,15 @@
 }
 .p1-route:hover .p1-route-go i { transform: translateX(2px); }
 .p1-route-go i { transition: .15s; }
+.p1-route-go.go-muted { color: var(--fg-3); }
+.p1-route-title .badge-closed {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: #fef2f2; color: #b91c1c;
+  padding: 1px 6px; border-radius: 4px;
+  font-size: 11px; font-weight: 700;
+}
+.p1-route.is-suspended { opacity: 0.75; }
+.p1-route.is-suspended:hover { opacity: 1; }
 
 @media (max-width: 600px) {
   .p1-route { flex-direction: column; }

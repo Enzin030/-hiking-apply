@@ -309,13 +309,15 @@ function Page3App() {
                 </div>
               </section>
 
-              <div className="p3-submit">
-                <div className="p3-submit-info">
+              <div className="th-footbar">
+                <div className="th-footbar-info">
                   <i className="fa-solid fa-floppy-disk"></i>
                   系統會自動暫存您填寫的內容，可關閉再回來繼續編輯
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-2.html"}><i className="fa-solid fa-arrow-left"></i> 上一步</button>
+                <div className="th-footbar-actions">
+                  <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-2.html"}>
+                    <i className="fa-solid fa-arrow-left"></i>上一步
+                  </button>
                   <button className="th-btn th-btn-ghost">儲存草稿</button>
                   <button className="th-btn th-btn-primary" disabled={!allOk}
                     onClick={() => alert("送出申請")}>
@@ -326,37 +328,37 @@ function Page3App() {
             </div>
 
             {/* SUMMARY SIDEBAR */}
-            <aside className="p3-summary">
-              <div className="p3-summary-head">
+            <aside className="th-sidebar">
+              <div className="th-sidebar-head">
                 <i className="ph-bold ph-clipboard-text"></i>申請摘要
               </div>
-              <div className="p3-summary-body">
-                <div className="p3-summary-row">
+              <div className="th-sidebar-body">
+                <div className="th-sidebar-row">
                   <span className="lbl">管理機關</span>
                   <span className="val">{unit}</span>
                 </div>
-                <div className="p3-summary-row">
+                <div className="th-sidebar-row">
                   <span className="lbl">路線</span>
                   <span className="val">{route}</span>
                 </div>
-                <div className="p3-summary-row">
+                <div className="th-sidebar-row">
                   <span className="lbl">入山日期</span>
                   <span className="val"><strong>{startDate}</strong></span>
                 </div>
-                <div className="p3-summary-row">
+                <div className="th-sidebar-row">
                   <span className="lbl">天數</span>
                   <span className="val"><strong>{days} 天 {Math.max(0,days-1)} 夜</strong></span>
                 </div>
-                <div className="p3-summary-row">
+                <div className="th-sidebar-row">
                   <span className="lbl">隊員人數</span>
                   <span className="val"><strong>{members.length} / 12 人</strong></span>
                 </div>
-                <div className="p3-summary-row">
+                <div className="th-sidebar-row">
                   <span className="lbl">許可項目</span>
                   <span className="val">入園許可 + 入山許可</span>
                 </div>
 
-                <ul className="p3-summary-checklist">
+                <ul className="th-sidebar-checklist">
                   {checks.map((c, i) => (
                     <li key={i} className={c.ok ? "is-ok" : ""}>
                       <i className={c.ok ? "fa-solid fa-circle-check" : "fa-regular fa-circle"}></i>

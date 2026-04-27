@@ -314,76 +314,14 @@
 }
 
 /* ===== SUBMIT BAR ===== */
-.p3-submit {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 24px;
-  margin-top: 24px;
-  background: #fff;
-  border: 1px solid var(--slate-100);
-  border-radius: 12px;
-  box-shadow: var(--sh-card);
-  flex-wrap: wrap; gap: 12px;
-}
-.p3-submit-info {
-  font-size: 13px; color: var(--slate-600);
-  display: flex; align-items: center; gap: 8px;
-}
-.p3-submit-info i { color: var(--national-700); }
-
-/* ===== SIDEBAR / SUMMARY ===== */
-.p3-summary {
-  position: sticky; top: 96px;
-  background: #fff;
-  border: 1px solid var(--slate-200);
-  border-radius: 16px;
-  box-shadow: var(--sh-md);
-  overflow: hidden;
-}
-@media (max-width: 1100px) {
-  .p3-summary { position: static; }
-}
-.p3-summary-head {
-  padding: 16px 18px;
-  background: #fff;
-  border-bottom: 1px solid var(--slate-100);
-  font-family: var(--font-sans); font-weight: 700; font-size: 14px;
-  color: var(--fg-1);
-  display: flex; align-items: center; gap: 8px;
-}
-.p3-summary-head i { color: var(--national-700); }
-.p3-summary-body { padding: 16px 18px; }
-.p3-summary-row {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  padding: 8px 0;
-  font-size: 13px;
-  border-bottom: 1px dashed var(--slate-100);
-  gap: 10px;
-}
-.p3-summary-row:last-child { border-bottom: none; }
-.p3-summary-row .lbl {
-  color: var(--fg-3); flex-shrink: 0;
-}
-.p3-summary-row .val {
-  color: var(--fg-1); font-weight: 500; text-align: right;
-}
-.p3-summary-row .val strong { color: var(--national-700); font-weight: 700; }
-
-.p3-summary-checklist {
-  list-style: none; margin: 12px 0 0; padding: 12px 0 0;
-  border-top: 1px solid var(--slate-100);
-  display: flex; flex-direction: column; gap: 6px;
-  font-size: 12px;
-}
-.p3-summary-checklist li {
-  display: flex; align-items: center; gap: 8px;
-  color: var(--slate-600);
-}
-.p3-summary-checklist li i {
-  width: 14px; flex-shrink: 0; font-size: 12px;
-  color: var(--slate-300);
-}
-.p3-summary-checklist li.is-ok i { color: var(--success-fg); }
-.p3-summary-checklist li.is-ok { color: var(--slate-700); }
+/* p3-submit / p3-summary → 使用 shared.css th-footbar / th-sidebar */
+.p3-submit     { /* alias: th-footbar */ }
+.p3-submit-info { /* alias: th-footbar-info */ }
+.p3-summary    { /* alias: th-sidebar */ }
+.p3-summary-head { /* alias: th-sidebar-head */ }
+.p3-summary-body { /* alias: th-sidebar-body */ }
+.p3-summary-row  { /* alias: th-sidebar-row */ }
+.p3-summary-checklist { /* alias: th-sidebar-checklist */ }
 
 /* ===== POLICE NOTE ===== */
 .p3-police-note {

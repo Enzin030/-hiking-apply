@@ -1,5 +1,63 @@
 /* Page 1: Route Selection */
 
+// unit → 下一步目的地
+const UNIT_NEXT = {
+  "yushan":         r => `apply-2.html?unit=yushan&route=${r.id}`,
+  "shei-pa":        r => `apply-2.html?unit=shei-pa&route=${r.id}`,
+  "taroko":         r => `apply-2.html?unit=taroko&route=${r.id}`,
+  "forestry-camp":  null,   // 待開發：顯示提示
+  "forestry-area":  r => `apply-2.html?unit=forestry-area&route=${r.id}`,
+  "police":         r => `apply-2.html?unit=police&route=${r.id}`,
+  "suspended":      null,   // 顯示暫停 modal
+};
+
+function SuspendedModal({ route, onClose }) {
+  if (!route) return null;
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999,
+      background: "rgba(15,23,42,0.55)", display: "flex",
+      alignItems: "center", justifyContent: "center", padding: "16px",
+    }} onClick={onClose}>
+      <div style={{
+        background: "var(--bg-1)", borderRadius: "var(--r-xl)",
+        padding: "32px", maxWidth: 440, width: "100%",
+        boxShadow: "var(--sh-xl)",
+      }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+          <span style={{
+            width: 40, height: 40, borderRadius: "var(--r-md)",
+            background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0,
+          }}>
+            <i className="fa-solid fa-circle-xmark" style={{ color: "#dc2626", fontSize: 20 }}></i>
+          </span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: "var(--fs-md)", color: "var(--fg-1)" }}>
+              此路線暫停申請
+            </div>
+            <div style={{ fontSize: "var(--fs-sm)", color: "var(--fg-3)" }}>{route.name}</div>
+          </div>
+        </div>
+        <p style={{ fontSize: "var(--fs-sm)", color: "var(--fg-2)", lineHeight: "var(--lh-loose)", marginBottom: 20 }}>
+          {route.suspendReason || "此路線目前暫停開放申請，請關注管理處公告以掌握最新開放訊息。"}
+        </p>
+        <button
+          onClick={onClose}
+          style={{
+            width: "100%", padding: "10px 0",
+            background: "var(--national-700)", color: "#fff",
+            border: "none", borderRadius: "var(--r-md)",
+            fontWeight: 700, fontSize: "var(--fs-sm)", cursor: "pointer",
+          }}>
+          我知道了
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
 function Page1App() {
   const [search, setSearch] = React.useState("");
   const [agency, setAgency] = React.useState("all");
@@ -8,6 +66,7 @@ function Page1App() {
   const [hotOnly, setHotOnly] = React.useState(false);
   const [openOnly, setOpenOnly] = React.useState(false);
   const [sort, setSort] = React.useState("default");
+  const [suspendedRoute, setSuspendedRoute] = React.useState(null);
 
   const filtered = React.useMemo(() => {
     let r = ROUTE_DATA.slice();
@@ -64,6 +123,7 @@ function Page1App() {
 
   return (
     <div data-screen-label="01 路線選擇">
+      <SuspendedModal route={suspendedRoute} onClose={() => setSuspendedRoute(null)} />
       <Header active="apply" />
       <Breadcrumb trail={["登山申請", "登山線上申請"]} />
 
@@ -202,7 +262,11 @@ function Page1App() {
                     </div>
                   </div>
                   <div className="p1-route-list">
-                    {g.items.map(r => <RouteCard key={r.id} r={r} />)}
+                    {g.items.map(r => (
+                      <RouteCard key={r.id} r={r}
+                        onSuspended={() => setSuspendedRoute(r)}
+                      />
+                    ))}
                   </div>
                 </div>
               ))}
@@ -216,15 +280,34 @@ function Page1App() {
   );
 }
 
-function RouteCard({ r }) {
+function RouteCard({ r, onSuspended }) {
   const statusMap = {
     open:    { cls: "s-open",    label: "目前可申請", icon: "fa-solid fa-circle" },
     lottery: { cls: "s-lottery", label: "抽籤期間",   icon: "fa-solid fa-shuffle" },
     closed:  { cls: "s-closed",  label: "暫停申請",   icon: "fa-solid fa-circle-xmark" },
   };
-  const s = statusMap[r.status];
+  const s = statusMap[r.status] || statusMap.open;
+
+  const handleClick = () => {
+    const unit = r.unit || "yushan";
+    if (r.status === "closed" || unit === "suspended") {
+      onSuspended && onSuspended();
+      return;
+    }
+    if (unit === "forestry-camp") {
+      window.location.href = `forest-camp-1.html?route=${r.id}`;
+      return;
+    }
+    const nextFn = UNIT_NEXT[unit];
+    if (nextFn) window.location.href = nextFn(r);
+  };
+
+  const isSuspended = r.status === "closed" || r.unit === "suspended";
+  const goLabel = isSuspended ? "查看原因" : "進入申請";
+  const goIcon  = isSuspended ? "fa-solid fa-info-circle" : "fa-solid fa-arrow-right";
+
   return (
-    <article className="p1-route" onClick={() => window.location.href = "apply-2.html"}>
+    <article className={`p1-route ${isSuspended ? "is-suspended" : ""}`} onClick={handleClick}>
       <div className="p1-route-thumb">
         <img src={r.image} alt="" />
         <span className="p1-route-diff">第 {r.diff} 級</span>
@@ -234,6 +317,7 @@ function RouteCard({ r }) {
           {r.name}
           {r.hot && <span className="badge-hot"><i className="fa-solid fa-fire"></i>熱門</span>}
           {r.status === "lottery" && <span className="badge-lottery"><i className="fa-solid fa-shuffle"></i>抽籤</span>}
+          {isSuspended && <span className="badge-closed"><i className="fa-solid fa-circle-xmark"></i>暫停</span>}
         </h3>
         <div className="p1-route-sub">{r.subroute}</div>
         <div className="p1-route-meta">
@@ -244,8 +328,8 @@ function RouteCard({ r }) {
           <span className={`p1-status-pill ${s.cls}`}>
             <i className={s.icon}></i>{s.label}
           </span>
-          <span className="p1-route-go">
-            進入申請<i className="fa-solid fa-arrow-right"></i>
+          <span className={`p1-route-go ${isSuspended ? "go-muted" : ""}`}>
+            {goLabel}<i className={goIcon}></i>
           </span>
         </div>
       </div>
