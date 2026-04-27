@@ -1,0 +1,24 @@
+# ── 內層獨立 repo，外層不追蹤 ──
+登山一站式/
+
+# ── OneDrive 衝突備份檔 ──
+* - 複製.rp
+* - 複本.rp
+*-conflict*.rp
+*.tmp
+
+# ── Axure RP 自動產生 ──
+*.rpprj/
+*.rp.bak
+
+# ── OS / 工具 ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Python / Node 產物 ──
+__pycache__/
+*.pyc
+node_modules/
+.env
+.env.local

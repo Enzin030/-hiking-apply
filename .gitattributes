@@ -1,0 +1,28 @@
+# ── 預設：文字檔統一用 LF，checkout 時依平台轉換 ──
+* text=auto eol=lf
+
+# ── 明確宣告文字類型 ──
+*.html      text eol=lf
+*.css       text eol=lf
+*.js        text eol=lf
+*.jsx       text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.txt       text eol=lf
+*.py        text eol=lf
+*.aspx      text eol=lf
+*.cs        text eol=lf
+
+# ── 二進位：不做換行轉換，不做 diff ──
+*.rp        binary
+*.rp.bak    binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.pdf       binary
+*.docx      binary
+*.xlsx      binary
+*.pptx      binary
+*.zip       binary
