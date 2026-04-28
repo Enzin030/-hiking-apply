@@ -44,24 +44,63 @@ function getConsentItems(orgId, unit) {
   const fallbackOrgId = parkByUnit[unit]?.orgId;
   const items = byOrg[orgId] || byOrg[fallbackOrgId] || [];
 
-  return items.map(item => ({
+  return items.map((item, index) => ({
     id: item.id,
-    title: item.title || getConsentTitle(item.name || item.contentHtml || "", item.order),
-    summary: item.summary || `attention #${item.dbId || item.id} · ord ${item.order || item.ord || "-"}`,
+    label: `條文 ${String(index + 1).padStart(2, "0")}`,
+    title: item.title || getConsentTopic(item),
     clauses: [{ html: item.contentHtml || item.name || "" }],
     defaultChecked: item.defaultChecked ?? (item.selectchk === "1"),
     order: item.order || Number(item.ord) || 0,
   }));
 }
 
-function getConsentTitle(html, order) {
+function getPlainConsentText(item) {
   const div = document.createElement("div");
-  div.innerHTML = html;
-  const text = (div.textContent || "")
+  div.innerHTML = item.contentHtml || item.name || "";
+  return (div.textContent || "")
     .replace(/\s+/g, " ")
     .trim();
-  if (!text) return `注意事項 ${order || ""}`;
-  return text.length > 34 ? `${text.slice(0, 34)}...` : text;
+}
+
+function getConsentTopic(item) {
+  const text = getPlainConsentText(item);
+  const compact = text.replace(/\s+/g, "");
+  const has = (...words) => words.every(word => compact.includes(word));
+
+  const rules = [
+    [() => has("抽籤", "申請期限"), "申請期限與抽籤"],
+    [() => has("登山綜合保險") || has("優先審核"), "保險與審查排序"],
+    [() => has("外國人", "提前申請") || has("外籍", "提前"), "外籍提前申請"],
+    [() => has("07", "23") && has("系統"), "系統受理時段"],
+    [() => has("入山許可", "警政署"), "入山許可代辦"],
+    [() => has("申請及入園注意事項") || has("申辦規定"), "申辦規定告知"],
+    [() => has("颱風警報") || has("森林火災"), "天災停開與許可廢止"],
+    [() => has("公開抽籤") && has("暫停"), "宿營地抽籤暫停異動"],
+    [() => has("領隊責任"), "領隊責任"],
+    [() => has("生態保護"), "生態保護承諾"],
+    [() => has("登山安全"), "登山安全承諾"],
+    [() => has("個人資料"), "個資使用同意"],
+    [() => has("領隊需為成年人") || has("領隊未到"), "領隊資格與入園責任"],
+    [() => has("緊急災難") || has("緊急災害"), "緊急應變準備"],
+    [() => has("環境維護") || has("環境保護"), "環境維護規範"],
+    [() => has("錐麓古道") && has("收費"), "錐麓古道收費與查核"],
+    [() => has("錐麓古道") && has("安全宣導影片"), "錐麓古道安全宣導"],
+    [() => has("其他路線"), "其他路線申請限制"],
+    [() => has("高山症") || has("高海拔"), "高山症風險提醒"],
+    [() => has("雪季管制"), "雪季管制"],
+    [() => has("多日行程") && has("名額"), "多日行程名額規則"],
+    [() => has("學生身分") || has("學校社團"), "學生隊員通報"],
+    [() => has("身分證明文件") || has("入園許可證"), "入園證件查核"],
+    [() => has("居家隔離") || has("自主健康"), "健康狀況告知"],
+    [() => has("傳統領域") || has("原住民族"), "原住民族傳統領域"],
+  ];
+
+  const matched = rules.find(([test]) => test());
+  if (matched) return matched[1];
+
+  const lead = text.split(/[：:。]/)[0]?.trim();
+  if (lead && lead.length <= 18) return lead;
+  return "其他申請提醒";
 }
 
 function nextUrl(page) {
@@ -364,8 +403,8 @@ function NationalParkConsent({ unit }) {
               <div className="p2-intro">
                 <div className="p2-intro-icon"><i className="ph-bold ph-info"></i></div>
                 <div>
-                  <h2>請先閱讀以下說明後，始可進行後續之申請作業</h2>
-                  <p>為了您的登山安全與行政審核作業順利，請逐項閱讀並勾選每組事項。完成所有勾選後，下方「同意並下一步」按鈕即可使用。</p>
+                  <h2>申請前確認</h2>
+                  <p>以下條文依管理機關原始規則帶入。請逐項確認，完成後即可進入行程登記。</p>
                 </div>
               </div>
 
@@ -380,24 +419,21 @@ function NationalParkConsent({ unit }) {
                           {isAcked ? <i className="fa-solid fa-check"></i> : (idx + 1)}
                         </div>
                         <div className="p2-sec-titles">
+                          <span className="p2-sec-kicker">{s.label}</span>
                           <h3 className="p2-sec-title">{s.title}</h3>
                         </div>
                       </div>
                       <div className="p2-sec-head-right">
-                        <span className="p2-sec-count">{isAcked ? "已確認" : "待確認"}</span>
+                        <label className="p2-sec-check" onClick={e => e.stopPropagation()}>
+                          <input type="checkbox" checked={isAcked} onChange={() => toggleAck(s.id)} />
+                          <span className="p2-sec-ack-box"></span>
+                          <span>{isAcked ? "已確認" : "確認本項"}</span>
+                        </label>
                       </div>
                     </div>
 
                     <div className="p2-sec-body">
                       <div className="p2-consent-html" dangerouslySetInnerHTML={{ __html: s.clauses[0]?.html || "" }} />
-
-                      <label className="p2-sec-ack" onClick={e => e.stopPropagation()}>
-                        <input type="checkbox" checked={isAcked} onChange={() => toggleAck(s.id)} />
-                        <span className="p2-sec-ack-box"></span>
-                        <span className="p2-sec-ack-text">
-                          我已閱讀並理解上述<strong>「{s.title}」</strong>之全部事項
-                        </span>
-                      </label>
                     </div>
                   </section>
                 );
@@ -444,7 +480,7 @@ function NationalParkConsent({ unit }) {
             <label className={`p2-master-ack ${!allAcked ? "is-disabled" : ""}`}>
               <input type="checkbox" disabled={!allAcked} checked={master} onChange={e => setMaster(e.target.checked)} />
               <span className="p2-master-ack-box"></span>
-              <span>本人已閱讀並充分瞭解上述注意事項，並會遵守國家公園、警政署各項規定。</span>
+              <span>全部事項已逐項確認</span>
             </label>
 
             <div className="p2-footbar-actions">

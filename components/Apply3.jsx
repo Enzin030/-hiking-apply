@@ -65,6 +65,7 @@ function Page3App() {
     { ok: !!planText, label: "已填寫登山計畫書" },
   ];
   const allOk = checks.every(c => c.ok);
+  const doneCount = checks.filter(c => c.ok).length;
 
   return (
     <div data-screen-label="03 行程登記">
@@ -115,19 +116,19 @@ function Page3App() {
                 <div className="p3-section-head">
                   <span className="p3-section-num">1</span>
                   <div className="p3-section-titles">
-                    <h3 className="p3-section-title">行程基本資料 <span className="p3-section-title-en">Trip Basics</span></h3>
+                    <h3 className="p3-section-title">行程基本資料</h3>
                     <p className="p3-section-sub">請確認入山日期與整體行程天數</p>
                   </div>
                 </div>
                 <div className="p3-section-body">
                   <div className="p3-grid">
                     <div className="p3-field p3-grid-full">
-                      <label className="p3-field-label"><span className="req">*</span>入山日期 <span className="p3-field-label-en">Entry Date</span></label>
+                      <label className="p3-field-label"><span className="req">*</span>入山日期</label>
                       <div className="p3-date-row">
                         <input type="date" className="p3-input p3-date-input" value={startDate} onChange={e => setStartDate(e.target.value)} />
                         <i className="p3-date-arrow fa-solid fa-arrow-right"></i>
                         <select className="p3-select" style={{ flex: 1 }} value={days} onChange={e => setDays(Number(e.target.value))}>
-                          {[1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n} 天</option>)}
+                          {[1, 2, 3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n} 天</option>)}
                         </select>
                       </div>
                       <div className="p3-date-result">
@@ -137,7 +138,7 @@ function Page3App() {
                       </div>
                     </div>
                     <div className="p3-field">
-                      <label className="p3-field-label"><span className="req">*</span>申請目的 <span className="p3-field-label-en">Purpose</span></label>
+                      <label className="p3-field-label"><span className="req">*</span>申請目的</label>
                       <select className="p3-select" value={purpose} onChange={e => setPurpose(e.target.value)}>
                         <option value="">請選擇申請目的</option>
                         <option value="hiking">登山活動</option>
@@ -147,7 +148,7 @@ function Page3App() {
                       </select>
                     </div>
                     <div className="p3-field">
-                      <label className="p3-field-label">細部路線圖（選填） <span className="p3-field-label-en">Route Map</span></label>
+                      <label className="p3-field-label">細部路線圖（選填）</label>
                       <div className="p3-input-group">
                         <i className="icon fa-solid fa-paperclip"></i>
                         <input type="text" className="p3-input" placeholder="可另上傳 GPX 軌跡檔" />
@@ -162,7 +163,7 @@ function Page3App() {
                 <div className="p3-section-head">
                   <span className="p3-section-num">2</span>
                   <div className="p3-section-titles">
-                    <h3 className="p3-section-title">隊員名單 <span className="p3-section-title-en">Team Members</span></h3>
+                    <h3 className="p3-section-title">隊員名單</h3>
                     <p className="p3-section-sub">玉山國家公園隊員人數：2–12 人。第 1 位為領隊。</p>
                   </div>
                 </div>
@@ -221,14 +222,14 @@ function Page3App() {
                 <div className="p3-section-head">
                   <span className="p3-section-num">3</span>
                   <div className="p3-section-titles">
-                    <h3 className="p3-section-title">路線規劃（操作說明） <span className="p3-section-title-en">Route Plan</span></h3>
+                    <h3 className="p3-section-title">路線規劃</h3>
                     <p className="p3-section-sub">通訊裝置、登山技能與機關備註</p>
                   </div>
                 </div>
                 <div className="p3-section-body">
                   <div className="p3-grid">
                     <div className="p3-field">
-                      <label className="p3-field-label"><span className="req">*</span>登山相關經歷 <span className="p3-field-label-en">Hiking Experience</span></label>
+                      <label className="p3-field-label"><span className="req">*</span>登山相關經歷</label>
                       <select className="p3-select">
                         <option>初次參加登山活動</option>
                         <option>曾參加過 1–3 次</option>
@@ -237,7 +238,7 @@ function Page3App() {
                       </select>
                     </div>
                     <div className="p3-field">
-                      <label className="p3-field-label"><span className="req">*</span>是否攜帶 GPS 等通訊裝置 <span className="p3-field-label-en">GPS Device</span></label>
+                      <label className="p3-field-label"><span className="req">*</span>是否攜帶 GPS 等通訊裝置</label>
                       <div className="p3-radio-row">
                         <label className={`p3-radio ${hasGps === "yes" ? "is-active" : ""}`}>
                           <input type="radio" checked={hasGps === "yes"} onChange={() => setHasGps("yes")} />是，會攜帶
@@ -248,15 +249,15 @@ function Page3App() {
                       </div>
                     </div>
                     <div className="p3-field">
-                      <label className="p3-field-label">衛星電話 <span className="p3-field-label-en">Satellite Phone</span></label>
+                      <label className="p3-field-label">衛星電話</label>
                       <input type="text" className="p3-input" placeholder="請輸入電話號碼" value={satPhone} onChange={e => setSatPhone(e.target.value)} />
                     </div>
                     <div className="p3-field">
-                      <label className="p3-field-label">無線電頻率 <span className="p3-field-label-en">Radio Frequency</span></label>
+                      <label className="p3-field-label">無線電頻率</label>
                       <input type="text" className="p3-input" placeholder="例：145.500 MHz" value={radio} onChange={e => setRadio(e.target.value)} />
                     </div>
                     <div className="p3-field p3-grid-full">
-                      <label className="p3-field-label">機關備註 <span className="p3-field-label-en">Note</span></label>
+                      <label className="p3-field-label">機關備註</label>
                       <textarea className="p3-textarea" placeholder="若有特殊需求請於此處說明" value={note} onChange={e => setNote(e.target.value)}></textarea>
                     </div>
                   </div>
@@ -268,7 +269,7 @@ function Page3App() {
                 <div className="p3-section-head">
                   <span className="p3-section-num">4</span>
                   <div className="p3-section-titles">
-                    <h3 className="p3-section-title">留守人資訊 <span className="p3-section-title-en">Keeper Contact</span></h3>
+                    <h3 className="p3-section-title">留守人資訊</h3>
                     <p className="p3-section-sub">指定一位行程外人員作為留守聯絡窗口</p>
                   </div>
                 </div>
@@ -298,7 +299,7 @@ function Page3App() {
                 <div className="p3-section-head">
                   <span className="p3-section-num">5</span>
                   <div className="p3-section-titles">
-                    <h3 className="p3-section-title">警政署入山證申請 <span className="p3-section-title-en">Police Mountain Permit</span></h3>
+                    <h3 className="p3-section-title">警政署入山證申請</h3>
                     <p className="p3-section-sub">本路線進入山地管制區，需同時申請入山許可</p>
                   </div>
                 </div>
@@ -313,11 +314,11 @@ function Page3App() {
                       <select className="p3-select"><option>登山活動</option><option>學術研究</option><option>其他</option></select>
                     </div>
                     <div className="p3-field">
-                      <label className="p3-field-label"><span className="req">*</span>預定地點 <span className="p3-field-label-en">Destination</span></label>
+                      <label className="p3-field-label"><span className="req">*</span>預定地點</label>
                       <input type="text" className="p3-input" defaultValue="玉山國家公園 排雲山莊" />
                     </div>
                     <div className="p3-field p3-grid-full">
-                      <label className="p3-field-label"><span className="req">*</span>登山計畫書 <span className="p3-field-label-en">Plan</span></label>
+                      <label className="p3-field-label"><span className="req">*</span>登山計畫書</label>
                       <textarea className="p3-textarea" style={{ minHeight: 140 }}
                         placeholder={"請依每日行程詳細填寫，例如：\nD1：塔塔加登山口→排雲山莊（宿）\nD2：排雲山莊→玉山主峰→塔塔加登山口"}
                         value={planText} onChange={e => setPlanText(e.target.value)}></textarea>
@@ -327,22 +328,6 @@ function Page3App() {
                 </div>
               </section>
 
-              <div className="th-footbar">
-                <div className="th-footbar-info">
-                  <i className="fa-solid fa-floppy-disk"></i>
-                  系統會自動暫存您填寫的內容，可關閉再回來繼續編輯
-                </div>
-                <div className="th-footbar-actions">
-                  <button className="th-btn th-btn-ghost" onClick={() => window.location.href = queryUrl("apply-2.html")}>
-                    <i className="fa-solid fa-arrow-left"></i>上一步
-                  </button>
-                  <button className="th-btn th-btn-ghost">儲存草稿</button>
-                  <button className="th-btn th-btn-primary" disabled={!allOk}
-                    onClick={() => alert("送出申請")}>
-                    送出申請<i className="fa-solid fa-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* SUMMARY SIDEBAR */}
@@ -386,6 +371,27 @@ function Page3App() {
                 </ul>
               </div>
             </aside>
+          </div>
+
+          <div className={`th-footbar ${allOk ? "is-ready" : ""}`}>
+            <div className="th-footbar-info">
+              <i className={allOk ? "fa-solid fa-check" : "fa-solid fa-list-check"}></i>
+              <div>
+                <div>必填完成 <strong>{doneCount}</strong> / {checks.length}</div>
+                <div className="th-footbar-sub">
+                  {allOk ? "可送出申請" : "請補齊必填資料後送出"}
+                </div>
+              </div>
+            </div>
+            <div className="th-footbar-actions">
+              <button className="th-btn th-btn-ghost" onClick={() => window.location.href = queryUrl("apply-2.html")}>
+                <i className="fa-solid fa-arrow-left"></i>上一步
+              </button>
+              <button className="th-btn th-btn-primary" disabled={!allOk}
+                onClick={() => alert("送出申請")}>
+                送出申請<i className="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
           </div>
         </div>
       </main>

@@ -214,28 +214,44 @@ a { color: inherit; }
 /* ============ CARD ============ */
 /* ============ FOOTBAR — 底部操作列（所有申請流程共用）============ */
 .th-footbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  margin: 24px -32px 0;
+  padding: 16px 32px;
+  background: #fff;
+  border-top: 1px solid var(--slate-200);
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px 24px;
-  margin-top: 24px;
-  background: var(--bg-1);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-xl);
-  box-shadow: var(--sh-card);
-  position: sticky;
-  bottom: 16px;
+  gap: 16px;
+}
+@media (max-width: 700px) {
+  .th-footbar {
+    margin: 24px -16px 0;
+    padding: 16px;
+  }
 }
 .th-footbar-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: var(--fs-xs);
-  color: var(--slate-600);
+  gap: 10px;
+  font-size: 14px;
+  color: var(--slate-700);
 }
-.th-footbar-info i { color: var(--national-700); }
+.th-footbar-info i {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
 .th-footbar-actions {
   display: flex;
   align-items: center;
