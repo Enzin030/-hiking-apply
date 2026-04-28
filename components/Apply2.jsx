@@ -335,12 +335,10 @@ function NationalParkConsent({ unit }) {
   const [acked, setAcked] = React.useState(() =>
     Object.fromEntries(sections.map(s => [s.id, Boolean(s.defaultChecked)]))
   );
-  const [master, setMaster] = React.useState(false);
-
   const ackedCount = Object.values(acked).filter(Boolean).length;
   const total = sections.length;
   const allAcked = ackedCount === total;
-  const canSubmit = allAcked && master;
+  const canSubmit = allAcked;
   const [activeIndex, setActiveIndex] = React.useState(0);
   const sectionIds = sections.map(s => s.id).join("|");
   const readingPercent = total ? ((activeIndex + 1) / total) * 100 : 0;
@@ -437,15 +435,6 @@ function NationalParkConsent({ unit }) {
             {/* SIDEBAR TOC */}
             <aside className="p2-toc">
               <h3><i className="ph-bold ph-list-numbers"></i>閱讀定位</h3>
-              <div className="p2-reading-meter">
-                <div className="p2-reading-label">
-                  <span>目前閱讀</span>
-                  <strong>{activeIndex + 1}/{total}</strong>
-                </div>
-                <div className="p2-reading-track">
-                  <div className="p2-reading-bar" style={{ width: `${readingPercent}%` }}></div>
-                </div>
-              </div>
               <div className="p2-confirm-meter">
                 <div className="p2-progress">
                   <div className="p2-progress-bar" style={{ width: `${(ackedCount / total) * 100}%` }}></div>
@@ -479,17 +468,8 @@ function NationalParkConsent({ unit }) {
               </div>
               <div>
                 <div>已確認 <span className="num">{ackedCount}</span> / {total} 組事項</div>
-                <div style={{ fontSize: 12, color: "var(--fg-3)" }}>
-                  {allAcked ? "請勾選總確認後繼續" : "請完成所有勾選後才能進入下一步"}
-                </div>
               </div>
             </div>
-
-            <label className={`p2-master-ack ${!allAcked ? "is-disabled" : ""}`}>
-              <input type="checkbox" disabled={!allAcked} checked={master} onChange={e => setMaster(e.target.checked)} />
-              <span className="p2-master-ack-box"></span>
-              <span>全部事項已逐項確認</span>
-            </label>
 
             <div className="p2-footbar-actions">
               <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-1.html"}>

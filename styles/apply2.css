@@ -443,35 +443,6 @@
 .p2-footbar-actions {
   display: flex; gap: 8px;
 }
-.p2-master-ack {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 10px 16px;
-  background: var(--slate-50); border: 1px solid var(--slate-200);
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px; color: var(--slate-700);
-  transition: .15s;
-  user-select: none;
-}
-.p2-master-ack:hover { background: #fff; border-color: var(--national-100); }
-.p2-master-ack input { display: none; }
-.p2-master-ack-box {
-  width: 18px; height: 18px; border-radius: 4px;
-  border: 2px solid var(--slate-400); background: #fff;
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.p2-master-ack input:checked + .p2-master-ack-box {
-  background: var(--national-700); border-color: var(--national-700);
-}
-.p2-master-ack input:checked + .p2-master-ack-box::after {
-  content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900;
-  color: #fff; font-size: 9px;
-}
-.p2-master-ack.is-disabled {
-  opacity: .5; cursor: not-allowed;
-}
-
 /* ===== EMERGENCY CALLOUT ===== */
 .p2-callout {
   background: #fef2f2;

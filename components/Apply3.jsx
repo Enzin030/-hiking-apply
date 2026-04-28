@@ -18,7 +18,7 @@ function queryUrl(page) {
 function Page3App() {
   const routeData = getRouteFromQuery();
   const [unit, setUnit] = React.useState(routeData?.agencyName || "玉山國家公園管理處");
-  const [route, setRoute] = React.useState(routeData?.name || "玉山主峰線");
+  const [route, setRoute] = React.useState(routeData?.displayName || routeData?.name || "玉山主峰線");
   const [subroute, setSubroute] = React.useState(routeData?.subroute || "塔塔加→排雲山莊→玉山主峰");
   const [startDate, setStartDate] = React.useState("2026-05-15");
   const [days, setDays] = React.useState(routeData?.days || 2);
@@ -306,7 +306,7 @@ function Page3App() {
                 <div className="p3-section-body">
                   <div className="p3-police-note">
                     <i className="fa-solid fa-circle-info"></i>
-                    <div><strong>提示：</strong>本路線位於山地管制區內，系統會自動將以下資料送交警政署辦理入山申請。請確認登山計畫書內容已包含每日預定行程與住宿點。</div>
+                    <div><strong>提示：<br/></strong>本路線位於山地管制區內，系統會自動將以下資料送交警政署辦理入山申請。請確認登山計畫書內容已包含每日預定行程與住宿點。</div>
                   </div>
                   <div className="p3-grid">
                     <div className="p3-field">
@@ -378,9 +378,6 @@ function Page3App() {
               <i className={allOk ? "fa-solid fa-check" : "fa-solid fa-list-check"}></i>
               <div>
                 <div>必填完成 <strong>{doneCount}</strong> / {checks.length}</div>
-                <div className="th-footbar-sub">
-                  {allOk ? "可送出申請" : "請補齊必填資料後送出"}
-                </div>
               </div>
             </div>
             <div className="th-footbar-actions">
