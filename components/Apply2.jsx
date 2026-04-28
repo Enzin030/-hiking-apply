@@ -341,10 +341,6 @@ function NationalParkConsent({ unit }) {
   const total = sections.length;
   const allAcked = ackedCount === total;
   const canSubmit = allAcked && master;
-  const [activeIndex, setActiveIndex] = React.useState(0);
-  const sectionIds = sections.map(s => s.id).join("|");
-  const readingPercent = total ? ((activeIndex + 1) / total) * 100 : 0;
-
   const toggleAck = id => setAcked(a => ({ ...a, [id]: !a[id] }));
   const scrollToSection = id => {
     const el = document.getElementById("sec-" + id);
@@ -354,26 +350,6 @@ function NationalParkConsent({ unit }) {
     }
   };
 
-  React.useEffect(() => {
-    const syncActiveSection = () => {
-      let nextIndex = 0;
-      sections.forEach((section, index) => {
-        const el = document.getElementById("sec-" + section.id);
-        if (el && el.getBoundingClientRect().top <= 160) {
-          nextIndex = index;
-        }
-      });
-      setActiveIndex(nextIndex);
-    };
-
-    syncActiveSection();
-    window.addEventListener("scroll", syncActiveSection, { passive: true });
-    window.addEventListener("resize", syncActiveSection);
-    return () => {
-      window.removeEventListener("scroll", syncActiveSection);
-      window.removeEventListener("resize", syncActiveSection);
-    };
-  }, [sectionIds]);
 
   return (
     <div data-screen-label="02 同意書（國家公園）">
@@ -436,38 +412,28 @@ function NationalParkConsent({ unit }) {
 
             {/* SIDEBAR TOC */}
             <aside className="p2-toc">
-              <h3><i className="ph-bold ph-list-numbers"></i>閱讀定位</h3>
-              <div className="p2-reading-meter">
-                <div className="p2-reading-label">
-                  <span>目前閱讀</span>
-                  <strong>{activeIndex + 1}/{total}</strong>
-                </div>
-                <div className="p2-reading-track">
-                  <div className="p2-reading-bar" style={{ width: `${readingPercent}%` }}></div>
-                </div>
+              <div className="p2-toc-head">
+                <i className="ph-bold ph-list-numbers"></i>確認進度
               </div>
-              <div className="p2-confirm-meter">
+              <div className="p2-toc-inner">
                 <div className="p2-progress">
                   <div className="p2-progress-bar" style={{ width: `${(ackedCount / total) * 100}%` }}></div>
                 </div>
                 <div className="p2-progress-label">
-                  <span>已確認 <strong>{ackedCount}/{total}</strong></span>
+                  <span>已確認 <strong>{ackedCount}/{total}</strong> 組</span>
                   <span>{Math.round((ackedCount / total) * 100)}%</span>
                 </div>
-              </div>
-              <ul className="p2-toc-list">
-                {sections.map((s, i) => (
-                  <li key={s.id} className={`${acked[s.id] ? "is-acked" : ""} ${i === activeIndex ? "is-active" : ""}`}>
-                    <button onClick={() => scrollToSection(s.id)}>
-                      <span className="p2-toc-dot"><span>{i + 1}</span></span>
-                      <span className="p2-toc-text">
-                        <span className="p2-toc-kicker">{s.label}</span>
+                <ul className="p2-toc-list">
+                  {sections.map((s, i) => (
+                    <li key={s.id} className={acked[s.id] ? "is-acked" : ""}>
+                      <button onClick={() => scrollToSection(s.id)}>
+                        <span className="p2-toc-dot"><span>{i + 1}</span></span>
                         <span>{s.title}</span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </aside>
           </div>
 
