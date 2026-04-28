@@ -88,7 +88,7 @@ function IndexApp() {
             </div>
 
             {/* 右：快速查詢 */}
-            <div className="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden flex flex-col h-full border border-slate-200">
+            <div className="lg:col-span-4 bg-white backdrop-blur-md rounded-2xl shadow-xl overflow-hidden flex flex-col h-full border border-slate-200">
               <div className="bg-slate-50 border-b border-slate-200 px-6 py-5 shrink-0">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2 text-[#5F7F68]">

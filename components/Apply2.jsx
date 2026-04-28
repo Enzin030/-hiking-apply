@@ -296,9 +296,6 @@ function NationalParkConsent({ unit }) {
   const [acked, setAcked] = React.useState(() =>
     Object.fromEntries(sections.map(s => [s.id, Boolean(s.defaultChecked)]))
   );
-  const [collapsed, setCollapsed] = React.useState(() =>
-    Object.fromEntries(sections.map(s => [s.id, Boolean(s.defaultChecked)]))
-  );
   const [master, setMaster] = React.useState(false);
 
   const ackedCount = Object.values(acked).filter(Boolean).length;
@@ -306,18 +303,13 @@ function NationalParkConsent({ unit }) {
   const allAcked = ackedCount === total;
   const canSubmit = allAcked && master;
 
-  const toggleCollapse = id => setCollapsed(c => ({ ...c, [id]: !c[id] }));
-  const toggleAck = id => {
-    setAcked(a => ({ ...a, [id]: !a[id] }));
-    setCollapsed(c => ({ ...c, [id]: !acked[id] }));
-  };
+  const toggleAck = id => setAcked(a => ({ ...a, [id]: !a[id] }));
   const scrollToSection = id => {
     const el = document.getElementById("sec-" + id);
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 100;
       window.scrollTo({ top, behavior: "smooth" });
     }
-    setCollapsed(c => ({ ...c, [id]: false }));
   };
 
   return (
@@ -356,14 +348,13 @@ function NationalParkConsent({ unit }) {
             <div className="p2-route-brief">
               <div>
                 <span className="p2-route-brief-label">申請路線</span>
-                <strong>{routeData.name}</strong>
-                <span>{routeData.subroute}</span>
+                <strong>{routeData.displayName || routeData.name}</strong>
+                <span>{routeData.routePath || routeData.subroute}</span>
               </div>
               <div>
-                <span className="p2-route-brief-label">舊系統參數</span>
-                <code>cid={getParam("cid") || routeData.cId || "-"}</code>
-                <code>fid={getParam("fid") || routeData.fId || "-"}</code>
-                <code>camp_id={getParam("camp_id") || routeData.campId || "0"}</code>
+                <span className="p2-route-brief-label">路線與天數</span>
+                <strong>{routeData.routeGroup || routeData.peak}</strong>
+                <span>{routeData.durationLabel || (routeData.days === 1 ? "單日往返" : `${routeData.days}天${routeData.days - 1}夜`)}</span>
               </div>
             </div>
           )}
@@ -380,46 +371,25 @@ function NationalParkConsent({ unit }) {
 
               {sections.map((s, idx) => {
                 const isAcked = acked[s.id];
-                const isCollapsed = collapsed[s.id];
                 return (
                   <section key={s.id} id={"sec-" + s.id}
-                    className={`p2-sec ${isAcked ? "is-acked" : ""} ${isCollapsed ? "is-collapsed" : ""}`}>
-                    <div className="p2-sec-head" onClick={() => toggleCollapse(s.id)}>
+                    className={`p2-sec ${isAcked ? "is-acked" : ""}`}>
+                    <div className="p2-sec-head">
                       <div className="p2-sec-head-left">
                         <div className="p2-sec-num">
                           {isAcked ? <i className="fa-solid fa-check"></i> : (idx + 1)}
                         </div>
                         <div className="p2-sec-titles">
                           <h3 className="p2-sec-title">{s.title}</h3>
-                          <p className="p2-sec-summary">{s.summary}</p>
                         </div>
                       </div>
                       <div className="p2-sec-head-right">
-                        <span className="p2-sec-count">{isAcked ? "已確認" : `${s.clauses.length} 項`}</span>
-                        <i className="p2-sec-chev fa-solid fa-chevron-down"></i>
+                        <span className="p2-sec-count">{isAcked ? "已確認" : "待確認"}</span>
                       </div>
                     </div>
 
                     <div className="p2-sec-body">
-                      {s.clauses.map((c, i) => (
-                        <div key={i} className="p2-clause">
-                          <span className="p2-clause-num">{i + 1}</span>
-                          <div className="p2-clause-body">
-                            <span dangerouslySetInnerHTML={{ __html: c.html }} />
-                            {c.danger && (
-                              <div className="p2-callout">
-                                <i className="fa-solid fa-triangle-exclamation"></i>
-                                <span><strong>強烈建議：</strong>未投保保險者，搜救衍生費用將由申請人自行負擔。</span>
-                              </div>
-                            )}
-                            {c.note && (
-                              <div className="p2-info-box">
-                                <span className="lbl">補充：</span>{c.note}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                      <div className="p2-consent-html" dangerouslySetInnerHTML={{ __html: s.clauses[0]?.html || "" }} />
 
                       <label className="p2-sec-ack" onClick={e => e.stopPropagation()}>
                         <input type="checkbox" checked={isAcked} onChange={() => toggleAck(s.id)} />
@@ -449,7 +419,7 @@ function NationalParkConsent({ unit }) {
                   <li key={s.id} className={acked[s.id] ? "is-acked" : ""}>
                     <button onClick={() => scrollToSection(s.id)}>
                       <span className="p2-toc-dot"><span>{i + 1}</span></span>
-                      <span>{s.title}</span>
+                      <span className="p2-toc-text">{s.title}</span>
                     </button>
                   </li>
                 ))}

@@ -318,6 +318,9 @@ function RouteCard({ r, onSuspended }) {
   const isSuspended = r.status === "closed" || r.unit === "suspended";
   const goLabel = isSuspended ? "查看原因" : "進入申請";
   const goIcon  = isSuspended ? "fa-solid fa-info-circle" : "fa-solid fa-arrow-right";
+  const title = r.displayName || r.name;
+  const routePath = r.routePath || r.subroute;
+  const duration = r.durationLabel || (r.days === 1 ? "單日往返" : `${r.days}天${r.days - 1}夜`);
 
   return (
     <article className={`p1-route ${isSuspended ? "is-suspended" : ""}`} onClick={handleClick}>
@@ -326,16 +329,18 @@ function RouteCard({ r, onSuspended }) {
         <span className="p1-route-diff">第 {r.diff} 級</span>
       </div>
       <div className="p1-route-body">
-        <h3 className="p1-route-title">
-          {r.name}
-          {r.hot && <span className="badge-hot"><i className="fa-solid fa-fire"></i>熱門</span>}
-          {r.status === "lottery" && <span className="badge-lottery"><i className="fa-solid fa-shuffle"></i>抽籤</span>}
-          {isSuspended && <span className="badge-closed"><i className="fa-solid fa-circle-xmark"></i>暫停</span>}
-        </h3>
-        <div className="p1-route-sub">{r.subroute}</div>
+        <div className="p1-route-title-row">
+          <h3 className="p1-route-title">{title}</h3>
+          <div className="p1-route-badges">
+            {r.hot && <span className="badge-hot"><i className="fa-solid fa-fire"></i>熱門</span>}
+            {r.status === "lottery" && <span className="badge-lottery"><i className="fa-solid fa-shuffle"></i>抽籤</span>}
+            {isSuspended && <span className="badge-closed"><i className="fa-solid fa-circle-xmark"></i>暫停</span>}
+          </div>
+        </div>
+        <div className="p1-route-sub">{routePath}</div>
         <div className="p1-route-meta">
-          <span><i className="ph-bold ph-mountains"></i>{r.peak}</span>
-          <span><i className="fa-regular fa-clock"></i>{r.days === 1 ? "單日往返" : `${r.days}天${r.days - 1}夜`}</span>
+          <span><i className="ph-bold ph-map-trifold"></i>{r.routeGroup || r.peak}</span>
+          <span><i className="fa-regular fa-clock"></i>{duration}</span>
         </div>
         <div className="p1-route-foot">
           <span className={`p1-status-pill ${s.cls}`}>
