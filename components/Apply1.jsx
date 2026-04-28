@@ -1,13 +1,26 @@
 /* Page 1: Route Selection */
 
 // unit → 下一步目的地
+const buildApplyQuery = route => {
+  const q = new URLSearchParams();
+  q.set("unit", route.unit || "");
+  q.set("route", route.id || "");
+  if (route.orgId) q.set("orgId", route.orgId);
+  if (route.cId) q.set("cid", route.cId);
+  if (route.fId) q.set("fid", route.fId);
+  if (route.sourceGuid) q.set("source_guid", route.sourceGuid);
+  if (route.campId) q.set("camp_id", route.campId);
+  if (route.parkForm) q.set("park", route.parkForm);
+  return q.toString();
+};
+
 const UNIT_NEXT = {
-  "yushan":         r => `apply-2.html?unit=yushan&route=${r.id}`,
-  "shei-pa":        r => `apply-2.html?unit=shei-pa&route=${r.id}`,
-  "taroko":         r => `apply-2.html?unit=taroko&route=${r.id}`,
+  "yushan":         r => `apply-2.html?${buildApplyQuery(r)}`,
+  "shei-pa":        r => `apply-2.html?${buildApplyQuery(r)}`,
+  "taroko":         r => `apply-2.html?${buildApplyQuery(r)}`,
   "forestry-camp":  null,   // 待開發：顯示提示
-  "forestry-area":  r => `apply-2.html?unit=forestry-area&route=${r.id}`,
-  "police":         r => `apply-2.html?unit=police&route=${r.id}`,
+  "forestry-area":  r => `apply-2.html?${buildApplyQuery(r)}`,
+  "police":         r => `apply-2.html?${buildApplyQuery(r)}`,
   "suspended":      null,   // 顯示暫停 modal
 };
 

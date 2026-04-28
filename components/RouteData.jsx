@@ -6,7 +6,31 @@
 //   "forestry-area"                  → 林業保護區摘要 → apply-2.html?unit=forestry-area
 //   "police"                         → 警政署入山確認 → apply-2.html?unit=police
 //   "suspended"                      → 暫停申請，顯示 modal，不跳頁
-const ROUTE_DATA = [
+const NATIONAL_PARK_ORG_IDS = {
+  yushan: "C951CDCD-B75A-46B9-8002-8EF952EC95FD",
+  "shei-pa": "E6DD4652-2D37-4346-8F5D-6E538353E0C2",
+  taroko: "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+};
+
+const ROUTE_LEGACY_KEYS = {
+  "yushan-main":   { cId: "mock-c-ys-main",   fId: "mock-f-ys-main",   sourceGuid: "mock-source-ys-main",   campId: "0", requiresNpa: true,  requiresForestCamp: true,  requiresAttachment: true },
+  "yushan-prince": { cId: "mock-c-ys-prince", fId: "mock-f-ys-main",   sourceGuid: "mock-source-ys-prince", campId: "0", requiresNpa: true,  requiresForestCamp: false, requiresAttachment: false },
+  "yushan-east":   { cId: "mock-c-ys-east",   fId: "mock-f-ys-east",   sourceGuid: "mock-source-ys-east",   campId: "0", requiresNpa: true,  requiresForestCamp: false, requiresAttachment: true },
+  "yushan-bata":   { cId: "mock-c-ys-bata",   fId: "mock-f-ys-bata",   sourceGuid: "mock-source-ys-bata",   campId: "0", requiresNpa: true,  requiresForestCamp: false, requiresAttachment: true },
+  "nanheng":       { cId: "mock-c-ys-nanheng", fId: "mock-f-ys-nanheng", sourceGuid: "mock-source-ys-nanheng", campId: "mock-camp-jiaming", requiresNpa: true, requiresForestCamp: true, requiresAttachment: true },
+
+  "xueshan-main":  { cId: "mock-c-sp-main",   fId: "mock-f-sp-main",   sourceGuid: "mock-source-sp-main",   campId: "0", requiresNpa: false, requiresForestCamp: false, requiresAttachment: true, requiresSafetyAssessment: true },
+  "wuling-4":      { cId: "mock-c-sp-wuling4", fId: "mock-f-sp-wuling", sourceGuid: "mock-source-sp-wuling4", campId: "0", requiresNpa: false, requiresForestCamp: false, requiresAttachment: true, requiresSafetyAssessment: true },
+  "shengling":     { cId: "mock-c-sp-shengling", fId: "mock-f-sp-shengling", sourceGuid: "mock-source-sp-shengling", campId: "0", requiresNpa: false, requiresForestCamp: false, requiresAttachment: true, requiresSafetyAssessment: true },
+  "dabajian":      { cId: "mock-c-sp-dabajian", fId: "mock-f-sp-dabajian", sourceGuid: "mock-source-sp-dabajian", campId: "0", requiresNpa: false, requiresForestCamp: false, requiresAttachment: true, requiresSafetyAssessment: true },
+
+  "qilai-main":    { cId: "mock-c-tk-qilai-main",  fId: "mock-f-tk-qilai", sourceGuid: "mock-source-tk-qilai-main",  campId: "0", requiresNpa: true, requiresForestCamp: false, requiresAttachment: false },
+  "qilai-south":   { cId: "mock-c-tk-qilai-south", fId: "mock-f-tk-qilai", sourceGuid: "mock-source-tk-qilai-south", campId: "0", requiresNpa: true, requiresForestCamp: false, requiresAttachment: false },
+  "nanhu":         { cId: "mock-c-tk-nanhu",        fId: "mock-f-tk-nanhu", sourceGuid: "mock-source-tk-nanhu",        campId: "0", requiresNpa: true, requiresForestCamp: false, requiresAttachment: false },
+  "zhongyang":     { cId: "mock-c-tk-zhongyang",    fId: "mock-f-tk-zhongyang", sourceGuid: "mock-source-tk-zhongyang", campId: "0", requiresNpa: true, requiresForestCamp: false, requiresAttachment: false },
+};
+
+const RAW_ROUTE_DATA = [
   // 玉山國家公園
   { id: "yushan-main",   name: "玉山主峰線",     subroute: "塔塔加→排雲山莊→玉山主峰",   agency: "yushan",   agencyName: "玉山國家公園",    peak: "玉山主峰 3,952m",  days: 2, diff: 3, status: "lottery", hot: true, image: "assets/route-yushan.png",  note: "需抽籤",                unit: "yushan" },
   { id: "yushan-prince", name: "玉山前峰日往返",  subroute: "塔塔加→玉山前峰",            agency: "yushan",   agencyName: "玉山國家公園",    peak: "玉山前峰 3,239m",  days: 1, diff: 3, status: "open",                    image: "assets/route-yushan.png",                                 unit: "yushan" },
@@ -37,6 +61,36 @@ const ROUTE_DATA = [
   { id: "police-shei-pa",  name: "雪霸地區入山許可", subroute: "雪霸國家公園範圍",        agency: "police",   agencyName: "警政署",          peak: "—",                days: 1, diff: 2, status: "open",                    image: "assets/route-wuling.png",                                 unit: "police" },
 ];
 
+const ROUTE_DATA = RAW_ROUTE_DATA.map(route => {
+  const orgId = NATIONAL_PARK_ORG_IDS[route.unit] || "";
+  const legacy = ROUTE_LEGACY_KEYS[route.id] || {};
+  const isNationalPark = Boolean(orgId);
+  const isPolice = route.unit === "police";
+  const isForestryArea = route.unit === "forestry-area";
+  const isForestryCamp = route.unit === "forestry-camp";
+
+  return {
+    ...route,
+    applyType: isNationalPark
+      ? "nationalPark"
+      : isForestryCamp
+        ? "forestCamp"
+        : (isPolice || isForestryArea)
+          ? "summary"
+          : route.unit,
+    orgId,
+    cId: legacy.cId || "",
+    fId: legacy.fId || "",
+    sourceGuid: legacy.sourceGuid || "",
+    campId: legacy.campId || "0",
+    parkForm: isNationalPark ? route.unit : "",
+    requiresNpa: Boolean(legacy.requiresNpa),
+    requiresForestCamp: Boolean(legacy.requiresForestCamp),
+    requiresAttachment: Boolean(legacy.requiresAttachment),
+    requiresSafetyAssessment: Boolean(legacy.requiresSafetyAssessment),
+  };
+});
+
 const AGENCIES = [
   { id: "all", name: "全部", icon: "ph-bold ph-mountains" },
   { id: "yushan", name: "玉山國家公園", icon: "ph-bold ph-mountains" },
@@ -57,3 +111,4 @@ const AGENCY_DESC = {
 window.ROUTE_DATA = ROUTE_DATA;
 window.AGENCIES = AGENCIES;
 window.AGENCY_DESC = AGENCY_DESC;
+window.NATIONAL_PARK_ORG_IDS = NATIONAL_PARK_ORG_IDS;

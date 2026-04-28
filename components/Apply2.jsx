@@ -10,7 +10,67 @@ function getParam(key) {
   return new URLSearchParams(window.location.search).get(key) || "";
 }
 
-// ---------- 國家公園同意書條文（依 unit 帶不同內容）----------
+function getRouteFromQuery() {
+  const routeId = getParam("route");
+  if (!routeId || typeof ROUTE_DATA === "undefined") return null;
+  return ROUTE_DATA.find(r => r.id === routeId) || null;
+}
+
+function getParkConfig(unit, routeData) {
+  const parkByUnit = window.PARK_BY_UNIT || {};
+  const queryOrgId = getParam("orgId") || "";
+  const orgMatched = Object.values(parkByUnit).find(p =>
+    p.orgId && (
+      p.orgId.toLowerCase() === queryOrgId.toLowerCase() ||
+      p.orgId.toLowerCase() === String(unit || "").toLowerCase()
+    )
+  );
+  if (orgMatched) return orgMatched;
+
+  const key = routeData?.parkForm || routeData?.unit || unit || "yushan";
+  return (window.PARK_BY_UNIT && window.PARK_BY_UNIT[key]) || {
+    unit: key,
+    orgId: queryOrgId || routeData?.orgId || "",
+    parkName: routeData?.agencyName || "國家公園",
+    agencyName: routeData?.agencyName || "國家公園管理處",
+    color: "var(--national-700)",
+    nextPage: "apply-3.html",
+  };
+}
+
+function getConsentItems(orgId, unit) {
+  const byOrg = window.CONSENT_BY_ORG || {};
+  const parkByUnit = window.PARK_BY_UNIT || {};
+  const fallbackOrgId = parkByUnit[unit]?.orgId;
+  const items = byOrg[orgId] || byOrg[fallbackOrgId] || [];
+
+  return items.map(item => ({
+    id: item.id,
+    title: item.title || getConsentTitle(item.name || item.contentHtml || "", item.order),
+    summary: item.summary || `attention #${item.dbId || item.id} · ord ${item.order || item.ord || "-"}`,
+    clauses: [{ html: item.contentHtml || item.name || "" }],
+    defaultChecked: item.defaultChecked ?? (item.selectchk === "1"),
+    order: item.order || Number(item.ord) || 0,
+  }));
+}
+
+function getConsentTitle(html, order) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  const text = (div.textContent || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!text) return `注意事項 ${order || ""}`;
+  return text.length > 34 ? `${text.slice(0, 34)}...` : text;
+}
+
+function nextUrl(page) {
+  const q = new URLSearchParams(window.location.search);
+  return `${page}?${q.toString()}`;
+}
+
+// Deprecated inline prototype copy. The rendered national-park consent list uses ConsentData.jsx.
+// Kept temporarily while the DB attention export is not available.
 const NP_CONSENT = {
   yushan: {
     parkName: "玉山國家公園",
@@ -223,15 +283,21 @@ const SUMMARY_CONFIG = {
 // 國家公園同意書模式
 // ===================================================================
 function NationalParkConsent({ unit }) {
-  const config = NP_CONSENT[unit] || NP_CONSENT["yushan"];
-  const sections = config.sections;
+  const routeData = getRouteFromQuery();
+  const parkConfig = getParkConfig(unit, routeData);
+  const orgId = getParam("orgId") || routeData?.orgId || parkConfig.orgId || unit;
+  const sections = getConsentItems(orgId, parkConfig.unit);
+  const config = {
+    ...parkConfig,
+    orgId,
+    sections,
+  };
 
-  // 除個人資料蒐集告知外，其餘預設勾選（已收起）
   const [acked, setAcked] = React.useState(() =>
-    Object.fromEntries(sections.map(s => [s.id, s.id !== "privacy"]))
+    Object.fromEntries(sections.map(s => [s.id, Boolean(s.defaultChecked)]))
   );
   const [collapsed, setCollapsed] = React.useState(() =>
-    Object.fromEntries(sections.map(s => [s.id, s.id !== "privacy"]))
+    Object.fromEntries(sections.map(s => [s.id, Boolean(s.defaultChecked)]))
   );
   const [master, setMaster] = React.useState(false);
 
@@ -280,9 +346,27 @@ function NationalParkConsent({ unit }) {
             </span>
             <div>
               <div style={{ fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--fg-1)" }}>{config.parkName}</div>
-              <div style={{ fontSize: "var(--fs-xs)", color: "var(--fg-3)" }}>入園許可申請同意書</div>
+              <div style={{ fontSize: "var(--fs-xs)", color: "var(--fg-3)" }}>
+                {config.agencyName || config.parkName} · 入園許可申請同意書
+              </div>
             </div>
           </div>
+
+          {routeData && (
+            <div className="p2-route-brief">
+              <div>
+                <span className="p2-route-brief-label">申請路線</span>
+                <strong>{routeData.name}</strong>
+                <span>{routeData.subroute}</span>
+              </div>
+              <div>
+                <span className="p2-route-brief-label">舊系統參數</span>
+                <code>cid={getParam("cid") || routeData.cId || "-"}</code>
+                <code>fid={getParam("fid") || routeData.fId || "-"}</code>
+                <code>camp_id={getParam("camp_id") || routeData.campId || "0"}</code>
+              </div>
+            </div>
+          )}
 
           <div className="p2-layout">
             <div>
@@ -382,7 +466,7 @@ function NationalParkConsent({ unit }) {
               <div>
                 <div>已確認 <span className="num">{ackedCount}</span> / {total} 組事項</div>
                 <div style={{ fontSize: 12, color: "var(--fg-3)" }}>
-                  {allAcked ? "請勾選下方確認語並繼續" : "請完成所有勾選後才能進入下一步"}
+                  {allAcked ? "請勾選總確認後繼續" : "請完成所有勾選後才能進入下一步"}
                 </div>
               </div>
             </div>
@@ -390,7 +474,7 @@ function NationalParkConsent({ unit }) {
             <label className={`p2-master-ack ${!allAcked ? "is-disabled" : ""}`}>
               <input type="checkbox" disabled={!allAcked} checked={master} onChange={e => setMaster(e.target.checked)} />
               <span className="p2-master-ack-box"></span>
-              <span>本人已閱讀並同意以上全部注意事項</span>
+              <span>本人已閱讀並充分瞭解上述注意事項，並會遵守國家公園、警政署各項規定。</span>
             </label>
 
             <div className="p2-footbar-actions">
@@ -398,7 +482,7 @@ function NationalParkConsent({ unit }) {
                 <i className="fa-solid fa-arrow-left"></i>上一步
               </button>
               <button className="th-btn th-btn-primary" disabled={!canSubmit}
-                onClick={() => window.location.href = config.nextPage}>
+                onClick={() => window.location.href = nextUrl(config.nextPage)}>
                 同意並下一步<i className="fa-solid fa-arrow-right"></i>
               </button>
             </div>
@@ -498,7 +582,7 @@ function SummaryPage({ unit }) {
               <i className="fa-solid fa-arrow-left"></i>上一步
             </button>
             <button className="th-btn th-btn-primary"
-              onClick={() => window.location.href = cfg.nextPage}>
+              onClick={() => window.location.href = nextUrl(cfg.nextPage)}>
               我已了解，進入申請<i className="fa-solid fa-arrow-right"></i>
             </button>
           </div>

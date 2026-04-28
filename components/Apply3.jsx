@@ -1,11 +1,27 @@
 /* Page 3: Trip Registration */
 
+function getParam(key) {
+  return new URLSearchParams(window.location.search).get(key) || "";
+}
+
+function getRouteFromQuery() {
+  const routeId = getParam("route");
+  if (!routeId || typeof ROUTE_DATA === "undefined") return null;
+  return ROUTE_DATA.find(r => r.id === routeId) || null;
+}
+
+function queryUrl(page) {
+  const q = new URLSearchParams(window.location.search);
+  return `${page}?${q.toString()}`;
+}
+
 function Page3App() {
-  const [unit, setUnit] = React.useState("玉山國家公園管理處");
-  const [route, setRoute] = React.useState("玉山主峰線");
-  const [subroute, setSubroute] = React.useState("塔塔加→排雲山莊→玉山主峰");
+  const routeData = getRouteFromQuery();
+  const [unit, setUnit] = React.useState(routeData?.agencyName || "玉山國家公園管理處");
+  const [route, setRoute] = React.useState(routeData?.name || "玉山主峰線");
+  const [subroute, setSubroute] = React.useState(routeData?.subroute || "塔塔加→排雲山莊→玉山主峰");
   const [startDate, setStartDate] = React.useState("2026-05-15");
-  const [days, setDays] = React.useState(2);
+  const [days, setDays] = React.useState(routeData?.days || 2);
   const [hasGps, setHasGps] = React.useState("yes");
   const [purpose, setPurpose] = React.useState("");
   const [satPhone, setSatPhone] = React.useState("");
@@ -66,17 +82,17 @@ function Page3App() {
               <div className="p3-route-card">
                 <div className="p3-route-head">
                   <div className="p3-route-thumb">
-                    <img src="assets/route-yushan.png" alt="" />
-                    <span className="p3-route-thumb-tag">第 3 級</span>
+                    <img src={routeData?.image || "assets/route-yushan.png"} alt="" />
+                    <span className="p3-route-thumb-tag">第 {routeData?.diff || 3} 級</span>
                   </div>
                   <div className="p3-route-info">
                     <h3>{route}</h3>
                     <div className="p3-route-info-sub">{subroute}</div>
                     <div className="p3-route-tags">
                       <span className="p3-route-tag"><i className="ph-bold ph-buildings"></i>{unit}</span>
-                      <span className="p3-route-tag"><i className="ph-bold ph-mountains"></i>玉山主峰 3,952m</span>
-                      <span className="p3-route-tag"><i className="fa-regular fa-clock"></i>建議 2 天 1 夜</span>
-                      <span className="p3-route-tag tag-warn"><i className="fa-solid fa-shuffle"></i>抽籤路線</span>
+                      <span className="p3-route-tag"><i className="ph-bold ph-mountains"></i>{routeData?.peak || "玉山主峰 3,952m"}</span>
+                      <span className="p3-route-tag"><i className="fa-regular fa-clock"></i>建議 {routeData?.days || 2} 天 {Math.max(0, (routeData?.days || 2) - 1)} 夜</span>
+                      {routeData?.status === "lottery" && <span className="p3-route-tag tag-warn"><i className="fa-solid fa-shuffle"></i>抽籤路線</span>}
                     </div>
                   </div>
                   <button className="p3-route-change">
@@ -87,7 +103,9 @@ function Page3App() {
                   <i className="fa-solid fa-circle-exclamation"></i>
                   <div>
                     <strong>請注意：</strong>本系統公開時段為每日 23:00 至次日 07:00 暫停受理申請。
-                    本路線需參加抽籤，每月 5 日抽籤、5 日開放結果查詢，詳見<a href="#" style={{ color: "#92400e", textDecoration: "underline", marginLeft: 4 }}>抽籤規則說明</a>。
+                    {routeData?.status === "lottery"
+                      ? <>本路線需參加抽籤，請依管理處公告時程辦理。</>
+                      : <>請確認入園日期、行程天數與每日路線規劃符合管理處規定。</>}
                   </div>
                 </div>
               </div>
@@ -315,7 +333,7 @@ function Page3App() {
                   系統會自動暫存您填寫的內容，可關閉再回來繼續編輯
                 </div>
                 <div className="th-footbar-actions">
-                  <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-2.html"}>
+                  <button className="th-btn th-btn-ghost" onClick={() => window.location.href = queryUrl("apply-2.html")}>
                     <i className="fa-solid fa-arrow-left"></i>上一步
                   </button>
                   <button className="th-btn th-btn-ghost">儲存草稿</button>
