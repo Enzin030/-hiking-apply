@@ -179,6 +179,12 @@
   font-size: 14px;
   line-height: 1.8;
 }
+.p2-consent-html,
+.p2-consent-html * {
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
 .p2-consent-html p {
   margin: 0 0 12px;
 }
@@ -295,6 +301,43 @@
   display: flex; align-items: center; gap: 8px;
 }
 .p2-toc h3 i { color: var(--national-700); }
+.p2-reading-meter {
+  border: 1px solid var(--slate-200);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--slate-50);
+}
+.p2-reading-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  color: var(--slate-600);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.p2-reading-label strong {
+  color: var(--national-700);
+  font-size: 14px;
+  font-weight: 800;
+}
+.p2-reading-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+}
+.p2-reading-bar {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--national-700);
+  transition: width .2s ease;
+}
+.p2-confirm-meter {
+  margin-bottom: 14px;
+}
 .p2-progress {
   background: var(--slate-100); border-radius: 9999px; height: 8px;
   overflow: hidden;
@@ -315,6 +358,10 @@
 .p2-toc-list {
   list-style: none; margin: 0; padding: 0;
   display: flex; flex-direction: column; gap: 4px;
+  max-height: min(52vh, 520px);
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
 }
 .p2-toc-list li button {
   width: 100%; text-align: left;
@@ -325,6 +372,15 @@
   cursor: pointer; transition: .15s;
 }
 .p2-toc-list li button:hover { background: var(--slate-50); color: var(--national-700); }
+.p2-toc-list li.is-active button {
+  background: var(--bg-mist);
+  color: var(--national-700);
+  font-weight: 700;
+}
+.p2-toc-list li.is-active .p2-toc-dot {
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
 .p2-toc-dot {
   width: 16px; height: 16px; border-radius: 9999px;
   background: var(--slate-100); flex-shrink: 0;
@@ -344,6 +400,15 @@
   min-width: 0;
   line-height: 1.45;
   overflow-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.p2-toc-kicker {
+  color: var(--fg-3);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
 }
 
 /* ===== STICKY FOOTER BAR ===== */

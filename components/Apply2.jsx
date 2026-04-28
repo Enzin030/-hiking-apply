@@ -341,6 +341,9 @@ function NationalParkConsent({ unit }) {
   const total = sections.length;
   const allAcked = ackedCount === total;
   const canSubmit = allAcked && master;
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const sectionIds = sections.map(s => s.id).join("|");
+  const readingPercent = total ? ((activeIndex + 1) / total) * 100 : 0;
 
   const toggleAck = id => setAcked(a => ({ ...a, [id]: !a[id] }));
   const scrollToSection = id => {
@@ -351,6 +354,27 @@ function NationalParkConsent({ unit }) {
     }
   };
 
+  React.useEffect(() => {
+    const syncActiveSection = () => {
+      let nextIndex = 0;
+      sections.forEach((section, index) => {
+        const el = document.getElementById("sec-" + section.id);
+        if (el && el.getBoundingClientRect().top <= 160) {
+          nextIndex = index;
+        }
+      });
+      setActiveIndex(nextIndex);
+    };
+
+    syncActiveSection();
+    window.addEventListener("scroll", syncActiveSection, { passive: true });
+    window.addEventListener("resize", syncActiveSection);
+    return () => {
+      window.removeEventListener("scroll", syncActiveSection);
+      window.removeEventListener("resize", syncActiveSection);
+    };
+  }, [sectionIds]);
+
   return (
     <div data-screen-label="02 同意書（國家公園）">
       <Header active="apply" />
@@ -360,28 +384,6 @@ function NationalParkConsent({ unit }) {
         <div className="th-page-inner">
           <h1 className="th-page-title">申請須知與同意書</h1>
           <Stepper current={2} />
-
-          {/* 機關標頭 */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: 10,
-            marginBottom: 24, padding: "12px 16px",
-            background: "var(--bg-mist)", borderRadius: "var(--r-md)",
-            border: "1px solid var(--bg-mist-3)",
-          }}>
-            <span style={{
-              width: 32, height: 32, borderRadius: "var(--r-sm)",
-              background: config.color, display: "flex",
-              alignItems: "center", justifyContent: "center", flexShrink: 0,
-            }}>
-              <i className="ph-bold ph-mountains" style={{ color: "#fff", fontSize: 16 }}></i>
-            </span>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--fg-1)" }}>{config.parkName}</div>
-              <div style={{ fontSize: "var(--fs-xs)", color: "var(--fg-3)" }}>
-                {config.agencyName || config.parkName} · 入園許可申請同意書
-              </div>
-            </div>
-          </div>
 
           {routeData && (
             <div className="p2-route-brief">
@@ -400,14 +402,6 @@ function NationalParkConsent({ unit }) {
 
           <div className="p2-layout">
             <div>
-              <div className="p2-intro">
-                <div className="p2-intro-icon"><i className="ph-bold ph-info"></i></div>
-                <div>
-                  <h2>申請前確認</h2>
-                  <p>以下條文依管理機關原始規則帶入。請逐項確認，完成後即可進入行程登記。</p>
-                </div>
-              </div>
-
               {sections.map((s, idx) => {
                 const isAcked = acked[s.id];
                 return (
@@ -427,7 +421,7 @@ function NationalParkConsent({ unit }) {
                         <label className="p2-sec-check" onClick={e => e.stopPropagation()}>
                           <input type="checkbox" checked={isAcked} onChange={() => toggleAck(s.id)} />
                           <span className="p2-sec-ack-box"></span>
-                          <span>{isAcked ? "已確認" : "確認本項"}</span>
+                          <span>{isAcked ? "已確認" : "確認"}</span>
                         </label>
                       </div>
                     </div>
@@ -442,20 +436,34 @@ function NationalParkConsent({ unit }) {
 
             {/* SIDEBAR TOC */}
             <aside className="p2-toc">
-              <h3><i className="ph-bold ph-list-numbers"></i>閱讀進度</h3>
-              <div className="p2-progress">
-                <div className="p2-progress-bar" style={{ width: `${(ackedCount / total) * 100}%` }}></div>
+              <h3><i className="ph-bold ph-list-numbers"></i>閱讀定位</h3>
+              <div className="p2-reading-meter">
+                <div className="p2-reading-label">
+                  <span>目前閱讀</span>
+                  <strong>{activeIndex + 1}/{total}</strong>
+                </div>
+                <div className="p2-reading-track">
+                  <div className="p2-reading-bar" style={{ width: `${readingPercent}%` }}></div>
+                </div>
               </div>
-              <div className="p2-progress-label">
-                <span>已確認 <strong>{ackedCount}/{total}</strong> 組</span>
-                <span>{Math.round((ackedCount / total) * 100)}%</span>
+              <div className="p2-confirm-meter">
+                <div className="p2-progress">
+                  <div className="p2-progress-bar" style={{ width: `${(ackedCount / total) * 100}%` }}></div>
+                </div>
+                <div className="p2-progress-label">
+                  <span>已確認 <strong>{ackedCount}/{total}</strong></span>
+                  <span>{Math.round((ackedCount / total) * 100)}%</span>
+                </div>
               </div>
               <ul className="p2-toc-list">
                 {sections.map((s, i) => (
-                  <li key={s.id} className={acked[s.id] ? "is-acked" : ""}>
+                  <li key={s.id} className={`${acked[s.id] ? "is-acked" : ""} ${i === activeIndex ? "is-active" : ""}`}>
                     <button onClick={() => scrollToSection(s.id)}>
                       <span className="p2-toc-dot"><span>{i + 1}</span></span>
-                      <span className="p2-toc-text">{s.title}</span>
+                      <span className="p2-toc-text">
+                        <span className="p2-toc-kicker">{s.label}</span>
+                        <span>{s.title}</span>
+                      </span>
                     </button>
                   </li>
                 ))}
