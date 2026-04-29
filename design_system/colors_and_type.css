@@ -1,0 +1,242 @@
+/* ============================================================
+   Taiwan Hiking One-Stop (臺灣登山申請一站式服務網)
+   Color & Type Foundations
+   ------------------------------------------------------------
+   A government information service: calm, trustworthy, and
+   rooted in the visual vocabulary of Taiwan's high mountains
+   — sage green, slate stone, soft alpine mist.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap");
+
+:root {
+  /* --------------------------------------------------------
+     CORE BRAND — National Park sage green
+     The signature 587a68 is a muted, lichen-y green that
+     reads as "national park signage" in Taiwan.
+  -------------------------------------------------------- */
+  --national-50:  #f2fbf5;
+  --national-100: #e1f6e8;
+  --national-200: #c4ead0;
+  --national-300: #9dd5b0;
+  --national-400: #6fb888;
+  --national-500: #22c55e;
+  --national-600: #16a34a;
+  --national-700: #587a68;   /* primary brand sage */
+  --national-700-hover: #456353;
+  --national-800: #166534;
+  --national-900: #14532d;
+
+  /* --------------------------------------------------------
+     SUPPORTING ACCENTS
+  -------------------------------------------------------- */
+  --btn-blue:   #3b5f8f;     /* secondary CTA — steady navy */
+  --footer:     #243447;     /* deep navy footer */
+  --sub-footer: #334155;     /* footer sub-band */
+  --filter-active: #587a68;  /* active filter pill */
+  --bg-gray:    #f5f7f2;     /* faint sage-tinted neutral */
+
+  /* --------------------------------------------------------
+     NEUTRALS — slate-leaning grays for text + chrome
+  -------------------------------------------------------- */
+  --slate-50:  #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+
+  /* --------------------------------------------------------
+     SEMANTIC FOREGROUND / BACKGROUND
+  -------------------------------------------------------- */
+  --fg-1: var(--slate-800);          /* primary text */
+  --fg-2: var(--slate-600);          /* secondary text */
+  --fg-3: var(--slate-500);          /* tertiary / metadata */
+  --fg-4: var(--slate-400);          /* placeholder / disabled */
+  --fg-on-dark: #ffffff;
+  --fg-on-dark-2: #cbd5e1;
+
+  --bg-1: #ffffff;                   /* surface */
+  --bg-2: var(--slate-50);           /* subtle alt surface */
+  --bg-3: var(--bg-gray);            /* sage-neutral panel */
+  --bg-mist: #f4f9f2;                /* alpine mist tint */
+  --bg-mist-2: #e2f1e4;              /* deeper mist */
+  --bg-mist-3: #cadcce;              /* horizon haze */
+
+  /* --------------------------------------------------------
+     STATUS — lifted from the bulletin pills
+  -------------------------------------------------------- */
+  --success-bg: #f0fdf4;
+  --success-fg: #15803d;
+  --success-border: #bbf7d0;
+  --info-bg: #eff6ff;
+  --info-fg: #1d4ed8;
+  --warning-bg: #fffbeb;
+  --warning-fg: #b45309;
+  --danger-fg: #dc2626;             /* asterisk warnings */
+  --danger-soft: #ef4444;           /* pinned-pin red */
+
+  /* --------------------------------------------------------
+     PARK-PROCESS COLOR CODES
+     (used on bulletin tags — green by default, but each
+      managing agency could be color-coded here)
+  -------------------------------------------------------- */
+  --park-yushan:    #587a68;   /* 玉山 — Yushan NP */
+  --park-shei-pa:   #6b8e7f;   /* 雪霸 — Shei-Pa NP */
+  --park-taroko:    #4f6e7a;   /* 太魯閣 — Taroko NP */
+  --park-forestry:  #7a8a5a;   /* 林業及自然保育署 */
+  --park-police:    #5a6e7a;   /* 警政署 */
+
+  /* --------------------------------------------------------
+     TYPE — Noto family, the de-facto Traditional-Chinese
+     gov / civic stack. Serif headings, sans body.
+  -------------------------------------------------------- */
+  --font-sans:  "Noto Sans TC", -apple-system, BlinkMacSystemFont,
+                "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+
+  /* font sizes (matching the live site) */
+  --fs-display: 32px;   /* hero brand wordmark */
+  --fs-h1: 28px;
+  --fs-h2: 24px;        /* section titles 最新公告 / 常見問答 */
+  --fs-h3: 20px;
+  --fs-lg: 18px;        /* primary nav */
+  --fs-md: 15px;        /* body, buttons, list rows */
+  --fs-sm: 14px;        /* meta, secondary nav, pills */
+  --fs-xs: 13px;        /* form labels, footer */
+  --fs-xxs: 12px;       /* date pills */
+
+  /* line height + tracking */
+  --lh-tight: 1.2;
+  --lh-snug: 1.4;
+  --lh-base: 1.6;
+  --lh-loose: 1.8;
+  --tracking-wide: 0.025em;
+
+  /* --------------------------------------------------------
+     SPACING + RADIUS + SHADOW
+  -------------------------------------------------------- */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;     /* form inputs, buttons */
+  --r-lg: 12px;    /* small cards */
+  --r-xl: 16px;    /* feature cards */
+  --r-2xl: 20px;   /* hero cards, side panel */
+  --r-pill: 9999px;
+
+  --sh-header: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --sh-card:   0 4px 20px rgba(0, 0, 0, 0.08);
+  --sh-sm:     0 1px 2px rgba(0, 0, 0, 0.05);
+  --sh-md:     0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --sh-lg:     0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  --sh-xl:     0 20px 40px -10px rgba(0, 0, 0, 0.15);
+
+  /* gradients — alpine mist (used on hero) */
+  --grad-mist: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #f4f9f2 40%,
+    #e2f1e4 70%,
+    #cadcce 100%
+  );
+  --grad-card-overlay: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.9) 0%,
+    rgba(15, 23, 42, 0.2) 50%,
+    rgba(15, 23, 42, 0) 100%
+  );
+}
+
+/* ============================================================
+   SEMANTIC ELEMENT STYLES
+   ============================================================ */
+
+body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  font-size: var(--fs-md);
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, .h1 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-display);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-1);
+}
+
+h2, .h2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  color: var(--fg-1);
+}
+
+p {
+  font-size: var(--fs-md);
+  line-height: var(--lh-base);
+  color: var(--fg-2);
+}
+
+.label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.meta {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+}
+
+a {
+  color: var(--fg-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:hover {
+  color: var(--national-700);
+}
+
+code, pre, .mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.92em;
+}
+
+/* Section title with the signature left-bar */
+.section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h2);
+  color: var(--fg-1);
+  border-left: 4px solid var(--filter-active);
+  padding-left: 16px;
+  line-height: var(--lh-tight);
+}
