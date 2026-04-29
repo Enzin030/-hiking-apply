@@ -1,0 +1,379 @@
+﻿c_id,f_id,OrgID,name,name_en,name_jp,source_guid,chk,pjtype,ord,sumdaymin,sumdaymax,isforeign,linetype,peopleset,TeamApplyMaxCntSnowlong,is_hiking_safety,file01,file04,linetxtch,note,note_en,note_jp
+22,15,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,奇萊主、北峰線,Qilai Main / North Peaks,Qilai Main / North Peaks,NULL,2,0,101,1,7,0,0,0,NULL,NULL,,,,"奇萊主北線與奇萊連峰線為(共同承載量)(平日40人、假日60人)。自109年2月21日零時起免辦入山許可證。
+",,
+23,15,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,奇萊連峰,Mt. Qilai Range,Mt. Qilai Range,NULL,2,0,102,1,4,0,0,0,NULL,NULL,,,,"奇萊主北線與奇萊連峰線為(共同承載量)(平日40人、假日60人)。自109年2月21日零時起免辦入山許可證。
+",,
+24,15,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,奇萊東稜,Qilai East Ridge,Qilai East Ridge,NULL,2,0,103,1,30,0,0,0,NULL,NULL,,,,"自109年2月21日零時起免辦入山許可證。
+",,
+25,15,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,奇萊南峰,Qilai South Peak,Qilai South Peak,NULL,2,0,104,1,1,0,0,0,NULL,NULL,,,,"自109年2月21日零時起免辦入山許可證。
+",,
+26,16,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,南湖大山線,Mt. Nanhu,Mt. Nanhu,NULL,2,0,301,1,30,0,0,0,NULL,NULL,,,,"凡申請南湖大山路線需辦理【警政署入山證】。
+警政署入山申辦系統。
+https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList
+",,
+27,16,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,南湖中央尖 (北一段線),Mt. Nanhu - Mt.Zhongyangjian (North Section 1 of Central Mt. Range),Mt. Nanhu - Mt.Zhongyangjian (North Section 1 of Central Mt. Range),NULL,2,0,302,1,30,0,0,0,NULL,NULL,,,,凡申請南湖中央尖 (北一段線)經過(審馬陣山、南湖北山)等路線需辦理【警政署入山證】。 警政署入山申辦系統。 https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList,,
+28,17,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,北一段縱走北二段,North Sections 1 to 2 of Central Mt. Range,North Sections 1 to 2 of Central Mt. Range,NULL,1,0,501,3,30,0,0,0,NULL,NULL,,,,"*請詳閱「北二段路標規劃及施作紀錄表」、「攀登北二段無明西峰至無明山路段注意事項」，並隨時注意天候及路段落石危崖風險。
+",,
+109,17,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,北一段縱走北二段(南往北),North Sections 2 to 1 of Central Mt. Range (South to North),North Sections 2 to 1 of Central Mt. Range (South to North),NULL,2,0,502,3,30,0,0,0,NULL,NULL,,,,"*請詳閱「北二段路標規劃及施作紀錄表」、「攀登北二段無明西峰至無明山路段注意事項」，並隨時注意天候及路段落石危崖風險。
+",,
+29,18,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,北二段（鬼門關斷崖）,North Section 2 of Central Mt. Range (Guimenguan Cliff),North Section 2 of Central Mt. Range (Guimenguan Cliff),NULL,2,0,401,2,30,0,0,0,NULL,NULL,,,,*請詳閱「北二段路標規劃及施作紀錄表」、「攀登北二段無明西峰至無明山路段注意事項」，並隨時注意天候及路段落石危崖風險。,,
+30,19,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,閂山鈴鳴山,Mt. Shuan - Mt. Lingming,Mt. Shuan - Mt. Lingming,NULL,2,0,701,1,4,0,0,0,NULL,NULL,,,,*閂山鈴鳴山不須申請入山證。,,
+31,20,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,閂山單攻,Mt. Shuan Single Day Ascent,Mt. Shuan Single Day Ascent,NULL,2,0,801,1,2,0,0,0,NULL,NULL,,,,*閂山不須申請入山證。,,
+32,21,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,畢祿縱走羊頭,Mt. Bilu - Mt. Yangtou,Mt. Bilu - Mt. Yangtou,NULL,2,0,1101,1,3,0,0,0,NULL,NULL,,,,"*自109年2月21日零時起免辦入山許可證。
+",,
+33,22,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,畢祿山,Mt. Bilu Single Day Ascent,Mt. Bilu,NULL,2,0,901,1,3,0,0,0,NULL,NULL,,,,"*自109年2月21日零時起免辦入山許可證。
+",,
+34,23,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,羊頭山單攻,Mt. Yangtou Single Day Ascent,Mt. Yangtou,NULL,2,0,1001,1,1,0,0,0,NULL,NULL,,,,*羊頭山單攻不須申請入山證。,Mt. Yangtou no need to apply Police Mountain Permit.,
+35,24,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,清水山,Mt. Qingshui,Mt. Qingshui,NULL,2,0,601,2,7,0,0,0,NULL,NULL,,,,*清水山不須申請入山證。,"Hikers are not allowed to enter the section spanning from Shakadang (Sanjianwu/Three Cabins) to Dali-Datong. 
+",
+21,26,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,錐麓古道,Zhuilu Old Road,Zhuilu Old Road,NULL,2,0,201,1,1,0,0,0,NULL,NULL,,,,"*錐麓古道每日開放時間為上午7點進入至下午5點前出登山口，東進東出3.1k原路往返，請於每日上午10點前於錐麓古道售票口查核報到，逾時將不開放進入。 
+*錐麓古道行經斷崖該路段請快速通過勿逗留。
+*<font color=""#cc0000"">錐麓古道不須申請入山證</font>。
+*<font color=""#cc0000"">中橫公路台8線179.5K溪畔災害施工管制，每日上午8時30分至下午5時實施搶修工程施工管制，並於施工管制期間排定有5次放行時段(上午10時、中午11時30分至12時30分、下午2時、下午3時30分、下午5時。實際交管時間請依太魯閣公路段公告為主，若有疑問請洽: 03-9962683)，請欲進入錐麓古道的山友留意管制時間，以免通行受阻。
+","Zhuilu Old Road is open daily from 7 AM to 5 PM;hikers are required to enter the trail between 7AM and 10 AM. The trail is 3.1 km (round-trip), and hikers enter and exit via the Eastern checkpoint near Zhuilu Suspension Bridge/Swallow Grotto.
+Zhuilu Old Road no need to apply Police Mountain Permit.
+",
+132,26,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,錐麓古道(外籍提前),Zhuilu Old Road(Advanced Application),Zhuilu Old Road(Advanced Application),NULL,2,0,202,1,1,1,0,0,NULL,NULL,,,,"*錐麓古道每日開放時間為上午7點至下午6點，東進東出3.1k往返需於上午10點前進入。
+*近日錐麓古道2.8K有零星落石發生，行經該路段請快速通過勿逗留。
+","Zhuilu Old Road is open daily from 7 AM to 5 PM; hikers are required to enter the trail between 7AM and 10 AM. The trail is 3.1 km (round-trip), and hikers enter and exit via the Eastern checkpoint near Zhuilu Suspension Bridge/Swallow Grotto.","Zhuilu Old Road is open daily from 7 AM to 5 PM; hikers are required to enter the trail between 7AM and 10 AM. The trail is 3.1 km (round-trip), and hikers enter and exit via the Eastern checkpoint near Zhuilu Suspension Bridge/Swallow Grotto."
+55,33,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,其他（非傳統路線但進入區域屬生態保護區）,Other (Non-traditional routes entering the Ecological Protection Area),其他（非傳統路線但進入區域屬生態保護區）,NULL,2,0,1111,1,30,0,0,0,NULL,NULL,,,,"1.若要申請「奇萊南峰」請選擇「奇萊_奇萊南峰」。若要進入南華山及天池周邊，由於該區域不在太魯閣範圍，不用申請入園。
+2.若要申請「黃金峽谷」，行程請填寫「三棧社區-三棧南溪-黃金峽谷-三棧南溪-三棧社區」，三棧南溪僅支流黃金峽谷屬本處生態保護區範圍，主流沿線均無需申請本處生態保護區入園許可證。","To apply for Qilai South Peak , please select   Qilai/Qilai South Peak . Nanhua Mountain and Tianchi are not in the scope of Taroko, you do not need to apply for admission.",
+661,33,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,其他路線_南湖大山線,其他路線_南湖大山線,其他路線_南湖大山線,NULL,1,0,10029,1,30,0,0,0,NULL,NULL,,,,,,
+662,33,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,其他路線_奇萊群峰,其他路線_奇萊群峰,其他路線_奇萊群峰,NULL,1,0,10039,1,30,0,0,0,NULL,NULL,,,,,,
+150,37,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,屏風避難山屋申請,Pingfong Cabin,Pingfong Cabin,NULL,2,0,10019,2,3,0,0,1,8,NULL,,,*開放初期，每隊申請以8人為限，不便之處請見諒。,,,
+97,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級)  七卡、雪山東峰單日往返,(grade 3) round trip to East Peak of Xue Mountain,(等級3) 雪山東峰への日帰り,NULL,2,0,101,1,1,0,0,1,0,1,,,,,,
+98,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級)  七卡、雪山東峰,(grade 3) East Peak of Xue Mountain,(等級3) 雪山東峰ルート,NULL,2,0,102,2,3,0,0,1,0,0,,,,,,
+99,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 雪山主峰(多日行程),(grade 3) Xue Mountain trail (Multiple Days),(等級3) 雪山主峰ルート,NULL,2,0,103,2,4,0,0,1,0,1,,,,,,
+100,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 雪山主峰(單日往返),(grade 4) round trip to Xue Mountain in 1 day,(等級4) 雪山主峰への日帰,NULL,2,0,104,1,1,0,0,1,6,1,,,,,,
+102,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 雪山北峰、翠池,"(grade 4) North Peak of Xue Mountain, Cuei Pond","(等級4) 雪山北峰、翠池 ",NULL,2,0,106,2,5,0,0,1,6,1,,,,,,
+103,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,雪地訓練申請案,Snowfield Training,雪上訓練,NULL,2,0,107,3,10,0,1,1,10,1,,,,,,
+133,4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 雪山主峰(多日行程)-<外籍提前>,(grade 3) Xue Mountain trail (Foreign Advanced Application),(等級3) 雪山主峰ルート,NULL,2,0,1001,2,3,1,0,0,NULL,1,,,,"1.108年9月1日起開放雪山主峰線及大霸線外籍提前申請
+2.外籍遊客最早可於入園日前65日至入園日前4個月提出申請，於「臺灣國家公園入園入山線上申請服務網」(英文版)提出申請入園申請及住宿登記。
+3.保留七卡山莊、三六九山莊及九九山莊，於每週日至週四(不含國定連續假日)於上述山屋每日各保留24位的名額予外籍登山遊客提前申請。
+4.隊伍人數1-5人次得搭配本國籍隊員1位，6-10人次之隊伍則可搭配2位，本國籍每日各山莊保留限額4人，詳細規定請參考「雪霸國家公園生態保護區外籍人士入園申請說明」。","1.Foreign visitors can apply for Park Permit in advance from 1st Sep., 2019.
+2.Application is open from 4 months before the date of exit to 65 days before the date of entry.
+3.Open for reservation from Sunday to Thursday, excluding continuous national holidays; 24 vacancies per day are reserved for foreigners at Qika Hut, Saliujiu Hut and Jiujiu Hut each.
+4.Only used by foreign tourists and shall provide foreign address. Exchange students and foreigners living in Taiwan shall use ""Standard Application"".
+",
+104,5,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 志佳陽大山,(grade 3) Zhihjiayang Mountain,(等級3) 志佳陽大山,NULL,2,0,401,1,3,0,0,1,0,1,,,,請留意天氣變化及司界蘭溪溪水情形，高繞路線非正常步道路徑，應特別注意落石與滑落風險。,,
+105,5,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 志佳陽-雪山線,(grade 4) Zhijiayang-Xue Mountain Trail,(等級4) 志佳陽-雪山ルート,NULL,2,0,402,2,4,0,1,1,6,1,,,,請留意天氣變化及司界蘭溪溪水情形，高繞路線非正常步道路徑，應特別注意落石與滑落風險。,,
+106,5,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 志佳陽-雪山北峰線,"(grade 5) Zhijiayang-North Peak of Xue Mountain Trail ",(等級5) 志佳陽-雪山北峰,NULL,2,0,403,3,5,0,1,1,6,1,,,,請留意天氣變化及司界蘭溪溪水情形，高繞路線非正常步道路徑，應特別注意落石與滑落風險。,,
+107,6,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 推論山單日往返,"(grade 3) round trip to Tuilun Mountain in 1day ",(等級3) 推論山への日帰り,NULL,2,0,501,1,1,0,0,1,0,1,,,,"提醒各位山友，松茂林道高繞路線非常設性步道，通過時應留意四周環境及全隊行進中之安全，更應注意石頭踩落的可能性。雪霸國家公園關心您。
+
+",,
+108,6,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 大劍線,(grade 4) Dajian Trail,(等級4) 大剣ルート,NULL,2,0,502,2,3,0,1,1,6,1,,,,"提醒各位山友，松茂林道高繞路線非常設性步道，通過時應留意四周環境及全隊行進中之安全，更應注意石頭踩落的可能性。雪霸國家公園關心您。
+",,
+110,6,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 大小劍線,(grade 5) Dajian-Siaojian Trail,(等級5) 大小剣ルート,NULL,1,0,503,3,4,0,1,1,6,1,,,,提醒各位山友，松茂林道高繞路線非常設性步道，通過時應留意四周環境及全隊行進中之安全，更應注意石頭踩落的可能性。雪霸國家公園關心您。,,
+111,6,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 雪劍線,(grade 5) Xuejian Trail,(等級5) 雪剣ルート,NULL,2,0,504,4,6,0,1,1,6,1,,,,提醒各位山友，松茂林道高繞路線非常設性步道，通過時應留意四周環境及全隊行進中之安全，更應注意石頭踩落的可能性。雪霸國家公園關心您。,,
+153,7,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 中雪山、大雪山,(grade 4) Zhongxue Mountain and Daxue Mountain,(等級4) 中雪山と大雪山,NULL,2,0,601,2,4,0,1,1,6,1,,,,"大雪山國家森林遊樂區詳細開放問題請洽東勢林區管理處<a href=""https://recreation.forest.gov.tw/Forest/RA?typ=0&typ_id=0300003"">https://recreation.forest.gov.tw/Forest/RA?typ=0&typ_id=0300003</a>。    
+230林道注意事項請參考：<a href=""https://drive.google.com/file/d/1yIp9F8NAZBJ3XKlx-_Dn4GtC0jZglEuA/view?usp=sharing"">https://drive.google.com/file/d/1yIp9F8NAZBJ3XKlx-_Dn4GtC0jZglEuA/view?usp=sharing</a>(1080821更新) ","When climbing the West Xue Trail, if you plan to enter or exit from the Taiwan Forestry Bureau’s Daxue Mountain Forest Recreation Area, please follow the recreation area’s opening hours (6:30 AM to 5:00 PM) to enter and exit the recreation zone’s fee collection station. Please refer to the website: <a href=""https://recreation.forest.gov.tw/lang/EN/Forest"">https://recreation.forest.gov.tw/lang/EN/Forest</a>","When climbing the West Xue Trail, if you plan to enter or exit from the Taiwan Forestry Bureau’s Daxue Mountain Forest Recreation Area, please follow the recreation area’s opening hours (6:30 AM to 5:00 PM) to enter and exit the recreation zone’s fee collection station. Please refer to the website: <a href=""https://recreation.forest.gov.tw/lang/EN/Forest"">https://recreation.forest.gov.tw/lang/EN/Forest</a>"
+125,7,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 雪山西稜線,(grade 5) West Xue Trail,(等級5) 雪山西稜ルート,NULL,2,0,602,5,8,0,1,1,6,1,,,,"大雪山國家森林遊樂區詳細開放問題請洽東勢林區管理處<a href=""https://recreation.forest.gov.tw/Forest/RA?typ=0&typ_id=0300003"">https://recreation.forest.gov.tw/Forest/RA?typ=0&typ_id=0300003</a>。    
+230林道注意事項請參考：<a href=""https://drive.google.com/file/d/1yIp9F8NAZBJ3XKlx-_Dn4GtC0jZglEuA/view?usp=sharing"">https://drive.google.com/file/d/1yIp9F8NAZBJ3XKlx-_Dn4GtC0jZglEuA/view?usp=sharing</a>(1080821更新) ","When climbing the West Xue Trail, if you plan to enter or exit from the Taiwan Forestry Bureau’s Daxue Mountain Forest Recreation Area, please follow the recreation area’s opening hours (6:30 AM to 5:00 PM) to enter and exit the recreation zone’s fee collection station. Please refer to the website: <a href=""https://recreation.forest.gov.tw/lang/EN/Forest"">https://recreation.forest.gov.tw/lang/EN/Forest</a>
+","When climbing the West Xue Trail, if you plan to enter or exit from the Taiwan Forestry Bureau’s Daxue Mountain Forest Recreation Area, please follow the recreation area’s opening hours (6:30 AM to 5:00 PM) to enter and exit the recreation zone’s fee collection station. Please refer to the website: <a href=""https://recreation.forest.gov.tw/lang/EN/Forest"">https://recreation.forest.gov.tw/lang/EN/Forest</a>"
+112,8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 武陵一秀或二秀 (桃山、池有山) 單日往返,(grade 3) round trip to Tao Mountain or Chiyou Mountain in 1day,(等級3) 桃山、池有山への日帰り,NULL,2,0,201,1,1,0,0,1,0,1,,,,,,
+113,8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 武陵三秀 (不包含品田山),(grade 3) Wuling Quadruple Mountains Trail (excluding Pingtian Mountain),(等級3) 武陵三秀ルート,NULL,2,0,202,2,3,0,1,1,6,1,,,,,,
+114,8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 喀拉業山單日長程往返,(grade 4) round trip to Kalahei Mountain in 1 day,(等級4) 喀拉業山への日帰り,NULL,2,0,203,1,1,0,1,1,6,1,,,,,,
+115,8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 品田山單日長程往返,(grade 4) round trip to Pintian Mountain in 1 day,(等級4) 品田山への日帰り,NULL,2,0,204,1,1,0,1,1,6,1,,,,,,
+116,8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 武陵四秀線,(grade 4) Wuling Quadruple Mountains Trail,(等級4) 武陵四秀ルート,NULL,2,0,205,2,4,0,1,1,6,1,,,,,,
+156,8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 秀霸線,(grade 4) Wuling Quadruple Mountains-Daba Peaks Trail,(等級4) 秀霸ルート,NULL,2,0,206,3,5,0,1,1,6,1,,,,"有危險斷崖地形，請攜帶確保繩索及安全盔。
+
+","There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them.
+","There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them.
+"
+118,9,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(4級) 大霸線,(grade 4) Daba Peaks Trail,(等級4) 大霸ルート,NULL,2,0,301,3,4,0,1,1,6,0,,,,,,
+119,9,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 大霸線(首日住宿中霸山屋),(grade 5) Daba Peaks Trail (Zhongba Shelter in first day),(等級5) 大霸ルート (Zhongba Shelter in first day),NULL,2,0,302,3,4,0,1,1,6,1,,,,,,
+155,9,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(2級) 馬達拉溪登山口宿營地,(grade 2) Trailhead of Madala Creek,(等級2) 馬達拉溪登山口,NULL,2,0,303,2,2,0,0,1,0,1,,,,,,
+134,9,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(3級) 大霸線-<外籍提前>,(grade 3) Daba Peaks Trail (Foreign Advanced Application),(等級3) 大霸ルート,NULL,2,0,1002,3,4,1,0,0,NULL,1,,,,"1.108年9月1日起開放雪山主峰線及大霸線外籍提前申請
+2.外籍遊客最早可於入園日前65日至入園日前4個月提出申請，於「臺灣國家公園入園入山線上申請服務網」(英文版)提出申請入園申請及住宿登記。
+3.保留七卡山莊、三六九山莊及九九山莊，於每週日至週四(不含國定連續假日)於上述山屋每日各保留24位的名額予外籍登山遊客提前申請。
+4.隊伍人數1-5人次得搭配本國籍隊員1位，6-10人次之隊伍則可搭配2位，本國籍每日各山莊保留限額4人，詳細規定請參考「雪霸國家公園生態保護區外籍人士入園申請說明」。","1.Foreign visitors can apply for Park Permit in advance from 1st Sep., 2019.
+2.Application is open from 4 months before the date of exit to 65 days before the date of entry.
+3.Open for reservation from Sunday to Thursday, excluding continuous national holidays; 24 vacancies per day are reserved for foreigners at Qika Hut, Saliujiu Hut and Jiujiu Hut each.
+4.Only used by foreign tourists and shall provide foreign address. Exchange students and foreigners living in Taiwan shall use ""Standard Application"".",
+120,10,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 大霸北稜線,(grade 5) North Dabajian Trail,(等級5) 大霸北稜ルート,NULL,2,0,801,3,5,0,1,1,6,1,,,,,,
+121,11,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 聖稜線I型,"(grade 5) Shengleng Trail ""I"" shape",(等級5) I 聖,NULL,2,0,701,4,6,0,1,1,6,0,,,,"有危險斷崖地形，請攜帶確保繩索及安全盔。
+
+
+","There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them.
+","There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them.
+"
+122,11,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 聖稜線O型,"(grade 5) Shengleng ""O"" Trail",(等級5) O 聖,NULL,2,0,702,3,6,0,1,1,6,1,,,,有危險斷崖地形，請攜帶確保繩索及安全盔。,"There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them.","There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them."
+123,11,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(5級) 聖稜線Y型,"(grade 5) Shengleng ""Y"" Trail",(等級5) Y 聖,NULL,2,0,703,4,7,0,1,1,6,1,,,,"有危險斷崖地形，請攜帶確保繩索及安全盔。
+","There are some scarps, and persons applying for this trail shall additionally bring climbing ropes and safety helmets with them.
+",
+124,35,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(6級)其他路線(傳統路線),(grade 6) Other,(6級) Other,NULL,2,0,911,1,20,0,1,1,6,1,,,,"本路線為既定路線無法符合申請需求時方可使用。需提出登山安全管理表，於申請時一併送件，另請注意公告路線開放狀態。
+請注意本路線不可作為一般既定路線使用，送件經審核發現後將予以退件並請重新申請。
+
+","Please note that this is a special route for use only when the itinerary is not an existing route. When submitting this application, we require not only the Grade C/C+ mountain climbing experience of your team leader, group members, but also a detailed climbing schedule. Before entering the Park, please check ""Current Status of Trails "" for final assessment. (e.g., if a sea warning is issued, the Park will close the trail and your Park Entry Permit would become automatically void.)  If your itinerary shows an existing route, we'll reject your application and your will need to resubmit another application.
+
+",
+666,35,E6DD4652-2D37-4346-8F5D-6E538353E0C2,(6級)自訂路線(非傳統路線),(grade 6) Other,(6級) Other,NULL,2,0,911,1,20,0,1,1,6,1,,,,"本路線為既定路線無法符合申請需求時方可使用。需提出登山安全管理表，於申請時一併送件，另請注意公告路線開放狀態。
+請注意本路線不可作為一般既定路線使用，送件經審核發現後將予以退件並請重新申請。
+
+","Please note that this is a special route for use only when the itinerary is not an existing route. When submitting this application, we require not only the Grade C/C+ mountain climbing experience of your team leader, group members, but also a detailed climbing schedule. Before entering the Park, please check ""Current Status of Trails "" for final assessment. (e.g., if a sea warning is issued, the Park will close the trail and your Park Entry Permit would become automatically void.)  If your itinerary shows an existing route, we'll reject your application and your will need to resubmit another application.
+
+",
+3,1,C951CDCD-B75A-46B9-8002-8EF952EC95FD,玉山前峰單日往返(塔塔加 - 玉山前峰 - 塔塔加 ),Yushan Front Peak Day Hike (Tataka - Yushan Front Peak -Tataka),玉山前峰日帰り(塔塔加 - 玉山前峰 - 塔塔加),NULL,2,0,101,1,1,0,0,0,NULL,NULL,20210810161508437.png,20210809090734254.png,,"玉山前峰登山口距前峰雖僅0.8公里，但步道坡度較陡，其間有亂石坡，需陡上約360公尺，由海拔約2,877公尺(前峰登山口)登上標高3,239公尺的玉山前峰。單程步行約1.5小時登頂，山頂可眺望玉山主峰及西峰。
+本路線往返約需5小時，為安全考量，若自登山口起登3小時仍未抵達玉山前峰者，請一律折返下山。 
+<a href=""https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","Despite the short distance of 0.8 km from Mt. Jade Front Peak Trailhead (2,877 m) to the summit of Mt. Jade Front Peak (3,239 m), this section, with an elevation of 360 m, is quite steep with some boulder pavement. It takes around 1.5 hr to reach the summit, where visitors can enjoy the view of Mt. Jade Main Peak and West Peak.
+The return hike takes roughly 5 hours. For safety concerns, those who can’t reach Mt. Jade Front Peak in 3 hours need to go back to the trailhead.
+<a href=""https://www.ysnp.gov.tw/En/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/En/Highway/C001300"" target=""_blank"">[Road Conditions]</a>","前峰登山口から玉山前峰までの距離はわずか0.8キロですが道は比較的険しく、石の多い道になっていて、海抜2877m（前峰登山口）から標高3239mの玉山前峰までの高度差約360mの急勾配を登って行かなければなりません。
+<a href=""https://www.ysnp.gov.tw/Jp/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/JP/Highway/C001300"" target=""_blank"">[道路状況]</a>
+"
+4,1,C951CDCD-B75A-46B9-8002-8EF952EC95FD,玉山線單日往返(塔塔加 - 玉山線 - 塔塔加),Yushan Trails Day Hike (Tataka - Yushan Trails - Tataka),玉山ルート日帰り(塔塔加 - 玉山ルート - 塔塔加),NULL,2,0,102,1,1,0,0,1,0,NULL,20210809091009989.png,20210809091010085.png,,"一、單日往返入園時間原則為上午5時以後，出園時間原則為下午17時以前。為安全考量，上午10時以前未抵達排雲山莊者，請一律折返下山。
+二、每年1~3月間因適逢雪季期間，暫停玉山主(西)峰單日往返入園活動。
+<a href=""https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","Ideally, teams should enter the park after 5 am, and depart before 5 pm. For safety concerns, those who have not reached Paiyun Lodge by 10:00 am must return.
+Yushan Main (West) Peak Day Hike application is suspended for snow season months (January – March).
+<a href=""https://www.ysnp.gov.tw/EN/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/EN/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","入園時間は原則午前5時以降、退園時間は原則午後5時以前です。安全を考慮して、午前10時までに排雲山荘に到着しない場合は一律下山をしてもらいます。
+1~3月の間に雪で天候が悪いため、玉山主（西）峰日帰りの申し込みは利用できません。予めご了承ください。
+<a href=""https://www.ysnp.gov.tw/JP/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/JP/Highway/C001300"" target=""_blank"">[道路状況]</a>
+
+"
+2,1,C951CDCD-B75A-46B9-8002-8EF952EC95FD,2~5天(塔塔加 - 玉山線 - 塔塔加),2~5 Days (Tataka - Yushan Trails - Tataka),2~5天(塔塔加 - 玉山ルート - 塔塔加),NULL,2,0,105,2,5,0,0,0,NULL,NULL,20210809091350388.png,20200219103056723.jpg,,"<a href=""https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","<a href=""https://www.ysnp.gov.tw/En/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/EN/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","<a href=""https://www.ysnp.gov.tw/JP/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/JP/Highway/C001300"" target=""_blank"">[道路状況]</a>
+"
+62,1,C951CDCD-B75A-46B9-8002-8EF952EC95FD,2天(塔塔加 - 玉山線 - 塔塔加)(外籍提前),2 Days(Tataka - Yushan Trails -Tataka )(Paiyun Lodge Advanced Application),2天(塔塔加 - 玉山ルート - 塔塔加)(排雲山荘の先行申請),NULL,2,0,181,2,2,0,0,0,NULL,NULL,20220527151011482.png,20200219103107666.jpg,,"<a href=""https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","<a href=""https://www.ysnp.gov.tw/EN/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/EN/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","<a href=""https://www.ysnp.gov.tw/JP/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/JP/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+81,2,C951CDCD-B75A-46B9-8002-8EF952EC95FD,庫哈諾辛山/關山單日往返(進涇橋/南一段- 庫哈諾辛山／關山 - 進涇橋/南一段),Kuhanuosin Mountain/Guan Mountain Day Hike (Jinjing Bridge/Guanshan - Kuhanuosin Mountain/Guan Mountain - Jinjing Bridge/Guanshan),関山庫哈諾辛山/関山日帰り(進涇橋/関山 - 庫哈諾辛山/関山  - 進涇橋/関山),NULL,2,0,201,1,1,0,0,0,NULL,NULL,20220810122415367.png,20200219103119404.jpg,,"<a href=""https://www.ysnp.gov.tw/Trail/382f4797-1eb1-4746-a122-4e13a9e0c7e4?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>
+一、塔關山、關山嶺山不需辦理入園許可證。
+二、南一段行程請選擇「南一段」進出口，關山以南即離開國家公園範圍，請留意入園天數、日期是否選擇正確。
+三、台20臨105線(梅山口至向陽)以臨時便道通行，總長44公里，每週一、週三、週五、週六及週日07：00至14：00開放未滿5噸貨車及9人座以下客車、大型重機及機車進出，14：00以後禁止進入，17：00梅山口至向陽路段全線淨空；每週二、週四不開放。","<a href=""https://www.ysnp.gov.tw/EN/Trail/382f4797-1eb1-4746-a122-4e13a9e0c7e4?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","<a href=""https://www.ysnp.gov.tw/JP/Trail/382f4797-1eb1-4746-a122-4e13a9e0c7e4?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>
+"
+5,2,C951CDCD-B75A-46B9-8002-8EF952EC95FD,2~3天(進涇橋/南一段 - 庫哈諾辛山/關山 - 進涇橋/南一段),2 ~3 Days (Jinjing Bridge / Guan Mountain - Kuhanuosin Mountain / Guan Mountain - Jinjing Bridge / Guan Mountain),2~3天(進涇橋/関山 - 庫哈諾辛山/関山 - 進涇橋/関山),NULL,2,0,202,2,3,0,1,0,NULL,NULL,20240828175629098.png,20200219103131169.jpg,,"<a href=""https://www.ysnp.gov.tw/Trail/382f4797-1eb1-4746-a122-4e13a9e0c7e4?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>
+一、塔關山、關山嶺山不需辦理入園許可證。
+二、南一段行程請選擇「南一段」進出口，關山以南即離開國家公園範圍，請留意入園天數、日期是否選擇正確。
+三、台20臨105線(梅山口至向陽)以臨時便道通行，總長44公里，每週一、週三、週五、週六及週日07：00至14：00開放未滿5噸貨車及9人座以下客車、大型重機及機車進出，14：00以後禁止進入，17：00梅山口至向陽路段全線淨空；每週二、週四不開放。","Due to the damage of Typhoon Morakot, the section from Tianchih to Yakou of Southern Cross-island Highway (Provincial Highway 20), including Jinjing Bridge Hiking Entrance, is now closed for repair. 
+<a href=""https://www.ysnp.gov.tw/en/Trail/382f4797-1eb1-4746-a122-4e13a9e0c7e4?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","<a href=""https://www.ysnp.gov.tw/jp/Trail/382f4797-1eb1-4746-a122-4e13a9e0c7e4?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>
+"
+7,3,C951CDCD-B75A-46B9-8002-8EF952EC95FD,瓦拉米單日往返(南安 - 瓦拉米 - 南安),Walami Trail Day Hike (Nanan - Walami - Nanan),瓦拉米日帰り(南安 - 瓦拉米 - 南安),NULL,2,0,901,1,1,0,0,0,NULL,NULL,20220810105023417.png,20200219103258528.jpg,,"一、山風登山口至東段步道7K里程處尚未進入本處生態保護區，為一般健行步道，不需辦理入園申請。東段步道7K里程處至瓦拉米請提前辦理入園申請。
+二、瓦拉米步道單日往返建議行程時間表：
+   07：00  步道口出發
+   12：00  抵瓦拉米後返程；若未抵瓦拉米者（不論走到哪裡）亦需折返
+   16：30  抵步道口（冬季期間）
+   17：00  抵步道口（夏季期間）
+三、瓦拉米步道係指八通關越嶺線東段，由步道入口經山風－佳心－黃麻至瓦拉米山屋，全長13.6公里的路段。
+四、瓦拉米步道3.6K已龜裂滑動、產生落差泥濘達200公尺，通過此區具危險性，請遊客高繞行進並請注意自身安全，快速通過。</a>
+
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1. The section from Shanfong Trailhead to 7 km from the trailhead is outside of the restricted area, and a park permit is not required. For 7 km onward to Walami, please apply online at least 5 days before the hike date.
+2. The suggested itinerary for Walami Day Hike:
+07:00 Start the hike 
+12:00 Turn back after reaching Walami Cabin or anywhere before Walami
+16:30 Reach the trailhead (winter)
+17:00 Reach the trailhead (summer)
+3. Walami Trail is the east part of the Batongguan Traversing Trail. The length from the trailhead to Walami Cabin is 13.6 km, passing by Sanfong, Jiasin and Huangma.
+4. The land structure at the 3.6 km-point of Walami Trail has been fractured and is prone to sliding off, with up to 200 meters of slanted surface. With the risk of danger, please change your course upward, proceed carefully, and pass this area quickly.
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","1.南安から佳心までは生態保護区域の範囲ではなく一般なハイキング歩道のため、入園の申請が不要となります。佳心から瓦拉米までは事前に入園を申請してください。
+2.瓦拉米歩道の日帰りプランのお勧めタイムテーブル：
+   07：00　ハイキングを開始します。
+   12：00　瓦拉米到着して戻ります；瓦拉米に到着していなくても(どこでも)戻るべきです。
+   16：30步道口に到着（冬期間）
+   17：00步道口に到着（夏期間）
+3.瓦拉米ルートとは八通關越嶺線の東段、歩道の入り口から山風－佳心－黃麻、瓦拉米山屋、全13.6Kmの通路です。
+4.瓦拉米ルート3.6Kは既に亀裂、滑り、そのため、200メートルの道がぬかるみまして、このエリアを通過するには危険ですから、迂回して速やかに通過してください。</a>
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>
+"
+6,3,C951CDCD-B75A-46B9-8002-8EF952EC95FD,2~3天 (南安 - 瓦拉米 - 南安),2~3 Days (Nanan - Walami - Nanan),2~3天 (南安 - 瓦拉米 - 南安),NULL,2,0,902,2,3,0,0,0,NULL,NULL,20220810102224774.png,20200219103306992.jpg,,"一、山風登山口至東段步道7K里程處尚未進入本處生態保護區，為一般健行步道，不需辦理入園申請。東段步道7K里程處至瓦拉米請提前辦理入園申請。
+二、瓦拉米步道3.6K已龜裂滑動、產生落差泥濘達200公尺，通過此區具危險性，請遊客高繞行進並請注意自身安全，快速通過。
+
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.1. The section from Shanfong Trailhead to 7K from the trailhead is outside of the restricted area, and a park permit is not required. For 7K onward to Walami, please apply online at least 5 days before the hike date.
+2.The land structure at 3.6k-point of Walami Trail has been fractured and prone to sliding off, with up to 200 meters of slanted surface. With risks of danger, please change your course upward, proceed carefully, and pass this area quickly.</a>
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","南安から佳心までは一般のトレッキングコースです。佳心から瓦拉米山小屋までは中級登山コースです。
+1.南安から佳心までは生態保護区域の範囲ではなく一般なハイキング歩道のため、入園の申請が不要となります。佳心から瓦拉米までは事前に入園を申請してください。
+2.瓦拉米ルート3.6Kは既に亀裂、滑り、そのため、200メートルの道がぬかるみまして、このエリアを通過するには危険ですから、迂回して速やかに通過してください。</a>
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>
+"
+61,27,C951CDCD-B75A-46B9-8002-8EF952EC95FD,1~9天(向陽/南安 – 新康橫斷線 – 南安/向陽),1~9Days (Siangyang/Nanan – Sinkang Hiking Trail – Nanan/Siangyang),1~9天(向陽/南安 – 新康横断ルート – 南安/向陽),NULL,2,0,701,1,9,0,1,0,NULL,NULL,20230104155044693.png,20200219103235196.jpg,,"向陽山屋、嘉明湖山屋、向陽山、三叉山、嘉明湖、布新營地、布拉克桑山及戒茂斯等地非本處生態保護區，如需住宿向陽或嘉明湖山屋者，請向林業及自然保育署台東分署提出<a href=""https://jmlnt.forest.gov.tw/room/"" target=""_blank"">申請</a>。如有本園區域外行程，依進入本園生態保護區日期前2個月為可申請日期，如未依申請期限而有提前申請，將以電子郵件退件通知依申請期限重新提出入園申請。
+<a href=""https://www.ysnp.gov.tw/Trail/ba81933a-a5e2-4ac7-8aa8-d3930c1ec395?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","If your itinerary includes plans to stay at Jiaming Lake Cabin or Siangyang Cabin, please apply for and gain approval regarding your lodging arrangements. Alternatively, you could apply for staying at Jiaming Lake Campground when submitting the park entry permit application.
+<a href=""https://www.ysnp.gov.tw/en/Trail/ba81933a-a5e2-4ac7-8aa8-d3930c1ec395?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","向陽-嘉明湖-布新營地の交差点と布拉克桑山は本機関の担当範囲ではないので、宿向陽か嘉明湖山屋に宿泊する場合は臺東林區管理處に<a href=""https://jmlnt.forest.gov.tw/room/"" target=""_blank"">申し込んでください</a>。または登山道の申請する時に、<a href=""https://npm.cpami.gov.tw/news_4main.aspx?ID=2668"" target=""_blank"">嘉明湖キャンプ場</a>の宿泊を選んでください。
+<a href=""https://www.ysnp.gov.tw/jp/Trail/ba81933a-a5e2-4ac7-8aa8-d3930c1ec395?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+1,28,C951CDCD-B75A-46B9-8002-8EF952EC95FD,乙女瀑布單日往返(東埔 – 乙女瀑布 – 東埔),Yinyu Waterfall Day Hike (Dongpu – Yinyu Waterfall - Dongpu),乙女滝日帰り(東埔 – 乙女滝 – 東埔),NULL,2,0,301,1,1,0,0,0,NULL,NULL,20210811144928438.png,20210811144928481.png,,"一、行經東埔至八通關步道2.2K~乙女瀑布沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+二、步道沿線的父子斷崖、雲龍瀑布、乙女瀑布等，為遊客所嚮往的景點。為確保遊憩安全，若於中午12時前未抵達乙女瀑布則必須折返。
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1. Be aware of the subgrade erosion, fallen trees and collapse path between 2.2 km to 12.8 km on the trail.
+2. For safety concerns, please retreat back to the trailhead if you cannot reach Yinyu Waterfall before 12 pm.
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","1.東埔から八通關步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+2.安全上の理由から、午後12時までに乙女の滝に到着できない場合は、トレイルヘッドに戻ってください。
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+10,28,C951CDCD-B75A-46B9-8002-8EF952EC95FD,3天(東埔 –八通關 – 東埔),3 Days (Dongpu - Batongguan - Dongpu),3天(東埔 –八通関– 東埔),NULL,2,0,302,3,3,0,1,0,NULL,NULL,20240828175544395.png,20200219103153447.jpg,,"一、行經東埔至八通關步道2.2K~12.8K沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+二、觀高坪至八通關草原因古道崩坍，仍請高遶通過。
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.Be aware of the subgrade erosion, fallen trees and collapse path between 2.2km to 12.8km on the trail.
+2.The section from Guangaoping to Batongguan Grassland is affected by trail collapse. Please take the upward detour.
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","1.東埔から八通關步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+2.觀高坪から八通關草原までの道路崩れのため、高遶から通過してください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+130,28,C951CDCD-B75A-46B9-8002-8EF952EC95FD,3~5天其他路線(東埔/塔塔加 - 八通關玉山線 - 塔塔加/東埔),3~5 Days Others Trails(Dongpu / Tataka - Batongguan  Yushan Trails -Tataka / Dongpu),3~5天その他の登山ルート(東埔/塔塔加 - 八通関玉山ルート - 塔塔加/東埔),NULL,2,0,1003,3,5,0,1,0,NULL,NULL,20210726135001865.png,,,"一、八通關至荖濃溪營地2.7K處崩塌已改道，請高繞小心通行。
+二、行經東埔至八通關步道2.2K~12.8K沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+三、觀高坪至八通關草原因古道崩坍，仍請高遶通過。
+四、請上傳登山計畫書。
+五、其他路線因非屬既定路線，未規劃有登山步道、指示牌示、安全及住宿設施等人為建物，且為本處非例行性巡查之區域。入園前應自行檢視相關登山行前準備，如體能及技術訓練、路徑判讀及危機處理能力、完善的留守及後援計畫等安全準備事宜。入園時應量力而為，山區路況常面臨崩坍等困難地形、落石或野生物等自然風險，如遇危險或困難，請勿強行通過，並以安全第一為原則，行進間或宿營時應避免破壞原有自然生態環境。另為保存生態保護區原有自然生態環境，其他路線將不因登山活動需求增設相關設施為原則。
+
+<a href=""https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[玉山線登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[八通關登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.Be aware of the subgrade erosion, fallen trees and collapse path between 2.2km to 12.8km on the trail.
+2.The section from Guangaoping to Batongguan Grassland is affected by trail collapse. Please take the upward detour.
+3.Please upload a hiking plan when you submitting the application.
+4.“Other Trail” refer to trails that are not well-established or planed. There's no warning/direction sign, safety facility, nor accommodation, and these trails are regularly patrolled or inspected. It is strongly encouraged for hikers to make sure the hike is well-prepared, including but not limited to evaluate the physical fitness, the capability to read the map, choose the trail, use gears that requiring special techniques, and handle the possible dangers, as well as the emergency contact and back-up plan, etc. It is not suggested to attempt to pass sections that are too dangerous or difficult to pass. Safety first. Try to minimize your impact when hiking or camping. To protect the environment of the restricted area, there will not be additional facilities installed for the demand for hiking activities.
+
+<a href=""https://www.ysnp.gov.tw/En/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[Yushan Trails Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Batongguan Trail Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>","1.東埔から八通關步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+2.觀高坪から八通關草原までの道路崩れのため、高遶から通過してください。
+3.登山計画書をアップロードください。
+4.他のルートは既定路線ではないため、登山道、立て札、安全や宿泊などの施設がありません。そして、本機関の日常点検のアリアではありません。入園前に登山の準備を掌握すべきことです。例えば、体力、技術訓練、ルートの判断、危機管理能力、最善な滞留と後援計画などの安全支度の準備。入園する際、無理しないでください。危険や困難の場合は安全第一のルールで無理に渡らないでください。移動中またはキャンプする時に自然環境を乱さないでください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5"" target=""_blank"">[玉山ルート登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[八通関ルート登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+89,29,C951CDCD-B75A-46B9-8002-8EF952EC95FD,2~9天(向陽/東埔 - 南二段 – 東埔/向陽),2~9 Days (Siangyang/Dongpu - South Section 2 of Central Mountains Trail - Dongpu/Siangyang),2~9天(向陽/東埔 - 南二段 – 東埔/向陽),NULL,2,0,401,2,9,0,1,0,NULL,NULL,20240828175515207.png,20200219103203761.jpg,,"一、南二段線一般登山行程建議6~7天。
+二、行經東埔至八通關步道2.2K~12.8K沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+三、觀高坪至八通關草原因古道崩坍，仍請高遶通過。
+四、向陽山屋、嘉明湖山屋、向陽山、三叉山、嘉明湖、布新營地、布拉克桑山及戒茂斯等地非本處生態保護區，如需住宿向陽或嘉明湖山屋者，請向林業及自然保育署台東分署提出<a href=""https://jmlnt.forest.gov.tw/room/"" target=""_blank"">申請</a>。如有本園區域外行程，依進入本園生態保護區日期前2個月為可申請日期，如未依申請期限而有提前申請，將以電子郵件退件通知依申請期限重新提出入園申請。
+
+<a href=""https://www.ysnp.gov.tw/Trail/1783c684-3f87-4862-bf4e-e876e639d405?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.South Section 2 of Central Mountains Trail Hike takes around 6 to 7 days.
+2.Be aware of the subgrade erosion, fallen trees and collapse path between 2.2km to 12.8km on the trail.
+3.The section from Guangaoping to Batongguan Grassland is affected by trail collapse. Please take the upward detour.
+4.If your itinerary includes plans to stay at Jiaming Lake Cabin or Siangyang Cabin, please <a href=""https://jmlnt.forest.gov.tw/room/"" target=""_blank"">apply</a> for and gain approval regarding your lodging arrangements. Alternatively, you could apply for staying at Jiaming Lake Campground when submitting the park entry permit application.
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/1783c684-3f87-4862-bf4e-e876e639d405?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","一、南二段線一般的に6～7日間お勧めです。
+二、東埔から八通關步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+三、觀高坪から八通關草原までの道路崩れのため、高遶から通過してください。
+四、向陽-嘉明湖-南二段の交差点は本機関の担当範囲ではないので、宿向陽か嘉明湖山屋に宿泊する場合は臺東林區管理處に<a href=""https://jmlnt.forest.gov.tw/room/"" target=""_blank"">申し込んでください</a>。または登山道の申請する時に、<a href=""https://npm.cpami.gov.tw/news_4main.aspx?ID=2668"" target=""_blank"">嘉明湖キャンプ場</a>の宿泊を選んでください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/1783c684-3f87-4862-bf4e-e876e639d405?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+57,30,C951CDCD-B75A-46B9-8002-8EF952EC95FD,4~6天(東埔- 秀姑巒 – 東埔),4~6 Days (Dongpu - Siouguluan - Dongpu),4~6天(東埔–秀姑巒–東埔),NULL,2,0,501,4,6,0,1,0,NULL,NULL,20240828175449239.png,20200219103212101.jpg,,"一、行經東埔至八通關步道2.2K~12.8K沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+二、觀高坪至八通關草原因古道崩坍，仍請高遶通過。
+
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.Be aware of the subgrade erosion, fallen trees and collapse path between 2.2km to 12.8km on the trail.
+2.The section from Guangaoping to Batongguan Grassland is affected by trail collapse. Please take the upward detour.
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>","1.東埔から八通關步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+2.觀高坪から八通關草原までの道路崩れのため、高遶から通過してください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+90,31,C951CDCD-B75A-46B9-8002-8EF952EC95FD,2~9天(東埔/玉里林道–馬博拉斯橫斷–東埔/玉里林道),2~9 Days (Dongpu/Yuli Forest Road - Mabolasih - Dongpu/Yuli Forest Road),2~9天(東埔/玉里林道–馬博拉斯橫斷–東埔/玉里林道),NULL,2,0,601,2,9,0,1,0,NULL,NULL,20240828175358473.png,20200219103224823.jpg,,"一、馬博拉斯橫斷線一般登山行程建議7天。
+二、行經東埔至八通關步道2.2K~12.8K沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+三、觀高坪至八通關草原因古道崩坍，仍請高遶通過。
+四、太平谷-玉里林道出口非本處所轄園區，不需辦理入園申請。如有本園區域外行程，依進入本園生態保護區日期前2個月為可申請日期，如未依申請期限而有提前申請，將以電子郵件退件通知依申請期限重新提出入園申請。
+五、非馬博登山行程將退件，並請另擇八通關、南二段或秀姑巒線申請。
+
+<a href=""https://www.ysnp.gov.tw/Trail/8dbb3955-47fc-4311-8077-3518d1ad89b7?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.Mabolasih Trail Hike takes around 7 days.
+2.Be aware of the subgrade erosion, fallen trees and collapse path between 2.2km to 12.8km on the trail.
+3.The section from Guangaoping to Batongguan Grassland is affected by trail collapse. Please take the upward detour.
+4.Our park does not cover the section from Taiping Valley to Yuli Forest Road, therefore, applicants don’t need to include it in the park permit application.
+5.If your itinerary includes plans to stay at Jiaming Lake Cabin or Siangyang Cabin, please apply for and gain approval regarding your lodging arrangements. Alternatively, you could apply for staying at Jiaming Lake Campground when submitting the park entry permit application.
+6.Tanxiwan is outside of the park, therefore, applicants don’t need to include it in the park permit application. Please start/end the hike from Malijia’nan Mountain Trailhead if visitors intend to enter/leave the restricted area of the park from Tanxiwan or South Section 3 of Central Mountains Trail.
+7.Mabolasih Trail Hike applications without actually going to Mabolasih Trail will be declined. Please choose the appropriate route, such as Batongguan, Siouguluan, or South Section 2 of Central Mountains Trail.
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/8dbb3955-47fc-4311-8077-3518d1ad89b7?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","1.馬博拉斯橫斷線一般的に7日間お勧めです。
+2.東埔から八通關步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+3.觀高坪から八通關草原までの道路崩れのため、高遶から通過してください。
+4.太平谷-玉里林道出口は本機関の担当範囲ではないので、入園の申し込みが不要となります。
+5.向陽-嘉明湖-南二段の交差点は本機関の担当範囲ではないので、宿向陽か嘉明湖山屋に宿泊する場合は臺東林區管理處に申し込んでください。または登山道の申請する時に、嘉明湖營地の宿泊を選んでください。
+6.嘆息灣は本機関の担当範囲ではないので、入園の申し込みが不要となります。嘆息灣或いは南三段から出入りの方は馬利加南の出入り口で申請してください。
+7.馬博からの登山プラン以外は申込書を却下すること。八通關、南二段と秀姑巒線から申し込んでください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/8dbb3955-47fc-4311-8077-3518d1ad89b7?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+51,32,C951CDCD-B75A-46B9-8002-8EF952EC95FD,3~8天(南安 - 八通關越嶺線東段 - 南安),3~8 Days(Nanan - Batonggaun Traversing Trail - Nanan),3~8天(南安 - 八通関越嶺ルート八の東セクション – 南安),NULL,2,0,801,3,8,0,1,0,NULL,NULL,20220810112824369.png,20200219103245779.jpg,,"一、本路線受理佳心至大分入園申請。
+二、瓦拉米至大分路段16.3K棧橋損毀、20.1K棧橋損毀、31K至33K有4處坍方路段、32.9K階梯棧橋基座掏空、38K溪谷上切路段約70度異常陡坡需上切。以上路況，請特別評估行程風險並注意通行。
+
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.The park permit application for going to the section from Jiasin to Dafen is accepted.
+2.For the path from Walami to Dafen, please evaluate the risks and take particular care when passing the following places: the bridge at 16.3k and 20.1k were damaged; four collapse sections from 31k-point to 33k-point; the foundation of the stair-bridge at 32.9k was affected by erosion; the 38k upward detour point is extremely steep (about 70 degrees).
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>
+","一、本ルートは佳心から大分までの入園の申し込みができます。
+二、瓦拉米から大分線路まで16.3Kの橋の崩壊、20.1Kの橋の崩壊、31Kから33Kまで四つの道路崩れがあります、32.9Kの階段橋の路盤が被害を受け、38Kの渓谷道路は約70度の急な傾斜となります。以上の道路状況をリスクを評価し、通過する際に十分注意ください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+131,32,C951CDCD-B75A-46B9-8002-8EF952EC95FD,4~9天其他路線(南安/東埔 - 八通關越嶺線 – 東埔/南安),4~9Days Others Trails(Nanan/Dongpu - Batonggaun Traversing Trail - Dongpu/Nanan),4~9天その他の登山ルート(南安/東埔 - 八通関越嶺ルート – 東埔/南安),NULL,2,0,1004,4,9,0,1,0,NULL,NULL,20240828175245462.png,20240828175117629.png,,"一、本路線受理佳心至東埔入園申請。
+二、瓦拉米至大分路段16.3K棧橋損毀、20.1K棧橋損毀、31K至33K有4處坍方路段、32.9K階梯棧橋基座掏空、38K溪谷上切路段約70度異常陡坡需上切。以上路況，請特別評估行程風險並注意通行。
+三、八通關越嶺線，因土葛崩壁等困難地形阻礙，目前有多處路基坍方、無明顯路徑、斷崖或舊有棧橋毀損等路段有風險之虞，需妥為評估行程風險。如仍欲進入八通關越嶺線，全隊人員應對自身及隊伍安全負責，並應自行檢視相關登山行前準備，如體能及技術訓練、路徑判讀及危機處理能力、完善的留守及後援計畫等安全準備事宜。入園時應量力而為，如遇危險或困難請勿強行通過，以安全第一為原則。
+四、觀高坪至八通關草原因古道崩坍，仍請高遶通過。
+五、行經東埔至八通關步道2.2K~12.8K沿線仍須特別注意落石、坍塌、路基沖刷、棧橋崩落及倒木等情形。
+六、請上傳登山計畫書。
+<a href=""https://www.ysnp.gov.tw/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山路線路況]</a>
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.The park permit application for going to the section from Jiasin to Dongpu is accepted.
+2.For the path from Walami to Dafen, please evaluate the risks and take particular care when passing the following places: the bridge at 16.3k and 20.1k were damaged; four collapse sections from 31k-point to 33k-point; the foundation of the stair-bridge at 32.9k was affected by erosion; the 38k upward detour point is extremely steep (about 70 degrees).
+3.Along Batongguan Traversing Trail, there are sections that are difficult to pass, such as Tuge Landslide Zone, collapses from below, unclear paths, cliffs, and damaged ancient bridges. It is therefore suggested for visitors to evaluate all the potential risks in advance. Visitors are expected to make sure the hike is well-prepared, including but not limited to evaluate the physical fitness, the capability to read the map, choose the trail, use gears that requiring special techniques, and handle the possible dangers, as well as the emergency contact and back-up plan, etc. It is not suggested to attempt to pass sections that are too dangerous or difficult to pass. Safety First.	
+4.The section from Guangaoping to Batongguan Grassland is affected by trail collapse. Please take the upward detour.
+5.Be aware of the subgrade erosion, fallen trees and collapse path between 2.2km to 12.8km on the trail.
+6.Please upload a hiking plan when you submitting the application.
+
+<a href=""https://www.ysnp.gov.tw/en/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[Important Notes]</a>
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Conditions]</a>","1.本ルートは佳心から東埔までの入園の申し込みができます。
+2.瓦拉米から大分線路まで16.3Kの橋の崩壊、20.1Kの橋の崩壊、31Kから33Kまで四つの道路崩れがあります、32.9Kの階段橋の路盤が被害を受け、38Kの渓谷道路は約70度の急な傾斜となります。以上の道路状況をリスクを評価し、通過する際に十分にご注意ください。
+3.八通関越嶺ルートは崖崩れの原因で、いくつ道路崩れ、明確な道のない、断崖と橋の崩壊などの線路はリスクがあるため、十分に評価しください。八通関越嶺ルートに入る場合、全チームメンバーは自らとチームの安全に責任を背負って登山の準備を掌握すべきことです。例えば、体力、技術訓練、ルートの判断、危機管理能力、最善な滞留と後援計画などの安全支度の準備。入園する際、無理しないでください。危険や困難の場合は安全第一のルールで無理に渡らないでください。
+4.觀高坪から八通関草原までの道路崩れのため、高遶から通過してください。
+5.東埔から八通関步道まで2.2K~12.8Kに通過する時落石、崖崩れ、土壌侵食、橋の崩壊、木の落下などの現象をご注意ください。
+6.登山計画書をアップロードください。
+
+<a href=""https://www.ysnp.gov.tw/jp/Trail/e0befc9d-0707-4ce0-b530-6bde521570f9?Tab=5"" target=""_blank"">[登山ルート状況]</a>
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"
+128,36,C951CDCD-B75A-46B9-8002-8EF952EC95FD,1~15天(其他路線),1 ~15 Days Other Trails(Please upload a complete mountaineering plan),1~15天 その他の登山ルート(完全な登山計画をアップロードしてください),NULL,2,0,1090,1,15,0,1,0,NULL,NULL,20240807134155330.jpg,,,"一、請上傳登山計畫書。
+二、如屬各主路線既定路線行程，將退件請自行選擇既定路線重新申請排隊預約。玉山線其他山峰單日往返請選擇玉山線單日往返申請；八通關玉山線請選擇八通關線申請；南一段行程請選擇庫哈諾辛山/關山線申請；戒茂斯位於國家公園外不需辦理入園申請，戒茂斯攀登新康山線或南二段線，請選擇新康山線或南二段線申請。
+三、其他路線因非屬既定路線，未規劃有登山步道、指示牌示、安全及住宿設施等人為建物，且為本處非例行性巡查之區域。入園前應自行檢視相關登山行前準備，如體能及技術訓練、路徑判讀及危機處理能力、完善的留守及後援計畫等安全準備事宜。入園時應量力而為，山區路況常面臨崩坍等困難地形、落石或野生物等自然風險，如遇危險或困難，請勿強行通過，並以安全第一為原則，行進間或宿營時應避免破壞原有自然生態環境。另為保存生態保護區原有自然生態環境，其他路線將不因登山活動需求增設相關設施及維護為原則。
+四、如有本園區域外行程，依進入本園生態保護區日期前2個月為可申請日期，如未依申請期限而有提前申請，將以電子郵件退件通知依申請期限重新提出入園申請。
+<a href=""https://www.ysnp.gov.tw/Highway/C001300"" target=""_blank"">[園區路況]</a>","1.Please upload a hiking plan when you submitting the application.
+2.“Other Trail” refer to trails that are not well-established or planed. There's no warning/direction sign, safety facility, nor accommodation, and these trails are regularly patrolled or inspected. It is strongly encouraged for hikers to make sure the hike is well-prepared, including but not limited to evaluate the physical fitness, the capability to read the map, choose the trail, use gears that requiring special techniques, and handle the possible dangers, as well as the emergency contact and back-up plan, etc. It is not suggested to attempt to pass sections that are too dangerous or difficult to pass. Safety first. Try to minimize your impact when hiking or camping. To protect the environment of the restricted area, there will not be additional facilities installed for the demand for hiking activities.
+
+<a href=""https://www.ysnp.gov.tw/en/Highway/C001300"" target=""_blank"">[Road Condition]</a>","1.まず、アップロード後に登山計画書を申請してください。
+2.その他のルートの確立は計画されておらず、ハイキングコース、標識看板、安全施設および宿泊施設などの計画的な人工構造物はなく、日常的でない検査区域もあります。 公園に入る前に、物理的および技術的なトレーニング、パスの解釈と危機管理能力、完璧な滞在計画とバックアップの準備を含む登山のための完璧な準備があるはずです。 危険や困難にさらされている場合は、それを無理せずに安全の原則に従うようにしてください行進中やキャンプ中にもともとの自然の生態環境を破壊しないようにしてください。 さらに、生態保護区域の本来の自然の生態環境を保護するために、他の経路は登山活動の要件に基づいていないでしょう。
+<a href=""https://www.ysnp.gov.tw/jp/Highway/C001300"" target=""_blank"">[道路状況]</a>"

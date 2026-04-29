@@ -1,0 +1,33 @@
+﻿f_id,OrgID,name,name_en,name_jp,source_guid,chk,pjtype,ord
+1,C951CDCD-B75A-46B9-8002-8EF952EC95FD,玉山線,Yushan Trails,玉山ルート,NULL,2,0,100
+2,C951CDCD-B75A-46B9-8002-8EF952EC95FD,南橫三山-庫哈諾辛山/關山線,Kuhanousin Mountain Trail/Guan Mountain Trail,南橫三山ルート-庫哈諾辛山/関山ルート,NULL,2,0,200
+3,C951CDCD-B75A-46B9-8002-8EF952EC95FD,瓦拉米線,Walami Trail,瓦拉米ルート,NULL,2,0,900
+4,E6DD4652-2D37-4346-8F5D-6E538353E0C2,雪山主峰線,Xue Mountain Trail,"雪主ルート ",NULL,2,0,1
+5,E6DD4652-2D37-4346-8F5D-6E538353E0C2,志佳陽線,"Zhijiayang Trail ",志佳陽ルート,NULL,2,0,4
+6,E6DD4652-2D37-4346-8F5D-6E538353E0C2,"雪劍線 ","Xuejian Trail ","雪剣ルート ",NULL,2,0,5
+7,E6DD4652-2D37-4346-8F5D-6E538353E0C2,"雪山西稜線 ",West Xue Trail,雪山西稜ルート,NULL,2,0,6
+8,E6DD4652-2D37-4346-8F5D-6E538353E0C2,武陵四秀線,"Wuling Quadruple Mountains Trail ","四秀ルート ",NULL,2,0,2
+9,E6DD4652-2D37-4346-8F5D-6E538353E0C2,"大霸線  ",Daba Peaks Trail,大霸ルート,NULL,2,0,3
+10,E6DD4652-2D37-4346-8F5D-6E538353E0C2,"大霸北稜線 ","North Dabajian Trail ","大霸北稜ルート ",NULL,2,0,8
+11,E6DD4652-2D37-4346-8F5D-6E538353E0C2,"聖稜線  ",Shengleng Trail,聖稜ルート,NULL,2,0,7
+15,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,奇萊,Qilai,Qilai,NULL,2,0,1
+16,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,南湖(南湖大山、中央尖山、北一段),Nanhu (Mt. Nanhu/Mt. Zhongyangjian/North Section 1),Nanhu (Mt. Nanhu/Mt. Zhongyangjian/North Section 1),NULL,2,0,2
+17,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,北一段縱走北二段,North Sections 1 to 2 of Central Mt. Range,North Sections 1 to 2 of Central Mt. Range,NULL,1,0,3
+18,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,北二段（鬼門關斷崖）,North Section 2 of Central Mt. Range (Guimenguan Cliff),North Section 2 of Central Mt. Range (Guimenguan Cliff),NULL,2,0,4
+19,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,閂山鈴鳴山,Mt. Shuan - Mt. Lingming,Mt. Shuan - Mt. Lingming,NULL,2,0,5
+20,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,閂山單攻,Mt. Shuan Single Day Ascent,Mt. Shuan Single Day Ascent,NULL,2,0,6
+21,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,畢祿縱走羊頭,Mt. Bilu - Mt. Yangtou,Mt. Bilu - Mt. Yangtou,NULL,2,0,7
+22,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,畢祿山,Mt. Bilu Single Day Ascent,Mt. Bilu Single Day Ascent,NULL,2,0,8
+23,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,羊頭山單攻,Mt. Yangtou Single Day Ascent,Mt. Yangtou Single Day Ascent,NULL,2,0,9
+24,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,清水山,Mt. Qingshui,Mt. Qingshui,NULL,2,0,10
+26,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,錐麓古道,Zhuilu Old Road,Zhuilu Old Road,NULL,2,0,11
+27,C951CDCD-B75A-46B9-8002-8EF952EC95FD,新康山線,Sinkang Trail,新康山ルート,NULL,2,0,700
+28,C951CDCD-B75A-46B9-8002-8EF952EC95FD,八通關線,Batongguan Trail,八通関ルート,NULL,2,0,300
+29,C951CDCD-B75A-46B9-8002-8EF952EC95FD,南二段線,South Section 2 of Central Mountains Trail,南二段ルート,NULL,2,0,400
+30,C951CDCD-B75A-46B9-8002-8EF952EC95FD,秀姑巒線,Siouguluan Trail,秀姑巒ルート,NULL,2,0,500
+31,C951CDCD-B75A-46B9-8002-8EF952EC95FD,馬博拉斯橫斷線,Mabolasih Trail,馬博拉斯橫斷ルート,NULL,2,0,600
+32,C951CDCD-B75A-46B9-8002-8EF952EC95FD,八通關越嶺線,Batongguan Traversing Trail,八通関越嶺ルート,NULL,2,0,800
+33,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,其他,Other,Other,NULL,2,0,12
+35,E6DD4652-2D37-4346-8F5D-6E538353E0C2,其他路線,Other,Other,NULL,2,0,9
+36,C951CDCD-B75A-46B9-8002-8EF952EC95FD,其他路線,Other Trails,その他の登山ルート,NULL,2,0,1000
+37,105E956F-D8DA-49F7-A9B7-3AEFDDA88A12,屏風避難山屋申請,Pingfong Cabin,Pingfong Cabin,NULL,2,0,0

@@ -1,0 +1,738 @@
+@import url("../design_system/colors_and_type.css");
+
+/* ============================================================
+   Forest Camp — 山屋住宿申請流程共用樣式
+   ============================================================ */
+
+/* ── 步驟條：alias th-stepper，保持 class 名稱相容 ── */
+.fc-stepper { /* 沿用 th-stepper 所有樣式，僅覆寫間距 */
+  display: flex;
+  align-items: center;
+  margin: 24px 0 32px;
+  padding: 20px 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  overflow-x: auto;
+}
+.fc-step          { display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 60px; flex-shrink: 0; }
+.fc-step-dot      { width: 32px; height: 32px; border-radius: 9999px; border: 2px solid var(--slate-300); background: var(--bg-2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--fg-4); transition: all 0.2s; }
+.fc-step-label    { font-size: var(--fs-xxs); color: var(--fg-4); font-weight: 500; white-space: nowrap; }
+.fc-step-line     { flex: 1; height: 2px; background: var(--slate-200); margin-bottom: 26px; min-width: 12px; transition: background 0.2s; flex-shrink: 0; }
+.fc-step-line.is-done                { background: var(--national-700); }
+.fc-step.is-current .fc-step-dot    { border-color: var(--national-700); background: var(--national-700); color: #fff; box-shadow: 0 0 0 4px rgba(88,122,104,0.15); }
+.fc-step.is-current .fc-step-label  { color: var(--national-700); font-weight: 700; }
+.fc-step.is-done .fc-step-dot       { border-color: var(--national-700); background: var(--bg-mist-2); color: var(--national-700); }
+.fc-step.is-done .fc-step-label     { color: var(--slate-600); }
+
+/* ── 版面 ── */
+.fc-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .fc-layout { grid-template-columns: 1fr; }
+  .fc-aside { order: -1; }
+}
+
+/* ── 山屋資訊卡 ── */
+.fc-cabin-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-mist);
+  border: 1px solid var(--bg-mist-3);
+  border-radius: var(--r-lg);
+  margin-bottom: 24px;
+}
+
+.fc-cabin-thumb {
+  width: 100px;
+  height: 72px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fc-cabin-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fc-cabin-name {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin-bottom: 6px;
+}
+
+.fc-cabin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  margin-bottom: 8px;
+}
+
+.fc-cabin-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fc-cabin-meta i { font-size: 13px; }
+
+.fc-cabin-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--bg-1);
+  border: 1px solid var(--bg-mist-3);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xxs);
+  color: var(--park-forestry);
+  font-weight: 600;
+}
+
+/* ── 區塊標題 ── */
+.fc-section {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh-sm);
+}
+
+.fc-section-title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc-section-title i {
+  color: var(--park-forestry);
+  font-size: 17px;
+}
+
+/* ── 表單元素 ── */
+.fc-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 560px) {
+  .fc-form-grid { grid-template-columns: 1fr; }
+}
+
+.fc-field { display: flex; flex-direction: column; gap: 6px; }
+
+.fc-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+}
+
+.fc-input {
+  height: 42px;
+  padding: 0 12px;
+  border: 1.5px solid var(--slate-300);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.fc-input:focus { border-color: var(--national-700); }
+
+.fc-input-readonly {
+  display: flex;
+  align-items: center;
+  background: var(--bg-2);
+  color: var(--fg-3);
+  cursor: default;
+  user-select: none;
+}
+
+.fc-field-hint {
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+}
+
+/* ── 數量增減器 ── */
+.fc-stepper-input {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--slate-300);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  height: 42px;
+}
+
+.fc-stepper-btn {
+  width: 42px;
+  height: 100%;
+  border: none;
+  background: var(--bg-2);
+  color: var(--fg-2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fc-stepper-btn:hover:not(:disabled) { background: var(--bg-mist-2); color: var(--national-700); }
+.fc-stepper-btn:disabled { color: var(--fg-4); cursor: default; }
+
+.fc-stepper-val {
+  flex: 1;
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+/* ── 查詢按鈕 ── */
+.fc-query-btn {
+  width: 100%;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── 可用狀態列 ── */
+.fc-avail-section { border-color: var(--bg-mist-3); background: var(--bg-mist); }
+.fc-avail-section .fc-section-title { border-bottom-color: var(--bg-mist-3); }
+
+.fc-avail-row {
+  padding: 16px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  margin-bottom: 12px;
+}
+
+.fc-avail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fc-avail-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  background: var(--bg-mist-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--park-forestry);
+  font-size: 14px;
+}
+
+.fc-avail-name {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+  flex: 1;
+}
+
+.fc-avail-status {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.fc-avail-count {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+
+.fc-avail-bar-wrap {
+  height: 6px;
+  background: var(--slate-100);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.fc-avail-bar {
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width 0.4s ease;
+}
+
+.fc-avail-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+}
+
+.fc-avail-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--info-bg);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--r-md);
+  font-size: var(--fs-xs);
+  color: var(--info-fg);
+  margin-top: 4px;
+}
+
+.fc-avail-note i { margin-top: 1px; flex-shrink: 0; }
+
+/* ── 右欄卡片 ── */
+.fc-aside { display: flex; flex-direction: column; gap: 16px; }
+
+.fc-notice-card, .fc-price-card {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+}
+
+.fc-notice-head, .fc-price-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: var(--bg-mist);
+  border-bottom: 1px solid var(--bg-mist-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.fc-notice-head i, .fc-price-head i {
+  color: var(--park-forestry);
+  font-size: 16px;
+}
+
+.fc-notice-list {
+  list-style: none;
+  padding: 14px 18px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fc-notice-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+  line-height: var(--lh-loose);
+}
+
+.fc-notice-list li i {
+  color: var(--park-forestry);
+  font-size: 10px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.fc-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 18px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc-price-row:last-of-type { border-bottom: none; }
+
+.fc-price-note {
+  padding: 8px 18px 14px;
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+  font-style: italic;
+}
+
+/* ── 底部操作列：alias th-footbar ── */
+.fc-footbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  margin-top: 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-card);
+  position: sticky;
+  bottom: 16px;
+}
+
+/* ============================================================
+   Step 2 — 行程計畫
+   ============================================================ */
+
+/* 行程摘要 banner */
+.fc2-summary-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 14px 20px;
+  background: var(--bg-mist);
+  border: 1px solid var(--bg-mist-3);
+  border-radius: var(--r-lg);
+  margin-bottom: 20px;
+}
+
+.fc2-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--fg-1);
+  padding: 0 16px;
+}
+
+.fc2-summary-item:first-child { padding-left: 0; }
+.fc2-summary-item:last-child  { padding-right: 0; }
+
+.fc2-summary-item i {
+  color: var(--park-forestry);
+  font-size: 16px;
+}
+
+.fc2-summary-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--bg-mist-3);
+  flex-shrink: 0;
+}
+
+/* 區塊描述文字 */
+.fc2-section-desc {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  margin: -10px 0 16px;
+  line-height: var(--lh-loose);
+}
+
+/* 每晚住宿區塊 */
+.fc2-night-block {
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.fc2-night-block.is-filled {
+  border-color: var(--national-700);
+}
+
+.fc2-night-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.fc2-night-block.is-filled .fc2-night-head {
+  background: var(--bg-mist);
+  border-bottom-color: var(--bg-mist-3);
+}
+
+.fc2-night-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: var(--national-700);
+  color: #fff;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+}
+
+.fc2-night-date {
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+  font-weight: 600;
+}
+
+.fc2-night-ok {
+  margin-left: auto;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  color: var(--success-fg);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fc2-night-rows {
+  padding: 4px 0;
+}
+
+.fc2-facility-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc2-facility-row:last-child { border-bottom: none; }
+
+.fc2-facility-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fc2-facility-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: var(--bg-mist-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--park-forestry);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.fc2-facility-name {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.fc2-facility-price {
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+  margin-top: 2px;
+}
+
+.fc2-facility-subtotal {
+  margin-left: 6px;
+  color: var(--park-forestry);
+  font-weight: 700;
+}
+
+/* 付款方式 */
+.fc2-payment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 560px) {
+  .fc2-payment-grid { grid-template-columns: 1fr; }
+}
+
+.fc2-payment-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--bg-1);
+}
+
+.fc2-payment-card:hover {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+}
+
+.fc2-payment-card.is-selected {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.12);
+}
+
+.fc2-payment-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-md);
+  background: var(--bg-mist-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--park-forestry);
+  font-size: 18px;
+}
+
+.fc2-payment-card.is-selected .fc2-payment-icon {
+  background: var(--national-700);
+  color: #fff;
+}
+
+.fc2-payment-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.fc2-payment-note {
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+  line-height: 1.5;
+}
+
+.fc2-payment-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--national-700);
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 費用試算卡 */
+.fc2-cost-card {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+}
+
+.fc2-cost-body {
+  padding: 4px 0;
+}
+
+.fc2-cost-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc2-cost-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+}
+
+.fc2-cost-label i { color: var(--park-forestry); font-size: 14px; }
+
+.fc2-cost-amount {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+/* 每晚明細折疊 */
+.fc2-cost-detail {
+  padding: 8px 18px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc2-cost-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+  padding: 3px 0;
+}
+
+.fc2-cost-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-top: 2px solid var(--slate-200);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.fc2-cost-total-num {
+  color: var(--national-700);
+  font-size: var(--fs-lg);
+}
+
+.fc2-cost-note {
+  padding: 0 18px 14px;
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+  font-style: italic;
+}
+
+/* 驗證提示 */
+.fc2-validation-tips {
+  background: var(--warning-bg);
+  border: 1px solid #fde68a;
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+}
+
+.fc2-vt-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--warning-fg);
+  margin-bottom: 10px;
+}
+
+.fc2-vt-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: var(--fs-xs);
+  color: var(--warning-fg);
+  padding: 4px 0;
+}
+
+.fc2-vt-item i { font-size: 9px; margin-top: 4px; flex-shrink: 0; }
