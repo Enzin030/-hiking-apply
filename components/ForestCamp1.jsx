@@ -96,9 +96,23 @@ function FcStepper({ current }) {
 }
 
 // 簡易月曆日期選擇器
+function formatDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function addDaysToDateValue(dateValue, days) {
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() + days);
+  return formatDateInputValue(date);
+}
+
 function DatePicker({ value, onChange, label, min }) {
   const today = new Date();
-  const minDate = min || today.toISOString().slice(0, 10);
+  const minDate = min || formatDateInputValue(today);
   return (
     <div className="fc-field">
       <label className="fc-label">{label}</label>
@@ -155,9 +169,9 @@ function ForestCamp1App() {
   const cabin = CABIN_DATA[routeId] || CABIN_DATA["jiaming"];
 
   const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = formatDateInputValue(today);
 
-  const [startDate, setStartDate] = React.useState("");
+  const [startDate, setStartDate] = React.useState(todayStr);
   const [nights, setNights] = React.useState(cabin.minDays);
   const [headcount, setHeadcount] = React.useState(4);
   const [queried, setQueried] = React.useState(false);
@@ -165,9 +179,7 @@ function ForestCamp1App() {
   // 結束日（顯示用）
   const endDate = React.useMemo(() => {
     if (!startDate) return "";
-    const d = new Date(startDate);
-    d.setDate(d.getDate() + nights);
-    return d.toISOString().slice(0, 10);
+    return addDaysToDateValue(startDate, nights);
   }, [startDate, nights]);
 
   const canQuery = !!startDate && headcount >= 1;
@@ -311,7 +323,7 @@ function ForestCamp1App() {
 
                   <div className="fc-avail-note">
                     <i className="ph-bold ph-info"></i>
-                    以上為即時查詢結果（原型模擬），實際名額以系統確認為準。床位/營位數量將於下一步選擇。
+                    以上為即時查詢結果，實際名額以申請後為準。床位/營位數量將於下一步選擇。
                   </div>
                 </div>
               )}

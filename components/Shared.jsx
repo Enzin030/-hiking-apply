@@ -7,7 +7,7 @@ function Header({ active }) {
         <div className="flex justify-between items-center">
           <div className="flex items-center shrink-0 cursor-pointer hover:opacity-90 transition" onClick={() => window.location.href = "index.html"}>
             <img src="assets/logo.png" alt="Logo" className="h-16 w-auto mr-3" />
-            <h1 className="font-serif font-black text-2xl text-slate-800 tracking-wide mt-1">
+            <h1 className="font-serif font-extrabold text-2xl text-slate-800 tracking-wide mt-1">
               <span className="text-3xl">臺灣<span className="text-[#587a68]">登山申請</span></span>一站式服務網
             </h1>
           </div>
