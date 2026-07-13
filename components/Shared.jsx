@@ -31,7 +31,7 @@ function Header({ active }) {
 
             <nav className="flex items-center gap-6">
               {[
-                { key: "bulletin", label: "公佈欄", url: "index.html" },
+                { key: "bulletin", label: "公布欄", url: "index.html" },
                 { key: "apply",    label: "登山申請", url: "apply-1.html" },
                 { key: "notice",   label: "登山須知", url: "#" },
                 { key: "status",   label: "登山路線開放狀態", url: "#" },
