@@ -338,6 +338,102 @@ a { color: inherit; }
   font-size: 12px; color: var(--slate-400); text-align: center;
 }
 
+/* ============ 首頁 HERO — 背景照片（放置參考 code.html）============ */
+.th-home-hero { background: var(--bg-3); }
+.th-hero-overlay {
+  background: linear-gradient(180deg, rgba(247, 250, 248, 0.4) 0%, rgba(247, 250, 248, 0.1) 100%);
+  pointer-events: none;
+}
+
+/* ============ MARQUEE — 首頁膠囊式跑馬燈（寬度由 Tailwind max-w-6xl 對齊卡片）============ */
+.th-marquee-wrap { padding-top: 4px; }
+.th-marquee {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 9999px;
+  box-shadow: var(--sh-sm);
+  padding: 4px 8px;
+}
+.th-marquee-tag {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--national-700);
+  font-size: 20px;
+}
+.th-marquee-viewport { flex: 1; overflow: hidden; display: flex; align-items: center; }
+.th-marquee-gap { display: inline-block; flex-shrink: 0; width: 40vw; }
+.th-marquee-track {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  will-change: transform;
+  animation: th-marquee-scroll 32s linear infinite;
+}
+.th-marquee-track a {
+  display: inline-flex; align-items: center;
+  color: var(--fg-1); text-decoration: none;
+  font-size: 15px; font-weight: 500; line-height: 1;
+  padding: 0 32px 0 0;
+}
+.th-marquee-track a:hover { color: var(--national-700); text-decoration: underline; }
+@keyframes th-marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+/* 滑鼠移入或鍵盤聚焦時暫停，方便閱讀 */
+.th-marquee:hover .th-marquee-track,
+.th-marquee:focus-within .th-marquee-track { animation-play-state: paused; }
+.th-marquee-more {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--national-700); color: #fff;
+  padding: 7px 16px; border-radius: 9999px;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  white-space: nowrap;
+}
+.th-marquee-more:hover { background: var(--national-700-hover); }
+@media (prefers-reduced-motion: reduce) {
+  .th-marquee-track { animation: none; }
+}
+@media (max-width: 600px) {
+  .th-marquee-wrap { padding: 4px 12px 0; }
+  .th-marquee { gap: 8px; }
+}
+
+/* ============ 首頁專用置中頁首（僅 index.html；申請頁沿用 .th-header）============ */
+.th-home-header { color: #1f2d26; }
+.th-home-header a, .th-home-header button {
+  color: #1f2d26; background: none; border: none; padding: 0;
+  text-decoration: none; font-family: inherit; cursor: pointer;
+}
+.th-home-wordmark { color: var(--fg-1); }
+.th-home-wordmark .th-accent { color: var(--national-700); }
+.th-home-sep { display: inline-block; width: 1px; height: 16px; background: rgba(31,45,38,0.3); }
+.th-home-nav-active { color: var(--national-700) !important; position: relative; }
+.th-home-nav-active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -6px;
+  height: 3px; background: var(--national-700); border-radius: 2px;
+}
+
+/* ============ 首頁面板 + 圓形功能鈕 ============ */
+.th-home-panel {
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: var(--sh-lg);
+}
+.th-tile .th-tile-ic { transition: transform .25s cubic-bezier(0.34,1.56,0.64,1), box-shadow .25s, background .25s, border-color .25s; }
+.th-tile:hover .th-tile-ic { transform: translateY(-3px) scale(1.06); box-shadow: var(--sh-md); }
+.th-tile-green:hover .th-tile-ic { background: var(--national-100); border-color: var(--national-200); }
+.th-tile-blue:hover .th-tile-ic { background: #dbe7ed; border-color: #b6cbd3; }
+
+/* ============ 首頁 — 通用 focus 可見（無障礙 AA）============ */
+.th-focusable:focus-visible {
+  outline: 2px solid var(--national-700);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 900px) {
   .th-header-inner { flex-wrap: wrap; gap: 12px; }

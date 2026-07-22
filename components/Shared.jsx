@@ -112,7 +112,7 @@ function Footer() {
           <div className="w-full lg:max-w-[65%] flex flex-col sm:flex-row gap-6">
             <div className="shrink-0">
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <img src="assets/logo.png" alt="Logo" className="h-16 w-auto" />
+                <img src="assets/np-logo.png" alt="國家公園署" className="h-16 w-auto" />
               </div>
             </div>
             <div className="w-full">
