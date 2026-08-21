@@ -25,3 +25,12 @@ __pycache__/
 node_modules/
 .env
 .env.local
+
+# Obsidian：00_Obsidian/ 全部不進版控。
+#   tasks/、wbs/ 是指向 D 槽共用知識庫的 junction（卡片實體在知識庫，跨專案共用），
+#   attachments/、Excalidraw/ 是本機 vault 用的附件與畫布。
+#   *.base 是本地檢視設定。2026-08-21 起舊名「看板」改為 tasks，兩種名稱都擋。
+00_Obsidian/
+# vault 設定由 00_Obsidian-共用設定 的 Sync-ObsidianConfig.ps1 管理，不進版控
+.obsidian/
+*.base
