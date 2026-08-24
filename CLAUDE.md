@@ -25,7 +25,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 工作規則正本（語言、執行紀律、驗證程序、資料夾慣例） | `C:\Users\enzin.GIS\.agents\institution\core.md`（session 自動載入，不必重讀） |
 | 領域詞彙、角色、業務規則 | `D:\OneDrive - 天眼衛星科技股份有限公司\_knowledge\projects\國家公園入園擴充\index.md`（**正本**） |
 | 架構決策紀錄 | 根目錄 `decisions.md`（一行一筆） |
-| 需求與規劃文件 | `docs/`：`PRD.md`、`nationalpark-apply-db-request.md`、`nationalpark-apply-implementation-plan.md`、`儀錶板.md` 等 |
+| 規格文件 | `02_Spec/`（尚無定稿） |
+| 早期規劃草稿（PRD、實作方針、DB 清單、UI/UX 提案、簡報稿） | `.scratch/docs-舊規劃/`——**不進版控**，僅供回查 |
 | 雛形（頁面、元件、樣式、圖檔） | `05_Prototype/` |
 | 來源資料、機關提供檔案 | `01_Raw_Input/` |
 | 規格書 | `02_Spec/` |
