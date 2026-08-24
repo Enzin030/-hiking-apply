@@ -1,0 +1,6 @@
+- [2026-08-24] 資料夾層級比照 `115嘉市災管/嘉市災管`：外層 `115登山一站式改版/` 只當容器（放 `00_Obsidian/`、`tasks.base` 與 OneDrive 共用的「楊庚翊」的檔案資料夾），`登山一站式/` 成為 repo root — 機關端往來文件是 OneDrive 共用資料夾（含 `desktop.ini`），不該被 repo 追蹤，把 repo 根往內收一層可從結構上避免。
+- [2026-08-24] git dir 分離到 `D:\git-dirs\登山一站式.git`，repo 內 `.git` 改為 gitdir 指標檔 — OneDrive 同步 `.git` 目錄會產生 `config-LAPTOP-*`、`index-LAPTOP-*` 之類的衝突副本（本次遷移前已出現），把 git dir 移出同步範圍可根除。
+- [2026-08-24] 舊雛形 `frontend/`、簡報產生器 `pptx_gen/`（含 node_modules）、舊規範 `gemini.md` 移入 `.scratch/`（junction 到 `D:\scratch-dirs\登山一站式`）— 這三者已非現行工作面，`.gitignore` 原本就註明「舊雛型先跳過，不追蹤」；`gemini.md` 的有效規則（繁中 commit、禁 Emoji、FontAwesome）先併入 `CLAUDE.md` 再移走，不直接丟棄。
+- [2026-08-24] `登山一站式.rp`（Axure 原始檔，65MB）移入 `01_Raw_Input/` 並維持版控 — 歷史裡已有這個 blob，斷追蹤不會讓 `.git` 變小，反而失去誤刪偵測。
+- [2026-08-24] `raw/*.csv` 維持在 repo 根的 `raw/`，不併入 `01_Raw_Input/` — 它們是 `components/RouteData.jsx`、`components/ConsentData.generated.jsx` 的 codegen 來源（見兩檔開頭註解），屬程式碼相依，不是機關提供的原始素材。
+- [2026-08-24] 移除內層 `登山一站式/.git`（master@511dc3c）與外層 `inner-ui` remote — 該歷史已由 1e43775「整合登山一站式內層 Git 歷史」併入，511dc3c 即外層 `HEAD~2`，且無其他分支或 stash；`登山一站式` 成為 repo root 後 `inner-ui` 會指向自己。
