@@ -52,6 +52,8 @@
 
 我已在專案中建立了 `frontend/prototype/` 資料夾，內含基於上述規劃的 HTML 與 CSS 檔案。您可以直接以瀏覽器開啟 `frontend/prototype/dashboard.html` 進行體驗。
 
+> 2026-08-24 資料夾重整：`frontend/` 已移出版控，現位於 `.scratch/frontend-舊雛形/`，上述路徑請改讀 `.scratch/frontend-舊雛形/prototype/dashboard.html`。
+
 該雛形包含：
 
 - 極簡風格的左右分欄 (Sidebar & Main Content)

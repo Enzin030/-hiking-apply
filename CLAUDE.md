@@ -52,8 +52,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 重要限制
 
 - **不要引入 npm 或打包工具**，本專案刻意維持零 build。
-- `raw/*.csv` 是 `components/RouteData.jsx`、`ConsentData.generated.jsx` 的生成來源，
-  改資料要連帶重新產生對應 jsx，不要只改一邊。
+- `raw/*.csv` 是 `components/RouteData.jsx`、`ConsentData.generated.jsx` 的生成來源
+  （見兩檔開頭註解），改資料要連帶更新對應 jsx，不要只改一邊。
+  **repo 內目前沒有生成腳本**，產生方式待確認；補上腳本時請放 `scripts/`。
 - `01_Raw_Input/` 為機關提供的原始素材，**唯讀，不得修改**。
 - 分析產物、臨時 HTML、圖檔一律放 `.scratch/outputs/`（junction 到 `D:\scratch-dirs\登山一站式`），
   不在 repo 根目錄新增輸出資料夾。
