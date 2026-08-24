@@ -1,4 +1,4 @@
-﻿/* Generated from 01_Raw_Input/raw/同意書條文.csv and 01_Raw_Input/raw/管理機關.csv.
+﻿/* Generated from ../../01_Raw_Input/raw/同意書條文.csv and ../../01_Raw_Input/raw/管理機關.csv.
  * Source model: attention + EIP_Core_Organization.
  */
 

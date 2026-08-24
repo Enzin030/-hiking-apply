@@ -31,7 +31,7 @@
 - React 18 UMD ＋ `@babel/standalone` 瀏覽器端轉譯 JSX，無 build、無 npm
 - Tailwind CSS CDN ＋ 各頁 CSS（`styles/`）、`design_system/colors_and_type.css`
 - FontAwesome 6、Phosphor Icons；Noto Sans TC / Noto Serif TC
-- 頁面即檔案（`index.html`、`apply-1.html` …），無路由框架
+- 頁面即檔案（`05_Prototype/index.html`、`apply-1.html` …），無路由框架
 
 ---
 

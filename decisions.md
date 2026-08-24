@@ -4,3 +4,4 @@
 - [2026-08-24] `登山一站式.rp`（Axure 原始檔，65MB）移入 `01_Raw_Input/` 並維持版控 — 歷史裡已有這個 blob，斷追蹤不會讓 `.git` 變小，反而失去誤刪偵測。
 - [2026-08-24] `raw/*.csv` 維持在 repo 根的 `raw/`，不併入 `01_Raw_Input/` — 它們是 `components/RouteData.jsx`、`components/ConsentData.generated.jsx` 的 codegen 來源（見兩檔開頭註解），屬程式碼相依，不是機關提供的原始素材。
 - [2026-08-24] 移除內層 `登山一站式/.git`（master@511dc3c）與外層 `inner-ui` remote — 該歷史已由 1e43775「整合登山一站式內層 Git 歷史」併入，511dc3c 即外層 `HEAD~2`，且無其他分支或 stash；`登山一站式` 成為 repo root 後 `inner-ui` 會指向自己。
+- [2026-08-24] 雛形檔案（`index.html`、`apply-*.html`、`forest-camp-*.html`、`assets/`、`components/`、`styles/`、`design_system/`、`template/`）全部收進 `05_Prototype/`，repo 根目錄只留文件與資料夾骨架 — 比照 `115嘉市災管/嘉市災管/05_Prototype` 的作法，讓根目錄一眼看得出「哪些是交付文件、哪些是雛形」；整組一起搬，頁面之間的相對路徑不受影響（已用瀏覽器實跑 index／apply-1／forest-camp-1 驗證，無 404、無 console error）。

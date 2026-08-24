@@ -26,6 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 領域詞彙、角色、業務規則 | `D:\OneDrive - 天眼衛星科技股份有限公司\_knowledge\projects\國家公園入園擴充\index.md`（**正本**） |
 | 架構決策紀錄 | 根目錄 `decisions.md`（一行一筆） |
 | 需求與規劃文件 | `docs/`：`PRD.md`、`nationalpark-apply-db-request.md`、`nationalpark-apply-implementation-plan.md`、`儀錶板.md` 等 |
+| 雛形（頁面、元件、樣式、圖檔） | `05_Prototype/` |
 | 來源資料、機關提供檔案 | `01_Raw_Input/` |
 | 規格書 | `02_Spec/` |
 | 資料表結構 | `03_Schema/` |
@@ -33,11 +34,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 關鍵路徑
 
-- 入口：`index.html`；申請流程 `apply-1/2/3.html`；林場露營 `forest-camp-1/2.html`
-- React 元件（在瀏覽器內以 Babel 轉譯的 JSX）：`components/`
-- 樣式：`styles/`（每頁一支）＋ `design_system/colors_and_type.css`
-- 圖檔：`assets/`
-- codegen 來源資料：`01_Raw_Input/raw/*.csv` → `components/RouteData.jsx`、`components/ConsentData.generated.jsx`
+- 雛形一律放 `05_Prototype/`，repo 根目錄不再放頁面檔
+- 入口：`05_Prototype/index.html`；申請流程 `apply-1/2/3.html`；林場露營 `forest-camp-1/2.html`
+- React 元件（在瀏覽器內以 Babel 轉譯的 JSX）：`05_Prototype/components/`
+- 樣式：`05_Prototype/styles/`（每頁一支）＋ `05_Prototype/design_system/colors_and_type.css`
+- 圖檔：`05_Prototype/assets/`；頁面骨架範本：`05_Prototype/template/`
+- codegen 來源資料：`01_Raw_Input/raw/*.csv` → `05_Prototype/components/RouteData.jsx`、`ConsentData.generated.jsx`
 - Axure 原始檔：`01_Raw_Input/登山一站式.rp`
 - 交付 Word：`01_Raw_Input/臺灣登山申請一站式服務網.docx`
 - 暫存產物：`.scratch/outputs/`
@@ -52,7 +54,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 重要限制
 
 - **不要引入 npm 或打包工具**，本專案刻意維持零 build。
-- `01_Raw_Input/raw/*.csv` 是 `components/RouteData.jsx`、`ConsentData.generated.jsx` 的生成來源
+- `01_Raw_Input/raw/*.csv` 是 `05_Prototype/components/RouteData.jsx`、`ConsentData.generated.jsx` 的生成來源
   （見兩檔開頭註解），改資料要連帶更新對應 jsx，不要只改一邊。
   **repo 內目前沒有生成腳本**，產生方式待確認；補上腳本時請放 `scripts/`。
 - `01_Raw_Input/` 為原始素材區。機關提供的檔案（`.rp`、`.docx`）**唯讀，不得修改**；
@@ -68,7 +70,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 開啟與預覽
 
 ```bash
-# 任意靜態伺服器皆可，例如：
+# 任意靜態伺服器皆可，起在 05_Prototype 底下：
+cd 05_Prototype
 npx serve .
 python -m http.server 8080
 ```
