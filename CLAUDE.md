@@ -37,7 +37,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - React 元件（在瀏覽器內以 Babel 轉譯的 JSX）：`components/`
 - 樣式：`styles/`（每頁一支）＋ `design_system/colors_and_type.css`
 - 圖檔：`assets/`
-- codegen 來源資料：`raw/*.csv` → `components/RouteData.jsx`、`components/ConsentData.generated.jsx`
+- codegen 來源資料：`01_Raw_Input/raw/*.csv` → `components/RouteData.jsx`、`components/ConsentData.generated.jsx`
 - Axure 原始檔：`01_Raw_Input/登山一站式.rp`
 - 交付 Word：`01_Raw_Input/臺灣登山申請一站式服務網.docx`
 - 暫存產物：`.scratch/outputs/`
@@ -52,10 +52,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 重要限制
 
 - **不要引入 npm 或打包工具**，本專案刻意維持零 build。
-- `raw/*.csv` 是 `components/RouteData.jsx`、`ConsentData.generated.jsx` 的生成來源
+- `01_Raw_Input/raw/*.csv` 是 `components/RouteData.jsx`、`ConsentData.generated.jsx` 的生成來源
   （見兩檔開頭註解），改資料要連帶更新對應 jsx，不要只改一邊。
   **repo 內目前沒有生成腳本**，產生方式待確認；補上腳本時請放 `scripts/`。
-- `01_Raw_Input/` 為機關提供的原始素材，**唯讀，不得修改**。
+- `01_Raw_Input/` 為原始素材區。機關提供的檔案（`.rp`、`.docx`）**唯讀，不得修改**；
+  `01_Raw_Input/raw/*.csv` 是我方維護的 codegen 來源，可更新。
 - 分析產物、臨時 HTML、圖檔一律放 `.scratch/outputs/`（junction 到 `D:\scratch-dirs\登山一站式`），
   不在 repo 根目錄新增輸出資料夾。
 - 領域詞彙／業務規則的正本在知識庫，`CONTEXT.md` 只留路由——不要在兩處各存一份。

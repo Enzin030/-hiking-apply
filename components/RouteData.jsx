@@ -1,4 +1,4 @@
-/* Generated from raw/主路線.csv, raw/次路線.csv and raw/關聯申請.csv. */
+/* Generated from 01_Raw_Input/raw/主路線.csv, 01_Raw_Input/raw/次路線.csv and 01_Raw_Input/raw/關聯申請.csv. */
 
 const NATIONAL_PARK_ORG_IDS = {
   yushan: "C951CDCD-B75A-46B9-8002-8EF952EC95FD",

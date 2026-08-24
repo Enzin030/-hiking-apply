@@ -47,3 +47,8 @@ temp/
 *.base
 #   schema.base 例外：它是 03_Schema 的資料表結構檢視，屬專案交付資產，不是個人看板。
 !schema.base
+
+# Claudian（Obsidian 外掛）：帳號設定由 00_Obsidian-共用設定 管理，對話紀錄各 vault 自留
+.claudian/
+# Link-ObsidianConfig.ps1 建立連結前的原檔備份
+.obsidian-link-backup/
