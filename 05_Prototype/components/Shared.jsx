@@ -11,7 +11,42 @@ function TodoLink({ label, className = "", onDark }) {
   );
 }
 
+/*
+  主導覽項目。url 為 null＝本雛形尚未建置，一律出「待建置」標記，不給 `#` 假連結。
+*/
+const HEADER_NAV = [
+  { key: "bulletin", label: "公佈欄", url: "news.html" },
+  { key: "apply",    label: "登山申請", url: "apply-1.html" },
+  { key: "notice",   label: "登山須知", url: "notice.html" },
+  { key: "status",   label: "登山路線開放狀態", url: null },
+  { key: "campsite", label: "宿營地與床位查詢", url: null },
+  { key: "info",     label: "旅遊登山資訊", url: null },
+];
+
+/* 工具列項目（網站導覽／警特報／RSS），目前三項都未建置 */
+const HEADER_UTILITY = ["網站導覽", "警特報", "RSS"];
+
+/*
+  Header。
+  水平導覽只在 xl（≥1280px）以上呈現 —— 六個項目加上三個「待建置」標記後，
+  1280 容器內僅容得下一行 16px 文字，再窄就會把站名擠掉。
+  xl 以下改用收合選單（含手機，原本手機完全沒有導覽入口）。
+*/
 function Header({ active }) {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
+  // 開啟時鎖背景捲動，Esc 關閉；比照 ExperienceNav 的作法
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    document.addEventListener("keydown", onKey);
+    document.body.classList.add("th-noscroll");
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.classList.remove("th-noscroll");
+    };
+  }, [menuOpen]);
+
   return (
     <header className="w-full bg-white sticky top-0 z-50 shadow-[0_2px_10px_rgba(0,0,0,0.05)] border-b border-slate-100 py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,14 +65,15 @@ function Header({ active }) {
             </span>
           </a>
 
-          <div className="flex-col items-end gap-3 hidden lg:flex">
+          {/* 桌機（≥1280px）：工具列 ＋ 水平主導覽 */}
+          <div className="flex-col items-end gap-3 hidden xl:flex">
             <div className="flex items-center gap-3 text-[14px] text-slate-500">
-              <TodoLink label="網站導覽" />
-              <div className="w-[1px] h-3 bg-slate-300"></div>
-              <TodoLink label="警特報" />
-              <div className="w-[1px] h-3 bg-slate-300"></div>
-              <TodoLink label="RSS" />
-              <div className="w-[1px] h-3 bg-slate-300"></div>
+              {HEADER_UTILITY.map((label) => (
+                <React.Fragment key={label}>
+                  <TodoLink label={label} />
+                  <div className="w-[1px] h-3 bg-slate-300"></div>
+                </React.Fragment>
+              ))}
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5">
                 <i className="ph ph-globe text-[14px] relative top-[1px]"></i> 語言
               </button>
@@ -47,18 +83,9 @@ function Header({ active }) {
               </button>
             </div>
 
-            {/* 導覽字級由 18px 降為 16px：六個項目加上三個「待建置」標記後，18px 在
-                1280 容器內塞不下同一行（flex-wrap 為保險，不應真的觸發） */}
-            <nav className="flex items-center gap-4">
-              {/* url 為 null＝本雛形尚未建置，改出「待建置」標記，不給 `#` 假連結 */}
-              {[
-                { key: "bulletin", label: "公佈欄", url: "index.html" },
-                { key: "apply",    label: "登山申請", url: "apply-1.html" },
-                { key: "notice",   label: "登山須知", url: "notice.html" },
-                { key: "status",   label: "登山路線開放狀態", url: null },
-                { key: "campsite", label: "宿營地與床位查詢", url: null },
-                { key: "info",     label: "旅遊登山資訊", url: null },
-              ].map(({ key, label, url }) =>
+            {/* 導覽字級 16px：六個項目加三個「待建置」標記後，18px 在 1280 容器內塞不下同一行 */}
+            <nav className="flex items-center gap-4" aria-label="主要導覽">
+              {HEADER_NAV.map(({ key, label, url }) =>
                 url ? (
                   <a
                     key={key}
@@ -77,8 +104,57 @@ function Header({ active }) {
               )}
             </nav>
           </div>
+
+          {/* xl 以下：收合按鈕 */}
+          <button type="button"
+                  className="th-menubtn xl:hidden"
+                  onClick={() => setMenuOpen(true)}
+                  aria-haspopup="dialog" aria-expanded={menuOpen} aria-label="開啟選單">
+            <i className="ph-bold ph-list"></i>
+            <span>選單</span>
+          </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <div className="th-menumask" onClick={() => setMenuOpen(false)}>
+          <div className="th-menupanel" role="dialog" aria-modal="true" aria-label="網站選單"
+               onClick={(e) => e.stopPropagation()}>
+            <div className="th-menupanel-head">
+              <span>選單</span>
+              <button type="button" onClick={() => setMenuOpen(false)} aria-label="關閉選單">
+                <i className="ph-bold ph-x"></i>
+              </button>
+            </div>
+
+            <nav className="th-menunav" aria-label="主要導覽">
+              <ul>
+                {HEADER_NAV.map(({ key, label, url }) => (
+                  <li key={key}>
+                    {url ? (
+                      <a href={url} className={active === key ? "is-active" : ""}>
+                        {label}<i className="fa-solid fa-angle-right"></i>
+                      </a>
+                    ) : (
+                      <TodoLink label={label} className="th-menunav-todo" />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="th-menuutil">
+              {HEADER_UTILITY.map((label) => <TodoLink key={label} label={label} />)}
+              <button type="button">
+                <i className="ph ph-globe"></i> 語言
+              </button>
+              <button type="button">
+                <i className="ph-bold ph-magnifying-glass"></i> 搜尋
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

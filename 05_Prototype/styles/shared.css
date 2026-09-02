@@ -381,3 +381,564 @@ a { color: inherit; }
 /* 主導覽列的待建置標記：字級與間距壓到最小，避免 1440 下導覽列擠掉站名 */
 .th-todo-link-nav { gap: 3px; }
 .th-todo-link-nav::after { font-size: 9px; padding: 0 3px; }
+
+/* ============================================================
+   收合式選單 — xl（1280px）以下取代水平主導覽
+   水平導覽在 1280 容器內只容得下一行 16px 文字，再窄就會擠掉站名；
+   手機原本完全沒有導覽入口，一併由本選單提供。
+   ============================================================ */
+.th-menubtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.th-menubtn:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-400);
+  color: var(--national-700);
+}
+.th-menubtn i { font-size: 18px; }
+
+.th-menumask {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  justify-content: flex-end;
+}
+.th-menupanel {
+  width: min(360px, 88vw);
+  height: 100%;
+  background: var(--bg-1);
+  box-shadow: var(--sh-xl);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.th-menupanel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--slate-200);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.th-menupanel-head button { color: var(--fg-3); font-size: 20px; }
+.th-menupanel-head button:hover { color: var(--national-700); }
+
+.th-menunav ul { list-style: none; margin: 0; padding: 0; }
+.th-menunav li { border-bottom: 1px solid var(--slate-100); }
+.th-menunav a,
+.th-menunav .th-menunav-todo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 20px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  color: var(--fg-2);
+}
+.th-menunav a:hover { background: var(--bg-2); color: var(--national-700); }
+.th-menunav a.is-active { color: var(--national-700); }
+.th-menunav a i { font-size: 12px; color: var(--fg-4); }
+.th-menunav .th-menunav-todo { font-weight: 400; }
+
+.th-menuutil {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 18px 20px;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+.th-menuutil button { display: inline-flex; align-items: center; gap: 5px; }
+.th-menuutil button:hover { color: var(--national-700); }
+
+/* ============================================================
+   公佈欄（最新消息、違規名單、檔案下載、常見問答）樣式
+   ============================================================ */
+
+/* ── 頂部 TAB 切換 Bar (Segmented Control) ── */
+.news-tabs-wrap {
+  background: var(--bg-1, #fff);
+  border-bottom: 1px solid var(--slate-200, #e2e8f0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 73px;
+  z-index: 40;
+}
+.news-tabs-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  .news-tabs-container {
+    padding: 8px 16px;
+    overflow-x: auto;
+    justify-content: start;
+  }
+}
+.news-tabs-nav {
+  display: inline-flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+  border: 1px solid #e2e8f0;
+}
+.news-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--slate-600, #475569);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.news-tab-btn i {
+  font-size: 16px;
+  color: var(--slate-400, #94a3b8);
+  transition: color 0.2s ease;
+}
+.news-tab-btn:hover {
+  color: var(--national-700, #587a68);
+  background: rgba(255, 255, 255, 0.6);
+}
+.news-tab-btn.is-active {
+  background: #ffffff;
+  color: var(--national-700, #587a68);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.news-tab-btn.is-active i {
+  color: var(--national-700, #587a68);
+}
+
+/* ── 篩選與搜尋工具列 ── */
+.news-toolbar {
+  background: #ffffff;
+  border: 1px solid var(--slate-200, #e2e8f0);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.news-search-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .news-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.news-search-input-wrap {
+  position: relative;
+  flex: 1;
+}
+.news-search-input-wrap i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 16px;
+}
+.news-search-input {
+  width: 100%;
+  padding: 10px 14px 10px 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.news-search-input:focus {
+  border-color: #587a68;
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+
+.news-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.news-chip-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  margin-right: 4px;
+}
+.news-chip {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.news-chip:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+.news-chip.is-active {
+  background: #587a68;
+  color: #ffffff;
+  border-color: #587a68;
+  font-weight: 700;
+}
+
+/* ── TAB 1: 最新消息清單 ── */
+.news-list {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+.news-item {
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.news-item:last-child {
+  border-bottom: none;
+}
+.news-item:hover {
+  background: #f8fafc;
+}
+.news-date {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  width: 95px;
+  flex-shrink: 0;
+}
+.news-badge {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.news-badge.agency-yushan { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.news-badge.agency-taroko { background: #fdf2f8; color: #9d174d; border-color: #fbcfe8; }
+.news-badge.agency-sheipa { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+.news-badge.agency-forestry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+.news-badge.agency-police { background: #f1f5f9; color: #334155; border-color: #cbd5e1; }
+
+.news-item-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.news-item:hover .news-item-title {
+  color: #587a68;
+}
+.news-pin-icon {
+  color: #ef4444;
+  font-size: 14px;
+  transform: rotate(-30deg);
+  flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .news-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .news-item-title {
+    white-space: normal;
+  }
+}
+
+/* ── TAB 2: 違規名單 ── */
+.violation-query-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.violation-query-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.violation-table-wrap {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+.violation-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.violation-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+.violation-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+.violation-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.violation-status-tag.active {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+.violation-status-tag.expired {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+/* ── TAB 3: 檔案下載 ── */
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.download-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.download-card:hover {
+  border-color: #587a68;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+.download-card-header {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.download-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.download-icon.pdf { background: #fef2f2; color: #dc2626; }
+.download-icon.docx { background: #eff6ff; color: #2563eb; }
+.download-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.download-meta {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  gap: 12px;
+}
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 0;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.download-btn:hover {
+  background: #587a68;
+  color: #ffffff;
+  border-color: #587a68;
+}
+
+/* ── TAB 4: 常見問答 ── */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.faq-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+.faq-summary {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: color 0.15s;
+}
+.faq-summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item[open] .faq-summary {
+  color: #587a68;
+  border-bottom: 1px solid #f1f5f9;
+}
+.faq-summary-icon {
+  font-size: 14px;
+  color: #94a3b8;
+  transition: transform 0.2s ease;
+}
+.faq-item[open] .faq-summary-icon {
+  transform: rotate(180deg);
+  color: #587a68;
+}
+.faq-answer {
+  padding: 18px 20px;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.7;
+  background: #fafafa;
+}
+
+/* ── 彈窗 Modal (查看公告全文) ── */
+.news-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.news-modal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+.news-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.news-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+}
+.news-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.news-modal-close:hover {
+  color: #0f172a;
+}
+.news-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  font-size: 15px;
+  color: #334155;
+  line-height: 1.7;
+}

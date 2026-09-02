@@ -680,3 +680,11 @@ body.th-noscroll { overflow: hidden; }
     letter-spacing: var(--tracking-wide);
   }
 }
+
+/* 表格下方的出處註記 */
+.th-table-note {
+  margin: 12px 0 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  line-height: var(--lh-base);
+}
