@@ -351,3 +351,33 @@ a { color: inherit; }
   .th-stepper { padding: 14px 12px; }
   .th-header-right { align-items: flex-start; width: 100%; }
 }
+
+/* ============================================================
+   待建置連結 — Header／Footer／Breadcrumb 共用
+   本雛形尚未建置的頁面不給 `#` 假路徑，改以非連結元素 ＋「待建置」標記呈現，
+   避免看起來可點卻沒有反應。深色底（Footer）用 .on-dark。
+   ============================================================ */
+.th-todo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+  color: var(--fg-4);
+}
+.th-todo-link::after {
+  content: "待建置";
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--fg-4);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+.th-todo-link.on-dark,
+.th-todo-link.on-dark::after { color: #94a3b8; }
+.th-todo-link.on-dark::after { border-color: rgba(148, 163, 184, 0.4); }
+
+/* 主導覽列的待建置標記：字級與間距壓到最小，避免 1440 下導覽列擠掉站名 */
+.th-todo-link-nav { gap: 3px; }
+.th-todo-link-nav::after { font-size: 9px; padding: 0 3px; }

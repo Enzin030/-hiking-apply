@@ -1,24 +1,42 @@
 /* Shared components used across all pages */
 
+/*
+  尚未建置的頁面：不給 `#` 假路徑，改輸出非連結的「待建置」標記
+  （樣式見 styles/shared.css 的 .th-todo-link）。
+  onDark = 深色底（Footer）用的配色。
+*/
+function TodoLink({ label, className = "", onDark }) {
+  return (
+    <span className={`th-todo-link ${onDark ? "on-dark" : ""} ${className}`}>{label}</span>
+  );
+}
+
 function Header({ active }) {
   return (
     <header className="w-full bg-white sticky top-0 z-50 shadow-[0_2px_10px_rgba(0,0,0,0.05)] border-b border-slate-100 py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center shrink-0 cursor-pointer hover:opacity-90 transition" onClick={() => window.location.href = "index.html"}>
-            <img src="assets/logo.png" alt="Logo" className="h-16 w-auto mr-3" />
-            <h1 className="font-serif font-extrabold text-2xl text-slate-800 tracking-wide mt-1">
-              <span className="text-3xl">臺灣<span className="text-[#587a68]">登山申請</span></span>一站式服務網
-            </h1>
-          </div>
+        <div className="flex flex-wrap justify-between items-center gap-y-2">
+          {/*
+            站名是全站識別（wordmark），不是各頁主標題 —— 頁面主標題是 PageHero 的 h1，
+            這裡用 <a> 而非帶 onClick 的 div，兼顧鍵盤可聚焦與單一 h1 的語意。
+            行動版：拿掉 shrink-0、縮小字級並允許換行，避免撐寬 documentElement。
+          */}
+          <a href="index.html"
+             className="flex items-center min-w-0 shrink lg:shrink-0 hover:opacity-90 transition"
+             aria-label="臺灣登山申請一站式服務網 首頁">
+            <img src="assets/logo.png" alt="" className="h-10 sm:h-14 lg:h-16 w-auto shrink-0 mr-2 sm:mr-3" />
+            <span className="font-serif font-extrabold text-base sm:text-xl lg:text-2xl text-slate-800 tracking-wide mt-1 min-w-0 lg:whitespace-nowrap">
+              <span className="text-lg sm:text-2xl lg:text-3xl">臺灣<span className="text-[#587a68]">登山申請</span></span>一站式服務網
+            </span>
+          </a>
 
           <div className="flex-col items-end gap-3 hidden lg:flex">
             <div className="flex items-center gap-3 text-[14px] text-slate-500">
-              <a href="#" className="hover:text-[#587a68] transition">網站導覽</a>
+              <TodoLink label="網站導覽" />
               <div className="w-[1px] h-3 bg-slate-300"></div>
-              <a href="#" className="hover:text-[#587a68] transition">警特報</a>
+              <TodoLink label="警特報" />
               <div className="w-[1px] h-3 bg-slate-300"></div>
-              <a href="#" className="hover:text-[#587a68] transition">RSS</a>
+              <TodoLink label="RSS" />
               <div className="w-[1px] h-3 bg-slate-300"></div>
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5">
                 <i className="ph ph-globe text-[14px] relative top-[1px]"></i> 語言
@@ -29,27 +47,34 @@ function Header({ active }) {
               </button>
             </div>
 
-            <nav className="flex items-center gap-6">
+            {/* 導覽字級由 18px 降為 16px：六個項目加上三個「待建置」標記後，18px 在
+                1280 容器內塞不下同一行（flex-wrap 為保險，不應真的觸發） */}
+            <nav className="flex items-center gap-4">
+              {/* url 為 null＝本雛形尚未建置，改出「待建置」標記，不給 `#` 假連結 */}
               {[
                 { key: "bulletin", label: "公佈欄", url: "index.html" },
                 { key: "apply",    label: "登山申請", url: "apply-1.html" },
-                { key: "notice",   label: "登山須知", url: "#" },
-                { key: "status",   label: "登山路線開放狀態", url: "#" },
-                { key: "campsite", label: "宿營地與床位查詢", url: "#" },
-                { key: "info",     label: "旅遊登山資訊", url: "#" },
-              ].map(({ key, label, url }) => (
-                <a
-                  key={key}
-                  href={url}
-                  className={`font-medium transition text-[18px] whitespace-nowrap ${
-                    active === key
-                      ? "text-[#587a68]"
-                      : "text-slate-600 hover:text-[#587a68]"
-                  }`}
-                >
-                  {label}
-                </a>
-              ))}
+                { key: "notice",   label: "登山須知", url: "notice.html" },
+                { key: "status",   label: "登山路線開放狀態", url: null },
+                { key: "campsite", label: "宿營地與床位查詢", url: null },
+                { key: "info",     label: "旅遊登山資訊", url: null },
+              ].map(({ key, label, url }) =>
+                url ? (
+                  <a
+                    key={key}
+                    href={url}
+                    className={`font-medium transition text-[16px] whitespace-nowrap ${
+                      active === key
+                        ? "text-[#587a68]"
+                        : "text-slate-600 hover:text-[#587a68]"
+                    }`}
+                  >
+                    {label}
+                  </a>
+                ) : (
+                  <TodoLink key={key} label={label} className="th-todo-link-nav text-[16px] whitespace-nowrap" />
+                )
+              )}
             </nav>
           </div>
         </div>
@@ -58,18 +83,28 @@ function Header({ active }) {
   );
 }
 
+/*
+  麵包屑。trail 元素可為字串或 { label, href }：
+  中間層級沒有 href 時輸出純文字，不給 `#` 假連結。
+*/
 function Breadcrumb({ trail }) {
   return (
     <div className="th-crumb">
-      <a href="#"><i className="fa-solid fa-house"></i></a>
-      {trail.map((t, i) => (
-        <React.Fragment key={i}>
-          <i className="fa-solid fa-angle-right"></i>
-          {i === trail.length - 1
-            ? <span className="th-crumb-current">{t}</span>
-            : <a href="#">{t}</a>}
-        </React.Fragment>
-      ))}
+      <a href="index.html" aria-label="首頁"><i className="fa-solid fa-house"></i></a>
+      {trail.map((t, i) => {
+        const label = typeof t === "string" ? t : t.label;
+        const href = typeof t === "string" ? null : t.href;
+        return (
+          <React.Fragment key={i}>
+            <i className="fa-solid fa-angle-right"></i>
+            {i === trail.length - 1
+              ? <span className="th-crumb-current">{label}</span>
+              : href
+                ? <a href={href}>{label}</a>
+                : <span>{label}</span>}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
@@ -120,6 +155,11 @@ function Footer() {
                 <h3 className="font-serif font-bold text-xl text-white tracking-wide leading-none">
                   臺灣登山申請一站式服務網
                 </h3>
+                {/*
+                  這是抄自正式站的「全站」最後更新日期，與 PageHero 的「本頁」更新日期
+                  語意不同，兩者不一致屬正常，勿逕自對齊（2026-09-02 使用者裁決）。
+                  [待確認] 實際上線時此值的維護方式（人工填寫或由 CMS 帶出）。
+                */}
                 <span className="text-slate-400 text-[13px] leading-none mb-1 xl:mb-0">
                   最後更新日期：2026-03-23
                 </span>
@@ -135,9 +175,10 @@ function Footer() {
               <h4 className="text-white font-bold text-[15px] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
                 服務專區
               </h4>
+              {/* 兩頁本雛形尚未建置（舊站 news_7.aspx／contact.aspx），不給 `#` 假連結 */}
               <ul className="space-y-3 text-[14px]">
-                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">常見問答</a></li>
-                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">聯絡我們</a></li>
+                <li><TodoLink label="常見問答" onDark /></li>
+                <li><TodoLink label="聯絡我們" onDark /></li>
               </ul>
             </div>
             <div>
@@ -145,9 +186,9 @@ function Footer() {
                 政策宣告
               </h4>
               <ul className="space-y-3 text-[14px]">
-                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">隱私權宣告</a></li>
-                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">資訊安全政策</a></li>
-                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">資料開放宣告</a></li>
+                <li><TodoLink label="隱私權宣告" onDark /></li>
+                <li><TodoLink label="資訊安全政策" onDark /></li>
+                <li><TodoLink label="資料開放宣告" onDark /></li>
               </ul>
             </div>
           </div>
@@ -172,4 +213,342 @@ function Footer() {
   );
 }
 
-Object.assign(window, { Header, Breadcrumb, Stepper, Footer });
+/* ============================================================
+   內容頁共用元件（樣式見 styles/content.css）
+   ============================================================ */
+
+/*
+  內頁標題橫幅：麵包屑 ＋ 標題 ＋ 導言 ＋ 更新日期
+  bg = 背景照的 modifier class（見 content.css：bg-mountain／bg-qilai／bg-wuling
+       ／bg-yushan／bg-nanheng），省略則為純色底
+*/
+function PageHero({ trail, title, lead, updated, bg = "bg-mountain" }) {
+  return (
+    <div className={`th-hero ${bg}`}>
+      <Breadcrumb trail={trail} />
+      <div className="th-hero-inner">
+        <h1 className="th-hero-title">{title}</h1>
+        {lead && <p className="th-hero-lead">{lead}</p>}
+        {updated && <div className="th-hero-meta">更新日期：{updated}</div>}
+      </div>
+    </div>
+  );
+}
+
+/* 頁內目錄：items = [{ id, label }]，錨點對應 SectionCard 的 id */
+function PageNav({ items, title = "本頁內容" }) {
+  return (
+    <nav className="th-pagenav">
+      <p className="th-pagenav-title">{title}</p>
+      <ul>
+        {items.map((it) => (
+          <li key={it.id}><a href={`#${it.id}`}>{it.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/* 區塊卡片；flush = 內容自行控制邊距（表格、清單用） */
+function SectionCard({ id, title, icon, note, flush, children }) {
+  return (
+    <section className="th-card" id={id}>
+      {title && (
+        <div className="th-card-head">
+          {icon && <i className={icon}></i>}
+          <h2 className="th-card-title">{title}</h2>
+          {note && <span className="th-card-note">{note}</span>}
+        </div>
+      )}
+      <div className={`th-card-body ${flush ? "is-flush" : ""}`}>{children}</div>
+    </section>
+  );
+}
+
+/*
+  條列連結。item：
+    { label, href, kind }
+    kind — "internal"（站內頁）／"external"（外部網站）／"file"（附件下載）
+           ／"todo"（連結目標未取得，標 [待確認]，不給假路徑）
+  numbered = 顯示序號
+*/
+function LinkList({ items, numbered }) {
+  const ICON = {
+    internal: "fa-solid fa-angle-right",
+    external: "fa-solid fa-arrow-up-right-from-square",
+    file: "fa-solid fa-file-pdf",
+  };
+  return (
+    <ul className="th-linklist">
+      {items.map((it, i) => {
+        const kind = it.kind || (it.href ? "internal" : "todo");
+        const isTodo = kind === "todo";
+        /* 外部網站與檔案下載（PDF）都另開分頁，避免使用者離開本站 */
+        const newTab = kind === "external" || kind === "file";
+        const inner = (
+          <React.Fragment>
+            {numbered && <span className="th-linkrow-num">{i + 1}</span>}
+            <span className="th-linkrow-text">{it.label}</span>
+            {isTodo
+              ? <span className="th-todo-tag">待確認</span>
+              : <i className={`th-linkrow-icon ${ICON[kind]}`}></i>}
+          </React.Fragment>
+        );
+        return (
+          <li key={it.label}>
+            {isTodo ? (
+              <div className="th-linkrow is-todo">{inner}</div>
+            ) : (
+              <a className="th-linkrow" href={it.href}
+                 target={newTab ? "_blank" : undefined}
+                 rel={newTab ? "noopener noreferrer" : undefined}>
+                {inner}
+              </a>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+/*
+  資料表。
+    columns   = [{ key, label, align, render }]
+                render(row) 未給時直接輸出 row[key]
+    rows      = 物件陣列
+    rowKey    = 取列 key 的欄位名，預設 columns[0].key
+    className = 附加在 table 上的修飾 class，欄寬一律由 CSS 控制（禁 inline style）
+*/
+function DataTable({ columns, rows, rowKey, className = "", empty = "查無資料" }) {
+  const keyOf = rowKey || columns[0].key;
+  if (!rows || rows.length === 0) {
+    return (
+      <div className="th-table-empty">
+        <i className="fa-regular fa-folder-open"></i>{empty}
+      </div>
+    );
+  }
+  return (
+    <div className="th-table-wrap">
+      <table className={`th-table ${className}`}>
+        <thead>
+          <tr>
+            {columns.map((c) => (
+              <th key={c.key} className={c.align ? `is-${c.align}` : ""}>
+                {c.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r[keyOf]}>
+              {columns.map((c) => (
+                /* data-label 供行動版卡片化以 ::before 顯示欄名 */
+                <td key={c.key} data-label={c.label} className={c.align ? `is-${c.align}` : ""}>
+                  {c.render ? c.render(r) : r[c.key]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/*
+  編號步驟。step：{ title, body, subs, shot }
+    body — 段落文字或 JSX；subs — 子項目陣列；shot — 截圖佔位說明
+*/
+function StepList({ steps }) {
+  return (
+    <ol className="th-steplist">
+      {steps.map((s, i) => (
+        <li className="th-steprow" key={s.title}>
+          <span className="th-steprow-num">{i + 1}</span>
+          <div className="th-steprow-body">
+            <h3 className="th-steprow-title">{s.title}</h3>
+            {s.body && <p>{s.body}</p>}
+            {s.subs && (
+              <ol className="th-substeps">
+                {s.subs.map((t, j) => <li key={j}>{t}</li>)}
+              </ol>
+            )}
+            {s.shot && (
+              <div className="th-shot-placeholder">
+                <i className="fa-regular fa-image"></i>{s.shot}
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/* 提示區塊 */
+function Callout({ type, icon, children }) {
+  return (
+    <div className={`th-callout ${type === "warning" ? "is-warning" : ""}`}>
+      <i className={icon || (type === "warning" ? "fa-solid fa-triangle-exclamation" : "fa-solid fa-circle-info")}></i>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+/*
+  依登山經驗建議參考資料。
+  舊站是右下角浮動按鈕 `#f_search`（放大鏡 ＋「快捷選單」），點開 Bootstrap modal，
+  標題「依據登山經驗建議參考資料」；本雛形沿用同一種呈現方式。
+  項目與 href 取自 notice.aspx 的 modal 原始碼，括號內註記舊站對應頁；
+  本雛形尚未建置的頁面留 href: null，點擊不導頁。
+*/
+const EXPERIENCE_GROUPS = [
+  {
+    icon: "fa-solid fa-book-open",
+    title: "學習登山者",
+    sub: "獲取登山知識",
+    groups: [
+      {
+        label: "登山安全影片",
+        items: [
+          { label: "登山安全防護原則", href: "https://www.youtube.com/watch?v=HgnaQaKFjNo", kind: "external" },
+          { label: "國家公園步道分級", href: "https://www.youtube.com/watch?v=OrVgsQFbuOs", kind: "external" },
+          { label: "登山必要裝備", href: "https://www.youtube.com/watch?v=syBRav_eZAA", kind: "external" },
+          { label: "登山留守制度", href: "https://www.youtube.com/watch?v=vvkmAks0fD8", kind: "external" },
+          { label: "高山症處理與預防", href: "https://www.youtube.com/watch?v=e4_GSy6vdYI", kind: "external" },
+        ],
+      },
+    ],
+    items: [
+      { label: "路線及景點介紹", old: "information_place.aspx" },
+      { label: "如何申請入山／入園許可證", href: "web_illustrate.html", old: "web_illustrate.aspx" },
+    ],
+  },
+  {
+    icon: "fa-solid fa-map-location-dot",
+    title: "規劃登山者",
+    sub: "查詢登山資料",
+    items: [
+      { label: "登山路線圖資查詢", old: "web_map2.aspx" },
+      { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
+      { label: "可申請路線查詢", old: "open.aspx" },
+      { label: "單日往返可申請數量", old: "bed_7.aspx" },
+      { label: "宿營地及山屋可申請數量", old: "bed_0.aspx" },
+    ],
+  },
+  {
+    icon: "fa-solid fa-pen-to-square",
+    title: "申請登山者",
+    sub: "申請／修改資料",
+    items: [
+      { label: "線上申請", href: "apply-1.html", old: "apply_1.aspx" },
+      { label: "草稿編輯", old: "apply_2_1.aspx" },
+      { label: "申請進度查詢", old: "apply_3.aspx" },
+      { label: "申請資料異動", old: "apply_2.aspx" },
+      { label: "繳費／退費（含退費日期）查詢", old: "apply_4.aspx" },
+    ],
+  },
+  {
+    icon: "fa-solid fa-person-hiking",
+    title: "前往學習者",
+    sub: "必要整備",
+    items: [
+      { label: "路線開放狀態查詢", old: "open.aspx" },
+      { label: "天候狀況查詢", old: "information_3.aspx" },
+      { label: "登山教育影片", href: "https://www.youtube.com/playlist?list=PL8CdSPNjegIZKIN75OXLB9uk_4eQmgsAm", kind: "external" },
+    ],
+  },
+  {
+    icon: "fa-solid fa-flag-checkered",
+    title: "完成登山者",
+    sub: "下山回報",
+    items: [{ label: "出園回報", old: "apply_6.aspx" }],
+  },
+];
+
+function ExperienceNav({ title = "依據登山經驗建議參考資料", label = "快捷選單" }) {
+  const [open, setOpen] = React.useState(false);
+
+  // 開啟時鎖背景捲動，Esc 關閉
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", onKey);
+    document.body.classList.add("th-noscroll");
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.classList.remove("th-noscroll");
+    };
+  }, [open]);
+
+  const renderItem = (it, i) => {
+    const external = it.kind === "external";
+    const todo = !it.href;
+    return (
+      <li key={i}>
+        <a href={it.href || "#"}
+           className={todo ? "is-todo" : ""}
+           target={external ? "_blank" : undefined}
+           rel={external ? "noopener noreferrer" : undefined}
+           onClick={todo ? (e) => e.preventDefault() : undefined}>
+          <i className={external ? "fa-solid fa-arrow-up-right-from-square" : "fa-solid fa-angle-right"}></i>
+          {it.label}
+        </a>
+      </li>
+    );
+  };
+
+  return (
+    <React.Fragment>
+      <button type="button" className="th-quickbtn" onClick={() => setOpen(true)}
+              aria-haspopup="dialog" aria-expanded={open}>
+        <i className="ph-bold ph-squares-four"></i>
+        <span>{label}</span>
+      </button>
+
+      {open && (
+        <div className="th-quickmask" onClick={() => setOpen(false)}>
+          <div className="th-quickpanel" role="dialog" aria-modal="true" aria-label={title}
+               onClick={(e) => e.stopPropagation()}>
+            <div className="th-quickpanel-head">
+              <h2>{title}</h2>
+              <button type="button" className="th-quickpanel-close" onClick={() => setOpen(false)} aria-label="關閉">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div className="th-quickpanel-body">
+              <div className="th-expnav-grid">
+                {EXPERIENCE_GROUPS.map((g) => (
+                  <div className="th-expcard" key={g.title}>
+                    <div className="th-expcard-head">
+                      <span className="th-expcard-icon"><i className={g.icon}></i></span>
+                      <div>
+                        <div className="th-expcard-title">{g.title}</div>
+                        <div className="th-expcard-sub">{g.sub}</div>
+                      </div>
+                    </div>
+                    {g.groups && g.groups.map((sub) => (
+                      <div className="th-expcard-group" key={sub.label}>
+                        <div className="th-expcard-grouptitle">{sub.label}</div>
+                        <ul className="th-expcard-nested">{sub.items.map(renderItem)}</ul>
+                      </div>
+                    ))}
+                    {g.items && <ul>{g.items.map(renderItem)}</ul>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+Object.assign(window, {
+  Header, Breadcrumb, Stepper, Footer,
+  PageHero, PageNav, SectionCard, LinkList, DataTable, StepList, Callout, ExperienceNav,
+});
