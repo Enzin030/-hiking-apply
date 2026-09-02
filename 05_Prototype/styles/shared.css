@@ -353,6 +353,34 @@ a { color: inherit; }
 }
 
 /* ============================================================
+   狀態膠囊 — 查詢型頁面共用
+   結果表格內表示「可／不可」「開放／關閉」等狀態的小膠囊。
+   語意變體：is-yes／is-no（可否）、is-open／is-closed（開放與否）、
+             is-proof（附條件）、is-snow（季節性限制）。
+   目前由登山路線開放狀態使用，宿營地與床位查詢等查詢頁沿用同一組。
+   ============================================================ */
+.th-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--slate-200);
+  background: var(--bg-1);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.th-flag i { font-size: 12px; }
+.th-flag.is-yes    { color: var(--success-fg); border-color: var(--success-border); background: var(--success-bg); }
+.th-flag.is-no     { color: var(--danger-fg);  border-color: #fecaca; background: #fef2f2; }
+.th-flag.is-open   { color: var(--success-fg); border-color: var(--success-border); background: var(--success-bg); }
+.th-flag.is-closed { color: var(--danger-fg);  border-color: #fecaca; background: #fef2f2; }
+.th-flag.is-proof  { color: var(--warning-fg); border-color: #fde68a; background: var(--warning-bg); }
+.th-flag.is-snow   { color: var(--info-fg);    border-color: #bfdbfe; background: var(--info-bg); }
+
+/* ============================================================
    待建置連結 — Header／Footer／Breadcrumb 共用
    本雛形尚未建置的頁面不給 `#` 假路徑，改以非連結元素 ＋「待建置」標記呈現，
    避免看起來可點卻沒有反應。深色底（Footer）用 .on-dark。
@@ -467,478 +495,481 @@ a { color: inherit; }
 .th-menuutil button:hover { color: var(--national-700); }
 
 /* ============================================================
-   公佈欄（最新消息、違規名單、檔案下載、常見問答）樣式
+   公佈欄（最新消息／違規名單／檔案下載／常見問答）
+   ------------------------------------------------------------
+   四個頁籤共用同一套骨架，比照正式站 hike.taiwan.gov.tw/news_0.aspx：
+     頁籤列 → 篩選卡 → 區塊標題（左色條）→ 表格 → 分頁
+   配色沿用專案 sage green（--national-700），不套用正式站的深藍表頭。
    ============================================================ */
 
-/* ── 頂部 TAB 切換 Bar (Segmented Control) ── */
-.news-tabs-wrap {
-  background: var(--bg-1, #fff);
-  border-bottom: 1px solid var(--slate-200, #e2e8f0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  position: sticky;
-  top: 73px;
-  z-index: 40;
-}
-.news-tabs-container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 12px 32px;
+/* ── 頁籤列（Segmented Control）── */
+.bulletin-tabs {
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 20px;
 }
 @media (max-width: 768px) {
-  .news-tabs-container {
-    padding: 8px 16px;
-    overflow-x: auto;
-    justify-content: start;
-  }
+  .bulletin-tabs { overflow-x: auto; }
 }
-.news-tabs-nav {
+.bulletin-tabs-nav {
   display: inline-flex;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 12px;
   gap: 4px;
-  border: 1px solid #e2e8f0;
+  padding: 4px;
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
 }
-.news-tab-btn {
+.bulletin-tab {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--slate-600, #475569);
-  background: transparent;
   border: none;
-  cursor: pointer;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  font-weight: 500;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
-.news-tab-btn i {
-  font-size: 16px;
-  color: var(--slate-400, #94a3b8);
-  transition: color 0.2s ease;
-}
-.news-tab-btn:hover {
-  color: var(--national-700, #587a68);
-  background: rgba(255, 255, 255, 0.6);
-}
-.news-tab-btn.is-active {
-  background: #ffffff;
-  color: var(--national-700, #587a68);
+.bulletin-tab i { font-size: 16px; color: var(--fg-4); transition: color 0.2s ease; }
+.bulletin-tab:hover { color: var(--national-700); background: rgba(255, 255, 255, 0.65); }
+.bulletin-tab.is-active {
+  background: var(--bg-1);
+  color: var(--national-700);
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--sh-sm);
 }
-.news-tab-btn.is-active i {
-  color: var(--national-700, #587a68);
+.bulletin-tab.is-active i { color: var(--national-700); }
+
+/* ── 卡片外框（篩選卡與違規查詢卡共用）── */
+.bulletin-card {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  margin-bottom: 20px;
 }
 
-/* ── 篩選與搜尋工具列 ── */
-.news-toolbar {
-  background: #ffffff;
-  border: 1px solid var(--slate-200, #e2e8f0);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.news-search-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-@media (max-width: 640px) {
-  .news-search-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-.news-search-input-wrap {
-  position: relative;
-  flex: 1;
-}
-.news-search-input-wrap i {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8;
-  font-size: 16px;
-}
-.news-search-input {
-  width: 100%;
-  padding: 10px 14px 10px 42px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.news-search-input:focus {
-  border-color: #587a68;
-  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
-}
-
-.news-chips-row {
+/* ── 篩選卡：每列一組 label ＋ 控制項 ── */
+.bulletin-filter-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
   align-items: center;
+  gap: 10px;
 }
-.news-chip-label {
-  font-size: 13px;
+.bulletin-filter-row + .bulletin-filter-row {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--slate-200);
+}
+.bulletin-filter-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 84px;
+  font-size: var(--fs-xs);
   font-weight: 700;
-  color: #64748b;
-  margin-right: 4px;
+  color: var(--fg-2);
+  white-space: nowrap;
 }
-.news-chip {
+.bulletin-filter-label i { color: var(--fg-4); }
+/* 同一列裡的第二組條件標籤（發布日期／排序／發布類別）不佔固定寬 */
+.bulletin-filter-label--inline { min-width: auto; }
+
+/* 篩選 chip（發布單位、發布類別） */
+.bulletin-chip {
   padding: 6px 14px;
-  border-radius: 9999px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #475569;
-  font-size: 13px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-pill);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-xs);
   font-weight: 500;
-  cursor: pointer;
   transition: all 0.15s ease;
 }
-.news-chip:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-}
-.news-chip.is-active {
-  background: #587a68;
-  color: #ffffff;
-  border-color: #587a68;
+.bulletin-chip:hover { background: var(--bg-2); border-color: var(--slate-400); }
+.bulletin-chip.is-active {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
   font-weight: 700;
 }
 
-/* ── TAB 1: 最新消息清單 ── */
-.news-list {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-}
-.news-item {
-  padding: 18px 24px;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-.news-item:last-child {
-  border-bottom: none;
-}
-.news-item:hover {
-  background: #f8fafc;
-}
-.news-date {
-  font-size: 14px;
-  color: #64748b;
-  font-weight: 500;
-  width: 95px;
-  flex-shrink: 0;
-}
-.news-badge {
-  font-size: 12px;
-  padding: 3px 10px;
-  border-radius: 6px;
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-  font-weight: 500;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.news-badge.agency-yushan { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
-.news-badge.agency-taroko { background: #fdf2f8; color: #9d174d; border-color: #fbcfe8; }
-.news-badge.agency-sheipa { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
-.news-badge.agency-forestry { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
-.news-badge.agency-police { background: #f1f5f9; color: #334155; border-color: #cbd5e1; }
-
-.news-item-title {
-  font-size: 15px;
-  font-weight: 500;
-  color: #1e293b;
-  flex: 1;
+/* 關鍵字搜尋框 */
+.bulletin-search {
+  position: relative;
+  flex: 1 1 260px;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
+}
+.bulletin-search > i {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg-4);
+  font-size: 15px;
+  pointer-events: none;
+}
+.bulletin-input {
+  width: 100%;
+  padding: 9px 14px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.bulletin-search .bulletin-input { padding-left: 42px; }
+.bulletin-input:focus {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+.bulletin-input--date { flex: 0 0 auto; width: 165px; }
+.bulletin-select {
+  padding: 9px 32px 9px 12px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  outline: none;
+}
+.bulletin-select:focus { border-color: var(--national-700); }
+.bulletin-sep { color: var(--fg-4); font-size: var(--fs-sm); }
+
+/* 卡片內的按鈕 */
+.bulletin-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border: 1px solid var(--national-700);
+  border-radius: var(--r-md);
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.15s ease;
 }
-.news-item:hover .news-item-title {
-  color: #587a68;
+.bulletin-btn:hover { background: var(--national-700-hover); border-color: var(--national-700-hover); }
+.bulletin-btn--ghost {
+  background: var(--bg-1);
+  border-color: var(--slate-300);
+  color: var(--fg-2);
+  font-weight: 500;
 }
-.news-pin-icon {
-  color: #ef4444;
-  font-size: 14px;
-  transform: rotate(-30deg);
-  flex-shrink: 0;
-}
-@media (max-width: 640px) {
-  .news-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .news-item-title {
-    white-space: normal;
-  }
+.bulletin-btn--ghost:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-400);
+  color: var(--fg-1);
 }
 
-/* ── TAB 2: 違規名單 ── */
-.violation-query-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px solid #cbd5e1;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-}
-.violation-query-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 12px;
+/* ── 筆數列（不放區塊次標，頁面主標已在上方）── */
+.bulletin-section-head {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 16px;
+  margin: 20px 0 10px;
 }
-.violation-table-wrap {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
+.bulletin-count {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+.bulletin-count strong { color: var(--national-700); font-weight: 700; }
+
+/* ── 統一表格 ── */
+.bulletin-table-wrap {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--sh-sm);
 }
-.violation-table {
+.bulletin-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
-.violation-table th {
-  background: #f8fafc;
-  color: #475569;
+.bulletin-table thead th {
+  background: var(--national-700);
+  color: var(--fg-on-dark);
   font-weight: 700;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tracking-wide);
+  padding: 13px 18px;
   white-space: nowrap;
 }
-.violation-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
+.bulletin-table tbody td {
+  padding: 14px 18px;
+  border-top: 1px solid var(--slate-100);
+  color: var(--fg-1);
+  vertical-align: top;
+  line-height: var(--lh-snug);
 }
-.violation-status-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+.bulletin-table tbody tr:nth-child(even) { background: var(--bg-2); }
+.bulletin-table tbody tr:hover { background: var(--bg-mist); }
+/* 欄寬定義套在 th／td，字色只套 tbody——否則會蓋掉表頭的白字 */
+.bulletin-table .col-org       { width: 130px; white-space: nowrap; }
+.bulletin-table .col-date      { width: 120px; white-space: nowrap; }
+.bulletin-table .col-daterange { width: 132px; white-space: nowrap; }
+.bulletin-table .col-cat       { width: 176px; white-space: nowrap; }
+.bulletin-table .col-name      { width: 90px;  white-space: nowrap; }
+.bulletin-table tbody td.col-date,
+.bulletin-table tbody td.col-daterange { color: var(--fg-3); }
+.bulletin-table tbody td.col-name { font-weight: 700; }
+
+/* 表格內可點的標題 */
+.bulletin-link {
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+  color: var(--fg-1);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: var(--lh-snug);
+  transition: color 0.15s ease;
+}
+.bulletin-link:hover { color: var(--national-700); text-decoration: underline; }
+.bulletin-pin {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-xs);
+  background: var(--national-50);
+  color: var(--national-700);
+  font-size: var(--fs-xxs);
   font-weight: 700;
-}
-.violation-status-tag.active {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
-}
-.violation-status-tag.expired {
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #cbd5e1;
+  white-space: nowrap;
+  vertical-align: 1px;
 }
 
-/* ── TAB 3: 檔案下載 ── */
-.download-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
+/* 單位標籤 */
+.bulletin-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm);
+  background: var(--bg-2);
+  color: var(--fg-2);
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  white-space: nowrap;
 }
-.download-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+.bulletin-badge.agency-nps      { background: var(--bg-mist);  color: var(--national-700); border-color: var(--national-200); }
+.bulletin-badge.agency-yushan   { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.bulletin-badge.agency-taroko   { background: #f0f7f9; color: #4f6e7a; border-color: #cfe3ea; }
+.bulletin-badge.agency-sheipa   { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+.bulletin-badge.agency-forestry { background: #f5f8ec; color: #5f6f3c; border-color: #dde5c4; }
+.bulletin-badge.agency-police   { background: var(--slate-100); color: var(--slate-700); border-color: var(--slate-300); }
+
+/* 類別標籤（違規類別、FAQ 發布類別） */
+.bulletin-tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  background: var(--bg-2);
+  color: var(--fg-2);
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  white-space: nowrap;
 }
-.download-card:hover {
-  border-color: #587a68;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
-.download-card-header {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-.download-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.download-icon.pdf { background: #fef2f2; color: #dc2626; }
-.download-icon.docx { background: #eff6ff; color: #2563eb; }
-.download-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1.4;
-  margin-bottom: 6px;
-}
-.download-meta {
-  font-size: 12px;
-  color: #64748b;
-  display: flex;
-  gap: 12px;
-}
-.download-btn {
+.bulletin-tag--warn { background: #fef2f2; color: var(--danger-fg); border-color: #fecaca; }
+
+/* 檔案格式下載鈕 */
+.bulletin-file {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 9px 0;
-  border-radius: 8px;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
+  gap: 5px;
+  margin: 2px 0 2px 8px;
+  padding: 3px 10px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-sm);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-xxs);
+  font-weight: 700;
   transition: all 0.15s ease;
 }
-.download-btn:hover {
-  background: #587a68;
-  color: #ffffff;
-  border-color: #587a68;
-}
+.bulletin-file.pdf  { border-color: #fecaca; color: #dc2626; background: #fff5f5; }
+.bulletin-file.pdf:hover  { background: #fee2e2; }
+.bulletin-file.odt, .bulletin-file.doc, .bulletin-file.docx { border-color: #bfdbfe; color: #2563eb; background: #eff6ff; }
+.bulletin-file.odt:hover, .bulletin-file.doc:hover, .bulletin-file.docx:hover { background: #dbeafe; }
+.bulletin-file.xlsx, .bulletin-file.xls, .bulletin-file.csv { border-color: #bbf7d0; color: #15803d; background: #f0fdf4; }
+.bulletin-file.xlsx:hover, .bulletin-file.xls:hover, .bulletin-file.csv:hover { background: #dcfce7; }
+.bulletin-file.png, .bulletin-file.jpg, .bulletin-file.jpeg { border-color: #e9d5ff; color: #7e22ce; background: #faf5ff; }
+.bulletin-file.png:hover, .bulletin-file.jpg:hover, .bulletin-file.jpeg:hover { background: #f3e8ff; }
 
-/* ── TAB 4: 常見問答 ── */
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* 空狀態 */
+.bulletin-empty {
+  padding: 56px 20px;
+  text-align: center;
+  color: var(--fg-4);
+  font-size: var(--fs-sm);
 }
-.faq-item {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-}
-.faq-summary {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  padding: 18px 20px;
-  cursor: pointer;
-  list-style: none;
+.bulletin-empty i { display: block; font-size: 30px; margin-bottom: 10px; }
+
+/* ── 分頁 ── */
+.bulletin-pager {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  transition: color 0.15s;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 20px;
 }
-.faq-summary::-webkit-details-marker {
-  display: none;
+.bulletin-page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
-.faq-item[open] .faq-summary {
-  color: #587a68;
-  border-bottom: 1px solid #f1f5f9;
+.bulletin-page-btn:hover:not(:disabled) { border-color: var(--national-700); color: var(--national-700); }
+.bulletin-page-btn.is-active {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
 }
-.faq-summary-icon {
-  font-size: 14px;
-  color: #94a3b8;
-  transition: transform 0.2s ease;
-}
-.faq-item[open] .faq-summary-icon {
-  transform: rotate(180deg);
-  color: #587a68;
-}
-.faq-answer {
-  padding: 18px 20px;
-  font-size: 14px;
-  color: #475569;
-  line-height: 1.7;
-  background: #fafafa;
-}
+.bulletin-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* 視窗式頁碼中間的省略記號（頁數多時，見 Shared.jsx 的 BulletinPager）*/
+.bulletin-page-gap { padding: 0 2px; color: var(--fg-4); font-size: var(--fs-sm); }
 
-/* ── 彈窗 Modal (查看公告全文) ── */
-.news-modal-overlay {
+/* ── 違規名單：個人查詢卡（正式站無此塊，為本雛形新增功能）── */
+.bulletin-query-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.bulletin-query-title i { color: var(--national-700); }
+.bulletin-query-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.bulletin-query-form .bulletin-input { flex: 1 1 320px; max-width: 420px; }
+.bulletin-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+.bulletin-alert i { margin-top: 2px; }
+.bulletin-alert--warn    { background: var(--warning-bg); border-color: #fde68a; color: var(--warning-fg); }
+.bulletin-alert--success { background: var(--success-bg); border-color: var(--success-border); color: var(--success-fg); }
+.bulletin-alert--error   { background: #fef2f2; border-color: #fecaca; color: var(--danger-fg); }
+
+/* ── 明細彈窗（最新消息全文／常見問答解答）── */
+.bulletin-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(2px);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
 }
-.news-modal-card {
-  background: #ffffff;
-  border-radius: 16px;
-  max-width: 720px;
-  width: 100%;
-  max-height: 85vh;
+.bulletin-modal {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  background: var(--bg-1);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-xl);
   overflow: hidden;
 }
-.news-modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+.bulletin-modal-head {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--slate-200);
 }
-.news-modal-title {
-  font-size: 18px;
+.bulletin-modal-title {
+  margin: 8px 0 0;
+  font-size: var(--fs-lg);
   font-weight: 700;
-  color: #0f172a;
-  line-height: 1.4;
+  color: var(--fg-1);
+  line-height: var(--lh-snug);
 }
-.news-modal-close {
-  background: none;
+.bulletin-modal-meta { margin-top: 6px; font-size: var(--fs-xs); color: var(--fg-3); }
+.bulletin-modal-close {
+  flex-shrink: 0;
   border: none;
-  font-size: 20px;
-  color: #94a3b8;
-  cursor: pointer;
+  background: none;
   padding: 4px;
+  font-size: 20px;
+  color: var(--fg-4);
   transition: color 0.15s;
 }
-.news-modal-close:hover {
-  color: #0f172a;
-}
-.news-modal-body {
+.bulletin-modal-close:hover { color: var(--fg-1); }
+.bulletin-modal-body {
   padding: 24px;
   overflow-y: auto;
-  font-size: 15px;
-  color: #334155;
-  line-height: 1.7;
+  font-size: var(--fs-md);
+  color: var(--fg-2);
+  line-height: var(--lh-loose);
+  white-space: pre-line;
+}
+
+/* ── 窄螢幕：表格改為堆疊卡片（以 data-label 顯示欄名）── */
+@media (max-width: 768px) {
+  .bulletin-filter-label,
+  .bulletin-filter-label--inline { min-width: 100%; }
+  .bulletin-search { flex-basis: 100%; }
+  .bulletin-select, .bulletin-input--date { flex: 1 1 100%; width: 100%; }
+  .bulletin-btn { flex: 1 1 40%; }
+  .bulletin-table-wrap { border: none; box-shadow: none; background: transparent; }
+  .bulletin-table thead { display: none; }
+  .bulletin-table, .bulletin-table tbody, .bulletin-table tr, .bulletin-table td { display: block; width: 100%; }
+  .bulletin-table tbody tr {
+    margin-bottom: 12px;
+    background: var(--bg-1);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .bulletin-table tbody tr:nth-child(even) { background: var(--bg-1); }
+  .bulletin-table tbody td {
+    display: flex;
+    gap: 12px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--slate-100);
+    width: auto;
+    white-space: normal;
+  }
+  .bulletin-table tbody td:first-child { border-top: none; }
+  .bulletin-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 84px;
+    font-size: var(--fs-xxs);
+    font-weight: 700;
+    color: var(--fg-3);
+  }
+  .bulletin-pager { justify-content: center; }
 }

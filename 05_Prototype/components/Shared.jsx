@@ -18,7 +18,7 @@ const HEADER_NAV = [
   { key: "bulletin", label: "公佈欄", url: "news.html" },
   { key: "apply",    label: "登山申請", url: "apply-1.html" },
   { key: "notice",   label: "登山須知", url: "notice.html" },
-  { key: "status",   label: "登山路線開放狀態", url: null },
+  { key: "status",   label: "登山路線開放狀態", url: "open.html" },
   { key: "campsite", label: "宿營地與床位查詢", url: null },
   { key: "info",     label: "旅遊登山資訊", url: null },
 ];
@@ -479,6 +479,50 @@ function StepList({ steps }) {
   );
 }
 
+/*
+  查詢型頁面共用分頁。
+  頁碼採視窗式呈現（目前頁前後各兩頁，首末頁固定，中間以 … 省略）——
+  路線開放狀態有 479 筆共 24 頁，把頁碼全部列出會比表格還寬。
+  資料不足一頁時不顯示。
+*/
+function BulletinPager({ page, totalPages, onChange }) {
+  if (totalPages <= 1) return null;
+
+  const win = new Set([1, totalPages]);
+  for (let i = page - 2; i <= page + 2; i++) if (i >= 1 && i <= totalPages) win.add(i);
+  const nums = [...win].sort((a, b) => a - b);
+
+  const items = [];
+  nums.forEach((n, i) => {
+    if (i > 0 && n - nums[i - 1] > 1) items.push({ gap: true, key: `gap-${n}` });
+    items.push({ n, key: n });
+  });
+
+  return (
+    <nav className="bulletin-pager" aria-label="分頁">
+      <button type="button" className="bulletin-page-btn" disabled={page === 1} onClick={() => onChange(page - 1)}>
+        上一頁
+      </button>
+      {items.map((it) => it.gap ? (
+        <span key={it.key} className="bulletin-page-gap">…</span>
+      ) : (
+        <button
+          key={it.key}
+          type="button"
+          className={`bulletin-page-btn ${it.n === page ? "is-active" : ""}`}
+          aria-current={it.n === page ? "page" : undefined}
+          onClick={() => onChange(it.n)}
+        >
+          {it.n}
+        </button>
+      ))}
+      <button type="button" className="bulletin-page-btn" disabled={page === totalPages} onClick={() => onChange(page + 1)}>
+        下一頁
+      </button>
+    </nav>
+  );
+}
+
 /* 提示區塊 */
 function Callout({ type, icon, children }) {
   return (
@@ -525,7 +569,7 @@ const EXPERIENCE_GROUPS = [
     items: [
       { label: "登山路線圖資查詢", old: "web_map2.aspx" },
       { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
-      { label: "可申請路線查詢", old: "open.aspx" },
+      { label: "可申請路線查詢", href: "open.html", old: "open.aspx" },
       { label: "單日往返可申請數量", old: "bed_7.aspx" },
       { label: "宿營地及山屋可申請數量", old: "bed_0.aspx" },
     ],
@@ -547,7 +591,7 @@ const EXPERIENCE_GROUPS = [
     title: "前往學習者",
     sub: "必要整備",
     items: [
-      { label: "路線開放狀態查詢", old: "open.aspx" },
+      { label: "路線開放狀態查詢", href: "open.html", old: "open.aspx" },
       { label: "天候狀況查詢", old: "information_3.aspx" },
       { label: "登山教育影片", href: "https://www.youtube.com/playlist?list=PL8CdSPNjegIZKIN75OXLB9uk_4eQmgsAm", kind: "external" },
     ],
@@ -642,4 +686,5 @@ function ExperienceNav({ title = "依據登山經驗建議參考資料", label =
 Object.assign(window, {
   Header, Breadcrumb, Stepper, Footer,
   PageHero, PageNav, SectionCard, LinkList, DataTable, StepList, Callout, ExperienceNav,
+  BulletinPager,
 });
