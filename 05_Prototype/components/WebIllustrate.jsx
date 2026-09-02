@@ -48,7 +48,9 @@ const GUIDE_FAQS = [
     a: "查詢「登山入園須知」和「常見問答」。",
     links: [
       { label: "前往登山須知", href: "notice.html" },
-      { label: "常見問答", todo: true },
+      // 帶 ?tab=faq 直接落在公佈欄的常見問答頁籤，不停在預設的最新消息
+      // （News.jsx 的 getInitialTab 解析此參數，亦接受 ?tab=3）
+      { label: "常見問答", href: "news.html?tab=faq" },
     ],
   },
 ];

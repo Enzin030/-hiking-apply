@@ -251,9 +251,14 @@ function Footer() {
               <h4 className="text-white font-bold text-[15px] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
                 服務專區
               </h4>
-              {/* 兩頁本雛形尚未建置（舊站 news_7.aspx／contact.aspx），不給 `#` 假連結 */}
+              {/* 常見問答＝公佈欄第四個頁籤（帶 ?tab=faq 直接落在該頁籤）；
+                  聯絡我們（舊站 contact.aspx）尚未建置，不給 `#` 假連結 */}
               <ul className="space-y-3 text-[14px]">
-                <li><TodoLink label="常見問答" onDark /></li>
+                <li>
+                  <a href="news.html?tab=faq" className="text-slate-400 hover:text-white transition-colors">
+                    常見問答
+                  </a>
+                </li>
                 <li><TodoLink label="聯絡我們" onDark /></li>
               </ul>
             </div>
