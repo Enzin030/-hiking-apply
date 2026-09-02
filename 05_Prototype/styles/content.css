@@ -282,14 +282,16 @@ a.th-linkrow:hover .th-linkrow-icon { color: var(--national-700); }
 .th-cell-ol li + li { margin-top: 4px; }
 
 /* 儲存格／提示內的行內連結（PDF、現行網站） */
+/* 內文連結色與詳細須知頁（styles/notice.css）一致，用較深的 --national-800；
+   品牌 sage --national-700 與內文灰藍明度太接近，長文裡不易辨識 */
 .th-inline-link {
   display: inline;
-  color: var(--national-700);
+  color: var(--national-800);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.th-inline-link:hover { color: var(--national-800); }
+.th-inline-link:hover { color: var(--national-900); }
 .th-inline-link i {
   font-size: 11px;
   margin-right: 4px;
@@ -378,6 +380,24 @@ a.th-linkrow:hover .th-linkrow-icon { color: var(--national-700); }
 }
 .th-substeps li { line-height: var(--lh-base); padding-left: 4px; margin-top: 6px; }
 .th-substeps li:first-child { margin-top: 0; }
+
+/* 操作截圖 — 目前沿用舊站畫面，新版 UI 定版後重拍替換 */
+.th-shot-list { margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+.th-shot {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.th-shot img { display: block; width: 100%; height: auto; }
+.th-shot figcaption {
+  padding: 8px 12px;
+  border-top: 1px solid var(--slate-200);
+  color: var(--fg-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-base);
+}
 
 /* 截圖佔位 — 舊站教學頁附操作截圖，新版 UI 已改，待補 */
 .th-shot-placeholder {

@@ -452,6 +452,16 @@ function StepList({ steps }) {
                 {s.subs.map((t, j) => <li key={j}>{t}</li>)}
               </ol>
             )}
+            {s.pics && (
+              <div className="th-shot-list">
+                {s.pics.map((pic) => (
+                  <figure className="th-shot" key={pic.src}>
+                    <img src={pic.src} alt={pic.alt} loading="lazy" />
+                    <figcaption>{pic.alt}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
             {s.shot && (
               <div className="th-shot-placeholder">
                 <i className="fa-regular fa-image"></i>{s.shot}
