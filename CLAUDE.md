@@ -38,8 +38,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 雛形一律放 `05_Prototype/`，repo 根目錄不再放頁面檔
 - 入口：`05_Prototype/index.html`；申請流程 `apply-1/2/3.html`；林場露營 `forest-camp-1/2.html`
 - React 元件（在瀏覽器內以 Babel 轉譯的 JSX）：`05_Prototype/components/`
-- 樣式：`05_Prototype/styles/`（每頁一支）＋ `05_Prototype/design_system/colors_and_type.css`
-- 圖檔：`05_Prototype/assets/`；頁面骨架範本：`05_Prototype/template/`
+- 樣式：**只有 `05_Prototype/styles/shared.css` 一支**（`@import` `design_system/colors_and_type.css`）；
+  2026-09-03 已把八支分頁 CSS 併回共用檔，**不要再新增 `styles/<頁名>.css`**
+- 圖檔：`05_Prototype/assets/`；頁面骨架範本：`05_Prototype/template/page.html` ＋ `template/PageName.jsx`
+  （`template/` 底下就這兩支，新頁一律從這裡起手；舊版範本 `1.html` 已於 2026-09-03 移入
+  `.scratch/frontend-舊雛形/template-1.html`，脫節已久，不要再撿回來）
+- 頁面外殼一律用 `Shared.jsx` 的 `PageShell`（`trail`／`title`／`lead`／`updated`／`stepper`／`nav`／`bare`），不自刻 `<main className="th-page">`
 - codegen 來源資料：`01_Raw_Input/raw/*.csv` → `05_Prototype/components/RouteData.jsx`、`ConsentData.generated.jsx`
 - Axure 原始檔：`01_Raw_Input/登山一站式.rp`
 - 交付 Word：`01_Raw_Input/臺灣登山申請一站式服務網.docx`
@@ -48,7 +52,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 技術棧（雛形階段）
 
 - React 18 UMD ＋ `@babel/standalone`（瀏覽器端即時轉譯 `type="text/babel"` 的 JSX），**無打包工具**
-- Tailwind CSS CDN（`cdn.tailwindcss.com`）＋ 各頁自有 CSS
+- Tailwind CSS CDN（`cdn.tailwindcss.com`）＋ 全站單一 `styles/shared.css`
 - 字體 Noto Sans TC / Noto Serif TC；Icon 用 FontAwesome 6 與 Phosphor Icons
 - 無 npm、無 build、無測試框架
 
