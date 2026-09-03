@@ -504,7 +504,7 @@ a { color: inherit; }
 .th-menuutil button:hover { color: var(--national-700); }
 
 /* ============================================================
-   公佈欄（最新消息／違規名單／檔案下載／常見問答）
+   公布欄（最新消息／違規名單／檔案下載／常見問答）
    ------------------------------------------------------------
    四個頁籤共用同一套骨架，比照正式站 hike.taiwan.gov.tw/news_0.aspx：
      頁籤列 → 篩選卡 → 區塊標題（左色條）→ 表格 → 分頁
@@ -692,7 +692,7 @@ a { color: inherit; }
 /*
   筆數列若要帶區塊標題（路線開放狀態、宿營地概況），沿用既有的 .th-section-title
   （與申請頁同一套左色條），只在這個 flex 列內去掉它的下邊距並推到最左。
-  ——公佈欄不放區塊次標，故本規則只在有標題時生效。
+  ——公布欄不放區塊次標，故本規則只在有標題時生效。
 */
 .bulletin-section-head .th-section-title {
   margin: 0 auto 0 0;
@@ -872,35 +872,6 @@ a { color: inherit; }
 /* 視窗式頁碼中間的省略記號（頁數多時，見 Shared.jsx 的 BulletinPager）*/
 .bulletin-page-gap { padding: 0 2px; color: var(--fg-4); font-size: var(--fs-sm); }
 
-/* ── 違規名單：個人查詢卡（正式站無此塊，為本雛形新增功能）── */
-.bulletin-query-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 12px;
-  font-size: var(--fs-md);
-  font-weight: 700;
-  color: var(--fg-1);
-}
-.bulletin-query-title i { color: var(--national-700); }
-.bulletin-query-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.bulletin-query-form .bulletin-input { flex: 1 1 320px; max-width: 420px; }
-.bulletin-alert {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-top: 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-md);
-  font-size: var(--fs-sm);
-  line-height: var(--lh-snug);
-}
-.bulletin-alert i { margin-top: 2px; }
-.bulletin-alert--warn    { background: var(--warning-bg); border-color: #fde68a; color: var(--warning-fg); }
-.bulletin-alert--success { background: var(--success-bg); border-color: var(--success-border); color: var(--success-fg); }
-.bulletin-alert--error   { background: #fef2f2; border-color: #fecaca; color: var(--danger-fg); }
-
 /* ── 明細彈窗（最新消息全文／常見問答解答）── */
 .bulletin-modal-overlay {
   position: fixed;
@@ -995,3 +966,236 @@ a { color: inherit; }
   }
   .bulletin-pager { justify-content: center; }
 }
+
+/* ── 語言選單（Header 切換繁中、英文、日文） ── */
+.th-lang-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.th-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--r-sm, 6px);
+  transition: all 0.15s ease;
+}
+.th-lang-btn:hover {
+  color: var(--national-700, #587a68);
+  background: rgba(88, 122, 104, 0.08);
+}
+.th-lang-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 9999;
+  min-width: 150px;
+  background: #ffffff;
+  border: 1px solid var(--slate-200, #e2e8f0);
+  border-radius: var(--r-md, 8px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.th-lang-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--slate-700, #334155);
+  border-radius: var(--r-sm, 6px);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+.th-lang-item:hover {
+  background: var(--slate-100, #f1f5f9);
+  color: var(--national-700, #587a68);
+}
+.th-lang-item.is-active {
+  font-weight: 600;
+  color: var(--national-700, #587a68);
+  background: #f0f7f3;
+}
+.th-menu-lang-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  padding-left: 8px;
+}
+.th-menu-lang-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--slate-600);
+  background: var(--slate-50, #f8fafc);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm, 6px);
+  cursor: pointer;
+}
+.th-menu-lang-btn.is-active {
+  color: var(--national-700, #587a68);
+  border-color: var(--national-700, #587a68);
+  background: #f0f7f3;
+  font-weight: 600;
+}
+
+
+/* 由 content.css 搬過來（2026-09-03）：ExperienceNav 已是全站每頁都有的元件，
+   而 content.css 只有內容頁載入，留在那裡的話申請流程、首頁、公布欄等頁會拿到裸元素。 */
+/* ============================================================
+   EXPERIENCE NAV — 依登山經驗建議參考資料
+   舊站是右下角浮動按鈕 #f_search 開啟的 modal，本雛形沿用。
+   ============================================================ */
+
+/* 浮動觸發按鈕 */
+.th-quickbtn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--r-pill);
+  border: none;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  box-shadow: var(--sh-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.th-quickbtn:hover { background: var(--national-700-hover); transform: translateY(-2px); }
+.th-quickbtn i { font-size: 20px; }
+.th-quickbtn span { font-size: var(--fs-xxs); font-weight: 500; letter-spacing: var(--tracking-wide); }
+@media (max-width: 640px) {
+  .th-quickbtn { right: 16px; bottom: 16px; width: 58px; height: 58px; }
+  .th-quickbtn i { font-size: 17px; }
+}
+
+/* 遮罩與面板 */
+body.th-noscroll { overflow: hidden; }
+.th-quickmask {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+.th-quickpanel {
+  background: var(--bg-1);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--sh-xl);
+  width: 100%;
+  max-width: 1180px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.th-quickpanel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--slate-200);
+  background: var(--bg-2);
+}
+.th-quickpanel-head h2 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h3);
+  margin: 0;
+  border-left: 4px solid var(--filter-active);
+  padding-left: 14px;
+  line-height: var(--lh-tight);
+}
+.th-quickpanel-close {
+  border: none;
+  background: none;
+  color: var(--fg-3);
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+}
+.th-quickpanel-close:hover { color: var(--fg-1); background: var(--slate-200); }
+.th-quickpanel-body { padding: 24px; overflow-y: auto; background: var(--bg-3); }
+
+.th-expnav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+.th-expcard {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-sm);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.th-expcard-head { display: flex; align-items: center; gap: 10px; }
+.th-expcard-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-pill);
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.th-expcard-title { font-size: var(--fs-md); font-weight: 700; color: var(--fg-1); line-height: var(--lh-snug); }
+.th-expcard-sub { font-size: var(--fs-xxs); color: var(--fg-3); }
+.th-expcard ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.th-expcard li { font-size: var(--fs-sm); line-height: var(--lh-snug); }
+.th-expcard a { display: flex; align-items: baseline; gap: 7px; color: var(--fg-2); }
+.th-expcard a:hover { color: var(--national-700); }
+.th-expcard a i { font-size: 10px; color: var(--slate-300); flex-shrink: 0; }
+.th-expcard a:hover i { color: var(--national-700); }
+/* 本雛形尚未建置的頁面 */
+.th-expcard a.is-todo { color: var(--fg-4); cursor: default; }
+.th-expcard a.is-todo:hover { color: var(--fg-4); }
+.th-expcard a.is-todo::after {
+  content: "待建置";
+  font-size: 10px;
+  color: var(--fg-4);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  padding: 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.th-expcard-group { display: flex; flex-direction: column; gap: 7px; }
+.th-expcard-grouptitle {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+}
+.th-expcard-nested { padding-left: 12px; border-left: 1px solid var(--slate-200); }

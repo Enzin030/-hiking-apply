@@ -52,7 +52,7 @@ function ApplyTeachApp() {
     <div>
       <Header active="apply" />
 
-      <PageHero
+      <PageHead
         trail={["登山申請", "線上申請教學"]}
         title="線上申請教學"
         lead="從確認可申請日期到收到申請結果，共四個步驟。首次使用本站申請入園者，建議先閱讀本頁後再開始送件。"

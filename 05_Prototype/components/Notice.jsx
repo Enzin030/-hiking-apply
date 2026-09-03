@@ -122,7 +122,7 @@ function NoticeApp() {
     <div>
       <Header active="notice" />
 
-      <PageHero
+      <PageHead
         trail={["登山須知"]}
         title="登山須知"
         lead="本站整合國家公園署、林業及自然保育署、警政署等機關之登山申辦規定。"

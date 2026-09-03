@@ -47,7 +47,7 @@ function Information6App() {
     <div>
       <Header active="info" />
 
-      <PageHero
+      <PageHead
         trail={["旅遊登山資訊", "國家公園步道分級"]}
         title="國家公園步道分級"
         updated="2026-09-01"

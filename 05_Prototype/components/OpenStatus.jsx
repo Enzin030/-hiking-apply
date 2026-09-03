@@ -2,7 +2,7 @@
   登山路線開放狀態（open.html）
   對應正式站 https://service.skyeyes.tw/hikenationpark/open.aspx
 
-  版型沿用公佈欄那套查詢型骨架（shared.css 的 bulletin-* 篩選卡／表格／分頁），
+  版型沿用公布欄那套查詢型骨架（shared.css 的 bulletin-* 篩選卡／表格／分頁），
   後續「宿營地與床位查詢」等查詢頁一併複用；本頁專屬的分組表頭與 11 欄欄寬寫在 styles/open.css；
   狀態膠囊（th-flag）與分頁一併放進 shared.css，供後續查詢頁複用。
 
@@ -210,9 +210,9 @@ function OpenStatusApp() {
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="status" />
-      <Breadcrumb trail={["首頁", "登山路線開放狀態"]} />
+      <Breadcrumb trail={["登山路線開放狀態"]} />
 
-      <main className="th-page">
+      <main className="th-page th-page-plain">
         <div className="th-page-inner">
           <h1 className="th-page-title">登山路線開放狀態</h1>
 

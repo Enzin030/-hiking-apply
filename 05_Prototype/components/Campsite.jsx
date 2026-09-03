@@ -233,9 +233,9 @@ function CampsiteApp() {
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="campsite" />
-      <Breadcrumb trail={["首頁", "宿營地與床位查詢", "雪霸宿營地查詢"]} />
+      <Breadcrumb trail={["宿營地與床位查詢", "雪霸宿營地查詢"]} />
 
-      <main className="th-page">
+      <main className="th-page th-page-plain">
         <div className="th-page-inner">
           <h1 className="th-page-title">宿營地與床位查詢</h1>
 

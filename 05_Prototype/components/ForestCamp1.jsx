@@ -201,7 +201,7 @@ function ForestCamp1App() {
   return (
     <div data-screen-label="FC-01 日期確認">
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", "登山線上申請", cabin.name, "日期確認"]} />
+      <Breadcrumb trail={["登山申請", APPLY_CRUMB, cabin.name, "日期確認"]} />
 
       <main className="th-page">
         <div className="th-page-inner">
@@ -377,6 +377,7 @@ function ForestCamp1App() {
         </div>
       </main>
 
+      <ExperienceNav />
       <Footer />
     </div>
   );

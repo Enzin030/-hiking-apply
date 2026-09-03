@@ -288,6 +288,7 @@ function Page1App() {
         </div>
       </main>
 
+      <ExperienceNav />
       <Footer />
     </div>
   );

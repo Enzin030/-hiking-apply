@@ -48,7 +48,7 @@ const GUIDE_FAQS = [
     a: "查詢「登山入園須知」和「常見問答」。",
     links: [
       { label: "前往登山須知", href: "notice.html" },
-      // 帶 ?tab=faq 直接落在公佈欄的常見問答頁籤，不停在預設的最新消息
+      // 帶 ?tab=faq 直接落在公布欄的常見問答頁籤，不停在預設的最新消息
       // （News.jsx 的 getInitialTab 解析此參數，亦接受 ?tab=3）
       { label: "常見問答", href: "news.html?tab=faq" },
     ],
@@ -82,7 +82,7 @@ function WebIllustrateApp() {
     <div>
       <Header active="info" />
 
-      <PageHero
+      <PageHead
         trail={["本站使用說明"]}
         title="本站使用說明"
         lead="本站提供國家公園入園與入山申請服務。依國家公園法第十九條，進入玉山、太魯閣、雪霸國家公園生態保護區須申請「國家公園入園許可」；若登山路線同時進入國家安全法第六條公告之山地管制區，另須申請「入山許可證」。本站會自動判斷申請者需要哪幾份許可。"

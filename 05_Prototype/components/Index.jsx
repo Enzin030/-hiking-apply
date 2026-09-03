@@ -196,6 +196,7 @@ function IndexApp() {
         </div>
       </section>
 
+      <ExperienceNav />
       <Footer />
     </div>
   );

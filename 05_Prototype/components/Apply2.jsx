@@ -376,7 +376,7 @@ function NationalParkConsent({ unit }) {
   return (
     <div data-screen-label="02 同意書（國家公園）">
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", "登山線上申請", "申請須知與同意書"]} />
+      <Breadcrumb trail={["登山申請", APPLY_CRUMB, "申請須知與同意書"]} />
 
       <main className="th-page">
         <div className="th-page-inner">
@@ -484,6 +484,7 @@ function NationalParkConsent({ unit }) {
         </div>
       </main>
 
+      <ExperienceNav />
       <Footer />
     </div>
   );
@@ -505,10 +506,10 @@ function SummaryPage({ unit }) {
   return (
     <div data-screen-label="02 申請前摘要">
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", "登山線上申請", "申請前摘要"]} />
+      <Breadcrumb trail={["登山申請", APPLY_CRUMB, "申請前摘要"]} />
 
       <main className="th-page">
-        <div className="th-page-inner" style={{ maxWidth: 680 }}>
+        <div className="th-page-inner">
           <h1 className="th-page-title">{cfg.title}</h1>
           <Stepper current={2} />
 
@@ -583,6 +584,7 @@ function SummaryPage({ unit }) {
         </div>
       </main>
 
+      <ExperienceNav />
       <Footer />
     </div>
   );

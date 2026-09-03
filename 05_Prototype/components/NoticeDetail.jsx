@@ -122,7 +122,7 @@ function NoticeDetailApp({ pageId }) {
       <Header active="notice" />
 
       {/* 正式站未標更新日期，這裡不填，避免捏造 */}
-      <PageHero trail={["登山須知", data.title]} title={data.title} />
+      <PageHead trail={["登山須知", data.title]} title={data.title} />
 
       <div className={`th-page ${hasNav ? "has-nav" : ""}`}>
         <div className="th-page-main">

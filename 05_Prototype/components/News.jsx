@@ -1,5 +1,5 @@
 /* ============================================================
-   公佈欄（BulletinApp）
+   公布欄（BulletinApp）
    ------------------------------------------------------------
    四個頁籤：最新消息、違規名單、檔案下載、常見問答。
    四頁共用同一套骨架，比照正式站 hike.taiwan.gov.tw 的
@@ -58,7 +58,7 @@ const MOCK_ANNOUNCEMENTS = [
     title: "雪霸國家公園雪季期間入園裝備自主檢查表修訂公告",
     content: `一、配合115年雪季管理措施，本處修訂「雪季期間入園裝備自主檢查表」。
 二、申請雪季期間入園之隊伍，須於送件時一併上傳填妥之檢查表。
-三、表單可於本網「公佈欄／檔案下載」取得。`
+三、表單可於本網「公布欄／檔案下載」取得。`
   },
   {
     id: "a6", date: "2026-02-10", org: "太管處", agencyId: "taroko", pinned: false,
@@ -329,10 +329,6 @@ function BulletinApp() {
   const [page, setPage] = React.useState(1);
   const [modalItem, setModalItem] = React.useState(null);
 
-  // 違規名單的個人查詢（正式站無此塊，為本雛形新增功能）
-  const [idQuery, setIdQuery] = React.useState("");
-  const [queryResult, setQueryResult] = React.useState(null);
-
   const tab = TABS[activeTab];
   const setDraftField = (patch) => setDraft(prev => Object.assign({}, prev, patch));
 
@@ -341,7 +337,6 @@ function BulletinApp() {
     setDraft(EMPTY_FILTER);
     setApplied(EMPTY_FILTER);
     setPage(1);
-    setQueryResult(null);
     const newUrl = `${window.location.pathname}?tab=${TABS[index].key}`;
     window.history.pushState({ path: newUrl }, "", newUrl);
   };
@@ -356,8 +351,6 @@ function BulletinApp() {
     setDraft(EMPTY_FILTER);
     setApplied(EMPTY_FILTER);
     setPage(1);
-    setIdQuery("");
-    setQueryResult(null);
   };
 
   const matchAgency = (item) => applied.agency === "all" || item.agencyId === applied.agency;
@@ -458,33 +451,10 @@ function BulletinApp() {
     ];
   }, [tab.key]);
 
-  /* 個人違規查詢（僅示意，非真實勾稽） */
-  const handleIdQuery = (e) => {
-    e.preventDefault();
-    const q = idQuery.trim().toUpperCase();
-    if (!q) {
-      setQueryResult({ type: "error", text: "請輸入身分證字號或護照號碼進行查詢" });
-      return;
-    }
-    const masked = `${q.substring(0, 3)}****${q.slice(-3)}`;
-    if (q.startsWith("A12")) {
-      const hit = MOCK_VIOLATIONS[0];
-      setQueryResult({
-        type: "warn",
-        text: `查詢結果：證號 ${masked} 於 ${hit.org} 仍有一筆違規紀錄（${hit.category}），停權至 ${hit.banEnd} 止。`
-      });
-    } else {
-      setQueryResult({
-        type: "success",
-        text: `查詢結果：證號 ${masked} 目前無任何違規停權紀錄，可正常申請各國家公園與山屋床位。`
-      });
-    }
-  };
-
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="bulletin" />
-      <Breadcrumb trail={["首頁", "公佈欄", tab.label]} />
+      <Breadcrumb trail={["公布欄", tab.label]} />
 
       <main className="th-page">
         <div className="th-page-inner">
@@ -492,7 +462,7 @@ function BulletinApp() {
 
           {/* 頁籤列 */}
           <div className="bulletin-tabs">
-            <nav className="bulletin-tabs-nav" aria-label="公佈欄分頁">
+            <nav className="bulletin-tabs-nav" aria-label="公布欄分頁">
               {TABS.map((t, idx) => (
                 <button
                   key={t.key}
@@ -506,38 +476,6 @@ function BulletinApp() {
               ))}
             </nav>
           </div>
-
-          {/* 違規名單專屬：個人違規與停權紀錄查詢 */}
-          {tab.key === "violation" && (
-            <section className="bulletin-card">
-              <h2 className="bulletin-query-title">
-                <i className="fa-solid fa-id-card"></i>個人違規與停權紀錄查詢
-              </h2>
-              <form className="bulletin-query-form" onSubmit={handleIdQuery}>
-                <input
-                  type="text"
-                  className="bulletin-input"
-                  name="idQuery"
-                  placeholder="請輸入身分證字號或護照號碼（例：A123456789）"
-                  value={idQuery}
-                  onChange={e => setIdQuery(e.target.value)}
-                />
-                <button type="submit" className="bulletin-btn">
-                  <i className="fa-solid fa-magnifying-glass"></i>查詢紀錄
-                </button>
-              </form>
-              {queryResult && (
-                <div className={`bulletin-alert bulletin-alert--${queryResult.type}`}>
-                  <i className={
-                    queryResult.type === "warn" ? "fa-solid fa-triangle-exclamation" :
-                    queryResult.type === "success" ? "fa-solid fa-circle-check" :
-                    "fa-solid fa-circle-xmark"
-                  }></i>
-                  <div>{queryResult.text}</div>
-                </div>
-              )}
-            </section>
-          )}
 
           {/* 篩選卡（四頁籤共用外框，第二列依頁籤換條件） */}
           <form className="bulletin-card" onSubmit={submitFilter}>
@@ -670,6 +608,7 @@ function BulletinApp() {
         </div>
       )}
 
+      <ExperienceNav />
       <Footer />
     </div>
   );

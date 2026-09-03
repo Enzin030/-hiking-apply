@@ -1,58 +1,28 @@
 /* ============================================================
    內容頁共用版型
    使用頁面：information_6 / notice / web_illustrate / apply_teach
-   元件對應：Shared.jsx 的 PageHero / PageNav / SectionCard /
+   元件對應：Shared.jsx 的 PageHead / PageNav / SectionCard /
              LinkList / StepList / DataTable / ExperienceNav
    ============================================================ */
 
-/* ============ PAGE HERO — 內頁標題橫幅 ============ */
+/* ============ PAGE HEAD — 內頁標題區 ============ */
 /*
-  背景用實景照，白色覆蓋層壓下對比讓深色文字維持可讀；
-  圖片以 modifier class 指定（PageHero 的 bg prop），避免 inline style。
+  與查詢型頁面（news／open／campsite）同一套：麵包屑 .th-crumb ＋
+  .th-page-inner 內的 .th-page-title，兩者都定義在 shared.css，這裡不重寫。
+  本段只補內容頁獨有的兩件事：
+  1. 標題下方的導言與更新日期（原照片橫幅內的兩行）。
+  2. 標題的下邊距歸零——內容頁緊接著的 .th-page 本身有 32px padding，
+     不歸零會變成 24＋32。查詢型頁面的 .th-page 不是 grid、也沒有上內距，
+     所以它們維持 shared.css 的 24px。
 */
-.th-hero {
-  position: relative;
-  background-color: var(--bg-2);
-  background-position: center 22%;
-  background-size: cover;
-  background-repeat: no-repeat;
-  border-bottom: 1px solid var(--slate-200);
-}
-.th-hero.bg-mountain { background-image: url("../assets/hero-bg.png"); }
-.th-hero.bg-qilai    { background-image: url("../assets/route-qilai.png"); }
-.th-hero.bg-wuling   { background-image: url("../assets/route-wuling.png"); }
-.th-hero.bg-yushan   { background-image: url("../assets/route-yushan.png"); }
-.th-hero.bg-nanheng  { background-image: url("../assets/route-nanheng.png"); }
-.th-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.78);
-}
-.th-hero > * { position: relative; }
-.th-hero-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 32px 32px;
-}
-.th-hero-title {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: var(--fs-h1);
-  color: var(--fg-1);
-  letter-spacing: var(--tracking-wide);
-  margin: 8px 0 0;
-  border-left: 4px solid var(--filter-active);
-  padding-left: 16px;
-  line-height: var(--lh-tight);
-}
-.th-hero-lead {
+.th-page-head .th-page-title { margin-bottom: 0; }
+.th-page-lead {
   margin: 14px 0 0;
   max-width: 62em;
   color: var(--fg-2);
   text-align: justify;
 }
-.th-hero-meta {
+.th-page-meta {
   margin-top: 14px;
   font-size: var(--fs-xs);
   color: var(--fg-3);
@@ -60,6 +30,12 @@
 }
 
 /* ============ PAGE LAYOUT — 主內容 ＋ 右側目錄 ============ */
+/*
+  下面這組 .th-page 是內容頁專用的（覆寫 shared.css 的純外框版本）。
+  但 open／campsite 兩頁也載入本檔（為了 .th-level、.th-inline-link 等），
+  它們的版型實際上跟 news 同一套；煩到這組 grid 規則會讓標題比麵包屑
+  多縮 32px、跟全站對不齊，因此它們另掛 .th-page-plain 還原。
+*/
 .th-page {
   max-width: 1280px;
   margin: 0 auto;
@@ -81,6 +57,15 @@
   flex-direction: column;
   gap: 24px;
   min-width: 0;
+}
+
+/* 查詢型頁面（open／campsite）還原 shared.css 的 .th-page：純外框，內距交給 .th-page-inner */
+.th-page.th-page-plain {
+  max-width: none;
+  margin: 0;
+  padding: 0 0 80px;
+  display: block;
+  min-height: 100vh;
 }
 
 /* ============ PAGE NAV — 頁內目錄 ============ */
@@ -446,149 +431,6 @@ a.th-linkrow:hover .th-linkrow-icon { color: var(--national-700); }
 .th-faq-body a { color: var(--national-700); font-weight: 500; }
 .th-faq-body a i { font-size: 11px; margin-left: 5px; }
 
-/* ============================================================
-   EXPERIENCE NAV — 依登山經驗建議參考資料
-   舊站是右下角浮動按鈕 #f_search 開啟的 modal，本雛形沿用。
-   ============================================================ */
-
-/* 浮動觸發按鈕 */
-.th-quickbtn {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 60;
-  width: 68px;
-  height: 68px;
-  border-radius: var(--r-pill);
-  border: none;
-  background: var(--national-700);
-  color: var(--fg-on-dark);
-  box-shadow: var(--sh-lg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-.th-quickbtn:hover { background: var(--national-700-hover); transform: translateY(-2px); }
-.th-quickbtn i { font-size: 20px; }
-.th-quickbtn span { font-size: var(--fs-xxs); font-weight: 500; letter-spacing: var(--tracking-wide); }
-@media (max-width: 640px) {
-  .th-quickbtn { right: 16px; bottom: 16px; width: 58px; height: 58px; }
-  .th-quickbtn i { font-size: 17px; }
-}
-
-/* 遮罩與面板 */
-body.th-noscroll { overflow: hidden; }
-.th-quickmask {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 16px;
-}
-.th-quickpanel {
-  background: var(--bg-1);
-  border-radius: var(--r-2xl);
-  box-shadow: var(--sh-xl);
-  width: 100%;
-  max-width: 1180px;
-  max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.th-quickpanel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--slate-200);
-  background: var(--bg-2);
-}
-.th-quickpanel-head h2 {
-  font-family: var(--font-sans);
-  font-size: var(--fs-h3);
-  margin: 0;
-  border-left: 4px solid var(--filter-active);
-  padding-left: 14px;
-  line-height: var(--lh-tight);
-}
-.th-quickpanel-close {
-  border: none;
-  background: none;
-  color: var(--fg-3);
-  font-size: 20px;
-  line-height: 1;
-  padding: 4px 8px;
-  border-radius: var(--r-sm);
-}
-.th-quickpanel-close:hover { color: var(--fg-1); background: var(--slate-200); }
-.th-quickpanel-body { padding: 24px; overflow-y: auto; background: var(--bg-3); }
-
-.th-expnav-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 16px;
-}
-.th-expcard {
-  background: var(--bg-1);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-sm);
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.th-expcard-head { display: flex; align-items: center; gap: 10px; }
-.th-expcard-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--r-pill);
-  background: var(--bg-mist-2);
-  color: var(--national-700);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  flex-shrink: 0;
-}
-.th-expcard-title { font-size: var(--fs-md); font-weight: 700; color: var(--fg-1); line-height: var(--lh-snug); }
-.th-expcard-sub { font-size: var(--fs-xxs); color: var(--fg-3); }
-.th-expcard ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
-.th-expcard li { font-size: var(--fs-sm); line-height: var(--lh-snug); }
-.th-expcard a { display: flex; align-items: baseline; gap: 7px; color: var(--fg-2); }
-.th-expcard a:hover { color: var(--national-700); }
-.th-expcard a i { font-size: 10px; color: var(--slate-300); flex-shrink: 0; }
-.th-expcard a:hover i { color: var(--national-700); }
-/* 本雛形尚未建置的頁面 */
-.th-expcard a.is-todo { color: var(--fg-4); cursor: default; }
-.th-expcard a.is-todo:hover { color: var(--fg-4); }
-.th-expcard a.is-todo::after {
-  content: "待建置";
-  font-size: 10px;
-  color: var(--fg-4);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-xs);
-  padding: 0 4px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-.th-expcard-group { display: flex; flex-direction: column; gap: 7px; }
-.th-expcard-grouptitle {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--fg-3);
-  letter-spacing: var(--tracking-wide);
-}
-.th-expcard-nested { padding-left: 12px; border-left: 1px solid var(--slate-200); }
-
 /* ============ CALLOUT ============ */
 .th-callout {
   display: flex;
@@ -652,8 +494,6 @@ body.th-noscroll { overflow: hidden; }
   不撐寬 documentElement。
 */
 @media (max-width: 640px) {
-  .th-hero-inner { padding: 0 16px 24px; }
-  .th-hero-title { padding-left: 12px; }
   .th-page { padding: 16px; gap: 20px; }
   .th-card-body { padding: 16px; }
   .th-card-head { padding: 14px 16px; flex-wrap: wrap; }
@@ -707,4 +547,94 @@ body.th-noscroll { overflow: hidden; }
   font-size: var(--fs-xs);
   color: var(--fg-3);
   line-height: var(--lh-base);
+}
+
+/* ── RSS 訂閱頁（rss.html）── */
+/* 本頁唯一新造的原件是「訂閱網址 ＋ 複製鈕」那一格，其餘沿用 th-card／th-table／th-callout。 */
+.th-table.tbl-rss th:nth-child(1) { width: 156px; }
+.th-table.tbl-rss th:nth-child(2) { width: 24%; }
+.th-table.tbl-rss th:nth-child(4) { width: 96px; }
+
+.rss-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.rss-channel i { color: var(--national-700); font-size: 14px; }
+
+.rss-url {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.rss-url-text {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-sm);
+  color: var(--national-800);
+  word-break: break-all;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rss-url-text:hover { color: var(--national-900); }
+.rss-copy { flex-shrink: 0; }
+
+.rss-url.is-todo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-3);
+}
+
+.rss-url-note {
+  margin: 8px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--warning-fg);
+  line-height: var(--lh-base);
+}
+.rss-url-note i { margin-top: 2px; }
+
+/* 複製失敗時的離屏 textarea 承接元素（execCommand 退路） */
+.rss-offscreen {
+  position: fixed;
+  top: -1000px;
+  left: -1000px;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  /* 四欄在窄螢幕改為一頻道一張卡，比照 .tbl-level 的做法 */
+  .th-table.tbl-rss { display: block; }
+  .th-table.tbl-rss thead { display: none; }
+  .th-table.tbl-rss tbody,
+  .th-table.tbl-rss tbody tr { display: block; }
+  .th-table.tbl-rss th:nth-child(1),
+  .th-table.tbl-rss th:nth-child(2),
+  .th-table.tbl-rss th:nth-child(4) { width: auto; }
+  .th-table.tbl-rss tbody tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .th-table.tbl-rss tbody tr:last-child { border-bottom: none; }
+  .th-table.tbl-rss tbody td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+    text-align: left;
+  }
+  .th-table.tbl-rss tbody td + td { margin-top: 10px; }
+  .th-table.tbl-rss tbody td:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--fg-3);
+    letter-spacing: var(--tracking-wide);
+  }
 }

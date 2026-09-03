@@ -15,7 +15,7 @@ function TodoLink({ label, className = "", onDark }) {
   主導覽項目。url 為 null＝本雛形尚未建置，一律出「待建置」標記，不給 `#` 假連結。
 */
 const HEADER_NAV = [
-  { key: "bulletin", label: "公佈欄", url: "news.html" },
+  { key: "bulletin", label: "公布欄", url: "news.html" },
   { key: "apply",    label: "登山申請", url: "apply-1.html" },
   { key: "notice",   label: "登山須知", url: "notice.html" },
   { key: "status",   label: "登山路線開放狀態", url: "open.html" },
@@ -23,8 +23,19 @@ const HEADER_NAV = [
   { key: "info",     label: "旅遊登山資訊", url: null },
 ];
 
-/* 工具列項目（網站導覽／警特報／RSS），目前三項都未建置 */
-const HEADER_UTILITY = ["網站導覽", "警特報", "RSS"];
+/* 工具列項目（網站導覽／警特報／RSS） */
+const HEADER_UTILITY = [
+  { label: "網站導覽", url: null },
+  { label: "警特報",   url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true },
+  { label: "RSS",     url: "rss.html" },
+];
+
+/* 可選語系定義 */
+const LANGUAGES = [
+  { key: "zh-TW", label: "繁體中文" },
+  { key: "en",    label: "English" },
+  { key: "ja",    label: "日本語" },
+];
 
 /*
   Header。
@@ -34,32 +45,48 @@ const HEADER_UTILITY = ["網站導覽", "警特報", "RSS"];
 */
 function Header({ active }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [langOpen, setLangOpen] = React.useState(false);
+  const [currentLang, setCurrentLang] = React.useState("zh-TW");
+  const langRef = React.useRef(null);
 
-  // 開啟時鎖背景捲動，Esc 關閉；比照 ExperienceNav 的作法
+  // 開啟時鎖背景捲動，Esc 關閉；點擊外部關閉語言下拉
   React.useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setLangOpen(false);
+      }
+    };
+    const onClickOutside = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false);
+      }
+    };
     document.addEventListener("keydown", onKey);
-    document.body.classList.add("th-noscroll");
+    document.addEventListener("mousedown", onClickOutside);
+    if (menuOpen) document.body.classList.add("th-noscroll");
     return () => {
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClickOutside);
       document.body.classList.remove("th-noscroll");
     };
   }, [menuOpen]);
+
+  const currentLangObj = LANGUAGES.find(l => l.key === currentLang) || LANGUAGES[0];
 
   return (
     <header className="w-full bg-white sticky top-0 z-50 shadow-[0_2px_10px_rgba(0,0,0,0.05)] border-b border-slate-100 py-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap justify-between items-center gap-y-2">
           {/*
-            站名是全站識別（wordmark），不是各頁主標題 —— 頁面主標題是 PageHero 的 h1，
+            站名是全站識別（wordmark），不是各頁主標題 —— 頁面主標題是 PageHead 的 h1，
             這裡用 <a> 而非帶 onClick 的 div，兼顧鍵盤可聚焦與單一 h1 的語意。
             行動版：拿掉 shrink-0、縮小字級並允許換行，避免撐寬 documentElement。
           */}
           <a href="index.html"
              className="flex items-center min-w-0 shrink lg:shrink-0 hover:opacity-90 transition"
              aria-label="臺灣登山申請一站式服務網 首頁">
-            <img src="assets/logo.png" alt="" className="h-10 sm:h-14 lg:h-16 w-auto shrink-0 mr-2 sm:mr-3" />
+            <img src="assets/logo-mark.png" alt="國家公園署" className="h-10 sm:h-14 lg:h-16 w-auto shrink-0 mr-2 sm:mr-3" />
             <span className="font-serif font-extrabold text-base sm:text-xl lg:text-2xl text-slate-800 tracking-wide mt-1 min-w-0 lg:whitespace-nowrap">
               <span className="text-lg sm:text-2xl lg:text-3xl">臺灣<span className="text-[#587a68]">登山申請</span></span>一站式服務網
             </span>
@@ -68,15 +95,55 @@ function Header({ active }) {
           {/* 桌機（≥1280px）：工具列 ＋ 水平主導覽 */}
           <div className="flex-col items-end gap-3 hidden xl:flex">
             <div className="flex items-center gap-3 text-[14px] text-slate-500">
-              {HEADER_UTILITY.map((label) => (
+              {HEADER_UTILITY.map(({ label, url, external }) => (
                 <React.Fragment key={label}>
-                  <TodoLink label={label} />
+                  {url ? (
+                    <a href={url}
+                       target={external ? "_blank" : undefined}
+                       rel={external ? "noopener noreferrer" : undefined}
+                       className="hover:text-[#587a68] transition">
+                      {label}
+                    </a>
+                  ) : (
+                    <TodoLink label={label} />
+                  )}
                   <div className="w-[1px] h-3 bg-slate-300"></div>
                 </React.Fragment>
               ))}
-              <button className="hover:text-[#587a68] transition flex items-center gap-1.5">
-                <i className="ph ph-globe text-[14px] relative top-[1px]"></i> 語言
-              </button>
+
+              {/* 語言選擇下拉選單 */}
+              <div className="th-lang-wrapper" ref={langRef}>
+                <button
+                  type="button"
+                  className="th-lang-btn hover:text-[#587a68] transition"
+                  onClick={() => setLangOpen(!langOpen)}
+                  aria-expanded={langOpen}
+                  aria-haspopup="true"
+                >
+                  <i className="ph ph-globe text-[14px] relative top-[1px]"></i>
+                  <span>{currentLangObj.label}</span>
+                  <i className={`fa-solid fa-chevron-down text-[10px] transition-transform ${langOpen ? "rotate-180" : ""}`}></i>
+                </button>
+                {langOpen && (
+                  <div className="th-lang-dropdown">
+                    {LANGUAGES.map(lang => (
+                      <button
+                        key={lang.key}
+                        type="button"
+                        className={`th-lang-item ${currentLang === lang.key ? "is-active" : ""}`}
+                        onClick={() => {
+                          setCurrentLang(lang.key);
+                          setLangOpen(false);
+                        }}
+                      >
+                        <span>{lang.label}</span>
+                        {currentLang === lang.key && <i className="fa-solid fa-check text-xs text-[#587a68]"></i>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="w-[1px] h-3 bg-slate-300"></div>
               <button className="hover:text-[#587a68] transition flex items-center gap-1.5 ml-1">
                 <i className="ph-bold ph-magnifying-glass text-[15px] relative top-[1px]"></i>
@@ -144,11 +211,36 @@ function Header({ active }) {
             </nav>
 
             <div className="th-menuutil">
-              {HEADER_UTILITY.map((label) => <TodoLink key={label} label={label} />)}
-              <button type="button">
-                <i className="ph ph-globe"></i> 語言
-              </button>
-              <button type="button">
+              {HEADER_UTILITY.map(({ label, url, external }) =>
+                url ? (
+                  <a key={label} href={url}
+                     target={external ? "_blank" : undefined}
+                     rel={external ? "noopener noreferrer" : undefined}>
+                    {label}
+                  </a>
+                ) : (
+                  <TodoLink key={label} label={label} />
+                )
+              )}
+              <div className="w-full mt-2 pt-2 border-t border-slate-100">
+                <div className="text-xs text-slate-400 font-medium mb-1.5 flex items-center gap-1">
+                  <i className="ph ph-globe"></i> 語言 / Language
+                </div>
+                <div className="th-menu-lang-options">
+                  {LANGUAGES.map(lang => (
+                    <button
+                      key={lang.key}
+                      type="button"
+                      className={`th-menu-lang-btn ${currentLang === lang.key ? "is-active" : ""}`}
+                      onClick={() => setCurrentLang(lang.key)}
+                    >
+                      <span>{lang.label}</span>
+                      {currentLang === lang.key && <i className="fa-solid fa-check text-xs"></i>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button type="button" className="mt-2">
                 <i className="ph-bold ph-magnifying-glass"></i> 搜尋
               </button>
             </div>
@@ -158,6 +250,13 @@ function Header({ active }) {
     </header>
   );
 }
+
+/*
+  申請流程共用的麵包屑中間層級。四支流程頁（apply-2／apply-3／forest-camp-1／2）
+  都掛在「各項線上申請」底下，指回 apply-1.html。
+  一級的「登山申請」在正式站沒有自己的頁面（site_map 只列子項），故維持純文字。
+*/
+const APPLY_CRUMB = { label: "登山線上申請", href: "apply-1.html" };
 
 /*
   麵包屑。trail 元素可為字串或 { label, href }：
@@ -223,7 +322,7 @@ function Footer() {
           <div className="w-full lg:max-w-[65%] flex flex-col sm:flex-row gap-6">
             <div className="shrink-0">
               <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <img src="assets/logo.png" alt="Logo" className="h-16 w-auto" />
+                <img src="assets/logo-mark.png" alt="Logo" className="h-16 w-auto" />
               </div>
             </div>
             <div className="w-full">
@@ -232,7 +331,7 @@ function Footer() {
                   臺灣登山申請一站式服務網
                 </h3>
                 {/*
-                  這是抄自正式站的「全站」最後更新日期，與 PageHero 的「本頁」更新日期
+                  這是抄自正式站的「全站」最後更新日期，與 PageHead 的「本頁」更新日期
                   語意不同，兩者不一致屬正常，勿逕自對齊（2026-09-02 使用者裁決）。
                   [待確認] 實際上線時此值的維護方式（人工填寫或由 CMS 帶出）。
                 */}
@@ -251,7 +350,7 @@ function Footer() {
               <h4 className="text-white font-bold text-[15px] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
                 服務專區
               </h4>
-              {/* 常見問答＝公佈欄第四個頁籤（帶 ?tab=faq 直接落在該頁籤）；
+              {/* 常見問答＝公布欄第四個頁籤（帶 ?tab=faq 直接落在該頁籤）；
                   聯絡我們（舊站 contact.aspx）尚未建置，不給 `#` 假連結 */}
               <ul className="space-y-3 text-[14px]">
                 <li>
@@ -299,20 +398,20 @@ function Footer() {
    ============================================================ */
 
 /*
-  內頁標題橫幅：麵包屑 ＋ 標題 ＋ 導言 ＋ 更新日期
-  bg = 背景照的 modifier class（見 content.css：bg-mountain／bg-qilai／bg-wuling
-       ／bg-yushan／bg-nanheng），省略則為純色底
+  內頁標題區：麵包屑 ＋ 標題 ＋ 導言 ＋ 更新日期
+  版型與查詢型頁面（news／open／campsite）一致——同一組 .th-crumb、
+  .th-page-inner、.th-page-title，不再用照片橫幅。
 */
-function PageHero({ trail, title, lead, updated, bg = "bg-mountain" }) {
+function PageHead({ trail, title, lead, updated }) {
   return (
-    <div className={`th-hero ${bg}`}>
+    <React.Fragment>
       <Breadcrumb trail={trail} />
-      <div className="th-hero-inner">
-        <h1 className="th-hero-title">{title}</h1>
-        {lead && <p className="th-hero-lead">{lead}</p>}
-        {updated && <div className="th-hero-meta">更新日期：{updated}</div>}
+      <div className="th-page-inner th-page-head">
+        <h1 className="th-page-title">{title}</h1>
+        {lead && <p className="th-page-lead">{lead}</p>}
+        {updated && <div className="th-page-meta">更新日期：{updated}</div>}
       </div>
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -684,7 +783,7 @@ function ExperienceNav({ title = "依據登山經驗建議參考資料", label =
 }
 
 Object.assign(window, {
-  Header, Breadcrumb, Stepper, Footer,
-  PageHero, PageNav, SectionCard, LinkList, DataTable, StepList, Callout, ExperienceNav,
+  Header, Breadcrumb, APPLY_CRUMB, Stepper, Footer,
+  PageHead, PageNav, SectionCard, LinkList, DataTable, StepList, Callout, ExperienceNav,
   BulletinPager,
 });
