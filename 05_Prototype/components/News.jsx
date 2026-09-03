@@ -279,8 +279,8 @@ function AgencyBadge({ agencyId, org }) {
 /* 統一表格：columns = [{ key, label, cls, render(row) }] */
 function BulletinTable({ columns, rows, emptyText }) {
   return (
-    <div className="bulletin-table-wrap">
-      <table className="bulletin-table">
+    <div className="th-table-wrap th-table-card">
+      <table className="th-table th-table--zebra">
         <thead>
           <tr>
             {columns.map(c => (
@@ -298,7 +298,7 @@ function BulletinTable({ columns, rows, emptyText }) {
           )) : (
             <tr>
               <td colSpan={columns.length}>
-                <div className="bulletin-empty">
+                <div className="th-empty">
                   <i className="fa-solid fa-inbox"></i>
                   {emptyText}
                 </div>
@@ -454,140 +454,139 @@ function BulletinApp() {
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="bulletin" />
-      <Breadcrumb trail={["公布欄", tab.label]} />
+      <PageShell
+        trail={["公布欄", tab.label]}
+        title={tab.label}
+        bare
+      >
 
-      <main className="th-page">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">{tab.label}</h1>
-
-          {/* 頁籤列 */}
-          <div className="bulletin-tabs">
-            <nav className="bulletin-tabs-nav" aria-label="公布欄分頁">
-              {TABS.map((t, idx) => (
-                <button
-                  key={t.key}
-                  type="button"
-                  className={`bulletin-tab ${activeTab === idx ? "is-active" : ""}`}
-                  aria-current={activeTab === idx ? "page" : undefined}
-                  onClick={() => changeTab(idx)}
-                >
-                  <i className={t.icon}></i><span>{t.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* 篩選卡（四頁籤共用外框，第二列依頁籤換條件） */}
-          <form className="bulletin-card" onSubmit={submitFilter}>
-            <div className="bulletin-filter-row">
-              <span className="bulletin-filter-label">
-                <i className="fa-solid fa-building"></i>發布單位
-              </span>
-              {ALL_AGENCIES.map(a => (
-                <button
-                  key={a.id}
-                  type="button"
-                  className={`bulletin-chip ${draft.agency === a.id ? "is-active" : ""}`}
-                  aria-pressed={draft.agency === a.id}
-                  onClick={() => setDraftField({ agency: a.id })}
-                >
-                  {a.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="bulletin-filter-row">
-              <span className="bulletin-filter-label">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                {tab.key === "download" ? "檔案名稱" : "查詢條件"}
-              </span>
-
-              <div className="bulletin-search">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                <input
-                  type="text"
-                  className="bulletin-input"
-                  name="keyword"
-                  placeholder={{
-                    news: "請輸入公告標題或內容關鍵字",
-                    violation: "請輸入姓名或違規原因關鍵字",
-                    download: "請輸入檔案名稱關鍵字",
-                    faq: "請輸入問題或解答關鍵字",
-                  }[tab.key]}
-                  value={draft.q}
-                  onChange={e => setDraftField({ q: e.target.value })}
-                />
-              </div>
-
-              {/* 最新消息：發布日期起訖 */}
-              {tab.key === "news" && (
-                <React.Fragment>
-                  <span className="bulletin-filter-label bulletin-filter-label--inline">
-                    <i className="fa-regular fa-calendar-days"></i>發布日期
-                  </span>
-                  <input type="date" name="startDate" className="bulletin-input bulletin-input--date"
-                         value={draft.start} onChange={e => setDraftField({ start: e.target.value })} />
-                  <span className="bulletin-sep">至</span>
-                  <input type="date" name="endDate" className="bulletin-input bulletin-input--date"
-                         value={draft.end} onChange={e => setDraftField({ end: e.target.value })} />
-                </React.Fragment>
-              )}
-
-              {/* 違規名單：排序 */}
-              {tab.key === "violation" && (
-                <React.Fragment>
-                  <span className="bulletin-filter-label bulletin-filter-label--inline">
-                    <i className="fa-solid fa-arrow-down-wide-short"></i>排序
-                  </span>
-                  <select name="sort" className="bulletin-select" value={draft.sort}
-                          onChange={e => setDraftField({ sort: e.target.value })}>
-                    <option value="date_desc">違規或核定日期 新→舊</option>
-                    <option value="date_asc">違規或核定日期 舊→新</option>
-                  </select>
-                </React.Fragment>
-              )}
-
-              {/* 常見問答：發布類別 */}
-              {tab.key === "faq" && (
-                <React.Fragment>
-                  <span className="bulletin-filter-label bulletin-filter-label--inline">
-                    <i className="fa-solid fa-tags"></i>發布類別
-                  </span>
-                  <select name="category" className="bulletin-select" value={draft.cat}
-                          onChange={e => setDraftField({ cat: e.target.value })}>
-                    {FAQ_CATEGORIES.map(c => (
-                      <option key={c} value={c}>{c === "all" ? "全部類別" : c}</option>
-                    ))}
-                  </select>
-                </React.Fragment>
-              )}
-
-              <button type="submit" className="bulletin-btn">
-                <i className="fa-solid fa-magnifying-glass"></i>查詢
+        {/* 頁籤列 */}
+        <div className="bulletin-tabs">
+          <nav className="bulletin-tabs-nav" aria-label="公布欄分頁">
+            {TABS.map((t, idx) => (
+              <button
+                key={t.key}
+                type="button"
+                className={`bulletin-tab ${activeTab === idx ? "is-active" : ""}`}
+                aria-current={activeTab === idx ? "page" : undefined}
+                onClick={() => changeTab(idx)}
+              >
+                <i className={t.icon}></i><span>{t.label}</span>
               </button>
-              <button type="button" className="bulletin-btn bulletin-btn--ghost" onClick={resetFilter}>
-                <i className="fa-solid fa-rotate-left"></i>重置
-              </button>
-            </div>
-          </form>
-
-          {/* 筆數列（不再放區塊次標——頁面主標已在上方，四頁籤皆同名） */}
-          <div className="bulletin-section-head">
-            <span className="bulletin-count">
-              共 <strong>{filtered.length}</strong> {tab.unit}
-              {totalPages > 1 && `　｜　第 ${safePage} / ${totalPages} 頁`}
-            </span>
-          </div>
-
-          <BulletinTable
-            columns={columns}
-            rows={pageRows}
-            emptyText={`尚無符合條件的${tab.label}資料`}
-          />
-
-          <BulletinPager page={safePage} totalPages={totalPages} onChange={setPage} />
+            ))}
+          </nav>
         </div>
-      </main>
+
+        {/* 篩選卡（四頁籤共用外框，第二列依頁籤換條件） */}
+        <form className="bulletin-card" onSubmit={submitFilter}>
+          <div className="bulletin-filter-row">
+            <span className="bulletin-filter-label">
+              <i className="fa-solid fa-building"></i>發布單位
+            </span>
+            {ALL_AGENCIES.map(a => (
+              <button
+                key={a.id}
+                type="button"
+                className={`th-chip ${draft.agency === a.id ? "is-active" : ""}`}
+                aria-pressed={draft.agency === a.id}
+                onClick={() => setDraftField({ agency: a.id })}
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="bulletin-filter-row">
+            <span className="bulletin-filter-label">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              {tab.key === "download" ? "檔案名稱" : "查詢條件"}
+            </span>
+
+            <div className="th-search">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                className="th-input"
+                name="keyword"
+                placeholder={{
+                  news: "請輸入公告標題或內容關鍵字",
+                  violation: "請輸入姓名或違規原因關鍵字",
+                  download: "請輸入檔案名稱關鍵字",
+                  faq: "請輸入問題或解答關鍵字",
+                }[tab.key]}
+                value={draft.q}
+                onChange={e => setDraftField({ q: e.target.value })}
+              />
+            </div>
+
+            {/* 最新消息：發布日期起訖 */}
+            {tab.key === "news" && (
+              <React.Fragment>
+                <span className="bulletin-filter-label bulletin-filter-label--inline">
+                  <i className="fa-regular fa-calendar-days"></i>發布日期
+                </span>
+                <input type="date" name="startDate" className="th-input th-input--date"
+                       value={draft.start} onChange={e => setDraftField({ start: e.target.value })} />
+                <span className="bulletin-sep">至</span>
+                <input type="date" name="endDate" className="th-input th-input--date"
+                       value={draft.end} onChange={e => setDraftField({ end: e.target.value })} />
+              </React.Fragment>
+            )}
+
+            {/* 違規名單：排序 */}
+            {tab.key === "violation" && (
+              <React.Fragment>
+                <span className="bulletin-filter-label bulletin-filter-label--inline">
+                  <i className="fa-solid fa-arrow-down-wide-short"></i>排序
+                </span>
+                <select name="sort" className="th-select" value={draft.sort}
+                        onChange={e => setDraftField({ sort: e.target.value })}>
+                  <option value="date_desc">違規或核定日期 新→舊</option>
+                  <option value="date_asc">違規或核定日期 舊→新</option>
+                </select>
+              </React.Fragment>
+            )}
+
+            {/* 常見問答：發布類別 */}
+            {tab.key === "faq" && (
+              <React.Fragment>
+                <span className="bulletin-filter-label bulletin-filter-label--inline">
+                  <i className="fa-solid fa-tags"></i>發布類別
+                </span>
+                <select name="category" className="th-select" value={draft.cat}
+                        onChange={e => setDraftField({ cat: e.target.value })}>
+                  {FAQ_CATEGORIES.map(c => (
+                    <option key={c} value={c}>{c === "all" ? "全部類別" : c}</option>
+                  ))}
+                </select>
+              </React.Fragment>
+            )}
+
+            <button type="submit" className="th-btn th-btn-primary">
+              <i className="fa-solid fa-magnifying-glass"></i>查詢
+            </button>
+            <button type="button" className="th-btn th-btn-ghost" onClick={resetFilter}>
+              <i className="fa-solid fa-rotate-left"></i>重置
+            </button>
+          </div>
+        </form>
+
+        {/* 筆數列（不再放區塊次標——頁面主標已在上方，四頁籤皆同名） */}
+        <div className="bulletin-section-head">
+          <span className="bulletin-count">
+            共 <strong>{filtered.length}</strong> {tab.unit}
+            {totalPages > 1 && `　｜　第 ${safePage} / ${totalPages} 頁`}
+          </span>
+        </div>
+
+        <BulletinTable
+          columns={columns}
+          rows={pageRows}
+          emptyText={`尚無符合條件的${tab.label}資料`}
+        />
+
+        <BulletinPager page={safePage} totalPages={totalPages} onChange={setPage} />
+      </PageShell>
 
       {/* 明細彈窗（最新消息全文／常見問答解答） */}
       {modalItem && (

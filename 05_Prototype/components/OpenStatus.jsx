@@ -210,171 +210,170 @@ function OpenStatusApp() {
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="status" />
-      <Breadcrumb trail={["登山路線開放狀態"]} />
+      <PageShell
+        trail={["登山路線開放狀態"]}
+        title="登山路線開放狀態"
+        bare
+      >
 
-      <main className="th-page th-page-plain">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">登山路線開放狀態</h1>
-
-          <form className="bulletin-card" onSubmit={submit}>
-            <div className="bulletin-filter-row">
-              <span className="bulletin-filter-label">
-                <i className="fa-solid fa-building"></i>機關
-              </span>
-              {OPEN_ORG_BUTTONS.map((o) => (
-                <button
-                  key={o.key}
-                  type="button"
-                  className={`bulletin-chip ${draft.org === o.key ? "is-active" : ""}`}
-                  aria-pressed={draft.org === o.key}
-                  onClick={() => changeOrg(o.key)}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="bulletin-filter-row">
-              <span className="bulletin-filter-label">
-                <i className="fa-solid fa-route"></i>登山主路線
-              </span>
-              <select
-                className="bulletin-select open-select"
-                value={draft.mainRoute}
-                onChange={(e) => setField({ mainRoute: e.target.value })}
-                aria-label="登山主路線"
-              >
-                <option value="all">全部路線（{mainRoutes.length} 條主路線）</option>
-                {mainRoutes.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
-
-            <div className="bulletin-filter-row">
-              <span className="bulletin-filter-label">
-                <i className="fa-solid fa-magnifying-glass"></i>關鍵字查詢
-              </span>
-              <div className="bulletin-search">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                <input
-                  type="text"
-                  className="bulletin-input"
-                  placeholder="請輸入路線名稱、主路線或備註關鍵字"
-                  value={draft.q}
-                  onChange={(e) => setField({ q: e.target.value })}
-                />
-              </div>
-              <button type="submit" className="bulletin-btn">
-                <i className="fa-solid fa-magnifying-glass"></i>查詢
-              </button>
-              <button type="button" className="bulletin-btn bulletin-btn--ghost" onClick={reset}>
-                <i className="fa-solid fa-rotate-left"></i>清除條件
-              </button>
-            </div>
-          </form>
-
-          <div className="bulletin-section-head">
-            <h2 className="th-section-title">路線申請對照資訊</h2>
-            <span className="bulletin-count">
-              共 <strong>{rows.length}</strong> 筆
-              {rows.length > 0 && <span>／第 {page} 頁（共 {totalPages} 頁）</span>}
+        <form className="bulletin-card" onSubmit={submit}>
+          <div className="bulletin-filter-row">
+            <span className="bulletin-filter-label">
+              <i className="fa-solid fa-building"></i>機關
             </span>
+            {OPEN_ORG_BUTTONS.map((o) => (
+              <button
+                key={o.key}
+                type="button"
+                className={`th-chip ${draft.org === o.key ? "is-active" : ""}`}
+                aria-pressed={draft.org === o.key}
+                onClick={() => changeOrg(o.key)}
+              >
+                {o.label}
+              </button>
+            ))}
           </div>
 
-          <Legend />
+          <div className="bulletin-filter-row">
+            <span className="bulletin-filter-label">
+              <i className="fa-solid fa-route"></i>登山主路線
+            </span>
+            <select
+              className="th-select open-select"
+              value={draft.mainRoute}
+              onChange={(e) => setField({ mainRoute: e.target.value })}
+              aria-label="登山主路線"
+            >
+              <option value="all">全部路線（{mainRoutes.length} 條主路線）</option>
+              {mainRoutes.map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
 
-          <div className="bulletin-table-wrap open-table-wrap">
-            <table className="bulletin-table open-table">
-              <thead>
-                <tr>
-                  <th rowSpan="2" className="col-org">機關</th>
-                  <th rowSpan="2" className="col-main">登山主路線</th>
-                  <th rowSpan="2" className="col-name2">路線名稱</th>
-                  <th rowSpan="2" className="col-can">可否申請</th>
-                  <th rowSpan="2" className="col-status">路線現況</th>
-                  <th colSpan="4" className="col-needs">是否須要申請</th>
-                  <th rowSpan="2" className="col-level">登山路線<br />難度等級</th>
-                  <th rowSpan="2" className="col-fn">功能</th>
-                </tr>
-                <tr>
-                  <th className="col-need">入園證</th>
-                  <th className="col-need">林業及自然保育署<br />自然保護留區</th>
-                  <th className="col-need">林業及自然保育署<br />住宿</th>
-                  <th className="col-need">警政署<br />入山證</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pageRows.length > 0 ? pageRows.map((r, i) => {
-                  const can = CAN_APPLY_META[r.canApply];
-                  const st = STATUS_META[r.status];
-                  return (
-                    <tr key={`${r.fId}-${r.cId}-${i}`}>
-                      <td className="col-org" data-label="機關">
-                        <span className={`bulletin-badge agency-${ORG_BADGE[r.orgLabel] || "nps"}`}>{r.orgLabel}</span>
+          <div className="bulletin-filter-row">
+            <span className="bulletin-filter-label">
+              <i className="fa-solid fa-magnifying-glass"></i>關鍵字查詢
+            </span>
+            <div className="th-search">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                className="th-input"
+                placeholder="請輸入路線名稱、主路線或備註關鍵字"
+                value={draft.q}
+                onChange={(e) => setField({ q: e.target.value })}
+              />
+            </div>
+            <button type="submit" className="th-btn th-btn-primary">
+              <i className="fa-solid fa-magnifying-glass"></i>查詢
+            </button>
+            <button type="button" className="th-btn th-btn-ghost" onClick={reset}>
+              <i className="fa-solid fa-rotate-left"></i>清除條件
+            </button>
+          </div>
+        </form>
+
+        <div className="bulletin-section-head">
+          <h2 className="th-section-title">路線申請對照資訊</h2>
+          <span className="bulletin-count">
+            共 <strong>{rows.length}</strong> 筆
+            {rows.length > 0 && <span>／第 {page} 頁（共 {totalPages} 頁）</span>}
+          </span>
+        </div>
+
+        <Legend />
+
+        <div className="th-table-wrap th-table-card open-table-wrap">
+          <table className="th-table th-table--zebra open-table">
+            <thead>
+              <tr>
+                <th rowSpan="2" className="col-org">機關</th>
+                <th rowSpan="2" className="col-main">登山主路線</th>
+                <th rowSpan="2" className="col-name2">路線名稱</th>
+                <th rowSpan="2" className="col-can">可否申請</th>
+                <th rowSpan="2" className="col-status">路線現況</th>
+                <th colSpan="4" className="col-needs">是否須要申請</th>
+                <th rowSpan="2" className="col-level">登山路線<br />難度等級</th>
+                <th rowSpan="2" className="col-fn">功能</th>
+              </tr>
+              <tr>
+                <th className="col-need">入園證</th>
+                <th className="col-need">林業及自然保育署<br />自然保護留區</th>
+                <th className="col-need">林業及自然保育署<br />住宿</th>
+                <th className="col-need">警政署<br />入山證</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pageRows.length > 0 ? pageRows.map((r, i) => {
+                const can = CAN_APPLY_META[r.canApply];
+                const st = STATUS_META[r.status];
+                return (
+                  <tr key={`${r.fId}-${r.cId}-${i}`}>
+                    <td className="col-org" data-label="機關">
+                      <span className={`bulletin-badge agency-${ORG_BADGE[r.orgLabel] || "nps"}`}>{r.orgLabel}</span>
+                    </td>
+                    <td className="col-main" data-label="登山主路線">{r.mainRoute}</td>
+                    <td className="col-name2" data-label="路線名稱">{r.name}</td>
+                    <td className="col-can" data-label="可否申請">
+                      {can && <span className={`th-flag ${can.cls}`}><i className={can.icon}></i>{can.label}</span>}
+                    </td>
+                    <td className="col-status" data-label="路線現況">
+                      {st && <span className={`th-flag ${st.cls}`}><i className={st.icon}></i>{st.label}</span>}
+                    </td>
+                    {NEED_COLUMNS.map((c) => (
+                      <td key={c.key} className="col-need" data-label={c.label}>
+                        {r[c.key]
+                          ? <i className="fa-solid fa-check open-need-yes" aria-label="須申請"></i>
+                          : <span className="open-need-no" aria-label="免申請">—</span>}
                       </td>
-                      <td className="col-main" data-label="登山主路線">{r.mainRoute}</td>
-                      <td className="col-name2" data-label="路線名稱">{r.name}</td>
-                      <td className="col-can" data-label="可否申請">
-                        {can && <span className={`th-flag ${can.cls}`}><i className={can.icon}></i>{can.label}</span>}
-                      </td>
-                      <td className="col-status" data-label="路線現況">
-                        {st && <span className={`th-flag ${st.cls}`}><i className={st.icon}></i>{st.label}</span>}
-                      </td>
-                      {NEED_COLUMNS.map((c) => (
-                        <td key={c.key} className="col-need" data-label={c.label}>
-                          {r[c.key]
-                            ? <i className="fa-solid fa-check open-need-yes" aria-label="須申請"></i>
-                            : <span className="open-need-no" aria-label="免申請">—</span>}
-                        </td>
-                      ))}
-                      <td className="col-level" data-label="難度等級">
-                        {r.level === null ? (
-                          <span className="open-need-no">—</span>
-                        ) : (
-                          <button type="button" className={`open-level-btn th-level lv-${r.level}`} onClick={() => setLevelModal(r.level)}>
-                            第 {r.level} 級
+                    ))}
+                    <td className="col-level" data-label="難度等級">
+                      {r.level === null ? (
+                        <span className="open-need-no">—</span>
+                      ) : (
+                        <button type="button" className={`open-level-btn th-level lv-${r.level}`} onClick={() => setLevelModal(r.level)}>
+                          第 {r.level} 級
+                        </button>
+                      )}
+                    </td>
+                    <td className="col-fn" data-label="功能">
+                      <div className="open-actions">
+                        <a className="open-act is-primary" href="apply-1.html">
+                          <i className="fa-solid fa-pen-to-square"></i>申請
+                        </a>
+                        {r.hasIntro && (
+                          /* 路線介紹頁尚未建置，不給假連結 */
+                          <span className="open-act th-todo-link">
+                            <i className="fa-solid fa-circle-info"></i>介紹
+                          </span>
+                        )}
+                        {r.note && (
+                          <button type="button" className="open-act" onClick={() => setNoteModal(r)}>
+                            <i className="fa-regular fa-note-sticky"></i>備註
                           </button>
                         )}
-                      </td>
-                      <td className="col-fn" data-label="功能">
-                        <div className="open-actions">
-                          <a className="open-act is-primary" href="apply-1.html">
-                            <i className="fa-solid fa-pen-to-square"></i>申請
-                          </a>
-                          {r.hasIntro && (
-                            /* 路線介紹頁尚未建置，不給假連結 */
-                            <span className="open-act th-todo-link">
-                              <i className="fa-solid fa-circle-info"></i>介紹
-                            </span>
-                          )}
-                          {r.note && (
-                            <button type="button" className="open-act" onClick={() => setNoteModal(r)}>
-                              <i className="fa-regular fa-note-sticky"></i>備註
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                }) : (
-                  <tr>
-                    <td colSpan="11">
-                      <div className="bulletin-empty">
-                        <i className="fa-solid fa-inbox"></i>查無符合條件的路線，請調整查詢條件。
                       </div>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          <BulletinPager page={page} totalPages={totalPages} onChange={setPage} />
-
-          <Callout>
-            表格內容為各機關提供之路線申請對照資訊，實際可申請日期與承載量仍以線上申請流程之查驗結果為準。
-          </Callout>
+                );
+              }) : (
+                <tr>
+                  <td colSpan="11">
+                    <div className="th-empty">
+                      <i className="fa-solid fa-inbox"></i>查無符合條件的路線，請調整查詢條件。
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      </main>
+
+        <BulletinPager page={page} totalPages={totalPages} onChange={setPage} />
+
+        <Callout>
+          表格內容為各機關提供之路線申請對照資訊，實際可申請日期與承載量仍以線上申請流程之查驗結果為準。
+        </Callout>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

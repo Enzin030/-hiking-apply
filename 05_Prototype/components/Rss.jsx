@@ -174,58 +174,53 @@ function RssApp() {
       {/* RSS 不屬於主導覽任何一項（正式站放在工具列），故不傳 active，不點亮任何項目 */}
       <Header />
 
-      <PageHead
+      <PageShell
         trail={["RSS 訂閱"]}
         title="RSS 訂閱"
         lead="訂閱本站的 RSS 頻道，各機關的入園公告與異動有更新時，閱讀器會自動通知，不需要每天回來看，也不必留下電子郵件或任何個人資料。"
         updated="2026-09-03"
-      />
-
-      <div className="th-page has-nav">
-        <div className="th-page-main">
-          <SectionCard id="feeds" title="可訂閱的頻道" icon="fa-solid fa-square-rss"
-                       note={`${FEEDS.length} 個頻道`} flush>
-            <div className="th-card-body">
-              <Callout type="warning">
-                目前僅<strong>最新消息</strong>一個頻道有訂閱網址，且該端點實測無法取得內容
-                （見表格內註記）；其餘頻道正式站尚未提供 feed，本頁不編造網址。
-                各頻道的實際供應範圍與更新頻率 <strong>[待確認]</strong>。
-              </Callout>
-            </div>
-            <DataTable
-              columns={feedColumns}
-              rows={FEEDS}
-              rowKey="key"
-              className="tbl-rss"
-            />
-          </SectionCard>
-
-          <SectionCard id="what" title="何謂 RSS？" icon="fa-solid fa-circle-info">
-            {/* 定義段落沿用正式站原文，未改寫 */}
-            <p>
-              RSS（Real Simple Syndication）－網頁資料交換技術架構，是一種用來分發和匯集網頁內容的
-              XML 格式，您可以想像您可以訂閱許多您有興趣的資訊來源，但是不用留下基本資料、電子郵件信箱⋯⋯，
-              對於 RSS 的訂閱者而言，可以最快的得到最新訊息以及頭條新聞，而不用被動式的去每個網站上去搜索。
-            </p>
-            <p className="th-table-note">本段文字取自正式站 RssWeb.aspx 原文。</p>
-          </SectionCard>
-
-          <SectionCard id="how" title="如何訂閱" icon="fa-solid fa-list-check">
-            <StepList steps={SUBSCRIBE_STEPS} />
-            <Callout>
-              各家閱讀器的操作介面不同，實際新增訂閱的步驟請依所用軟體的說明為準。
+        nav={<PageNav
+               items={[
+                 { id: "feeds", label: "可訂閱的頻道" },
+                 { id: "what", label: "何謂 RSS？" },
+                 { id: "how", label: "如何訂閱" },
+               ]}
+             />}
+      >
+        <SectionCard id="feeds" title="可訂閱的頻道" icon="fa-solid fa-square-rss"
+                     note={`${FEEDS.length} 個頻道`} flush>
+          <div className="th-card-body">
+            <Callout type="warning">
+              目前僅<strong>最新消息</strong>一個頻道有訂閱網址，且該端點實測無法取得內容
+              （見表格內註記）；其餘頻道正式站尚未提供 feed，本頁不編造網址。
+              各頻道的實際供應範圍與更新頻率 <strong>[待確認]</strong>。
             </Callout>
-          </SectionCard>
-        </div>
+          </div>
+          <DataTable
+            columns={feedColumns}
+            rows={FEEDS}
+            rowKey="key"
+            className="tbl-rss"
+          />
+        </SectionCard>
 
-        <PageNav
-          items={[
-            { id: "feeds", label: "可訂閱的頻道" },
-            { id: "what", label: "何謂 RSS？" },
-            { id: "how", label: "如何訂閱" },
-          ]}
-        />
-      </div>
+        <SectionCard id="what" title="何謂 RSS？" icon="fa-solid fa-circle-info">
+          {/* 定義段落沿用正式站原文，未改寫 */}
+          <p>
+            RSS（Real Simple Syndication）－網頁資料交換技術架構，是一種用來分發和匯集網頁內容的
+            XML 格式，您可以想像您可以訂閱許多您有興趣的資訊來源，但是不用留下基本資料、電子郵件信箱⋯⋯，
+            對於 RSS 的訂閱者而言，可以最快的得到最新訊息以及頭條新聞，而不用被動式的去每個網站上去搜索。
+          </p>
+          <p className="th-table-note">本段文字取自正式站 RssWeb.aspx 原文。</p>
+        </SectionCard>
+
+        <SectionCard id="how" title="如何訂閱" icon="fa-solid fa-list-check">
+          <StepList steps={SUBSCRIBE_STEPS} />
+          <Callout>
+            各家閱讀器的操作介面不同，實際新增訂閱的步驟請依所用軟體的說明為準。
+          </Callout>
+        </SectionCard>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

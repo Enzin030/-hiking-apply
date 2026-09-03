@@ -91,7 +91,7 @@ function DayModal({ site, day, onClose }) {
           </button>
         </div>
         <div className="bulletin-modal-body camp-daybody">
-          <table className="bulletin-table camp-daytable">
+          <table className="th-table th-table--zebra camp-daytable">
             <tbody>
               {site.labels.map((label, i) => (
                 <tr key={label}>
@@ -233,91 +233,90 @@ function CampsiteApp() {
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="campsite" />
-      <Breadcrumb trail={["宿營地與床位查詢", "雪霸宿營地查詢"]} />
+      <PageShell
+        trail={["宿營地與床位查詢", "雪霸宿營地查詢"]}
+        title="宿營地與床位查詢"
+        bare
+      >
 
-      <main className="th-page th-page-plain">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">宿營地與床位查詢</h1>
-
-          {/* 上層：機關 */}
-          <div className="bulletin-tabs">
-            <nav className="bulletin-tabs-nav" aria-label="管理機關">
-              {CAMPSITE_ORGS.map((o) => o.built ? (
-                <button key={o.key} type="button"
-                        className={`bulletin-tab ${org === o.key ? "is-active" : ""}`}
-                        aria-current={org === o.key ? "page" : undefined}
-                        onClick={() => setOrg(o.key)}>
-                  <i className="fa-solid fa-mountain-sun"></i><span>{o.label}</span>
-                </button>
-              ) : (
-                /* 尚未建置的機關不給可點的 Tab */
-                <span key={o.key} className="bulletin-tab is-todo th-todo-link">{o.label}</span>
-              ))}
-            </nav>
-          </div>
-
-          {/* 次層：類別 */}
-          <div className="bulletin-filter-row camp-kindrow">
-            <span className="bulletin-filter-label"><i className="fa-solid fa-layer-group"></i>查詢類別</span>
-            {(CAMPSITE_KINDS[org] || []).map((k) => k.built ? (
-              <button key={k.key} type="button"
-                      className={`bulletin-chip ${kind === k.key ? "is-active" : ""}`}
-                      aria-pressed={kind === k.key}
-                      onClick={() => setKind(k.key)}>
-                {k.label}
+        {/* 上層：機關 */}
+        <div className="bulletin-tabs">
+          <nav className="bulletin-tabs-nav" aria-label="管理機關">
+            {CAMPSITE_ORGS.map((o) => o.built ? (
+              <button key={o.key} type="button"
+                      className={`bulletin-tab ${org === o.key ? "is-active" : ""}`}
+                      aria-current={org === o.key ? "page" : undefined}
+                      onClick={() => setOrg(o.key)}>
+                <i className="fa-solid fa-mountain-sun"></i><span>{o.label}</span>
               </button>
             ) : (
-              <span key={k.key} className="bulletin-chip is-todo th-todo-link">{k.label}</span>
+              /* 尚未建置的機關不給可點的 Tab */
+              <span key={o.key} className="bulletin-tab is-todo th-todo-link">{o.label}</span>
             ))}
-          </div>
-
-          <NoticeList />
-
-          <form className="bulletin-card" onSubmit={submit}>
-            <div className="bulletin-filter-row">
-              <span className="bulletin-filter-label"><i className="fa-solid fa-tent"></i>宿營地點</span>
-              <select className="bulletin-select camp-select" value={draftSite}
-                      onChange={(e) => setDraftSite(e.target.value)} aria-label="宿營地點">
-                {SHEIPA_CAMPSITES.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-              <button type="submit" className="bulletin-btn">
-                <i className="fa-solid fa-magnifying-glass"></i>查詢
-              </button>
-            </div>
-          </form>
-
-          <div className="bulletin-section-head">
-            <h2 className="th-section-title">山屋／營地概況</h2>
-            <span className="bulletin-count">{site.name}／共 <strong>{site.days.length}</strong> 天</span>
-          </div>
-
-          {/*
-            月份切換：正式站是「上個月／年月下拉／下個月」的 postback。
-            本雛形的資料是單月快照，切月沒有資料可換，故停用並明說，
-            不做點了沒反應的假按鈕。
-          */}
-          <div className="camp-monthbar">
-            <span className="camp-monthbar-btn th-todo-link">上個月</span>
-            <span className="camp-month">{ym.year} 年 {ym.month} 月</span>
-            <span className="camp-monthbar-btn th-todo-link">下個月</span>
-          </div>
-
-          <Callout type="warning">
-            餘額為 <strong>{CAMPSITE_SNAPSHOT_DATE}</strong> 自現行網站擷取的快照，非即時查詢結果；
-            雛形資料僅含 {ym.year} 年 {ym.month} 月，故月份切換尚未建置。
-          </Callout>
-
-          <BedCalendar site={site} onPick={setDay} />
-
-          <div className="camp-legend">
-            <span className="th-flag is-yes"><i className="fa-solid fa-circle-check"></i>尚有餘額</span>
-            <span className="th-flag is-no"><i className="fa-solid fa-circle-xmark"></i>已無餘額</span>
-            <span className="camp-legend-hint">點日期可看該日 {CAMPSITE_COUNT_LABELS.length} 項計數明細</span>
-          </div>
-
-          <SiteIntro site={site} />
+          </nav>
         </div>
-      </main>
+
+        {/* 次層：類別 */}
+        <div className="bulletin-filter-row camp-kindrow">
+          <span className="bulletin-filter-label"><i className="fa-solid fa-layer-group"></i>查詢類別</span>
+          {(CAMPSITE_KINDS[org] || []).map((k) => k.built ? (
+            <button key={k.key} type="button"
+                    className={`th-chip ${kind === k.key ? "is-active" : ""}`}
+                    aria-pressed={kind === k.key}
+                    onClick={() => setKind(k.key)}>
+              {k.label}
+            </button>
+          ) : (
+            <span key={k.key} className="th-chip is-todo th-todo-link">{k.label}</span>
+          ))}
+        </div>
+
+        <NoticeList />
+
+        <form className="bulletin-card" onSubmit={submit}>
+          <div className="bulletin-filter-row">
+            <span className="bulletin-filter-label"><i className="fa-solid fa-tent"></i>宿營地點</span>
+            <select className="th-select camp-select" value={draftSite}
+                    onChange={(e) => setDraftSite(e.target.value)} aria-label="宿營地點">
+              {SHEIPA_CAMPSITES.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+            <button type="submit" className="th-btn th-btn-primary">
+              <i className="fa-solid fa-magnifying-glass"></i>查詢
+            </button>
+          </div>
+        </form>
+
+        <div className="bulletin-section-head">
+          <h2 className="th-section-title">山屋／營地概況</h2>
+          <span className="bulletin-count">{site.name}／共 <strong>{site.days.length}</strong> 天</span>
+        </div>
+
+        {/*
+          月份切換：正式站是「上個月／年月下拉／下個月」的 postback。
+          本雛形的資料是單月快照，切月沒有資料可換，故停用並明說，
+          不做點了沒反應的假按鈕。
+        */}
+        <div className="camp-monthbar">
+          <span className="camp-monthbar-btn th-todo-link">上個月</span>
+          <span className="camp-month">{ym.year} 年 {ym.month} 月</span>
+          <span className="camp-monthbar-btn th-todo-link">下個月</span>
+        </div>
+
+        <Callout type="warning">
+          餘額為 <strong>{CAMPSITE_SNAPSHOT_DATE}</strong> 自現行網站擷取的快照，非即時查詢結果；
+          雛形資料僅含 {ym.year} 年 {ym.month} 月，故月份切換尚未建置。
+        </Callout>
+
+        <BedCalendar site={site} onPick={setDay} />
+
+        <div className="camp-legend">
+          <span className="th-flag is-yes"><i className="fa-solid fa-circle-check"></i>尚有餘額</span>
+          <span className="th-flag is-no"><i className="fa-solid fa-circle-xmark"></i>已無餘額</span>
+          <span className="camp-legend-hint">點日期可看該日 {CAMPSITE_COUNT_LABELS.length} 項計數明細</span>
+        </div>
+
+        <SiteIntro site={site} />
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

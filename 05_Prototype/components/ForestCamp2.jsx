@@ -109,244 +109,243 @@ function ForestCamp2App() {
   return (
     <div data-screen-label="FC-02 行程計畫">
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", APPLY_CRUMB, cabin.name, "行程計畫"]} />
+      <PageShell
+        trail={["登山申請", APPLY_CRUMB, cabin.name, "行程計畫"]}
+        title="山屋住宿申請"
+        stepper={<FcStepper current={2} />}
+        bare
+      >
 
-      <main className="th-page">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">山屋住宿申請</h1>
-          <FcStepper current={2} />
+        <div className="fc-layout">
+          {/* ── 左欄：主表單 ── */}
+          <div className="fc-main">
 
-          <div className="fc-layout">
-            {/* ── 左欄：主表單 ── */}
-            <div className="fc-main">
-
-              {/* 行程摘要 banner */}
-              <div className="fc2-summary-bar">
-                <div className="fc2-summary-item">
-                  <i className="ph-bold ph-house"></i>
-                  <span>{cabin.name}</span>
-                </div>
-                <div className="fc2-summary-sep"></div>
-                <div className="fc2-summary-item">
-                  <i className="fa-regular fa-calendar"></i>
-                  <span>{fmtDate(startDate)}</span>
-                </div>
-                <div className="fc2-summary-sep"></div>
-                <div className="fc2-summary-item">
-                  <i className="ph-bold ph-moon"></i>
-                  <span>{nights} 晚</span>
-                </div>
-                <div className="fc2-summary-sep"></div>
-                <div className="fc2-summary-item">
-                  <i className="ph-bold ph-users"></i>
-                  <span>{headcount} 人</span>
-                </div>
+            {/* 行程摘要 banner */}
+            <div className="fc2-summary-bar">
+              <div className="fc2-summary-item">
+                <i className="ph-bold ph-house"></i>
+                <span>{cabin.name}</span>
               </div>
-
-              {/* 隊伍名稱 */}
-              <div className="fc-section">
-                <h2 className="fc-section-title">
-                  <i className="ph-bold ph-users-three"></i>隊伍基本資料
-                </h2>
-                <div className="fc-field" style={{ maxWidth: 400 }}>
-                  <label className="fc-label">
-                    隊伍名稱 <span style={{ color: "var(--danger-fg)" }}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="fc-input"
-                    placeholder="例：玉山山難救助訓練隊"
-                    maxLength={40}
-                    value={teamName}
-                    onChange={e => setTeamName(e.target.value)}
-                  />
-                  <div className="fc-field-hint">2–40 字，供識別申請隊伍使用</div>
-                </div>
+              <div className="fc2-summary-sep"></div>
+              <div className="fc2-summary-item">
+                <i className="fa-regular fa-calendar"></i>
+                <span>{fmtDate(startDate)}</span>
               </div>
-
-              {/* 每晚住宿配置 */}
-              <div className="fc-section">
-                <h2 className="fc-section-title">
-                  <i className="ph-bold ph-bed"></i>每日住宿床位 / 營位
-                </h2>
-                <p className="fc2-section-desc">
-                  請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。
-                </p>
-
-                {Array.from({ length: nights }, (_, i) => {
-                  const dateStr = addDays(startDate, i);
-                  const nightTotal = cabin.facilities.reduce((s, f) => s + (alloc[i]?.[f.id] || 0), 0);
-                  return (
-                    <div key={i} className={`fc2-night-block ${nightTotal > 0 ? "is-filled" : ""}`}>
-                      <div className="fc2-night-head">
-                        <div className="fc2-night-badge">第 {i + 1} 晚</div>
-                        <div className="fc2-night-date">{fmtDate(dateStr)}</div>
-                        {nightTotal > 0 && (
-                          <div className="fc2-night-ok">
-                            <i className="fa-solid fa-check"></i> 已填寫
-                          </div>
-                        )}
-                      </div>
-                      <div className="fc2-night-rows">
-                        {cabin.facilities.map(f => {
-                          const qty = alloc[i]?.[f.id] || 0;
-                          return (
-                            <div key={f.id} className="fc2-facility-row">
-                              <div className="fc2-facility-left">
-                                <span className="fc2-facility-icon">
-                                  <i className={f.icon}></i>
-                                </span>
-                                <div>
-                                  <div className="fc2-facility-name">{f.label}</div>
-                                  <div className="fc2-facility-price">
-                                    NT$ {f.pricePerNight} / {f.unit}
-                                    {qty > 0 && (
-                                      <span className="fc2-facility-subtotal">
-                                        = NT$ {qty * f.pricePerNight}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <Stepper2
-                                value={qty}
-                                min={0}
-                                max={Math.min(f.max, headcount)}
-                                onChange={v => setQty(i, f.id, v)}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="fc2-summary-sep"></div>
+              <div className="fc2-summary-item">
+                <i className="ph-bold ph-moon"></i>
+                <span>{nights} 晚</span>
               </div>
+              <div className="fc2-summary-sep"></div>
+              <div className="fc2-summary-item">
+                <i className="ph-bold ph-users"></i>
+                <span>{headcount} 人</span>
+              </div>
+            </div>
 
-              {/* 付款方式 */}
-              <div className="fc-section">
-                <h2 className="fc-section-title">
-                  <i className="ph-bold ph-credit-card"></i>付款方式
-                </h2>
-                <div className="fc2-payment-grid">
-                  {PAYMENT_OPTIONS.map(opt => (
-                    <label key={opt.id} className={`fc2-payment-card ${payment === opt.id ? "is-selected" : ""}`}>
-                      <input
-                        type="radio"
-                        name="payment"
-                        value={opt.id}
-                        checked={payment === opt.id}
-                        onChange={() => setPayment(opt.id)}
-                        style={{ display: "none" }}
-                      />
-                      <div className="fc2-payment-icon">
-                        <i className={opt.icon}></i>
-                      </div>
-                      <div className="fc2-payment-label">{opt.label}</div>
-                      <div className="fc2-payment-note">{opt.note}</div>
-                      {payment === opt.id && (
-                        <div className="fc2-payment-check">
-                          <i className="fa-solid fa-check"></i>
+            {/* 隊伍名稱 */}
+            <div className="fc-section">
+              <h2 className="fc-section-title">
+                <i className="ph-bold ph-users-three"></i>隊伍基本資料
+              </h2>
+              <div className="th-field" style={{ maxWidth: 400 }}>
+                <label className="th-label">
+                  隊伍名稱 <span style={{ color: "var(--danger-fg)" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  className="th-input"
+                  placeholder="例：玉山山難救助訓練隊"
+                  maxLength={40}
+                  value={teamName}
+                  onChange={e => setTeamName(e.target.value)}
+                />
+                <div className="th-field-hint">2–40 字，供識別申請隊伍使用</div>
+              </div>
+            </div>
+
+            {/* 每晚住宿配置 */}
+            <div className="fc-section">
+              <h2 className="fc-section-title">
+                <i className="ph-bold ph-bed"></i>每日住宿床位 / 營位
+              </h2>
+              <p className="fc2-section-desc">
+                請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。
+              </p>
+
+              {Array.from({ length: nights }, (_, i) => {
+                const dateStr = addDays(startDate, i);
+                const nightTotal = cabin.facilities.reduce((s, f) => s + (alloc[i]?.[f.id] || 0), 0);
+                return (
+                  <div key={i} className={`fc2-night-block ${nightTotal > 0 ? "is-filled" : ""}`}>
+                    <div className="fc2-night-head">
+                      <div className="fc2-night-badge">第 {i + 1} 晚</div>
+                      <div className="fc2-night-date">{fmtDate(dateStr)}</div>
+                      {nightTotal > 0 && (
+                        <div className="fc2-night-ok">
+                          <i className="fa-solid fa-check"></i> 已填寫
                         </div>
                       )}
-                    </label>
-                  ))}
+                    </div>
+                    <div className="fc2-night-rows">
+                      {cabin.facilities.map(f => {
+                        const qty = alloc[i]?.[f.id] || 0;
+                        return (
+                          <div key={f.id} className="fc2-facility-row">
+                            <div className="fc2-facility-left">
+                              <span className="fc2-facility-icon">
+                                <i className={f.icon}></i>
+                              </span>
+                              <div>
+                                <div className="fc2-facility-name">{f.label}</div>
+                                <div className="fc2-facility-price">
+                                  NT$ {f.pricePerNight} / {f.unit}
+                                  {qty > 0 && (
+                                    <span className="fc2-facility-subtotal">
+                                      = NT$ {qty * f.pricePerNight}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <Stepper2
+                              value={qty}
+                              min={0}
+                              max={Math.min(f.max, headcount)}
+                              onChange={v => setQty(i, f.id, v)}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* 付款方式 */}
+            <div className="fc-section">
+              <h2 className="fc-section-title">
+                <i className="ph-bold ph-credit-card"></i>付款方式
+              </h2>
+              <div className="fc2-payment-grid">
+                {PAYMENT_OPTIONS.map(opt => (
+                  <label key={opt.id} className={`fc2-payment-card ${payment === opt.id ? "is-selected" : ""}`}>
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={opt.id}
+                      checked={payment === opt.id}
+                      onChange={() => setPayment(opt.id)}
+                      style={{ display: "none" }}
+                    />
+                    <div className="fc2-payment-icon">
+                      <i className={opt.icon}></i>
+                    </div>
+                    <div className="fc2-payment-label">{opt.label}</div>
+                    <div className="fc2-payment-note">{opt.note}</div>
+                    {payment === opt.id && (
+                      <div className="fc2-payment-check">
+                        <i className="fa-solid fa-check"></i>
+                      </div>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── 右欄：費用小計 ── */}
+          <aside className="fc-aside">
+            <div className="fc2-cost-card">
+              <div className="th-sidebar-head">
+                <i className="ph-bold ph-receipt"></i>
+                <span>費用試算</span>
+              </div>
+              <div className="fc2-cost-body">
+                {subtotals.map(f => (
+                  <div key={f.id} className="fc2-cost-row">
+                    <div className="fc2-cost-label">
+                      <i className={f.icon}></i>{f.label}
+                    </div>
+                    <div className="fc2-cost-amount">
+                      {f.total > 0
+                        ? `NT$ ${f.total.toLocaleString()}`
+                        : <span style={{ color: "var(--fg-4)" }}>—</span>}
+                    </div>
+                  </div>
+                ))}
+
+                {/* 每晚明細 */}
+                {grandTotal > 0 && (
+                  <div className="fc2-cost-detail">
+                    {Array.from({ length: nights }, (_, i) => {
+                      const dateStr = addDays(startDate, i);
+                      const nightCost = cabin.facilities.reduce(
+                        (s, f) => s + (alloc[i]?.[f.id] || 0) * f.pricePerNight, 0
+                      );
+                      return nightCost > 0 ? (
+                        <div key={i} className="fc2-cost-detail-row">
+                          <span>{fmtDate(dateStr)}</span>
+                          <span>NT$ {nightCost.toLocaleString()}</span>
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                )}
+
+                <div className="fc2-cost-total">
+                  <span>預估總費用</span>
+                  <span className="fc2-cost-total-num">
+                    NT$ {grandTotal.toLocaleString()}
+                  </span>
+                </div>
+                <div className="fc2-cost-note">
+                  實際費用以審核通過後帳單為準。場地費不含膳食。
                 </div>
               </div>
             </div>
 
-            {/* ── 右欄：費用小計 ── */}
-            <aside className="fc-aside">
-              <div className="fc2-cost-card">
-                <div className="th-sidebar-head">
-                  <i className="ph-bold ph-receipt"></i>
-                  <span>費用試算</span>
+            {/* 驗證提示 */}
+            {!canNext && (
+              <div className="fc2-validation-tips">
+                <div className="fc2-vt-head">
+                  <i className="ph-bold ph-list-checks"></i>尚需完成
                 </div>
-                <div className="fc2-cost-body">
-                  {subtotals.map(f => (
-                    <div key={f.id} className="fc2-cost-row">
-                      <div className="fc2-cost-label">
-                        <i className={f.icon}></i>{f.label}
-                      </div>
-                      <div className="fc2-cost-amount">
-                        {f.total > 0
-                          ? `NT$ ${f.total.toLocaleString()}`
-                          : <span style={{ color: "var(--fg-4)" }}>—</span>}
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* 每晚明細 */}
-                  {grandTotal > 0 && (
-                    <div className="fc2-cost-detail">
-                      {Array.from({ length: nights }, (_, i) => {
-                        const dateStr = addDays(startDate, i);
-                        const nightCost = cabin.facilities.reduce(
-                          (s, f) => s + (alloc[i]?.[f.id] || 0) * f.pricePerNight, 0
-                        );
-                        return nightCost > 0 ? (
-                          <div key={i} className="fc2-cost-detail-row">
-                            <span>{fmtDate(dateStr)}</span>
-                            <span>NT$ {nightCost.toLocaleString()}</span>
-                          </div>
-                        ) : null;
-                      })}
-                    </div>
-                  )}
-
-                  <div className="fc2-cost-total">
-                    <span>預估總費用</span>
-                    <span className="fc2-cost-total-num">
-                      NT$ {grandTotal.toLocaleString()}
-                    </span>
+                {teamName.trim().length < 2 && (
+                  <div className="fc2-vt-item">
+                    <i className="fa-solid fa-circle-dot"></i>填寫隊伍名稱
                   </div>
-                  <div className="fc2-cost-note">
-                    實際費用以審核通過後帳單為準。場地費不含膳食。
+                )}
+                {!nightsValid && (
+                  <div className="fc2-vt-item">
+                    <i className="fa-solid fa-circle-dot"></i>每晚至少選 1 個床位或營位
                   </div>
-                </div>
+                )}
+                {payment === "" && (
+                  <div className="fc2-vt-item">
+                    <i className="fa-solid fa-circle-dot"></i>選擇付款方式
+                  </div>
+                )}
               </div>
-
-              {/* 驗證提示 */}
-              {!canNext && (
-                <div className="fc2-validation-tips">
-                  <div className="fc2-vt-head">
-                    <i className="ph-bold ph-list-checks"></i>尚需完成
-                  </div>
-                  {teamName.trim().length < 2 && (
-                    <div className="fc2-vt-item">
-                      <i className="fa-solid fa-circle-dot"></i>填寫隊伍名稱
-                    </div>
-                  )}
-                  {!nightsValid && (
-                    <div className="fc2-vt-item">
-                      <i className="fa-solid fa-circle-dot"></i>每晚至少選 1 個床位或營位
-                    </div>
-                  )}
-                  {payment === "" && (
-                    <div className="fc2-vt-item">
-                      <i className="fa-solid fa-circle-dot"></i>選擇付款方式
-                    </div>
-                  )}
-                </div>
-              )}
-            </aside>
-          </div>
-
-          {/* 底部操作列 */}
-          <div className="fc-footbar">
-            <button className="th-btn th-btn-ghost"
-              onClick={() => {
-                const params = new URLSearchParams({ route: routeId, start: startDate, nights, headcount });
-                window.location.href = `forest-camp-1.html?${params}`;
-              }}>
-              <i className="fa-solid fa-arrow-left"></i>上一步
-            </button>
-            <button className="th-btn th-btn-primary" disabled={!canNext} onClick={handleNext}>
-              下一步：隊伍資料<i className="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
+            )}
+          </aside>
         </div>
-      </main>
+
+        {/* 底部操作列 */}
+        <div className="fc-footbar">
+          <button className="th-btn th-btn-ghost"
+            onClick={() => {
+              const params = new URLSearchParams({ route: routeId, start: startDate, nights, headcount });
+              window.location.href = `forest-camp-1.html?${params}`;
+            }}>
+            <i className="fa-solid fa-arrow-left"></i>上一步
+          </button>
+          <button className="th-btn th-btn-primary" disabled={!canNext} onClick={handleNext}>
+            下一步：隊伍資料<i className="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

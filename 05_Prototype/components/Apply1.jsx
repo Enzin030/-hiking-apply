@@ -138,155 +138,155 @@ function Page1App() {
     <div data-screen-label="01 路線選擇">
       <SuspendedModal route={suspendedRoute} onClose={() => setSuspendedRoute(null)} />
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", "登山線上申請"]} />
+      <PageShell
+        trail={["登山申請", "登山線上申請"]}
+        title="登山線上申請"
+        stepper={<Stepper current={1} />}
+        bare
+      >
 
-      <main className="th-page">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">登山線上申請</h1>
-          <Stepper current={1} />
+        <h2 className="th-section-title">
+          登山路線選擇
+          <span className="th-section-title-sub"></span>
+        </h2>
 
-          <h2 className="th-section-title">
-            登山路線選擇
-            <span className="th-section-title-sub"></span>
-          </h2>
-
-          <div className="p1-layout">
-            {/* SIDEBAR */}
-            <aside className="p1-filters">
-              <div className="p1-filter-head">
-                <h3><i className="ph-bold ph-funnel"></i>篩選條件 {totalActive > 0 && <span style={{ background: "var(--national-700)", color: "#fff", borderRadius: 9999, padding: "1px 7px", fontSize: 11 }}>{totalActive}</span>}</h3>
-                <button className="p1-filter-reset" onClick={reset}>清除全部</button>
-              </div>
-
-              <div className="p1-filter-group">
-                <div className="p1-filter-label"><i className="ph-bold ph-buildings"></i>管理機關</div>
-                <div className="p1-chip-row">
-                  {AGENCIES.map(a => (
-                    <button key={a.id}
-                      className={`p1-chip ${agency === a.id ? "is-active" : ""}`}
-                      onClick={() => setAgency(a.id)}>
-                      {a.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p1-filter-group">
-                <div className="p1-filter-label"><i className="fa-regular fa-calendar"></i>行程天數</div>
-                <div className="p1-chip-row">
-                  {[
-                    { v: "all", l: "全部" },
-                    { v: "1", l: "單日" },
-                    { v: "2-3", l: "2–3 天" },
-                    { v: "4+", l: "4 天以上" },
-                  ].map(o => (
-                    <button key={o.v}
-                      className={`p1-chip ${days === o.v ? "is-active" : ""}`}
-                      onClick={() => setDays(o.v)}>{o.l}</button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p1-filter-group">
-                <div className="p1-filter-label"><i className="ph-bold ph-mountains"></i>難度等級</div>
-                <div className="p1-difficulty-row">
-                  {[1,2,3,4,5,6].map(n => (
-                    <button key={n}
-                      className={`p1-diff ${diff === String(n) ? "is-active" : ""}`}
-                      onClick={() => setDiff(diff === String(n) ? "all" : String(n))}>
-                      第{n}級
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p1-filter-group">
-                <div className="p1-filter-label"><i className="ph-bold ph-sparkle"></i>快速篩選</div>
-                <label className="p1-toggle" style={{ marginBottom: 8 }}>
-                  <input type="checkbox" checked={hotOnly} onChange={e => setHotOnly(e.target.checked)} />
-                  <span className="p1-toggle-track"></span>
-                  <span>僅顯示熱門路線</span>
-                </label>
-                <label className="p1-toggle">
-                  <input type="checkbox" checked={openOnly} onChange={e => setOpenOnly(e.target.checked)} />
-                  <span className="p1-toggle-track"></span>
-                  <span>僅顯示目前開放</span>
-                </label>
-              </div>
-            </aside>
-
-            {/* MAIN */}
-            <div>
-              <div className="p1-search-bar">
-                <div className="p1-search-row">
-                  <div className="p1-search-input">
-                    <i className="ph-bold ph-magnifying-glass"></i>
-                    <input
-                      type="text"
-                      placeholder="搜尋路線名稱、山名或關鍵字（例：玉山主峰、嘉明湖）"
-                      value={search}
-                      onChange={e => setSearch(e.target.value)}
-                    />
-                  </div>
-                  <button className="th-btn th-btn-primary">
-                    <i className="ph-bold ph-magnifying-glass"></i>查詢
-                  </button>
-                </div>
-                <div className="p1-search-hint">
-                  <span className="lbl">熱門：</span>
-                  {["玉山主峰", "嘉明湖", "雪山主東", "奇萊南華", "南湖大山"].map(t => (
-                    <span key={t} className="tag" onClick={() => setSearch(t)}>{t}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p1-results-head">
-                <div className="p1-results-count">
-                  共 <strong>{filtered.length}</strong> 條路線
-                  {totalActive > 0 && <span style={{ color: "var(--fg-3)" }}>（已套用 {totalActive} 項篩選）</span>}
-                </div>
-                <div className="p1-sort">
-                  <span>排序：</span>
-                  <select value={sort} onChange={e => setSort(e.target.value)}>
-                    <option value="default">預設（依管理機關）</option>
-                    <option value="diff-asc">難度低→高</option>
-                    <option value="diff-desc">難度高→低</option>
-                    <option value="days-asc">天數少→多</option>
-                  </select>
-                </div>
-              </div>
-
-              {grouped.length === 0 && (
-                <div className="p1-empty">
-                  <i className="ph-bold ph-binoculars" style={{ fontSize: 28, color: "var(--slate-300)", marginBottom: 8, display: "block" }}></i>
-                  找不到符合條件的路線，請調整篩選條件再試試。
-                </div>
-              )}
-
-              {grouped.map(g => (
-                <div key={g.agency} className="p1-group">
-                  <div className="p1-group-head">
-                    <div className="p1-group-head-left">
-                      <span className={`p1-group-tag tag-${g.agency}`}>
-                        <i className={g.agency === "police" ? "ph-bold ph-shield-check" : g.agency === "forestry" ? "ph-bold ph-tree" : "ph-bold ph-mountains"}></i>
-                        {g.name}
-                      </span>
-                      <span className="p1-group-meta">{g.items.length} 條路線 · {AGENCY_DESC[g.agency]}</span>
-                    </div>
-                  </div>
-                  <div className="p1-route-list">
-                    {g.items.map(r => (
-                      <RouteCard key={r.id} r={r}
-                        onSuspended={() => setSuspendedRoute(r)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+        <div className="p1-layout">
+          {/* SIDEBAR */}
+          <aside className="p1-filters">
+            <div className="p1-filter-head">
+              <h3><i className="ph-bold ph-funnel"></i>篩選條件 {totalActive > 0 && <span style={{ background: "var(--national-700)", color: "#fff", borderRadius: 9999, padding: "1px 7px", fontSize: 11 }}>{totalActive}</span>}</h3>
+              <button className="p1-filter-reset" onClick={reset}>清除全部</button>
             </div>
+
+            <div className="p1-filter-group">
+              <div className="p1-filter-label"><i className="ph-bold ph-buildings"></i>管理機關</div>
+              <div className="th-chip-row">
+                {AGENCIES.map(a => (
+                  <button key={a.id}
+                    className={`th-chip ${agency === a.id ? "is-active" : ""}`}
+                    onClick={() => setAgency(a.id)}>
+                    {a.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p1-filter-group">
+              <div className="p1-filter-label"><i className="fa-regular fa-calendar"></i>行程天數</div>
+              <div className="th-chip-row">
+                {[
+                  { v: "all", l: "全部" },
+                  { v: "1", l: "單日" },
+                  { v: "2-3", l: "2–3 天" },
+                  { v: "4+", l: "4 天以上" },
+                ].map(o => (
+                  <button key={o.v}
+                    className={`th-chip ${days === o.v ? "is-active" : ""}`}
+                    onClick={() => setDays(o.v)}>{o.l}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p1-filter-group">
+              <div className="p1-filter-label"><i className="ph-bold ph-mountains"></i>難度等級</div>
+              <div className="p1-difficulty-row">
+                {[1,2,3,4,5,6].map(n => (
+                  <button key={n}
+                    className={`p1-diff ${diff === String(n) ? "is-active" : ""}`}
+                    onClick={() => setDiff(diff === String(n) ? "all" : String(n))}>
+                    第{n}級
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p1-filter-group">
+              <div className="p1-filter-label"><i className="ph-bold ph-sparkle"></i>快速篩選</div>
+              <label className="p1-toggle" style={{ marginBottom: 8 }}>
+                <input type="checkbox" checked={hotOnly} onChange={e => setHotOnly(e.target.checked)} />
+                <span className="p1-toggle-track"></span>
+                <span>僅顯示熱門路線</span>
+              </label>
+              <label className="p1-toggle">
+                <input type="checkbox" checked={openOnly} onChange={e => setOpenOnly(e.target.checked)} />
+                <span className="p1-toggle-track"></span>
+                <span>僅顯示目前開放</span>
+              </label>
+            </div>
+          </aside>
+
+          {/* MAIN */}
+          <div>
+            <div className="p1-search-bar">
+              <div className="p1-search-row">
+                <div className="th-search">
+                  <i className="ph-bold ph-magnifying-glass"></i>
+                  <input
+                    type="text"
+                    className="th-input"
+                    placeholder="搜尋路線名稱、山名或關鍵字（例：玉山主峰、嘉明湖）"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                  />
+                </div>
+                <button className="th-btn th-btn-primary">
+                  <i className="ph-bold ph-magnifying-glass"></i>查詢
+                </button>
+              </div>
+              <div className="p1-search-hint">
+                <span className="lbl">熱門：</span>
+                {["玉山主峰", "嘉明湖", "雪山主東", "奇萊南華", "南湖大山"].map(t => (
+                  <span key={t} className="tag" onClick={() => setSearch(t)}>{t}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="p1-results-head">
+              <div className="p1-results-count">
+                共 <strong>{filtered.length}</strong> 條路線
+                {totalActive > 0 && <span style={{ color: "var(--fg-3)" }}>（已套用 {totalActive} 項篩選）</span>}
+              </div>
+              <div className="p1-sort">
+                <span>排序：</span>
+                <select className="th-select" value={sort} onChange={e => setSort(e.target.value)}>
+                  <option value="default">預設（依管理機關）</option>
+                  <option value="diff-asc">難度低→高</option>
+                  <option value="diff-desc">難度高→低</option>
+                  <option value="days-asc">天數少→多</option>
+                </select>
+              </div>
+            </div>
+
+            {grouped.length === 0 && (
+              <div className="th-empty">
+                <i className="ph-bold ph-binoculars" style={{ fontSize: 28, color: "var(--slate-300)", marginBottom: 8, display: "block" }}></i>
+                找不到符合條件的路線，請調整篩選條件再試試。
+              </div>
+            )}
+
+            {grouped.map(g => (
+              <div key={g.agency} className="p1-group">
+                <div className="p1-group-head">
+                  <div className="p1-group-head-left">
+                    <span className={`p1-group-tag tag-${g.agency}`}>
+                      <i className={g.agency === "police" ? "ph-bold ph-shield-check" : g.agency === "forestry" ? "ph-bold ph-tree" : "ph-bold ph-mountains"}></i>
+                      {g.name}
+                    </span>
+                    <span className="p1-group-meta">{g.items.length} 條路線 · {AGENCY_DESC[g.agency]}</span>
+                  </div>
+                </div>
+                <div className="p1-route-list">
+                  {g.items.map(r => (
+                    <RouteCard key={r.id} r={r}
+                      onSuspended={() => setSuspendedRoute(r)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </main>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

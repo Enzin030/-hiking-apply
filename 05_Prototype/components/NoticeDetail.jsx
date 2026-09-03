@@ -122,26 +122,23 @@ function NoticeDetailApp({ pageId }) {
       <Header active="notice" />
 
       {/* 正式站未標更新日期，這裡不填，避免捏造 */}
-      <PageHead trail={["登山須知", data.title]} title={data.title} />
+      <PageShell
+        trail={["登山須知", data.title]} title={data.title}
+        nav={hasNav && <PageNav items={navItems} />}
+      >
+        {data.blocks.map((b, i) => (
+          <SectionCard key={i} id={`blk${i + 1}`} title={b.title || undefined}>
+            <DetailBody body={b.body} />
+          </SectionCard>
+        ))}
 
-      <div className={`th-page ${hasNav ? "has-nav" : ""}`}>
-        <div className="th-page-main">
-          {data.blocks.map((b, i) => (
-            <SectionCard key={i} id={`blk${i + 1}`} title={b.title || undefined}>
-              <DetailBody body={b.body} />
-            </SectionCard>
-          ))}
-
-          {/* 對應正式站頁尾的「返回」按鈕 */}
-          <div className="th-doc-back">
-            <a className="th-linkrow-back" href="notice.html">
-              <i className="fa-solid fa-angle-left"></i>返回登山須知
-            </a>
-          </div>
+        {/* 對應正式站頁尾的「返回」按鈕 */}
+        <div className="th-doc-back">
+          <a className="th-linkrow-back" href="notice.html">
+            <i className="fa-solid fa-angle-left"></i>返回登山須知
+          </a>
         </div>
-
-        {hasNav && <PageNav items={navItems} />}
-      </div>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

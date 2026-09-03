@@ -47,38 +47,34 @@ function Information6App() {
     <div>
       <Header active="info" />
 
-      <PageHead
+      <PageShell
         trail={["旅遊登山資訊", "國家公園步道分級"]}
         title="國家公園步道分級"
         updated="2026-09-01"
-      />
+      >
+        <SectionCard
+          id="level-table"
+          title="步道難度分級表"
+          icon="fa-solid fa-signs-post"
+          note="共 7 級"
+          flush
+        >
+          <DataTable columns={LEVEL_COLUMNS} rows={TRAIL_LEVELS} rowKey="level" className="tbl-level" />
+          {/* 表格後兩則註記為正式站原文，不可省略 */}
+          <ol className="th-table-notes">
+            <li>天數係以一般行程安排提供參考，如縮短行程請自行提升體能並評估風險。</li>
+            <li>前往高海拔山區步道時，請預作行前準備及行程計畫，注意自身有無高山反應並設定折返點適時撤退。</li>
+          </ol>
+        </SectionCard>
 
-      <div className="th-page">
-        <div className="th-page-main">
-          <SectionCard
-            id="level-table"
-            title="步道難度分級表"
-            icon="fa-solid fa-signs-post"
-            note="共 7 級"
-            flush
-          >
-            <DataTable columns={LEVEL_COLUMNS} rows={TRAIL_LEVELS} rowKey="level" className="tbl-level" />
-            {/* 表格後兩則註記為正式站原文，不可省略 */}
-            <ol className="th-table-notes">
-              <li>天數係以一般行程安排提供參考，如縮短行程請自行提升體能並評估風險。</li>
-              <li>前往高海拔山區步道時，請預作行前準備及行程計畫，注意自身有無高山反應並設定折返點適時撤退。</li>
-            </ol>
-          </SectionCard>
-
-          <Callout>
-            路線開放狀態與可申請路線，請查詢
-            <a className="th-inline-link" href="open.html">
-              <i className="fa-solid fa-angle-right"></i>登山路線開放狀態
-            </a>
-            。
-          </Callout>
-        </div>
-      </div>
+        <Callout>
+          路線開放狀態與可申請路線，請查詢
+          <a className="th-inline-link" href="open.html">
+            <i className="fa-solid fa-angle-right"></i>登山路線開放狀態
+          </a>
+          。
+        </Callout>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

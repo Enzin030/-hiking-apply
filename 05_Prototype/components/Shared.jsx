@@ -79,7 +79,7 @@ function Header({ active }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap justify-between items-center gap-y-2">
           {/*
-            站名是全站識別（wordmark），不是各頁主標題 —— 頁面主標題是 PageHead 的 h1，
+            站名是全站識別（wordmark），不是各頁主標題 —— 頁面主標題是 PageShell 的 h1，
             這裡用 <a> 而非帶 onClick 的 div，兼顧鍵盤可聚焦與單一 h1 的語意。
             行動版：拿掉 shrink-0、縮小字級並允許換行，避免撐寬 documentElement。
           */}
@@ -331,7 +331,7 @@ function Footer() {
                   臺灣登山申請一站式服務網
                 </h3>
                 {/*
-                  這是抄自正式站的「全站」最後更新日期，與 PageHead 的「本頁」更新日期
+                  這是抄自正式站的「全站」最後更新日期，與 PageShell 的「本頁」更新日期
                   語意不同，兩者不一致屬正常，勿逕自對齊（2026-09-02 使用者裁決）。
                   [待確認] 實際上線時此值的維護方式（人工填寫或由 CMS 帶出）。
                 */}
@@ -398,19 +398,45 @@ function Footer() {
    ============================================================ */
 
 /*
-  內頁標題區：麵包屑 ＋ 標題 ＋ 導言 ＋ 更新日期
-  版型與查詢型頁面（news／open／campsite）一致——同一組 .th-crumb、
-  .th-page-inner、.th-page-title，不再用照片橫幅。
+  PageShell — 全站唯一的頁面外殼（2026-09-03 版面統一）。
+
+  在此之前全站有兩套骨架：查詢／申請頁是 `Breadcrumb ＋ main.th-page > .th-page-inner`，
+  內容頁是 `PageHead ＋ div.th-page.has-nav > .th-page-main`，而 `.th-page` 在
+  shared.css（純區塊）與 content.css（grid ＋ max-width ＋ padding）各有一份互相矛盾的
+  定義，靠「哪些頁有沒有載 content.css」才沒撞在一起。本元件把兩套併成一套：
+
+    main.th-page                白底全幅外框（唯一定義，來自 shared.css）
+      .th-page-inner            1280 版心置中、左右 32 內距
+        .th-page-head           標題／導言／更新日期
+        {stepper}               申請流程步驟條，非申請頁不給
+        .th-page-body[.has-nav] 內容區；有 nav 時為「主欄 ＋ 232 右側目錄」兩欄
+          .th-page-main         主欄（flex column，區塊間距 24）
+          {nav}                 PageNav
+
+  參數：
+    trail/title/lead/updated  同 PageHead
+    stepper                   申請流程的 <Stepper>／<FcStepper>，直接給 element
+    nav                       <PageNav>，給了才會變兩欄
+    bare                      不要 .th-page-main 的 flex 包裝（版面自帶 grid 的申請頁）
 */
-function PageHead({ trail, title, lead, updated }) {
+function PageShell({ trail, title, lead, updated, stepper, nav, bare, children }) {
   return (
     <React.Fragment>
       <Breadcrumb trail={trail} />
-      <div className="th-page-inner th-page-head">
-        <h1 className="th-page-title">{title}</h1>
-        {lead && <p className="th-page-lead">{lead}</p>}
-        {updated && <div className="th-page-meta">更新日期：{updated}</div>}
-      </div>
+      <main className="th-page">
+        <div className="th-page-inner">
+          <div className="th-page-head">
+            <h1 className="th-page-title">{title}</h1>
+            {lead && <p className="th-page-lead">{lead}</p>}
+            {updated && <div className="th-page-meta">更新日期：{updated}</div>}
+          </div>
+          {stepper}
+          <div className={`th-page-body${nav ? " has-nav" : ""}`}>
+            {bare ? children : <div className="th-page-main">{children}</div>}
+            {nav}
+          </div>
+        </div>
+      </main>
     </React.Fragment>
   );
 }
@@ -784,6 +810,6 @@ function ExperienceNav({ title = "依據登山經驗建議參考資料", label =
 
 Object.assign(window, {
   Header, Breadcrumb, APPLY_CRUMB, Stepper, Footer,
-  PageHead, PageNav, SectionCard, LinkList, DataTable, StepList, Callout, ExperienceNav,
+  PageShell, PageNav, SectionCard, LinkList, DataTable, StepList, Callout, ExperienceNav,
   BulletinPager,
 });

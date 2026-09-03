@@ -52,38 +52,33 @@ function ApplyTeachApp() {
     <div>
       <Header active="apply" />
 
-      <PageHead
+      <PageShell
         trail={["登山申請", "線上申請教學"]}
         title="線上申請教學"
         lead="從確認可申請日期到收到申請結果，共四個步驟。首次使用本站申請入園者，建議先閱讀本頁後再開始送件。"
         updated="2026-09-02"
-      />
+        nav={<PageNav
+               items={[
+                 { id: "steps", label: "申請流程四步驟" },
+                 { id: "next", label: "準備好了嗎" },
+               ]}
+             />}
+      >
+        <SectionCard id="steps" title="申請流程四步驟" icon="fa-solid fa-list-ol">
+          <StepList steps={TEACH_STEPS} />
+        </SectionCard>
 
-      <div className="th-page has-nav">
-        <div className="th-page-main">
-          <SectionCard id="steps" title="申請流程四步驟" icon="fa-solid fa-list-ol">
-            <StepList steps={TEACH_STEPS} />
-          </SectionCard>
-
-          <SectionCard id="next" title="準備好了嗎" icon="fa-solid fa-flag" flush>
-            <LinkList
-              items={[
-                { label: "開始線上申請", href: "apply-1.html" },
-                { label: "先看各機關登山須知", href: "notice.html" },
-                { label: "查看國家公園步道分級", href: "information_6.html" },
-                { label: "本站使用說明", href: "web_illustrate.html" },
-              ]}
-            />
-          </SectionCard>
-        </div>
-
-        <PageNav
-          items={[
-            { id: "steps", label: "申請流程四步驟" },
-            { id: "next", label: "準備好了嗎" },
-          ]}
-        />
-      </div>
+        <SectionCard id="next" title="準備好了嗎" icon="fa-solid fa-flag" flush>
+          <LinkList
+            items={[
+              { label: "開始線上申請", href: "apply-1.html" },
+              { label: "先看各機關登山須知", href: "notice.html" },
+              { label: "查看國家公園步道分級", href: "information_6.html" },
+              { label: "本站使用說明", href: "web_illustrate.html" },
+            ]}
+          />
+        </SectionCard>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

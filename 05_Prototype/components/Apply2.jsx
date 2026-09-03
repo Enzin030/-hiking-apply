@@ -376,113 +376,112 @@ function NationalParkConsent({ unit }) {
   return (
     <div data-screen-label="02 同意書（國家公園）">
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", APPLY_CRUMB, "申請須知與同意書"]} />
+      <PageShell
+        trail={["登山申請", APPLY_CRUMB, "申請須知與同意書"]}
+        title="申請須知與同意書"
+        stepper={<Stepper current={2} />}
+        bare
+      >
 
-      <main className="th-page">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">申請須知與同意書</h1>
-          <Stepper current={2} />
-
-          {routeData && (
-            <div className="p2-route-brief">
-              <div>
-                <span className="p2-route-brief-label">申請路線</span>
-                <strong>{routeData.displayName || routeData.name}</strong>
-                <span>{routeData.routePath || routeData.subroute}</span>
-              </div>
-              <div>
-                <span className="p2-route-brief-label">路線與天數</span>
-                <strong>{routeData.routeGroup || routeData.peak}</strong>
-                <span>{routeData.durationLabel || (routeData.days === 1 ? "單日往返" : `${routeData.days}天${routeData.days - 1}夜`)}</span>
-              </div>
-            </div>
-          )}
-
-          <div className="p2-layout">
+        {routeData && (
+          <div className="p2-route-brief">
             <div>
-              {sections.map((s, idx) => {
-                const isAcked = acked[s.id];
-                return (
-                  <section key={s.id} id={"sec-" + s.id}
-                    className={`p2-sec ${isAcked ? "is-acked" : ""}`}>
-                    <div className="p2-sec-head">
-                      <div className="p2-sec-head-left">
-                        <div className="p2-sec-num">
-                          {isAcked ? <i className="fa-solid fa-check"></i> : (idx + 1)}
-                        </div>
-                        <div className="p2-sec-titles">
-                          <span className="p2-sec-kicker">{s.label}</span>
-                          <h3 className="p2-sec-title">{s.title}</h3>
-                        </div>
-                      </div>
-                      <div className="p2-sec-head-right">
-                        <label className="p2-sec-check" onClick={e => e.stopPropagation()}>
-                          <input type="checkbox" checked={isAcked} onChange={() => toggleAck(s.id)} />
-                          <span className="p2-sec-ack-box"></span>
-                          <span>{isAcked ? "已確認" : "確認"}</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="p2-sec-body">
-                      <div className="p2-consent-html" dangerouslySetInnerHTML={{ __html: s.clauses[0]?.html || "" }} />
-                    </div>
-                  </section>
-                );
-              })}
+              <span className="p2-route-brief-label">申請路線</span>
+              <strong>{routeData.displayName || routeData.name}</strong>
+              <span>{routeData.routePath || routeData.subroute}</span>
             </div>
+            <div>
+              <span className="p2-route-brief-label">路線與天數</span>
+              <strong>{routeData.routeGroup || routeData.peak}</strong>
+              <span>{routeData.durationLabel || (routeData.days === 1 ? "單日往返" : `${routeData.days}天${routeData.days - 1}夜`)}</span>
+            </div>
+          </div>
+        )}
 
-            {/* SIDEBAR TOC */}
-            <aside className="p2-toc">
-              <h3><i className="ph-bold ph-list-numbers"></i>閱讀定位</h3>
-              <div className="p2-confirm-meter">
-                <div className="p2-progress">
-                  <div className="p2-progress-bar" style={{ width: `${(ackedCount / total) * 100}%` }}></div>
-                </div>
-                <div className="p2-progress-label">
-                  <span>已確認 <strong>{ackedCount}/{total}</strong></span>
-                  <span>{Math.round((ackedCount / total) * 100)}%</span>
-                </div>
-              </div>
-              <ul className="p2-toc-list">
-                {sections.map((s, i) => (
-                  <li key={s.id} className={`${acked[s.id] ? "is-acked" : ""} ${i === activeIndex ? "is-active" : ""}`}>
-                    <button onClick={() => scrollToSection(s.id)}>
-                      <span className="p2-toc-dot"><span>{i + 1}</span></span>
-                      <span className="p2-toc-text">
-                        <span className="p2-toc-kicker">{s.label}</span>
-                        <span>{s.title}</span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </aside>
+        <div className="p2-layout">
+          <div>
+            {sections.map((s, idx) => {
+              const isAcked = acked[s.id];
+              return (
+                <section key={s.id} id={"sec-" + s.id}
+                  className={`p2-sec ${isAcked ? "is-acked" : ""}`}>
+                  <div className="p2-sec-head">
+                    <div className="p2-sec-head-left">
+                      <div className="p2-sec-num">
+                        {isAcked ? <i className="fa-solid fa-check"></i> : (idx + 1)}
+                      </div>
+                      <div className="p2-sec-titles">
+                        <span className="p2-sec-kicker">{s.label}</span>
+                        <h3 className="p2-sec-title">{s.title}</h3>
+                      </div>
+                    </div>
+                    <div className="p2-sec-head-right">
+                      <label className="p2-sec-check" onClick={e => e.stopPropagation()}>
+                        <input type="checkbox" checked={isAcked} onChange={() => toggleAck(s.id)} />
+                        <span className="p2-sec-ack-box"></span>
+                        <span>{isAcked ? "已確認" : "確認"}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="p2-sec-body">
+                    <div className="p2-consent-html" dangerouslySetInnerHTML={{ __html: s.clauses[0]?.html || "" }} />
+                  </div>
+                </section>
+              );
+            })}
           </div>
 
-          {/* STICKY FOOTER */}
-          <div className={`p2-footbar ${canSubmit ? "is-ready" : ""}`}>
-            <div className="p2-footbar-status">
-              <div className="p2-footbar-icon">
-                <i className={canSubmit ? "fa-solid fa-check" : "fa-solid fa-list-check"}></i>
+          {/* SIDEBAR TOC */}
+          <aside className="p2-toc">
+            <h3><i className="ph-bold ph-list-numbers"></i>閱讀定位</h3>
+            <div className="p2-confirm-meter">
+              <div className="p2-progress">
+                <div className="p2-progress-bar" style={{ width: `${(ackedCount / total) * 100}%` }}></div>
               </div>
-              <div>
-                <div>已確認 <span className="num">{ackedCount}</span> / {total} 組事項</div>
+              <div className="p2-progress-label">
+                <span>已確認 <strong>{ackedCount}/{total}</strong></span>
+                <span>{Math.round((ackedCount / total) * 100)}%</span>
               </div>
             </div>
+            <ul className="p2-toc-list">
+              {sections.map((s, i) => (
+                <li key={s.id} className={`${acked[s.id] ? "is-acked" : ""} ${i === activeIndex ? "is-active" : ""}`}>
+                  <button onClick={() => scrollToSection(s.id)}>
+                    <span className="p2-toc-dot"><span>{i + 1}</span></span>
+                    <span className="p2-toc-text">
+                      <span className="p2-toc-kicker">{s.label}</span>
+                      <span>{s.title}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        </div>
 
-            <div className="p2-footbar-actions">
-              <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-1.html"}>
-                <i className="fa-solid fa-arrow-left"></i>上一步
-              </button>
-              <button className="th-btn th-btn-primary" disabled={!canSubmit}
-                onClick={() => window.location.href = nextUrl(config.nextPage)}>
-                同意並下一步<i className="fa-solid fa-arrow-right"></i>
-              </button>
+        {/* STICKY FOOTER */}
+        <div className={`p2-footbar ${canSubmit ? "is-ready" : ""}`}>
+          <div className="p2-footbar-status">
+            <div className="p2-footbar-icon">
+              <i className={canSubmit ? "fa-solid fa-check" : "fa-solid fa-list-check"}></i>
             </div>
+            <div>
+              <div>已確認 <span className="num">{ackedCount}</span> / {total} 組事項</div>
+            </div>
+          </div>
+
+          <div className="p2-footbar-actions">
+            <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-1.html"}>
+              <i className="fa-solid fa-arrow-left"></i>上一步
+            </button>
+            <button className="th-btn th-btn-primary" disabled={!canSubmit}
+              onClick={() => window.location.href = nextUrl(config.nextPage)}>
+              同意並下一步<i className="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
         </div>
-      </main>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />
@@ -506,83 +505,82 @@ function SummaryPage({ unit }) {
   return (
     <div data-screen-label="02 申請前摘要">
       <Header active="apply" />
-      <Breadcrumb trail={["登山申請", APPLY_CRUMB, "申請前摘要"]} />
+      <PageShell
+        trail={["登山申請", APPLY_CRUMB, "申請前摘要"]}
+        title={cfg.title}
+        stepper={<Stepper current={2} />}
+        bare
+      >
 
-      <main className="th-page">
-        <div className="th-page-inner">
-          <h1 className="th-page-title">{cfg.title}</h1>
-          <Stepper current={2} />
+        {/* 路線資訊欄 */}
+        {routeData && (
+          <div style={{
+            display: "flex", alignItems: "center", gap: 10,
+            marginBottom: 24, padding: "12px 16px",
+            background: "var(--bg-mist)", borderRadius: "var(--r-md)",
+            border: "1px solid var(--bg-mist-3)",
+          }}>
+            <span style={{
+              width: 32, height: 32, borderRadius: "var(--r-sm)",
+              background: cfg.color, display: "flex",
+              alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              <i className={cfg.icon} style={{ color: "#fff", fontSize: 16 }}></i>
+            </span>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--fg-1)" }}>{routeData.name}</div>
+              <div style={{ fontSize: "var(--fs-xs)", color: "var(--fg-3)" }}>{cfg.agencyName} · {routeData.subroute}</div>
+            </div>
+          </div>
+        )}
 
-          {/* 路線資訊欄 */}
-          {routeData && (
-            <div style={{
-              display: "flex", alignItems: "center", gap: 10,
-              marginBottom: 24, padding: "12px 16px",
-              background: "var(--bg-mist)", borderRadius: "var(--r-md)",
-              border: "1px solid var(--bg-mist-3)",
+        {/* 注意事項列表 */}
+        <div style={{
+          background: "var(--bg-1)", border: "1px solid var(--slate-200)",
+          borderRadius: "var(--r-xl)", overflow: "hidden",
+          boxShadow: "var(--sh-card)", marginBottom: 32,
+        }}>
+          <div style={{
+            padding: "16px 20px", borderBottom: "1px solid var(--slate-200)",
+            background: "var(--bg-mist)",
+            display: "flex", alignItems: "center", gap: 8,
+          }}>
+            <i className="ph-bold ph-info" style={{ color: cfg.color, fontSize: 18 }}></i>
+            <span style={{ fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--fg-1)" }}>申請前請確認以下事項</span>
+          </div>
+
+          {cfg.notices.map((n, i) => (
+            <div key={i} style={{
+              display: "flex", gap: 14, padding: "16px 20px",
+              borderBottom: i < cfg.notices.length - 1 ? "1px solid var(--slate-100)" : "none",
+              background: n.warn ? "var(--warning-bg)" : "var(--bg-1)",
             }}>
               <span style={{
-                width: 32, height: 32, borderRadius: "var(--r-sm)",
-                background: cfg.color, display: "flex",
-                alignItems: "center", justifyContent: "center", flexShrink: 0,
+                width: 32, height: 32, borderRadius: "var(--r-sm)", flexShrink: 0,
+                background: n.warn ? "#fef3c7" : "var(--bg-mist-2)",
+                display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <i className={cfg.icon} style={{ color: "#fff", fontSize: 16 }}></i>
+                <i className={n.icon} style={{ color: n.warn ? "var(--warning-fg)" : cfg.color, fontSize: 16 }}></i>
               </span>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--fg-1)" }}>{routeData.name}</div>
-                <div style={{ fontSize: "var(--fs-xs)", color: "var(--fg-3)" }}>{cfg.agencyName} · {routeData.subroute}</div>
-              </div>
+              <div style={{
+                fontSize: "var(--fs-sm)", color: n.warn ? "var(--warning-fg)" : "var(--fg-2)",
+                lineHeight: "var(--lh-loose)", paddingTop: 6,
+              }} dangerouslySetInnerHTML={{ __html: n.text }} />
             </div>
-          )}
-
-          {/* 注意事項列表 */}
-          <div style={{
-            background: "var(--bg-1)", border: "1px solid var(--slate-200)",
-            borderRadius: "var(--r-xl)", overflow: "hidden",
-            boxShadow: "var(--sh-card)", marginBottom: 32,
-          }}>
-            <div style={{
-              padding: "16px 20px", borderBottom: "1px solid var(--slate-200)",
-              background: "var(--bg-mist)",
-              display: "flex", alignItems: "center", gap: 8,
-            }}>
-              <i className="ph-bold ph-info" style={{ color: cfg.color, fontSize: 18 }}></i>
-              <span style={{ fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--fg-1)" }}>申請前請確認以下事項</span>
-            </div>
-
-            {cfg.notices.map((n, i) => (
-              <div key={i} style={{
-                display: "flex", gap: 14, padding: "16px 20px",
-                borderBottom: i < cfg.notices.length - 1 ? "1px solid var(--slate-100)" : "none",
-                background: n.warn ? "var(--warning-bg)" : "var(--bg-1)",
-              }}>
-                <span style={{
-                  width: 32, height: 32, borderRadius: "var(--r-sm)", flexShrink: 0,
-                  background: n.warn ? "#fef3c7" : "var(--bg-mist-2)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <i className={n.icon} style={{ color: n.warn ? "var(--warning-fg)" : cfg.color, fontSize: 16 }}></i>
-                </span>
-                <div style={{
-                  fontSize: "var(--fs-sm)", color: n.warn ? "var(--warning-fg)" : "var(--fg-2)",
-                  lineHeight: "var(--lh-loose)", paddingTop: 6,
-                }} dangerouslySetInnerHTML={{ __html: n.text }} />
-              </div>
-            ))}
-          </div>
-
-          {/* 操作按鈕 */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
-            <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-1.html"}>
-              <i className="fa-solid fa-arrow-left"></i>上一步
-            </button>
-            <button className="th-btn th-btn-primary"
-              onClick={() => window.location.href = nextUrl(cfg.nextPage)}>
-              我已了解，進入申請<i className="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
+          ))}
         </div>
-      </main>
+
+        {/* 操作按鈕 */}
+        <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+          <button className="th-btn th-btn-ghost" onClick={() => window.location.href = "apply-1.html"}>
+            <i className="fa-solid fa-arrow-left"></i>上一步
+          </button>
+          <button className="th-btn th-btn-primary"
+            onClick={() => window.location.href = nextUrl(cfg.nextPage)}>
+            我已了解，進入申請<i className="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />

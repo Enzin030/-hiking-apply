@@ -122,34 +122,29 @@ function NoticeApp() {
     <div>
       <Header active="notice" />
 
-      <PageHead
+      <PageShell
         trail={["登山須知"]}
         title="登山須知"
         lead="本站整合國家公園署、林業及自然保育署、警政署等機關之登山申辦規定。"
         updated="2026-09-01"
-      />
-
-      <div className="th-page has-nav">
-        <div className="th-page-main">
-          <div className="th-notice-actions">
-            <a className="th-video-btn" href={SAFETY_VIDEO} target="_blank" rel="noopener noreferrer">
-              <i className="fa-brands fa-youtube"></i>登山安全影片（HOT）
-            </a>
-          </div>
-
-          <Callout type="warning">
-            各機關申辦規定不同，<strong>同一趟行程若跨越多個管理機關，須分別符合各機關規定</strong>。
-            進入山地管制區者另須申請入山許可證。
-            <span className="th-todo-tag">待確認</span>
-            <span className="th-callout-src">本段非正式站原文，為我方新增，來源待業務確認。</span>
-          </Callout>
-
-          <div className="th-notice-grid">{primary.map(card)}</div>
-          <div className="th-notice-grid is-secondary">{secondary.map(card)}</div>
+        nav={<PageNav items={navItems} />}
+      >
+        <div className="th-notice-actions">
+          <a className="th-video-btn" href={SAFETY_VIDEO} target="_blank" rel="noopener noreferrer">
+            <i className="fa-brands fa-youtube"></i>登山安全影片（HOT）
+          </a>
         </div>
 
-        <PageNav items={navItems} />
-      </div>
+        <Callout type="warning">
+          各機關申辦規定不同，<strong>同一趟行程若跨越多個管理機關，須分別符合各機關規定</strong>。
+          進入山地管制區者另須申請入山許可證。
+          <span className="th-todo-tag">待確認</span>
+          <span className="th-callout-src">本段非正式站原文，為我方新增，來源待業務確認。</span>
+        </Callout>
+
+        <div className="th-notice-grid">{primary.map(card)}</div>
+        <div className="th-notice-grid is-secondary">{secondary.map(card)}</div>
+      </PageShell>
 
       <ExperienceNav />
       <Footer />
