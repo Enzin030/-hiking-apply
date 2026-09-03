@@ -273,7 +273,7 @@ function OpenStatusApp() {
           </form>
 
           <div className="bulletin-section-head">
-            <h2 className="bulletin-section-title">路線申請對照資訊</h2>
+            <h2 className="th-section-title">路線申請對照資訊</h2>
             <span className="bulletin-count">
               共 <strong>{rows.length}</strong> 筆
               {rows.length > 0 && <span>／第 {page} 頁（共 {totalPages} 頁）</span>}

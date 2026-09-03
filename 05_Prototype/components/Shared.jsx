@@ -19,7 +19,7 @@ const HEADER_NAV = [
   { key: "apply",    label: "登山申請", url: "apply-1.html" },
   { key: "notice",   label: "登山須知", url: "notice.html" },
   { key: "status",   label: "登山路線開放狀態", url: "open.html" },
-  { key: "campsite", label: "宿營地與床位查詢", url: null },
+  { key: "campsite", label: "宿營地與床位查詢", url: "campsite.html" },
   { key: "info",     label: "旅遊登山資訊", url: null },
 ];
 
@@ -570,8 +570,8 @@ const EXPERIENCE_GROUPS = [
       { label: "登山路線圖資查詢", old: "web_map2.aspx" },
       { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
       { label: "可申請路線查詢", href: "open.html", old: "open.aspx" },
-      { label: "單日往返可申請數量", old: "bed_7.aspx" },
-      { label: "宿營地及山屋可申請數量", old: "bed_0.aspx" },
+      { label: "單日往返可申請數量", href: "campsite.html", old: "bed_7.aspx" },
+      { label: "宿營地及山屋可申請數量", href: "campsite.html", old: "bed_0.aspx" },
     ],
   },
   {

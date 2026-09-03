@@ -200,9 +200,18 @@ a { color: inherit; }
   min-height: 100vh;
   padding-bottom: 80px;
 }
+/*
+  max-width 用 min(1280px, 100%) 而非單純 1280px：
+  內容頁的 .th-page 是 grid（content.css），本元素是 grid item，
+  只寫 1280px 時瀏覽器會讓它長到內容的 max-content 再夾在 1280——
+  宿營地頁的機關 Tab 有「林業及自然保育署」這種長標籤，390px 下整頁就橫向溢出。
+  加上 100% 才會夾回容器寬，各自的 overflow 機制（Tab 列橫捲、表格卡片化）也才輪得到。
+  min-width:0 同時解除 grid item 預設的 min-width:auto。
+*/
 .th-page-inner {
-  max-width: 1280px; margin: 0 auto;
+  max-width: min(1280px, 100%); margin: 0 auto;
   padding: 0 32px;
+  min-width: 0;
 }
 .th-page-title {
   font-family: var(--font-sans); font-weight: 700;
@@ -511,7 +520,10 @@ a { color: inherit; }
 @media (max-width: 768px) {
   .bulletin-tabs { overflow-x: auto; }
 }
+/* 標籤總寬超過容器時整列橫捲（父層 .bulletin-tabs 在 768 以下已設 overflow-x: auto），
+   不讓 Tab 被壓扁或撐破版面 */
 .bulletin-tabs-nav {
+  min-width: max-content;
   display: inline-flex;
   gap: 4px;
   padding: 4px;
@@ -677,6 +689,16 @@ a { color: inherit; }
   gap: 16px;
   margin: 20px 0 10px;
 }
+/*
+  筆數列若要帶區塊標題（路線開放狀態、宿營地概況），沿用既有的 .th-section-title
+  （與申請頁同一套左色條），只在這個 flex 列內去掉它的下邊距並推到最左。
+  ——公佈欄不放區塊次標，故本規則只在有標題時生效。
+*/
+.bulletin-section-head .th-section-title {
+  margin: 0 auto 0 0;
+  font-size: var(--fs-h3);
+}
+
 .bulletin-count {
   font-size: var(--fs-xs);
   color: var(--fg-3);
