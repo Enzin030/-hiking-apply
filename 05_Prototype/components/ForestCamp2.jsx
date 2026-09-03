@@ -39,7 +39,9 @@ function Stepper2({ value, min, max, onChange }) {
 function ForestCamp2App() {
   const p = new URLSearchParams(window.location.search);
   const routeId   = p.get("route")     || "jiaming";
-  const startDate = p.get("start")     || "";
+  // 直接開本頁（未經第一步）時 start 會是空的，而 addDays("") 產生 Invalid Date、
+  // 後續 toISOString() 拋 RangeError 讓整頁白畫面；比照第一步預設為今天。
+  const startDate = p.get("start")     || formatDateInputValue(new Date());
   const nights    = parseInt(p.get("nights") || "2", 10);
   const headcount = parseInt(p.get("headcount") || "4", 10);
 
