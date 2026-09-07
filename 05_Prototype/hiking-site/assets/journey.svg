@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="280" viewBox="0 0 1440 280" fill="none">
+  <title>登山旅程：淡色山巒與森林背景</title>
+  <desc>透明背景的可縮放向量插畫。左側低丘、右側高山，搭配鼠尾草綠針葉林；不含文字、路徑或節點。</desc>
+  <defs>
+    <linearGradient id="mist" x1="0" y1="170" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF5F0" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#F5F8F4" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ridge" x1="900" y1="64" x2="900" y2="228" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CBDDE1"/>
+      <stop offset="1" stop-color="#E4EEEC"/>
+    </linearGradient>
+    <g id="pine">
+      <path d="M-2 0H2V-48H-2Z" fill="#809C8C"/>
+      <path d="M0-96-15-64H-9L-23-37H-15L-31-8H31L15-37H23L9-64H15Z" fill="currentColor"/>
+      <path d="M0-96V-8H31L15-37H23L9-64H15Z" fill="#FFFFFF" opacity=".12"/>
+    </g>
+  </defs>
+  <!-- Distant mountains -->
+  <path d="M0 203 65 189 113 199 184 170 226 174 304 135 333 146 389 169 440 159 485 186 552 176 614 193 676 166 735 182 796 151 827 158 880 127 918 151 967 119 1008 131 1072 88 1108 99 1208 34Q1221 26 1233 35L1299 77 1332 64 1373 81 1406 72 1440 89V238H0Z" fill="url(#ridge)"/>
+  <!-- Soft mountain facets -->
+  <path d="m1221 30-87 143 77-24 53 41 35-113Z" fill="#DCE8E8" opacity=".7"/>
+  <path d="m304 135-68 73 96-23 57-16-56-23Z" fill="#E5EEEE"/>
+  <path d="m880 127-51 71 72-24 17-23Z" fill="#E6EFEB"/>
+  <path d="M0 215 74 200 128 210 198 189 249 208 314 184 366 204 423 185 487 210 541 193 600 211 675 190 721 210 796 189 851 201 904 172 940 181 979 157 1021 183 1069 158 1126 179 1182 139 1229 161 1281 135 1321 152 1380 112 1440 148V248H0Z" fill="#DCE9DF"/>
+  <!-- Distant tree clusters -->
+  <g color="#B7CEC2" opacity=".8">
+    <use href="#pine" transform="translate(58 219) scale(.53)"/>
+    <use href="#pine" transform="translate(101 224) scale(.36)"/>
+    <use href="#pine" transform="translate(362 222) scale(.43)"/>
+    <use href="#pine" transform="translate(594 222) scale(.4)"/>
+    <use href="#pine" transform="translate(877 224) scale(.65)"/>
+    <use href="#pine" transform="translate(908 226) scale(.43)"/>
+    <use href="#pine" transform="translate(1299 226) scale(.58)"/>
+    <use href="#pine" transform="translate(1364 222) scale(.66)"/>
+    <use href="#pine" transform="translate(1423 224) scale(.78)"/>
+  </g>
+  <!-- Near woodland -->
+  <g color="#9ABDAC">
+    <use href="#pine" transform="translate(33 232) scale(.76)"/>
+    <use href="#pine" transform="translate(77 232) scale(.87)"/>
+    <use href="#pine" transform="translate(343 228) scale(.75)"/>
+    <use href="#pine" transform="translate(581 228) scale(.7)"/>
+    <use href="#pine" transform="translate(850 232) scale(.58)"/>
+    <use href="#pine" transform="translate(1288 232) scale(1.25)"/>
+    <use href="#pine" transform="translate(1325 235) scale(.88)"/>
+    <use href="#pine" transform="translate(1393 235) scale(1.12)"/>
+  </g>
+  <g color="#86AA96" opacity=".86">
+    <use href="#pine" transform="translate(16 238) scale(.5)"/>
+    <use href="#pine" transform="translate(1264 240) scale(.68)"/>
+    <use href="#pine" transform="translate(1430 240) scale(.87)"/>
+  </g>
+  <!-- Gentle foreground fading into the page -->
+  <path d="M0 224Q98 215 192 228T387 224T590 228T786 224T981 227T1190 222T1440 224V280H0Z" fill="url(#mist)"/>
+</svg>
