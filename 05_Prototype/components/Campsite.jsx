@@ -4,13 +4,17 @@
 
   依 2026-09-02 使用者裁決：
   一、11 張子頁收成單一頁面，上層機關 Tab ＋ 次層類別子選（宿營地／路線），
-      不做 11 張獨立頁；本次只實作雪霸宿營地，其餘 Tab 與子選出「待建置」標記。
+      不做 11 張獨立頁；已實作雪霸的宿營地（bed_1）與路線（bed_10）兩個子選，
+      其餘 Tab 與子選出「待建置」標記。
   二、月曆格以餘額為主角（大字＋狀態色），其餘 6 項計數收進點格後的明細彈窗，
       欄位一項不減。
 
   資料：components/CampsiteData.jsx（正式站實跑轉檔，37 個宿營地）
+        components/CampsiteRouteData.jsx（正式站實跑轉檔，8 個登山口）
   版型沿用 shared.css 的 bulletin-* 查詢型骨架與 th-flag 狀態膠囊；
-  月曆本身是本頁專屬，寫在 styles/campsite.css。
+  月曆與兩個子選共用同一組 BedCalendar／DayModal，不另做一種版型。
+  路線子選比宿營地多一張「登山口承載量」總表（登山口／平日／假日／備註），
+  那是正式站 bed_10 未選取狀態的畫面，選了登山口後才換成月曆。
 
   餘額是即時資料，本頁是快照，畫面上明示擷取日期，不假裝即時查詢。
 */
@@ -25,13 +29,13 @@ const CAMPSITE_ORGS = [
 
 /*
   次層類別子選。對應正式站的子頁：
-    雪霸 宿營地 bed_1（已建）／路線 bed_10
+    雪霸 宿營地 bed_1（已建）／路線 bed_10（已建）
     太魯閣 山屋 bed_4／路線 bed_5；玉山 宿營地 bed_6／單日往返 bed_7
     林業署 宿營地 bed_0／區域申請及抽籤 bed_11
   玉山另有抽籤結果 bed_3、抽籤日期 bed_8、可申請退費日期 bed_9 三張日期型子頁。
 */
 const CAMPSITE_KINDS = {
-  "shei-pa":  [{ key: "camp", label: "宿營地", built: true }, { key: "route", label: "路線", built: false }],
+  "shei-pa":  [{ key: "camp", label: "宿營地", built: true }, { key: "route", label: "路線", built: true }],
   taroko:     [{ key: "hut", label: "山屋", built: false }, { key: "route", label: "路線", built: false }],
   yushan:     [{ key: "camp", label: "宿營地", built: false }, { key: "oneday", label: "單日往返路線", built: false },
                { key: "lot", label: "抽籤結果", built: false }, { key: "lotdate", label: "抽籤日期", built: false },
@@ -69,12 +73,20 @@ function NoticeList() {
   );
 }
 
-/* 當日明細網址：正式站 bed_1main.aspx，本雛形未建當日隊伍明細頁 */
-const detailUrl = (site, day) =>
-  `https://service.skyeyes.tw/hikenationpark/bed_1main.aspx?orgid=${CAMPSITE_ORG_ID}&node_id=${site.id}&sdate=${day.sdate}`;
+/*
+  當日明細網址：宿營地是正式站 bed_1main.aspx、路線登山口是 bed_10main.aspx，
+  本雛形未建當日隊伍明細頁，兩者都連回現行網站。
+*/
+const detailUrl = (page, orgId, site, day) =>
+  `https://service.skyeyes.tw/hikenationpark/${page}?orgid=${orgId}&node_id=${site.id}&sdate=${day.sdate}`;
 
-/* ── 當日明細彈窗（計數一項不少）── */
-function DayModal({ site, day, onClose }) {
+/* ── 當日明細彈窗（計數一項不少，宿營地與路線共用）── */
+function DayModal({ site, day, onClose, snapshot, detailPage, orgId }) {
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
   if (!day) return null;
   /* 餘額固定是 labels 的第一項（正式站的排列順序） */
   const flag = remainFlag(day.v[0]);
@@ -107,13 +119,13 @@ function DayModal({ site, day, onClose }) {
                 <i className={flag === "is-yes" ? "fa-solid fa-circle-check" : "fa-solid fa-circle-xmark"}></i>
                 {flag === "is-yes" ? "尚有餘額" : "已無餘額"}
               </span>
-              餘額為 {CAMPSITE_SNAPSHOT_DATE} 擷取之快照，實際可申請數量以線上申請流程查驗結果為準。
+              餘額為 {snapshot} 擷取之快照，實際可申請數量以線上申請流程查驗結果為準。
             </p>
           )}
           {day.sdate && (
             <p className="camp-daynote">
               當日申請隊伍明細：
-              <a className="th-inline-link" href={detailUrl(site, day)}
+              <a className="th-inline-link" href={detailUrl(detailPage, orgId, site, day)}
                  target="_blank" rel="noopener noreferrer">
                 <i className="fa-solid fa-arrow-up-right-from-square"></i>查看明細
               </a>
@@ -127,7 +139,7 @@ function DayModal({ site, day, onClose }) {
 }
 
 /* ── 月曆 ── */
-function BedCalendar({ site, onPick }) {
+function BedCalendar({ site, onPick, weekHead }) {
   const byDay = {};
   site.days.forEach((d) => { byDay[d.d] = d; });
   const first = site.days[0];
@@ -143,7 +155,7 @@ function BedCalendar({ site, onPick }) {
     <div className="camp-cal">
       <div className="camp-cal-head">
         {/* 行動版七欄塞不下「星期日」，改顯示末字；兩種寫法都在 DOM，由 CSS 切換 */}
-        {CAMPSITE_WEEK_HEAD.map((w) => (
+        {weekHead.map((w) => (
           <div key={w} className="camp-cal-week">
             <span className="camp-cal-week-full">{w}</span>
             <span className="camp-cal-week-short">{w.slice(-1)}</span>
@@ -210,31 +222,183 @@ function SiteIntro({ site }) {
   );
 }
 
-/* ── 主元件 ── */
-function CampsiteApp() {
-  const [org, setOrg] = React.useState("shei-pa");
-  const [kind, setKind] = React.useState("camp");
+/* ── 月曆下方圖例（宿營地與路線共用；項目數依該地點實際計數項目而定）── */
+function CalLegend({ site, hint }) {
+  return (
+    <div className="camp-legend">
+      <span className="th-flag is-yes"><i className="fa-solid fa-circle-check"></i>尚有餘額</span>
+      <span className="th-flag is-no"><i className="fa-solid fa-circle-xmark"></i>已無餘額</span>
+      <span className="camp-legend-hint">{hint || `點日期可看該日 ${site.labels.length} 項計數明細`}</span>
+    </div>
+  );
+}
+
+/*
+  月份切換：正式站是「上個月／年月下拉／下個月」的 postback。
+  本雛形的資料是單月快照，切月沒有資料可換，故停用並明說，
+  不做點了沒反應的假按鈕。
+*/
+function MonthBar({ ym }) {
+  return (
+    <div className="camp-monthbar">
+      <span className="camp-monthbar-btn th-todo-link">上個月</span>
+      <span className="camp-month">{ym.year} 年 {ym.month} 月</span>
+      <span className="camp-monthbar-btn th-todo-link">下個月</span>
+    </div>
+  );
+}
+
+/* 快照提醒（兩個子選共用，只有擷取日期與年月不同）*/
+function SnapshotNote({ snapshot, ym }) {
+  return (
+    <Callout type="warning">
+      餘額為 <strong>{snapshot}</strong> 自現行網站擷取的快照，非即時查詢結果；
+      雛形資料僅含 {ym.year} 年 {ym.month} 月，故月份切換尚未建置。
+    </Callout>
+  );
+}
+
+/* ── 雪霸「宿營地」子選（正式站 bed_1）── */
+function SheipaCampView() {
   const [draftSite, setDraftSite] = React.useState(SHEIPA_CAMPSITES[2].id); /* 預設七卡山莊 */
   const [siteId, setSiteId] = React.useState(SHEIPA_CAMPSITES[2].id);
   const [day, setDay] = React.useState(null);
 
   const site = SHEIPA_CAMPSITES.find((s) => s.id === siteId) || SHEIPA_CAMPSITES[0];
   const ym = site.ym || {};
-
-  React.useEffect(() => {
-    if (!day) return;
-    const onKey = (e) => { if (e.key === "Escape") setDay(null); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [day]);
-
   const submit = (e) => { e.preventDefault(); setSiteId(draftSite); setDay(null); };
+
+  return (
+    <React.Fragment>
+      <NoticeList />
+
+      <form className="bulletin-card" onSubmit={submit}>
+        <div className="bulletin-filter-row">
+          <span className="bulletin-filter-label"><i className="fa-solid fa-tent"></i>宿營地點</span>
+          <select className="th-select camp-select" value={draftSite}
+                  onChange={(e) => setDraftSite(e.target.value)} aria-label="宿營地點">
+            {SHEIPA_CAMPSITES.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+          <button type="submit" className="th-btn th-btn-primary">
+            <i className="fa-solid fa-magnifying-glass"></i>查詢
+          </button>
+        </div>
+      </form>
+
+      <div className="bulletin-section-head">
+        <h2 className="th-section-title">山屋／營地概況</h2>
+        <span className="bulletin-count">{site.name}／共 <strong>{site.days.length}</strong> 天</span>
+      </div>
+
+      <MonthBar ym={ym} />
+      <SnapshotNote snapshot={CAMPSITE_SNAPSHOT_DATE} ym={ym} />
+
+      <BedCalendar site={site} onPick={setDay} weekHead={CAMPSITE_WEEK_HEAD} />
+      <CalLegend site={site} />
+
+      <SiteIntro site={site} />
+
+      {day && (
+        <DayModal site={site} day={day} onClose={() => setDay(null)}
+                  snapshot={CAMPSITE_SNAPSHOT_DATE} detailPage="bed_1main.aspx" orgId={CAMPSITE_ORG_ID} />
+      )}
+    </React.Fragment>
+  );
+}
+
+/*
+  登山口承載量總表的欄位。表頭取自 SHEIPA_ROUTE_SUMMARY.head（正式站實抓的
+  登山口／平日／假日／備註），不寫死，資料改了欄位跟著改。
+  第一欄是登山口名稱兼查詢入口，其餘依內容決定對齊：全數字置中、文字靠左。
+*/
+const routeSummaryColumns = (onPick) => {
+  const [nameHead, ...valueHeads] = SHEIPA_ROUTE_SUMMARY.head;
+  return [
+    {
+      key: "name",
+      label: nameHead,
+      render: (r) => (
+        <button type="button" className="th-btn th-btn-ghost th-btn-sm"
+                onClick={() => onPick(r.id)}>{r.name}</button>
+      ),
+    },
+    ...valueHeads.map((label, i) => ({
+      key: `c${i}`,
+      label,
+      align: SHEIPA_ROUTE_SUMMARY.rows.every((r) => /^\d+$/.test(r.cols[i])) ? "center" : undefined,
+      /* 正式站的備註目前全空，空值以破折號表示，不臆造內容 */
+      render: (r) => (r.cols[i] === "" ? "—" : r.cols[i]),
+    })),
+  ];
+};
+
+/* ── 雪霸「路線」子選（正式站 bed_10）── */
+function SheipaRouteView() {
+  /* 首項「自訂登山口」承載量為 0，預設落在雪山登山口 */
+  const [draftNode, setDraftNode] = React.useState(SHEIPA_ROUTE_NODES[1].id);
+  const [nodeId, setNodeId] = React.useState(SHEIPA_ROUTE_NODES[1].id);
+  const [day, setDay] = React.useState(null);
+
+  const node = SHEIPA_ROUTE_NODES.find((n) => n.id === nodeId) || SHEIPA_ROUTE_NODES[0];
+  const ym = node.ym || {};
+  const submit = (e) => { e.preventDefault(); setNodeId(draftNode); setDay(null); };
+  /* 總表點名稱：下拉與月曆一起跳到該登山口，等同正式站的 postback */
+  const pick = (id) => { setDraftNode(id); setNodeId(id); setDay(null); };
+
+  return (
+    <React.Fragment>
+      <SectionCard title="登山口承載量" icon="fa-solid fa-person-hiking"
+                   note={`共 ${SHEIPA_ROUTE_SUMMARY.rows.length} 個登山口`}>
+        <DataTable columns={routeSummaryColumns(pick)} rows={SHEIPA_ROUTE_SUMMARY.rows}
+                   rowKey="id" className="th-table--zebra" />
+        {/* 「每日承載量上限」是推導而非正式站原文，依據寫在 CampsiteRouteData.jsx 檔頭 */}
+        <div className="camp-legend">
+          <span className="camp-legend-hint">平日／假日為該登山口每日承載量上限；點登山口名稱可切換下方月曆。</span>
+        </div>
+      </SectionCard>
+
+      <form className="bulletin-card" onSubmit={submit}>
+        <div className="bulletin-filter-row">
+          <span className="bulletin-filter-label"><i className="fa-solid fa-person-hiking"></i>登山口</span>
+          <select className="th-select camp-select" value={draftNode}
+                  onChange={(e) => setDraftNode(e.target.value)} aria-label="登山口">
+            {SHEIPA_ROUTE_NODES.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
+          </select>
+          <button type="submit" className="th-btn th-btn-primary">
+            <i className="fa-solid fa-magnifying-glass"></i>查詢
+          </button>
+        </div>
+      </form>
+
+      <div className="bulletin-section-head">
+        <h2 className="th-section-title">登山口每日餘額</h2>
+        <span className="bulletin-count">{node.name}／共 <strong>{node.days.length}</strong> 天</span>
+      </div>
+
+      <MonthBar ym={ym} />
+      <SnapshotNote snapshot={SHEIPA_ROUTE_SNAPSHOT_DATE} ym={ym} />
+
+      <BedCalendar site={node} onPick={setDay} weekHead={SHEIPA_ROUTE_WEEK_HEAD} />
+      <CalLegend site={node} />
+
+      {day && (
+        <DayModal site={node} day={day} onClose={() => setDay(null)}
+                  snapshot={SHEIPA_ROUTE_SNAPSHOT_DATE} detailPage="bed_10main.aspx" orgId={SHEIPA_ROUTE_ORG_ID} />
+      )}
+    </React.Fragment>
+  );
+}
+
+/* ── 主元件 ── */
+function CampsiteApp() {
+  const [org, setOrg] = React.useState("shei-pa");
+  const [kind, setKind] = React.useState("camp");
 
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="campsite" />
       <PageShell
-        trail={["宿營地與床位查詢", "雪霸宿營地查詢"]}
+        trail={["宿營地與床位查詢", kind === "route" ? "雪霸路線登山口查詢" : "雪霸宿營地查詢"]}
         title="宿營地與床位查詢"
         bare
       >
@@ -271,57 +435,11 @@ function CampsiteApp() {
           ))}
         </div>
 
-        <NoticeList />
-
-        <form className="bulletin-card" onSubmit={submit}>
-          <div className="bulletin-filter-row">
-            <span className="bulletin-filter-label"><i className="fa-solid fa-tent"></i>宿營地點</span>
-            <select className="th-select camp-select" value={draftSite}
-                    onChange={(e) => setDraftSite(e.target.value)} aria-label="宿營地點">
-              {SHEIPA_CAMPSITES.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-            <button type="submit" className="th-btn th-btn-primary">
-              <i className="fa-solid fa-magnifying-glass"></i>查詢
-            </button>
-          </div>
-        </form>
-
-        <div className="bulletin-section-head">
-          <h2 className="th-section-title">山屋／營地概況</h2>
-          <span className="bulletin-count">{site.name}／共 <strong>{site.days.length}</strong> 天</span>
-        </div>
-
-        {/*
-          月份切換：正式站是「上個月／年月下拉／下個月」的 postback。
-          本雛形的資料是單月快照，切月沒有資料可換，故停用並明說，
-          不做點了沒反應的假按鈕。
-        */}
-        <div className="camp-monthbar">
-          <span className="camp-monthbar-btn th-todo-link">上個月</span>
-          <span className="camp-month">{ym.year} 年 {ym.month} 月</span>
-          <span className="camp-monthbar-btn th-todo-link">下個月</span>
-        </div>
-
-        <Callout type="warning">
-          餘額為 <strong>{CAMPSITE_SNAPSHOT_DATE}</strong> 自現行網站擷取的快照，非即時查詢結果；
-          雛形資料僅含 {ym.year} 年 {ym.month} 月，故月份切換尚未建置。
-        </Callout>
-
-        <BedCalendar site={site} onPick={setDay} />
-
-        <div className="camp-legend">
-          <span className="th-flag is-yes"><i className="fa-solid fa-circle-check"></i>尚有餘額</span>
-          <span className="th-flag is-no"><i className="fa-solid fa-circle-xmark"></i>已無餘額</span>
-          <span className="camp-legend-hint">點日期可看該日 {CAMPSITE_COUNT_LABELS.length} 項計數明細</span>
-        </div>
-
-        <SiteIntro site={site} />
+        {kind === "route" ? <SheipaRouteView /> : <SheipaCampView />}
       </PageShell>
 
       <ExperienceNav />
       <Footer />
-
-      {day && <DayModal site={site} day={day} onClose={() => setDay(null)} />}
     </div>
   );
 }
