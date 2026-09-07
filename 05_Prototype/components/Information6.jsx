@@ -50,7 +50,6 @@ function Information6App() {
       <PageShell
         trail={["旅遊登山資訊", "國家公園步道分級"]}
         title="國家公園步道分級"
-        updated="2026-09-01"
       >
         <SectionCard
           id="level-table"
@@ -66,14 +65,6 @@ function Information6App() {
             <li>前往高海拔山區步道時，請預作行前準備及行程計畫，注意自身有無高山反應並設定折返點適時撤退。</li>
           </ol>
         </SectionCard>
-
-        <Callout>
-          路線開放狀態與可申請路線，請查詢
-          <a className="th-inline-link" href="open.html">
-            <i className="fa-solid fa-angle-right"></i>登山路線開放狀態
-          </a>
-          。
-        </Callout>
       </PageShell>
 
       <ExperienceNav />
