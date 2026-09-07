@@ -4,13 +4,15 @@
 
   依 2026-09-02 使用者裁決：
   一、11 張子頁收成單一頁面，上層機關 Tab ＋ 次層類別子選（宿營地／路線），
-      不做 11 張獨立頁；已實作雪霸的宿營地（bed_1）與路線（bed_10）兩個子選，
-      其餘 Tab 與子選出「待建置」標記。
-  二、月曆格以餘額為主角（大字＋狀態色），其餘 6 項計數收進點格後的明細彈窗，
-      欄位一項不減。
+      不做 11 張獨立頁；已實作雪霸的宿營地（bed_1）與路線（bed_10）、
+      太魯閣的山屋（bed_4）與路線（bed_5），其餘 Tab 與子選出「待建置」標記。
+  二、月曆格以餘額為主角（大字＋狀態色），其餘計數收進點格後的明細彈窗，
+      欄位一項不減。各子選的計數項目數不同（雪霸路線 5 項、太魯閣山屋 3 項、
+      太魯閣路線 4 項），一律取正式站原樣，不對齊成同一組。
 
   資料：components/CampsiteData.jsx（正式站實跑轉檔，37 個宿營地）
         components/CampsiteRouteData.jsx（正式站實跑轉檔，8 個登山口）
+        components/CampsiteTarokoData.jsx（正式站實跑轉檔，14 處山屋＋19 條路線）
   版型沿用 shared.css 的 bulletin-* 查詢型骨架與 th-flag 狀態膠囊；
   月曆與兩個子選共用同一組 BedCalendar／DayModal，不另做一種版型。
   路線子選比宿營地多一張「登山口承載量」總表（登山口／平日／假日／備註），
@@ -22,7 +24,7 @@
 /* 上層機關 Tab；built = 本雛形已建，其餘出待建置標記 */
 const CAMPSITE_ORGS = [
   { key: "shei-pa",  label: "雪霸",           built: true },
-  { key: "taroko",   label: "太魯閣",         built: false },
+  { key: "taroko",   label: "太魯閣",         built: true },
   { key: "yushan",   label: "玉山",           built: false },
   { key: "forestry", label: "林業及自然保育署", built: false },
 ];
@@ -36,7 +38,7 @@ const CAMPSITE_ORGS = [
 */
 const CAMPSITE_KINDS = {
   "shei-pa":  [{ key: "camp", label: "宿營地", built: true }, { key: "route", label: "路線", built: true }],
-  taroko:     [{ key: "hut", label: "山屋", built: false }, { key: "route", label: "路線", built: false }],
+  taroko:     [{ key: "hut", label: "山屋", built: true }, { key: "route", label: "路線", built: true }],
   yushan:     [{ key: "camp", label: "宿營地", built: false }, { key: "oneday", label: "單日往返路線", built: false },
                { key: "lot", label: "抽籤結果", built: false }, { key: "lotdate", label: "抽籤日期", built: false },
                { key: "refund", label: "可申請退費日期", built: false }],
@@ -74,14 +76,15 @@ function NoticeList() {
 }
 
 /*
-  當日明細網址：宿營地是正式站 bed_1main.aspx、路線登山口是 bed_10main.aspx，
-  本雛形未建當日隊伍明細頁，兩者都連回現行網站。
+  當日明細網址：各子選對應正式站不同的 *main.aspx，本雛形未建當日隊伍明細頁，
+  一律連回現行網站。節點參數名不統一——bed_1／bed_4／bed_10 是 node_id，
+  bed_5 是 c_id，故由呼叫端傳入 idParam，不寫死。
 */
-const detailUrl = (page, orgId, site, day) =>
-  `https://service.skyeyes.tw/hikenationpark/${page}?orgid=${orgId}&node_id=${site.id}&sdate=${day.sdate}`;
+const detailUrl = (page, orgId, site, day, idParam = "node_id") =>
+  `https://service.skyeyes.tw/hikenationpark/${page}?orgid=${orgId}&${idParam}=${site.id}&sdate=${day.sdate}`;
 
-/* ── 當日明細彈窗（計數一項不少，宿營地與路線共用）── */
-function DayModal({ site, day, onClose, snapshot, detailPage, orgId }) {
+/* ── 當日明細彈窗（計數一項不少，各子選共用）── */
+function DayModal({ site, day, onClose, snapshot, detailPage, orgId, idParam }) {
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
@@ -125,7 +128,7 @@ function DayModal({ site, day, onClose, snapshot, detailPage, orgId }) {
           {day.sdate && (
             <p className="camp-daynote">
               當日申請隊伍明細：
-              <a className="th-inline-link" href={detailUrl(detailPage, orgId, site, day)}
+              <a className="th-inline-link" href={detailUrl(detailPage, orgId, site, day, idParam)}
                  target="_blank" rel="noopener noreferrer">
                 <i className="fa-solid fa-arrow-up-right-from-square"></i>查看明細
               </a>
@@ -307,62 +310,93 @@ function SheipaCampView() {
 }
 
 /*
-  登山口承載量總表的欄位。表頭取自 SHEIPA_ROUTE_SUMMARY.head（正式站實抓的
-  登山口／平日／假日／備註），不寫死，資料改了欄位跟著改。
-  第一欄是登山口名稱兼查詢入口，其餘依內容決定對齊：全數字置中、文字靠左。
+  承載量總表的表頭在各子選有兩種形狀：
+    雪霸 bed_10 是字串陣列（單層）；太魯閣 bed_4／bed_5 是列陣列，
+    每格 { t 文字, c colSpan, r rowSpan }，bed_4 有兩層（平日／假日 底下是「山屋床位」）。
+  統一正規化成 { rows, leaf }：rows 給 DataTable 還原合併表頭，
+  leaf 是最上層那列（決定 tbody 的欄位與 data-label）。
 */
-const routeSummaryColumns = (onPick) => {
-  const [nameHead, ...valueHeads] = SHEIPA_ROUTE_SUMMARY.head;
+const normalizeHead = (head) => {
+  if (!head || !head.length) return { rows: [], leaf: [] };
+  if (typeof head[0] === "string") {
+    const leaf = head.map((t) => ({ t, c: 1, r: 1 }));
+    return { rows: [leaf], leaf };
+  }
+  return { rows: head, leaf: head[0] };
+};
+
+/*
+  承載量總表的欄位。表頭取自實抓的 summary.head，不寫死，資料改了欄位跟著改。
+  第一欄是名稱兼查詢入口，其餘依內容決定對齊：全數字置中、文字靠左。
+  總表列數可能多於下拉選項——太魯閣 bed_4 的總表有 15 列，下拉只有 14 個（「天空營地」
+  只列承載量、不開放查詢）。查不到對應節點的列出純文字，不給點了會跳錯地方的按鈕。
+*/
+const summaryColumns = (summary, nodes, onPick) => {
+  const [nameHead, ...valueHeads] = normalizeHead(summary.head).leaf;
+  const pickable = (r) => r.id && nodes.some((n) => n.id === r.id);
   return [
     {
       key: "name",
-      label: nameHead,
-      render: (r) => (
+      label: nameHead ? nameHead.t : "名稱",
+      render: (r) => (pickable(r) ? (
         <button type="button" className="th-btn th-btn-ghost th-btn-sm"
                 onClick={() => onPick(r.id)}>{r.name}</button>
-      ),
+      ) : r.name),
     },
-    ...valueHeads.map((label, i) => ({
+    ...valueHeads.map((h, i) => ({
       key: `c${i}`,
-      label,
-      align: SHEIPA_ROUTE_SUMMARY.rows.every((r) => /^\d+$/.test(r.cols[i])) ? "center" : undefined,
-      /* 正式站的備註目前全空，空值以破折號表示，不臆造內容 */
+      label: h.t,
+      align: summary.rows.every((r) => /^\d+$/.test(r.cols[i])) ? "center" : undefined,
+      /* 正式站的空值以破折號表示，不臆造內容 */
       render: (r) => (r.cols[i] === "" ? "—" : r.cols[i]),
     })),
   ];
 };
 
-/* ── 雪霸「路線」子選（正式站 bed_10）── */
-function SheipaRouteView() {
-  /* 首項「自訂登山口」承載量為 0，預設落在雪山登山口 */
-  const [draftNode, setDraftNode] = React.useState(SHEIPA_ROUTE_NODES[1].id);
-  const [nodeId, setNodeId] = React.useState(SHEIPA_ROUTE_NODES[1].id);
+/*
+  「承載量總表 ＋ 下拉查詢 ＋ 月曆」型的子選（雪霸路線 bed_10、太魯閣山屋 bed_4／
+  路線 bed_5 等）。各機關差的只有資料與文案，版型一套。
+  summary 傳 null 則不出總表。
+*/
+function NodeCalendarView({
+  summary, nodes, weekHead, snapshot, orgId, detailPage, idParam,
+  defaultIndex = 0, summaryTitle, summaryIcon, summaryUnit, summaryHint,
+  selectLabel, selectIcon, calTitle,
+}) {
+  const fallback = nodes[defaultIndex] || nodes[0];
+  const [draftNode, setDraftNode] = React.useState(fallback.id);
+  const [nodeId, setNodeId] = React.useState(fallback.id);
   const [day, setDay] = React.useState(null);
 
-  const node = SHEIPA_ROUTE_NODES.find((n) => n.id === nodeId) || SHEIPA_ROUTE_NODES[0];
+  const node = nodes.find((n) => n.id === nodeId) || fallback;
   const ym = node.ym || {};
   const submit = (e) => { e.preventDefault(); setNodeId(draftNode); setDay(null); };
-  /* 總表點名稱：下拉與月曆一起跳到該登山口，等同正式站的 postback */
+  /* 總表點名稱：下拉與月曆一起跳到該節點，等同正式站的 postback */
   const pick = (id) => { setDraftNode(id); setNodeId(id); setDay(null); };
+  const head = summary ? normalizeHead(summary.head) : null;
 
   return (
     <React.Fragment>
-      <SectionCard title="登山口承載量" icon="fa-solid fa-person-hiking"
-                   note={`共 ${SHEIPA_ROUTE_SUMMARY.rows.length} 個登山口`}>
-        <DataTable columns={routeSummaryColumns(pick)} rows={SHEIPA_ROUTE_SUMMARY.rows}
-                   rowKey="id" className="th-table--zebra" />
-        {/* 「每日承載量上限」是推導而非正式站原文，依據寫在 CampsiteRouteData.jsx 檔頭 */}
-        <div className="camp-legend">
-          <span className="camp-legend-hint">平日／假日為該登山口每日承載量上限；點登山口名稱可切換下方月曆。</span>
-        </div>
-      </SectionCard>
+      {summary && (
+        <SectionCard title={summaryTitle} icon={summaryIcon}
+                     note={`共 ${summary.rows.length} ${summaryUnit}`}>
+          <DataTable columns={summaryColumns(summary, nodes, pick)} rows={summary.rows}
+                     rowKey="name" className="th-table--zebra"
+                     headRows={head.rows.length > 1 ? head.rows.map((hr) => hr.map((h) => ({
+                       label: h.t, colSpan: h.c, rowSpan: h.r,
+                     }))) : undefined} />
+          <div className="camp-legend">
+            <span className="camp-legend-hint">{summaryHint}</span>
+          </div>
+        </SectionCard>
+      )}
 
       <form className="bulletin-card" onSubmit={submit}>
         <div className="bulletin-filter-row">
-          <span className="bulletin-filter-label"><i className="fa-solid fa-person-hiking"></i>登山口</span>
+          <span className="bulletin-filter-label"><i className={selectIcon}></i>{selectLabel}</span>
           <select className="th-select camp-select" value={draftNode}
-                  onChange={(e) => setDraftNode(e.target.value)} aria-label="登山口">
-            {SHEIPA_ROUTE_NODES.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
+                  onChange={(e) => setDraftNode(e.target.value)} aria-label={selectLabel}>
+            {nodes.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
           </select>
           <button type="submit" className="th-btn th-btn-primary">
             <i className="fa-solid fa-magnifying-glass"></i>查詢
@@ -371,34 +405,107 @@ function SheipaRouteView() {
       </form>
 
       <div className="bulletin-section-head">
-        <h2 className="th-section-title">登山口每日餘額</h2>
+        <h2 className="th-section-title">{calTitle}</h2>
         <span className="bulletin-count">{node.name}／共 <strong>{node.days.length}</strong> 天</span>
       </div>
 
       <MonthBar ym={ym} />
-      <SnapshotNote snapshot={SHEIPA_ROUTE_SNAPSHOT_DATE} ym={ym} />
+      <SnapshotNote snapshot={snapshot} ym={ym} />
 
-      <BedCalendar site={node} onPick={setDay} weekHead={SHEIPA_ROUTE_WEEK_HEAD} />
+      <BedCalendar site={node} onPick={setDay} weekHead={weekHead} />
       <CalLegend site={node} />
 
       {day && (
         <DayModal site={node} day={day} onClose={() => setDay(null)}
-                  snapshot={SHEIPA_ROUTE_SNAPSHOT_DATE} detailPage="bed_10main.aspx" orgId={SHEIPA_ROUTE_ORG_ID} />
+                  snapshot={snapshot} detailPage={detailPage} orgId={orgId} idParam={idParam} />
       )}
     </React.Fragment>
   );
 }
+
+/* ── 雪霸「路線」子選（正式站 bed_10）── */
+function SheipaRouteView() {
+  return (
+    <NodeCalendarView
+      summary={SHEIPA_ROUTE_SUMMARY} nodes={SHEIPA_ROUTE_NODES}
+      weekHead={SHEIPA_ROUTE_WEEK_HEAD} snapshot={SHEIPA_ROUTE_SNAPSHOT_DATE}
+      orgId={SHEIPA_ROUTE_ORG_ID} detailPage="bed_10main.aspx" idParam="node_id"
+      /* 首項「自訂登山口」承載量為 0，預設落在雪山登山口 */
+      defaultIndex={1}
+      summaryTitle="登山口承載量" summaryIcon="fa-solid fa-person-hiking" summaryUnit="個登山口"
+      /* 「每日承載量上限」是推導而非正式站原文，依據寫在 CampsiteRouteData.jsx 檔頭 */
+      summaryHint="平日／假日為該登山口每日承載量上限；點登山口名稱可切換下方月曆。"
+      selectLabel="登山口" selectIcon="fa-solid fa-person-hiking"
+      calTitle="登山口每日餘額"
+    />
+  );
+}
+
+/* ── 太魯閣「山屋」子選（正式站 bed_4）── */
+function TarokoHutView() {
+  return (
+    <NodeCalendarView
+      summary={TAROKO_HUT_SUMMARY} nodes={TAROKO_HUT_NODES}
+      weekHead={TAROKO_WEEK_HEAD} snapshot={TAROKO_SNAPSHOT_DATE}
+      orgId={TAROKO_ORG_ID} detailPage={TAROKO_HUT_DETAIL_PAGE} idParam={TAROKO_HUT_ID_PARAM}
+      summaryTitle="山屋床位承載量" summaryIcon="fa-solid fa-house-chimney" summaryUnit="處"
+      /* 「山屋床位」是正式站 bed_4 表頭第二層的原文，非推導 */
+      summaryHint="平日／假日底下的「山屋床位」為正式站表頭原文；點宿營地名稱可切換下方月曆。"
+      selectLabel="宿營地" selectIcon="fa-solid fa-house-chimney"
+      calTitle="山屋每日餘額"
+    />
+  );
+}
+
+/* ── 太魯閣「路線」子選（正式站 bed_5）── */
+function TarokoRouteView() {
+  return (
+    <NodeCalendarView
+      summary={TAROKO_ROUTE_SUMMARY} nodes={TAROKO_ROUTE_NODES}
+      weekHead={TAROKO_WEEK_HEAD} snapshot={TAROKO_SNAPSHOT_DATE}
+      orgId={TAROKO_ORG_ID} detailPage={TAROKO_ROUTE_DETAIL_PAGE} idParam={TAROKO_ROUTE_ID_PARAM}
+      summaryTitle="路線承載量" summaryIcon="fa-solid fa-route" summaryUnit="條路線"
+      /* 正式站 bed_5 未加註平日／假日的定義，也沒有說明區，不比照雪霸逕自推導 */
+      summaryHint="平日／假日為正式站列出的承載量數值，正式站未加註其定義［待確認］；點路線名稱可切換下方月曆。"
+      selectLabel="路線" selectIcon="fa-solid fa-route"
+      calTitle="路線每日餘額"
+    />
+  );
+}
+
+/*
+  子選 → 畫面。key 是「機關:類別」，對應正式站各張 bed_* 子頁。
+  trail 是麵包屑末節，比照正式站 site_map.aspx 的頁名。
+  沒列在這裡的組合就是還沒建，Tab 與 chip 會出待建置標記。
+*/
+const CAMPSITE_VIEWS = {
+  "shei-pa:camp":  { view: SheipaCampView,  trail: "雪霸宿營地查詢" },
+  "shei-pa:route": { view: SheipaRouteView, trail: "雪霸路線登山口查詢" },
+  "taroko:hut":    { view: TarokoHutView,   trail: "太魯閣山屋查詢" },
+  "taroko:route":  { view: TarokoRouteView, trail: "太魯閣路線查詢" },
+};
+
+/* 切機關時，原本的類別多半不存在（雪霸 camp → 太魯閣 hut），落回該機關第一個已建類別 */
+const firstKind = (orgKey) => {
+  const kinds = CAMPSITE_KINDS[orgKey] || [];
+  const hit = kinds.find((k) => k.built) || kinds[0];
+  return hit ? hit.key : "";
+};
 
 /* ── 主元件 ── */
 function CampsiteApp() {
   const [org, setOrg] = React.useState("shei-pa");
   const [kind, setKind] = React.useState("camp");
 
+  const pickOrg = (key) => { setOrg(key); setKind(firstKind(key)); };
+  const current = CAMPSITE_VIEWS[`${org}:${kind}`] || CAMPSITE_VIEWS["shei-pa:camp"];
+  const View = current.view;
+
   return (
     <div className="bg-white min-h-screen text-slate-800 antialiased">
       <Header active="campsite" />
       <PageShell
-        trail={["宿營地與床位查詢", kind === "route" ? "雪霸路線登山口查詢" : "雪霸宿營地查詢"]}
+        trail={["宿營地與床位查詢", current.trail]}
         title="宿營地與床位查詢"
         bare
       >
@@ -410,7 +517,7 @@ function CampsiteApp() {
               <button key={o.key} type="button"
                       className={`bulletin-tab ${org === o.key ? "is-active" : ""}`}
                       aria-current={org === o.key ? "page" : undefined}
-                      onClick={() => setOrg(o.key)}>
+                      onClick={() => pickOrg(o.key)}>
                 <i className="fa-solid fa-mountain-sun"></i><span>{o.label}</span>
               </button>
             ) : (
@@ -435,7 +542,8 @@ function CampsiteApp() {
           ))}
         </div>
 
-        {kind === "route" ? <SheipaRouteView /> : <SheipaCampView />}
+        {/* key 讓切子選時整個重掛，不把前一個子選的下拉／彈窗狀態帶過去 */}
+        <View key={`${org}:${kind}`} />
       </PageShell>
 
       <ExperienceNav />

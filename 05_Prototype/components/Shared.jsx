@@ -526,7 +526,12 @@ function LinkList({ items, numbered }) {
     rowKey    = 取列 key 的欄位名，預設 columns[0].key
     className = 附加在 table 上的修飾 class，欄寬一律由 CSS 控制（禁 inline style）
 */
-function DataTable({ columns, rows, rowKey, className = "", empty = "查無資料" }) {
+/*
+  headRows：需要合併表頭時傳入，每列一組 { label, colSpan, rowSpan, align }。
+  未傳則沿用 columns 的單層表頭（原行為）。tbody 一律由 columns 決定，
+  所以合併表頭的最下層欄數必須與 columns 對得起來。
+*/
+function DataTable({ columns, rows, rowKey, className = "", empty = "查無資料", headRows }) {
   const keyOf = rowKey || columns[0].key;
   if (!rows || rows.length === 0) {
     return (
@@ -539,13 +544,26 @@ function DataTable({ columns, rows, rowKey, className = "", empty = "查無資�
     <div className="th-table-wrap">
       <table className={`th-table ${className}`}>
         <thead>
-          <tr>
-            {columns.map((c) => (
-              <th key={c.key} className={c.align ? `is-${c.align}` : ""}>
-                {c.label}
-              </th>
-            ))}
-          </tr>
+          {headRows ? headRows.map((hr, ri) => (
+            <tr key={ri}>
+              {hr.map((h, hi) => (
+                <th key={hi}
+                    colSpan={h.colSpan > 1 ? h.colSpan : undefined}
+                    rowSpan={h.rowSpan > 1 ? h.rowSpan : undefined}
+                    className={h.align ? `is-${h.align}` : ""}>
+                  {h.label}
+                </th>
+              ))}
+            </tr>
+          )) : (
+            <tr>
+              {columns.map((c) => (
+                <th key={c.key} className={c.align ? `is-${c.align}` : ""}>
+                  {c.label}
+                </th>
+              ))}
+            </tr>
+          )}
         </thead>
         <tbody>
           {rows.map((r) => (
