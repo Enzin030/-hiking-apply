@@ -6,6 +6,33 @@
 
    頁面請 link 本檔，不要逐支 link 四層，也不要另掛獨立 CSS 檔（§6.5）。
 
+   【遷移中的頁面必須將本檔 link 在 shared.css 【之後】】
+   （2026-09-07 實測，v4 階段 3 入場條件）
+
+       <link rel="stylesheet" href="styles/shared.css" />     ← 先
+       <link rel="stylesheet" href="assets/css/index.css" />  ← 後
+
+   實測數字（探針：components.css 寫 .th-header{padding:99px}，
+   shared.css 原本是 12px）：
+   - shared.css 在前、index.css 在後 → 量到 **99px**（四層勝，正確）
+   - index.css 在前、shared.css 在後 → 量到 **12px**（shared.css 勝）
+
+   為何順序錯了一定會出事：依 §4.2，共用規則搬遷時是「先複製到
+   components.css，shared.css 原規則保留不動」。兩邊同名規則並存是
+   併存期的正常狀態，而 components.css 那份才是今後要維護的正本。
+   順序倒過來的話，**改 components.css 永遠沒效果**——而且不會報錯，
+   只會讓人以為自己改錯地方。
+
+   一併實測確認的三件（兩種順序下結果相同）：
+   - **Tailwind 仍然勝過四層**（.th-header.p-0 量到 0px）——它的 <style>
+     是 runtime 插在 head 尾端，永遠最後，與改版前的結論一致
+   - 只存在於 shared.css 的規則不會失效（.bulletin-modal 的
+     max-width:720px／display:flex 均正常），未遷移頁不受影響
+   - tokens.css 與 design_system 的 :root 重複宣告無害（數值相同）
+
+   @import 的深度不會讓四層吃虧：index.css 內 @import 進來的規則，
+   是以 index.css 自己的 link 位置參與競爭。
+
    併存期（階段 1–3）：本檔與 styles/shared.css 並存，同一條規則同時
    存在於兩邊是**正常且必要**的狀態，靠遷移清單追蹤（計畫 §4.2、§8）。
    shared.css 的規則要等**最後一個消費端**遷完才刪。
