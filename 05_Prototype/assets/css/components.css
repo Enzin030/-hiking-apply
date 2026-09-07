@@ -58,3 +58,185 @@
 .th-field-error {
   color: var(--danger-fg);
 }
+
+
+/* ============================================================
+   th-doc — 詳細須知頁的長文排版（th-doc.js 那組元件的外觀）
+   ------------------------------------------------------------
+   **這是從 styles/shared.css:3275-3428 「複製」過來的，不是搬移。**
+
+   依計畫 §4.2「共用資源以最後一個消費端為退場條件」：這組規則的消費端是
+   17 頁公告（全部走同一支 renderer），本輪只遷移了 notice_a1，
+   **其餘 16 頁仍靠 shared.css 的原規則渲染**，所以原處保留不動，
+   要等最後一頁遷完才由階段 4 統一刪除。
+
+   §4.2 的實例就在這裡，而且差點看漏：grep 「哪些檔案用到 .th-doc-*」只會得到
+   **1 個檔**（components/NoticeDetail.jsx），看起來像單頁專用、可以直接搬移。
+   但那一支 renderer 服務 17 頁——**檔案數不等於頁面數**。
+   §6.6 的警語「搜不到明確頁名不等於無人使用」講的就是這種情況。
+   判斷消費端數量要數**頁面**，不是數檔案。
+
+   ------------------------------------------------------------
+   併存期的注意事項（cascade 順序的反面）
+   ------------------------------------------------------------
+   已遷移頁的 index.css 在 shared.css 之後，所以**本檔這份會勝出**。
+   這正是我們要的（今後維護這一份），但反面是：
+   **改 shared.css 的 .th-doc-* 不會影響 notice_a1，只影響其餘 16 頁。**
+   併存期間要改這組樣式，請兩邊一起改，否則已遷移頁與未遷移頁會長得不一樣。
+
+   內容逐字複製，未做任何調整——階段 3 的驗收是外觀不變
+   （已驗：notice_a1 全頁 1440x9135 像素與 React 版完全相同）。
+   ============================================================ */
+
+/* ============ 詳細須知頁 — 長文排版 ============
+   內容逐字取自正式站，這裡只處理可讀性：段落間距、條列懸掛縮排、子標題區隔。 */
+.th-doc-block {
+  margin: 0 0 16px;
+}
+
+.th-doc-block:last-child {
+  margin-bottom: 0;
+}
+
+.th-doc-h {
+  margin: 0 0 8px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+  line-height: var(--lh-snug);
+}
+
+.th-doc-line {
+  margin: 0 0 6px;
+  color: var(--fg-2);
+  line-height: 1.75;
+}
+
+.th-doc-line:last-child {
+  margin-bottom: 0;
+}
+
+/* 條列行（1. / (1) / （一）／一、）縮排，讓編號對齊、續行不吃到編號位置 */
+.th-doc-line.is-item {
+  padding-left: 20px;
+  text-indent: -20px;
+}
+
+.th-doc-note {
+  margin: 8px 0 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+
+/* 內文連結：品牌 sage（--national-700 #587a68）與內文灰藍（--fg-2 #475569）明度太接近，
+   長文裡看不出是連結；改用同色系但更深更飽和的 --national-800（#166534），
+   並加粗、拉開底線間距。不用藍色，避免與整站綠色調衝突。 */
+.th-doc-block a,
+.th-doc-note a,
+.th-callout a {
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(22, 101, 52, 0.35);
+  word-break: break-all;
+  border-radius: var(--r-xs);
+  transition: background 0.12s, text-decoration-color 0.12s;
+}
+
+.th-doc-block a:hover,
+.th-doc-note a:hover,
+.th-callout a:hover {
+  background: var(--national-50);
+  color: var(--national-900);
+  text-decoration-color: var(--national-800);
+  box-shadow: 0 0 0 2px var(--national-50);
+}
+
+/* 表格內的連結不加背景，避免撐開儲存格 */
+.th-table a {
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 步道分級表這類寬表：字級縮一級，欄寬交給 .th-table-wrap 內部捲動 */
+.th-table.th-table-compact {
+  font-size: var(--fs-sm);
+}
+
+.th-table.th-table-compact th,
+.th-table.th-table-compact td {
+  padding: 8px 12px;
+}
+
+/* 群組表格：第一欄只在群組首列有字，用留白呈現正式站的 rowspan 合併效果 */
+.th-table.th-table-grouped td:first-child {
+  color: var(--fg-1);
+  font-weight: 500;
+}
+
+/* 頁尾返回鍵，對應正式站底部的「返回」 */
+.th-doc-back {
+  display: flex;
+  justify-content: center;
+}
+
+.th-linkrow-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  text-decoration: none;
+}
+
+.th-linkrow-back:hover {
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+
+/* 條列（正式站的 <ol>/<ul>）— 編號靠外，續行對齊文字 */
+/* Tailwind preflight 會把 ol/ul 的 list-style 清掉，這裡明確加回來，
+   否則正式站原本有的編號與項目符號會整個消失 */
+.th-doc-list {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+ol.th-doc-list {
+  list-style: decimal;
+}
+
+ul.th-doc-list {
+  list-style: disc;
+}
+
+.th-doc-list:last-child {
+  margin-bottom: 0;
+}
+
+.th-doc-list>li {
+  margin-bottom: 10px;
+  color: var(--fg-2);
+  line-height: 1.75;
+}
+
+.th-doc-list>li:last-child {
+  margin-bottom: 0;
+}
+
+.th-doc-list>li::marker {
+  color: var(--fg-3);
+  font-weight: 500;
+}
+
+.th-doc-list .th-doc-line {
+  margin-bottom: 2px;
+}
