@@ -3,22 +3,25 @@
   對應正式站 https://service.skyeyes.tw/hikenationpark/bed_1.aspx 等 11 張子頁。
 
   依 2026-09-02 使用者裁決：
-  一、11 張子頁收成單一頁面，上層機關 Tab ＋ 次層類別子選（宿營地／路線），
-      不做 11 張獨立頁；已實作雪霸的宿營地（bed_1）與路線（bed_10）、
-      太魯閣的山屋（bed_4）與路線（bed_5），其餘 Tab 與子選出「待建置」標記。
-  二、月曆格以餘額為主角（大字＋狀態色），其餘計數收進點格後的明細彈窗，
-      欄位一項不減。各子選的計數項目數不同（雪霸路線 5 項、太魯閣山屋 3 項、
-      太魯閣路線 4 項），一律取正式站原樣，不對齊成同一組。
+  一、11 張子頁收成單一頁面，上層機關 Tab ＋ 次層類別子選，不做 11 張獨立頁。
+      已實作：雪霸宿營地（bed_1）／路線（bed_10）、太魯閣山屋（bed_4）／路線（bed_5）、
+      林業署宿營地（bed_0）／區域申請及抽籤（bed_11）。玉山五個子選尚未建置。
+  二、月曆格以主要數字為主角（大字），其餘計數收進點格後的明細彈窗，欄位一項不減。
+      各子選的計數項目不一致，一律取正式站原樣，不對齊成同一組：
+      雪霸宿營地 7 項、雪霸路線 5 項、太魯閣山屋 3 項、太魯閣路線 4 項、
+      林業署區域 2 項（剩餘數量／現在申請量，且「剩餘數量」非每日都有）。
 
-  資料：components/CampsiteData.jsx（正式站實跑轉檔，37 個宿營地）
-        components/CampsiteRouteData.jsx（正式站實跑轉檔，8 個登山口）
-        components/CampsiteTarokoData.jsx（正式站實跑轉檔，14 處山屋＋19 條路線）
-  版型沿用 shared.css 的 bulletin-* 查詢型骨架與 th-flag 狀態膠囊；
-  月曆與兩個子選共用同一組 BedCalendar／DayModal，不另做一種版型。
-  路線子選比宿營地多一張「登山口承載量」總表（登山口／平日／假日／備註），
-  那是正式站 bed_10 未選取狀態的畫面，選了登山口後才換成月曆。
+  資料：components/CampsiteData.jsx（雪霸宿營地，37 個）
+        components/CampsiteRouteData.jsx（雪霸路線，8 個登山口）
+        components/CampsiteTarokoData.jsx（太魯閣，14 處山屋＋19 條路線）
+        components/CampsiteForestryData.jsx（林業署，4 個宿營地＋25 個區域）
+        皆為正式站實跑轉檔，腳本在 .scratch/outputs/，非手抄。
+  版型沿用 shared.css 的 bulletin-* 查詢型骨架與 th-flag 狀態膠囊。
+  兩種月曆：BedCalendar／DayModal 給有「餘額」概念的雪霸與太魯閣；
+  ForestryCalendar／ForestryDayModal 給林業署——後者沒有餘額，0 不等於額滿，
+  不能套 remainFlag 的紅／綠語意，故分開寫，不硬塞成同一個元件。
 
-  餘額是即時資料，本頁是快照，畫面上明示擷取日期，不假裝即時查詢。
+  餘額與申請量都是即時資料，本頁是快照，畫面上明示擷取日期，不假裝即時查詢。
 */
 
 /* 上層機關 Tab；built = 本雛形已建，其餘出待建置標記 */
@@ -26,7 +29,7 @@ const CAMPSITE_ORGS = [
   { key: "shei-pa",  label: "雪霸",           built: true },
   { key: "taroko",   label: "太魯閣",         built: true },
   { key: "yushan",   label: "玉山",           built: false },
-  { key: "forestry", label: "林業及自然保育署", built: false },
+  { key: "forestry", label: "林業及自然保育署", built: true },
 ];
 
 /*
@@ -42,7 +45,7 @@ const CAMPSITE_KINDS = {
   yushan:     [{ key: "camp", label: "宿營地", built: false }, { key: "oneday", label: "單日往返路線", built: false },
                { key: "lot", label: "抽籤結果", built: false }, { key: "lotdate", label: "抽籤日期", built: false },
                { key: "refund", label: "可申請退費日期", built: false }],
-  forestry:   [{ key: "camp", label: "宿營地", built: false }, { key: "area", label: "區域申請及抽籤", built: false }],
+  forestry:   [{ key: "camp", label: "宿營地", built: true }, { key: "area", label: "區域申請及抽籤", built: true }],
 };
 
 /* 餘額 0 視為已滿，其餘視為尚有餘額——正式站未提供每日承載量，不編造中間級距 */
@@ -252,10 +255,11 @@ function MonthBar({ ym }) {
 }
 
 /* 快照提醒（兩個子選共用，只有擷取日期與年月不同）*/
-function SnapshotNote({ snapshot, ym }) {
+function SnapshotNote({ snapshot, ym, metric = "餘額" }) {
   return (
     <Callout type="warning">
-      餘額為 <strong>{snapshot}</strong> 自現行網站擷取的快照，非即時查詢結果；
+      {/* metric：林業署的區域查詢沒有「餘額」，主數字是「現在申請量」，不能沿用同一句 */}
+      {metric}為 <strong>{snapshot}</strong> 自現行網站擷取的快照，非即時查詢結果；
       雛形資料僅含 {ym.year} 年 {ym.month} 月，故月份切換尚未建置。
     </Callout>
   );
@@ -374,6 +378,13 @@ function NodeCalendarView({
   /* 總表點名稱：下拉與月曆一起跳到該節點，等同正式站的 postback */
   const pick = (id) => { setDraftNode(id); setNodeId(id); setDay(null); };
   const head = summary ? normalizeHead(summary.head) : null;
+  /*
+    列 key 優先用正式站的節點代碼；只有在有列缺 id 或 id 重複時才退回名稱
+    （bed_4 的「天空營地」那類只列承載量、不開放查詢的列）。
+    不一律用名稱——名稱在跨機關的資料裡不保證唯一。
+  */
+  const summaryKey = summary && summary.rows.every((r) => r.id)
+    && new Set(summary.rows.map((r) => r.id)).size === summary.rows.length ? "id" : "name";
 
   return (
     <React.Fragment>
@@ -381,7 +392,7 @@ function NodeCalendarView({
         <SectionCard title={summaryTitle} icon={summaryIcon}
                      note={`共 ${summary.rows.length} ${summaryUnit}`}>
           <DataTable columns={summaryColumns(summary, nodes, pick)} rows={summary.rows}
-                     rowKey="name" className="th-table--zebra"
+                     rowKey={summaryKey} className="th-table--zebra"
                      headRows={head.rows.length > 1 ? head.rows.map((hr) => hr.map((h) => ({
                        label: h.t, colSpan: h.c, rowSpan: h.r,
                      }))) : undefined} />
@@ -473,16 +484,290 @@ function TarokoRouteView() {
   );
 }
 
+/* ══════════ 林業及自然保育署（bed_0 宿營地／bed_11 區域申請及抽籤）══════════
+   這兩張子頁與雪霸／太魯閣不同構，不能套 NodeCalendarView：
+     沒有承載量總表；日格不是「餘額」而是「查無資料」（bed_0）
+     或「剩餘數量／現在申請量」（bed_11）；當日連結是抽籤結果不是隊伍明細。
+   依據與實測見 components/CampsiteForestryData.jsx 檔頭。
+   本段刻意不動 Shared.jsx 與 shared.css，只沿用既有 class。
+*/
+
+/*
+  林業署月曆。與 BedCalendar 分開寫，因為：
+  一、沒有「餘額」概念，0 不等於額滿，不能套 remainFlag 的紅／綠語意；
+  二、計數項目每日不一致（「剩餘數量」非每日都有）。
+  主要數字由 primaryLabel 指定，找不到該項就退回第一項；完全沒有計數的日子出 note 原文。
+*/
+function ForestryCalendar({ site, weekHead, primaryLabel, onPick }) {
+  const byDay = {};
+  site.days.forEach((d) => { byDay[d.d] = d; });
+  const first = site.days[0];
+  const lead = first ? first.w : 0;
+  const last = site.days[site.days.length - 1];
+  const cells = [];
+  for (let i = 0; i < lead; i++) cells.push(null);
+  for (let d = first ? first.d : 1; d <= (last ? last.d : 0); d++) cells.push(byDay[d] || { d, counts: [], note: "" });
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  return (
+    <div className="camp-cal">
+      <div className="camp-cal-head">
+        {weekHead.map((w) => (
+          <div key={w} className="camp-cal-week">
+            <span className="camp-cal-week-full">{w}</span>
+            <span className="camp-cal-week-short">{w.slice(-1)}</span>
+          </div>
+        ))}
+      </div>
+      <div className="camp-cal-grid">
+        {cells.map((c, i) => {
+          if (!c) return <div key={i} className="camp-cal-cell is-blank"></div>;
+          const counts = c.counts || [];
+          if (!counts.length) {
+            return (
+              <div key={i} className="camp-cal-cell is-empty">
+                <span className="camp-cal-day">{c.d}</span>
+                {/*
+                  正式站寫「查無資料」就照抄；正式站留空白的日子（bed_0 是當月前 11 天）
+                  這裡也留空，不自己補「無資料」四個字冒充正式站的說法。
+                */}
+                {c.note && <span className="camp-cal-none">{c.note}</span>}
+              </div>
+            );
+          }
+          const main = counts.find((x) => x.label === primaryLabel) || counts[0];
+          return (
+            <button key={i} type="button" className="camp-cal-cell is-open"
+                    onClick={() => onPick(c)}
+                    aria-label={`${c.sdate || `${c.d} 日`} ${main.label} ${main.value}，查看該日明細`}>
+              <span className="camp-cal-day">{c.d}</span>
+              <span className="camp-cal-remain">{main.value}</span>
+              <span className="camp-cal-unit">{main.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/*
+  林業署當日明細彈窗。計數一項不少；有抽籤結果連結的日子才給連結，
+  沒有的不給假連結。抽籤結果網址＝正式站 bed_11Detail.aspx，本雛形未建該頁。
+*/
+function ForestryDayModal({ site, day, onClose, snapshot, catId }) {
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  if (!day) return null;
+  const lotUrl = day.sdate && catId
+    ? `https://service.skyeyes.tw/hikenationpark/bed_11Detail.aspx?orgCode=${catId}&areaCode=${site.id}&sdate=${day.sdate}`
+    : "";
+  return (
+    <div className="bulletin-modal-overlay" onClick={onClose}>
+      <div className="bulletin-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="bulletin-modal-head">
+          <div>
+            <div className="bulletin-modal-meta">{site.name}</div>
+            <h2 className="bulletin-modal-title">{day.sdate || `${day.d} 日`}</h2>
+          </div>
+          <button type="button" className="bulletin-modal-close" onClick={onClose} aria-label="關閉">
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div className="bulletin-modal-body camp-daybody">
+          <table className="th-table th-table--zebra camp-daytable">
+            <tbody>
+              {(day.counts || []).map((c) => (
+                <tr key={c.label}>
+                  <th scope="row">{c.label}</th>
+                  <td>{c.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="camp-daynote">
+            本頁為 {snapshot} 擷取之快照，實際數量以線上申請流程查驗結果為準。
+          </p>
+          {lotUrl ? (
+            <p className="camp-daynote">
+              當日抽籤結果：
+              <a className="th-inline-link" href={lotUrl} target="_blank" rel="noopener noreferrer">
+                <i className="fa-solid fa-arrow-up-right-from-square"></i>查詢抽籤結果
+              </a>
+              <span className="th-legacy-tag">前往現行網站</span>
+            </p>
+          ) : (
+            <p className="camp-daynote">該日正式站未提供抽籤結果連結。</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── 林業署「宿營地」子選（正式站 bed_0）── */
+function ForestryCampView() {
+  const [draftSite, setDraftSite] = React.useState(FORESTRY_CAMP_SITES[0].id);
+  const [siteId, setSiteId] = React.useState(FORESTRY_CAMP_SITES[0].id);
+  const [day, setDay] = React.useState(null);
+
+  const site = FORESTRY_CAMP_SITES.find((s) => s.id === siteId) || FORESTRY_CAMP_SITES[0];
+  const ym = site.ym || {};
+  const submit = (e) => { e.preventDefault(); setSiteId(draftSite); setDay(null); };
+  const withData = site.days.filter((d) => (d.counts || []).length).length;
+
+  return (
+    <React.Fragment>
+      {/*
+        正式站現況：四個宿營地 × 9-12 月，每一格都是「查無資料」。
+        依 2026-09-07 使用者裁決照實呈現空月曆，並在上方明說，不假造數字。
+      */}
+      <Callout type="warning">
+        正式站的林業及自然保育署宿營地查詢<strong>目前沒有任何可用資料</strong>——
+        2026-09-07 實測 {FORESTRY_CAMP_SITES.length} 個宿營地、9 至 12 月，每一天都顯示「查無資料」，
+        既無承載量也無當日明細。下方月曆照實呈現該現況。
+        <span className="th-todo-link">［待確認］正式站為何長期無資料，需向機關確認；
+        待機關上架後重抓快照。</span>
+      </Callout>
+
+      <form className="bulletin-card" onSubmit={submit}>
+        <div className="bulletin-filter-row">
+          <span className="bulletin-filter-label"><i className="fa-solid fa-tent"></i>宿營地</span>
+          <select className="th-select camp-select" value={draftSite}
+                  onChange={(e) => setDraftSite(e.target.value)} aria-label="宿營地">
+            {FORESTRY_CAMP_SITES.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+          <button type="submit" className="th-btn th-btn-primary">
+            <i className="fa-solid fa-magnifying-glass"></i>查詢
+          </button>
+        </div>
+      </form>
+
+      <div className="bulletin-section-head">
+        <h2 className="th-section-title">宿營地每日狀況</h2>
+        <span className="bulletin-count">
+          {site.name}／共 <strong>{site.days.length}</strong> 天，其中有資料 <strong>{withData}</strong> 天
+        </span>
+      </div>
+
+      <MonthBar ym={ym} />
+
+      <ForestryCalendar site={site} weekHead={FORESTRY_WEEK_HEAD}
+                        primaryLabel="現在申請量" onPick={setDay} />
+
+      {day && (
+        <ForestryDayModal site={site} day={day} onClose={() => setDay(null)}
+                          snapshot={FORESTRY_SNAPSHOT_DATE} catId="" />
+      )}
+    </React.Fragment>
+  );
+}
+
+/*
+  ── 林業署「區域申請及抽籤」子選（正式站 bed_11）──
+  兩層下拉照正式站保留：區域類別 → 區域名稱。不得壓平成一層
+  （2026-09-02 決策，open.html 已有前例：一顆鈕蓋掉三個 GUID 會漏筆）。
+*/
+function ForestryAreaView() {
+  /*
+    預設落在第一個查得到月曆的區域——第一類別的第一項「插天山自然保留區」
+    在正式站是總項、按查詢不出月曆，拿它當預設會讓人以為頁面壞了。
+  */
+  const firstArea = FORESTRY_AREA_CATS[0].areas.find((a) => a.hasCalendar) || FORESTRY_AREA_CATS[0].areas[0];
+  const [draftCat, setDraftCat] = React.useState(FORESTRY_AREA_CATS[0].id);
+  const [draftArea, setDraftArea] = React.useState(firstArea.id);
+  const [picked, setPicked] = React.useState({ cat: FORESTRY_AREA_CATS[0].id, area: firstArea.id });
+  const [day, setDay] = React.useState(null);
+
+  const draftCatObj = FORESTRY_AREA_CATS.find((c) => c.id === draftCat) || FORESTRY_AREA_CATS[0];
+  const cat = FORESTRY_AREA_CATS.find((c) => c.id === picked.cat) || FORESTRY_AREA_CATS[0];
+  const area = cat.areas.find((a) => a.id === picked.area) || cat.areas[0];
+  const ym = area.ym || {};
+
+  /* 換第一層要跟著換第二層的預設值，否則會留著上一個類別的區域 */
+  const pickCat = (id) => {
+    const next = FORESTRY_AREA_CATS.find((c) => c.id === id);
+    setDraftCat(id);
+    setDraftArea(next && next.areas[0] ? next.areas[0].id : "");
+  };
+  const submit = (e) => { e.preventDefault(); setPicked({ cat: draftCat, area: draftArea }); setDay(null); };
+
+  return (
+    <React.Fragment>
+      <form className="bulletin-card" onSubmit={submit}>
+        <div className="bulletin-filter-row">
+          <span className="bulletin-filter-label"><i className="fa-solid fa-layer-group"></i>區域類別</span>
+          <select className="th-select camp-select" value={draftCat}
+                  onChange={(e) => pickCat(e.target.value)} aria-label="區域類別">
+            {FORESTRY_AREA_CATS.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          <span className="bulletin-filter-label"><i className="fa-solid fa-mountain"></i>區域名稱</span>
+          <select className="th-select camp-select" value={draftArea}
+                  onChange={(e) => setDraftArea(e.target.value)} aria-label="區域名稱">
+            {draftCatObj.areas.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          </select>
+          <button type="submit" className="th-btn th-btn-primary">
+            <i className="fa-solid fa-magnifying-glass"></i>查詢
+          </button>
+        </div>
+      </form>
+
+      <div className="bulletin-section-head">
+        <h2 className="th-section-title">區域每日申請量</h2>
+        <span className="bulletin-count">
+          {cat.name}／{area.name}
+          {area.hasCalendar && <React.Fragment>／共 <strong>{area.days.length}</strong> 天</React.Fragment>}
+        </span>
+      </div>
+
+      {area.hasCalendar ? (
+        <React.Fragment>
+          <MonthBar ym={ym} />
+          <SnapshotNote snapshot={FORESTRY_SNAPSHOT_DATE} ym={ym} metric="申請量" />
+          <ForestryCalendar site={area} weekHead={FORESTRY_WEEK_HEAD}
+                            primaryLabel="現在申請量" onPick={setDay} />
+          <div className="camp-legend">
+            <span className="camp-legend-hint">
+              數字為該日「現在申請量」；有申請量的日期另有「剩餘數量」，
+              點日期可看全部計數與抽籤結果連結。
+            </span>
+          </div>
+        </React.Fragment>
+      ) : (
+        /* 正式站按查詢後不出月曆，重試三次確認過；不編造空月曆冒充有查到 */
+        <Callout type="warning">
+          正式站對「{area.name}」按查詢後<strong>不會出現月曆</strong>（2026-09-07 實測三次皆然）。
+          {area.name === "插天山自然保留區" && (
+            <React.Fragment>該項在正式站是總項，實際可查的是其下三條路線
+            （福巴越嶺步道／北插天山步道及其支線／其他路線），請於上方「區域名稱」改選。</React.Fragment>
+          )}
+          <span className="th-todo-link">［待確認］此為停用、無開放申請或其他原因，正式站未說明。</span>
+        </Callout>
+      )}
+
+      {day && (
+        <ForestryDayModal site={area} day={day} onClose={() => setDay(null)}
+                          snapshot={FORESTRY_SNAPSHOT_DATE} catId={cat.id} />
+      )}
+    </React.Fragment>
+  );
+}
+
 /*
   子選 → 畫面。key 是「機關:類別」，對應正式站各張 bed_* 子頁。
   trail 是麵包屑末節，比照正式站 site_map.aspx 的頁名。
   沒列在這裡的組合就是還沒建，Tab 與 chip 會出待建置標記。
 */
 const CAMPSITE_VIEWS = {
-  "shei-pa:camp":  { view: SheipaCampView,  trail: "雪霸宿營地查詢" },
-  "shei-pa:route": { view: SheipaRouteView, trail: "雪霸路線登山口查詢" },
-  "taroko:hut":    { view: TarokoHutView,   trail: "太魯閣山屋查詢" },
-  "taroko:route":  { view: TarokoRouteView, trail: "太魯閣路線查詢" },
+  "shei-pa:camp":  { view: SheipaCampView,   trail: "雪霸宿營地查詢" },
+  "shei-pa:route": { view: SheipaRouteView,  trail: "雪霸路線登山口查詢" },
+  "taroko:hut":    { view: TarokoHutView,    trail: "太魯閣山屋查詢" },
+  "taroko:route":  { view: TarokoRouteView,  trail: "太魯閣路線查詢" },
+  "forestry:camp": { view: ForestryCampView, trail: "林業及自然保育署宿營地查詢" },
+  "forestry:area": { view: ForestryAreaView, trail: "林業及自然保育署區域申請及抽籤查詢" },
 };
 
 /* 切機關時，原本的類別多半不存在（雪霸 camp → 太魯閣 hut），落回該機關第一個已建類別 */
