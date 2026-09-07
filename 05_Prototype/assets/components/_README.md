@@ -41,12 +41,19 @@ window.thComponents["th-xxx"] = { props: {...}, template: `...` };
 | `th-quick-nav.js` | `ExperienceNav` | **右下角快捷選單開關** |
 | `th-modal.js` | `bulletin-modal` 外殼、`DayModal`、`ForestryDayModal` | Esc 關閉、遮罩點擊關閉 |
 | `th-forest-camp-shared.js` | `ForestCampShared.jsx` | 無（`th-fc-stepper` ＋ `CABIN_DATA` ＋ `FC_STEPS`） |
+| `th-date-picker.js` | `ForestCamp1.jsx` 的 DatePicker | 原生 `input[type=date]` 薄包裝 |
+| `th-calendar-grid.js` | `BedCalendar` ＋ `ForestryCalendar` | `@pick`；格內容由 scoped slot 決定 |
+| `th-data-table.js` | `DataTable` | 無 |
+| `th-doc.js` | `NoticeDetail.jsx` 的版面部分 | 無（**唯一一檔多元件**，見下） |
 | `th-date-utils.js` | `ForestCampShared.jsx` 的日期工具 | 無 |
 
-## 待確認後才做
+## 「一檔一元件」的唯一例外：th-doc.js
 
-- `th-date-picker.js`：API 設計已提案，等使用者確認
-- `th-bed-calendar.js`：與 `th-date-picker` 的重疊度已評估，等使用者確認
+該檔有四個元件（`th-doc-inline`／`th-doc-paragraph`／`th-doc-list`／`th-doc-body`），
+因為它們是**同一個遞迴渲染器依 node 型別拆出來的分支**，彼此互相呼叫
+（body → list → body），單獨拿出任何一支都沒有用途。拆成四個檔只會得到四個
+不能單獨使用的檔。`th-doc-table` 也在裡面，因為它只服務這個渲染器；
+`th-data-table` 相反——它自己就是完整可用的元件，所以獨立一檔。
 
 ## 未實作（計畫預留）
 
