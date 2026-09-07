@@ -106,13 +106,93 @@
     <section class="th-card" id="sec-date">
       <div class="th-card-head">
         <i class="fa-regular fa-calendar"></i>
-        <h2 class="th-card-title">日期工具</h2>
-        <span class="th-card-note">th-date-picker 待確認設計後才做</span>
+        <h2 class="th-card-title">th-date-picker ＋ 日期工具</h2>
+        <span class="th-card-note">原生 input 薄包裝</span>
       </div>
       <div class="th-card-body">
         <p class="th-field-hint">
           今天 = {{ today }}；今天 ＋ 3 天 = {{ plus3 }}
           （逐欄組字串，不用 toISOString，避免 UTC+8 在 00:00–07:59 倒退一天）
+        </p>
+
+        <!-- 情境一：起日 ＋ 夜數 → 迄日。推算留在頁面 computed，不做進元件 -->
+        <div class="flex gap-4 flex-wrap items-start">
+          <th-date-picker v-model="startDate" label="起登日期"
+                          :min="today" :required="true"
+                          hint="不可選過去日期（min 明確傳入）"></th-date-picker>
+          <div class="th-field">
+            <label class="th-label">夜數</label>
+            <div class="flex items-center gap-2">
+              <button type="button" class="th-btn th-btn-ghost th-btn-sm"
+                      :disabled="nights <= 2" @click="nights--">−</button>
+              <span>{{ nights }} 晚</span>
+              <button type="button" class="th-btn th-btn-ghost th-btn-sm"
+                      :disabled="nights >= 4" @click="nights++">＋</button>
+            </div>
+            <div class="th-field-hint">可選 2～4 晚（比照嘉明湖山屋）</div>
+          </div>
+          <div class="th-field">
+            <label class="th-label">下山日期</label>
+            <div class="th-input th-input-readonly">{{ endDate || "—" }}</div>
+            <div class="th-field-hint">由起日＋夜數推算（頁面 computed）</div>
+          </div>
+        </div>
+
+        <!-- 情境二：日期區間 = 兩支 picker，第二支的 min 綁第一支的值 -->
+        <div class="flex gap-4 flex-wrap items-start mt-4">
+          <th-date-picker v-model="rangeFrom" label="公告日期（起）"
+                          input-class="th-input--date"
+                          hint="查詢用，刻意不擋過去日期"></th-date-picker>
+          <th-date-picker v-model="rangeTo" label="公告日期（迄）"
+                          input-class="th-input--date" :min="rangeFrom"
+                          :error="rangeError"></th-date-picker>
+        </div>
+      </div>
+    </section>
+
+    <section class="th-card" id="sec-cal">
+      <div class="th-card-head">
+        <i class="fa-regular fa-calendar-days"></i>
+        <h2 class="th-card-title">th-calendar-grid</h2>
+        <span class="th-card-note">一支涵蓋原 BedCalendar 與 ForestryCalendar</span>
+      </div>
+      <div class="th-card-body">
+        <p>格陣建構共用，格內內容由 scoped slot 決定。以下兩個月曆是**同一支元件**。</p>
+
+        <h3 class="th-steprow-title">有餘額概念（原 BedCalendar）</h3>
+        <th-calendar-grid :days="calDays" :week-head="weekHead" @pick="modal = 'day'">
+          <template #cell="{ day, pick }">
+            <button type="button"
+                    :class="['camp-cal-cell', Number(day.v[0]) > 0 ? 'is-open' : 'is-full']"
+                    @click="pick()"
+                    :aria-label="day.sdate + ' 餘額 ' + day.v[0] + '，查看當日明細'">
+              <span class="camp-cal-day">{{ day.d }}</span>
+              <span class="camp-cal-remain">{{ day.v[0] }}</span>
+              <span class="camp-cal-unit">餘額</span>
+            </button>
+          </template>
+        </th-calendar-grid>
+
+        <h3 class="th-steprow-title">無餘額概念（原 ForestryCalendar）</h3>
+        <th-calendar-grid :days="forestryDays" :week-head="weekHead" @pick="modal = 'forestry'">
+          <template #cell="{ day, pick }">
+            <button type="button" class="camp-cal-cell is-open" @click="pick()"
+                    :aria-label="day.sdate + ' 抽籤人數 ' + day.counts[0].value + '，查看該日明細'">
+              <span class="camp-cal-day">{{ day.d }}</span>
+              <span class="camp-cal-remain">{{ day.counts[0].value }}</span>
+              <span class="camp-cal-unit">{{ day.counts[0].label }}</span>
+            </button>
+          </template>
+          <template #empty="{ day }">
+            <div class="camp-cal-cell is-empty">
+              <span class="camp-cal-day">{{ day.d }}</span>
+              <span class="camp-cal-none">查無資料</span>
+            </div>
+          </template>
+        </th-calendar-grid>
+        <p class="th-field-hint">
+          第二個月曆刻意在資料中留缺漏日，用來驗 empty slot；不給 empty slot 時
+          只出日期數字，不自己補「無資料」四個字冒充正式站說法。
         </p>
       </div>
     </section>
