@@ -2,13 +2,13 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>階段 1 驗收用拋棄式測試頁（不進版控）</title>
+<title>階段 1 驗收：Vue 島與 React 併存</title>
 <!-- Tailwind 與四層 CSS 必須靜態插入（原因見 assets/includes/head.html 註解） -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="assets/css/index.css" />
-<!-- 其餘共用 head（meta／favicon／字型／圖示／Vue）由 loader 載入 -->
-<script src="assets/includes/head-loader.js"></script>
+<!-- 其餘共用 head（meta／favicon／字型／圖示／Vue／app-boot）由 loader 載入 -->
+<script src="assets/includes/head-loader.js" data-page-init="_island-test.js"></script>
 <!-- 模擬「併存期尚未遷移」的 React 依賴：本輪不移除任何舊 runtime -->
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
@@ -16,16 +16,33 @@
 </head>
 <body>
 
-<!-- React 專屬區：Vue 不得碰這段 DOM -->
+<!--
+  React 專屬區（契約第 5 條）：Vue 不得碰這段 DOM。
+  已遷移的頁面應**刪掉整個 #root**，只留 #th-app；這裡保留是為了證明
+  「不移除 React 也能掛 Vue」。app-boot.js 會對這個狀況發出 console.warn，
+  那是刻意的提醒，不是錯誤。
+-->
 <div id="root"></div>
 
-<!-- Vue 島：版面寫在 HTML 裡（in-DOM template），與 #root 完全不相交 -->
-<div id="th-app">
+<!--
+  Vue 島（契約第 2、3、6 條）：
+  - id 固定 #th-app
+  - 容器承接改版前 <div class="bg-white min-h-screen text-slate-800 antialiased"> 的角色
+  - data-* 由 app-boot 讀出後以 $page 提供（此處示範 data-demo）
+  - 版面寫在 HTML 裡（in-DOM template），不進 JS 字串
+-->
+<div id="th-app" class="bg-white text-slate-800 antialiased" data-demo="a1">
   <section class="th-page-inner" style="padding:24px">
-    <h2 class="text-2xl font-bold text-slate-800">Vue 島：{{ title }}</h2>
+    <h2 class="text-2xl font-bold">Vue 島：{{ title }}</h2>
+    <p class="text-sm text-slate-500">
+      $page.demo = {{ $page.demo }}（契約第 6 條：容器 data-* 傳參，沿用 notice_* 的 data-notice 慣例）
+    </p>
     <p class="text-sm text-slate-500">計數器 {{ count }}（宣告式互動，取代 useState）</p>
     <button class="px-4 py-2 rounded bg-slate-700 text-white" @click="count++">加一</button>
     <p v-if="count > 2" class="mt-2 text-emerald-700">v-if 生效：已按超過兩次</p>
+
+    <!-- 全域註冊的共用元件：階段 2 的五支會以同樣方式使用 -->
+    <th-demo-badge label="全域註冊的元件"></th-demo-badge>
   </section>
 </div>
 
@@ -38,20 +55,6 @@
       <p className="text-sm">React {React.version}；本頁未移除任何舊 runtime。</p>
     </div>
   );
-</script>
-
-<script>
-  // Vue 必須等 head-loader 的 includesLoaded 才存在
-  onIncludesLoaded(function () {
-    window.__vueProbe = { vue: typeof Vue, version: Vue && Vue.version };
-    Vue.createApp({
-      data() { return { title: "掛載成功", count: 0 }; },
-    }).mount("#th-app");
-    window.__islandMounted = true;
-  });
-  document.addEventListener("includesFailed", function (e) {
-    window.__islandFailed = e.detail && e.detail.what;
-  });
 </script>
 
 </body>

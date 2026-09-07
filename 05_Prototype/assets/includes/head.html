@@ -72,7 +72,11 @@
   <script src="assets/components/th-modal.js"></script>
   <script src="assets/components/th-date-picker.js"></script>
 
-  app-boot.js（createApp、全域註冊、掛載島容器）待 §5 階段 1.5 的掛載契約
-  經使用者確認後才加入：
-  <script src="assets/app-boot.js"></script>
 -->
+
+<!--
+  app-boot.js：createApp、全域註冊共用元件、掛載 #th-app。
+  §5 階段 1.5 的掛載契約已於 2026-09-07 經使用者確認，契約六條寫在該檔開頭。
+  **必須排在共用元件之後、頁面初始化之前**——順序由本檔的節點順序決定。
+-->
+<script src="assets/app-boot.js"></script>
