@@ -65,13 +65,32 @@
 <script src="https://unpkg.com/vue@3.5.42/dist/vue.global.prod.js" integrity="sha384-bqTg8NKlUS8kbe8Sak41ZAg1OAW/cc4kyI+FqMhCpzsyG7B39KgZfDOKA3HnKhCV" crossorigin="anonymous"></script>
 
 <!--
-  共用元件（階段 2 建立後在此逐支掛上，一檔一元件）：
-  <script src="assets/components/th-page-shell.js"></script>
-  <script src="assets/components/th-header.js"></script>
-  <script src="assets/components/th-footer.js"></script>
-  <script src="assets/components/th-modal.js"></script>
-  <script src="assets/components/th-date-picker.js"></script>
+  共用元件（階段 2）。一檔一元件，每支只把定義掛進 window.thComponents，
+  由 app-boot.js 在 createApp 後一次全域註冊。
 
+  註冊順序不影響結果（全部登記完才 mount），但仍照依賴關係排：
+  工具與小元件在前，組合型元件在後，方便閱讀。
+
+  **階段 2 沒有新增任何 CSS**，components.css 仍為空，這是刻意的：
+  這些元件沿用 shared.css 既有 class，依 §4.2 要等最後一個消費端遷完才能搬。
+  詳見 assets/components/_README.md。
+-->
+<script src="assets/components/th-date-utils.js"></script>
+<script src="assets/components/th-todo-link.js"></script>
+<script src="assets/components/th-breadcrumb.js"></script>
+<script src="assets/components/th-stepper.js"></script>
+<script src="assets/components/th-page-nav.js"></script>
+<script src="assets/components/th-page-shell.js"></script>
+<script src="assets/components/th-header.js"></script>
+<script src="assets/components/th-footer.js"></script>
+<script src="assets/components/th-quick-nav.js"></script>
+<script src="assets/components/th-modal.js"></script>
+<script src="assets/components/th-forest-camp-shared.js"></script>
+
+<!--
+  尚未實作，待使用者確認設計後才加入：
+  <script src="assets/components/th-date-picker.js"></script>
+  <script src="assets/components/th-bed-calendar.js"></script>
 -->
 
 <!--

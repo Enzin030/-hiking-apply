@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>階段 2 驗收：共用元件（不載入 React／Babel）</title>
+<!--
+  ============================================================
+  階段 2 驗收頁（v4 §5 階段 2）
+  ------------------------------------------------------------
+  **本頁刻意不載入 React 與 @babel/standalone。** 整頁只靠
+  assets/components/ 的共用元件與 Vue global build 組出來。
+
+  驗收條件（v4 加嚴）：三個互動必須實測可用，僅版面渲染不算通過——
+    1. 選單面板可開關（th-header，需縮到 xl 以下才看得到開啟鈕）
+    2. 語言下拉可切換（th-header，xl 以上）
+    3. 右下角快捷選單可開關（th-quick-nav）
+
+  CSS 順序照 v4 階段 3 入場條件的實測結論：**shared.css 在前、index.css 在後**
+  （見 assets/css/index.css 檔頭）。本頁仍需要 shared.css，因為元件沿用它的
+  既有 class，那些規則要等最後一個消費端遷完才能搬進 components.css（§4.2）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="styles/shared.css" />
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="_stage2-test.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約：容器 id 固定 #th-app、包住全頁、無 #root（本頁沒有 React） -->
+<div id="th-app" class="bg-white min-h-screen text-slate-800 antialiased" data-demo="stage2">
+
+  <!-- 契約：th-header／th-footer 置於 th-page-shell 之外 -->
+  <th-header active="status"></th-header>
+
+  <th-page-shell
+    :trail="['階段 2 驗收', '共用元件']"
+    title="共用元件驗收"
+    lead="本頁不載入 React 與 Babel，整頁由 assets/components/ 的共用元件組成。"
+    updated="2026-09-07">
+
+    <template #stepper>
+      <th-stepper :current="2"></th-stepper>
+    </template>
+
+    <template #nav>
+      <th-page-nav :items="[
+        { id: 'sec-interactions', label: '三個互動' },
+        { id: 'sec-modal', label: 'th-modal' },
+        { id: 'sec-fc', label: '山屋流程共用件' },
+        { id: 'sec-date', label: '日期工具' }
+      ]"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="sec-interactions">
+      <div class="th-card-head">
+        <i class="fa-solid fa-hand-pointer"></i>
+        <h2 class="th-card-title">三個互動</h2>
+        <span class="th-card-note">須實測可用</span>
+      </div>
+      <div class="th-card-body">
+        <ol class="th-substeps">
+          <li>選單面板：把視窗縮到 1280px 以下，頁首右側會出現「選單」按鈕。</li>
+          <li>語言下拉：1280px 以上時，頁首工具列的地球圖示可展開三種語系。</li>
+          <li>右下角快捷選單：畫面右下角的浮動按鈕。</li>
+        </ol>
+        <p class="th-field-hint">三者都可用 Esc 關閉；開啟時 body 會加上 .th-noscroll 鎖背景捲動。</p>
+      </div>
+    </section>
+
+    <section class="th-card" id="sec-modal">
+      <div class="th-card-head">
+        <i class="fa-regular fa-window-maximize"></i>
+        <h2 class="th-card-title">th-modal</h2>
+        <span class="th-card-note">涵蓋 campsite 的兩種日明細彈窗</span>
+      </div>
+      <div class="th-card-body">
+        <p>同一支外殼，body 由 slot 決定——原本 DayModal／ForestryDayModal 各有一份重複的 overlay＋head＋Esc。</p>
+        <!-- 版面用 Tailwind utility，不用 inline style（計畫 §7 禁 inline style） -->
+        <div class="flex gap-3 flex-wrap">
+          <button type="button" class="th-btn th-btn-primary" @click="modal = 'day'">
+            開啟：有餘額概念（雪霸／太魯閣／玉山）
+          </button>
+          <button type="button" class="th-btn th-btn-ghost" @click="modal = 'forestry'">
+            開啟：林業署（無餘額概念）
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="th-card" id="sec-fc">
+      <div class="th-card-head">
+        <i class="fa-solid fa-house-chimney"></i>
+        <h2 class="th-card-title">山屋流程共用件</h2>
+      </div>
+      <div class="th-card-body">
+        <th-fc-stepper :current="3"></th-fc-stepper>
+        <p class="th-field-hint">
+          CABIN_DATA 共 {{ cabinCount }} 間山屋；嘉明湖山屋可選
+          {{ cabinData.jiaming.minDays }}～{{ cabinData.jiaming.maxDays }} 晚。
+        </p>
+      </div>
+    </section>
+
+    <section class="th-card" id="sec-date">
+      <div class="th-card-head">
+        <i class="fa-regular fa-calendar"></i>
+        <h2 class="th-card-title">日期工具</h2>
+        <span class="th-card-note">th-date-picker 待確認設計後才做</span>
+      </div>
+      <div class="th-card-body">
+        <p class="th-field-hint">
+          今天 = {{ today }}；今天 ＋ 3 天 = {{ plus3 }}
+          （逐欄組字串，不用 toISOString，避免 UTC+8 在 00:00–07:59 倒退一天）
+        </p>
+      </div>
+    </section>
+
+    <div class="th-callout">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>本頁為拋棄式驗收頁，前綴底線標示非產品頁，不進遷移清單。</div>
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+  <!-- th-modal：兩種 body 共用同一個外殼 -->
+  <th-modal v-if="modal === 'day'" meta="雪霸｜自訂宿營地" title="2026-09-07"
+            body-class="camp-daybody" @close="modal = null">
+    <table class="th-table th-table--zebra camp-daytable">
+      <tbody>
+        <tr v-for="(v, i) in demoDay.v" :key="i">
+          <th scope="row">{{ demoDay.labels[i] }}</th>
+          <td :class="demoDay.labels[i] === '餘額' ? 'camp-strong' : ''">{{ v }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="camp-daynote">
+      <span class="th-flag is-yes">
+        <i class="fa-solid fa-circle-check"></i>尚有餘額
+      </span>
+      餘額為 2026-09-02 擷取之快照，實際可申請數量以線上申請流程查驗結果為準。
+    </p>
+  </th-modal>
+
+  <th-modal v-if="modal === 'forestry'" meta="林業署｜嘉明湖" title="2026-09-07"
+            body-class="camp-daybody" @close="modal = null">
+    <table class="th-table th-table--zebra camp-daytable">
+      <tbody>
+        <tr v-for="c in demoForestry" :key="c.label">
+          <th scope="row">{{ c.label }}</th>
+          <td>{{ c.value }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="camp-daynote">林業署沒有「餘額」概念，0 不等於額滿，故不套紅／綠語意。</p>
+  </th-modal>
+
+</div>
+
+</body>
+</html>
