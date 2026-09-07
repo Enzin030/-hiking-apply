@@ -1,3 +1,4 @@
+// DEPRECATED 2026-09-07：已改用同名 .js，請勿編輯此檔
 /*
   玉山國家公園 宿營地／單日往返／抽籤結果／抽籤日期／可申請退費日期 — 快照
   生成來源：正式站 https://service.skyeyes.tw/hikenationpark/bed_6、bed_7、bed_3、bed_8、bed_9.aspx。

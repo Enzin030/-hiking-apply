@@ -1,3 +1,4 @@
+// DEPRECATED 2026-09-07：已改用同名 .js，請勿編輯此檔
 /*
   雪霸路線登山口查詢 — 登山口總表與月曆餘額
   生成來源：正式站 https://service.skyeyes.tw/hikenationpark/bed_10.aspx，

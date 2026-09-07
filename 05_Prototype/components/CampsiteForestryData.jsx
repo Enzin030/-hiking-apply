@@ -1,3 +1,4 @@
+// DEPRECATED 2026-09-07：已改用同名 .js，請勿編輯此檔
 /*
   林業及自然保育署 宿營地與區域申請及抽籤查詢 — 月曆快照
   生成來源：正式站 https://service.skyeyes.tw/hikenationpark/bed_0.aspx（宿營地）

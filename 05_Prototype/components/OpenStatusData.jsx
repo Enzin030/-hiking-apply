@@ -1,3 +1,4 @@
+// DEPRECATED 2026-09-07：已改用同名 .js，請勿編輯此檔
 /*
   登山路線開放狀態 — 路線資料
   生成來源：正式站 https://service.skyeyes.tw/hikenationpark/open.aspx（「全部機關」查詢結果

@@ -1,3 +1,4 @@
+// DEPRECATED 2026-09-07：已改用同名 .js，請勿編輯此檔
 /*
   雪霸宿營地查詢 — 宿營地清單、月曆餘額與介紹卡
   生成來源：正式站 https://service.skyeyes.tw/hikenationpark/bed_1.aspx，

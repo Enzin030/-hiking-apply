@@ -1,3 +1,4 @@
+// DEPRECATED 2026-09-07：已改用同名 .js，請勿編輯此檔
 /* Generated from ../../01_Raw_Input/raw/主路線.csv, ../../01_Raw_Input/raw/次路線.csv and ../../01_Raw_Input/raw/關聯申請.csv. */
 
 const NATIONAL_PARK_ORG_IDS = {
