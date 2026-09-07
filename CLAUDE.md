@@ -10,8 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 工作原則
 
-1. 執行前先說計畫，確認後再動手；只改點名的範圍。
-2. 不確定的業務邏輯標 `[待訪談]`，不猜測、不虛構。
+1. 計畫與範圍紀律見 `institution\core.md` §3.1、§3.2、§3.5。
+2. 不確定的業務規則依 `institution\core.md` §3.4 處理：標 `[待確認]`（**不是** `[待訪談]`），不猜測、不虛構。
 3. 禁用 Emoji：所有 mockup、UI 與文件不使用系統內建 Emoji（🏕️、⏳ 等）。Icon 一律用
    FontAwesome（`<i class="fa-solid fa-mountain"></i>`）或 Phosphor Icons。
 4. Git commit message 用繁體中文，格式如 `feat: 增加登入頁面`、`docs: 更新 PRD 規格`。
@@ -51,10 +51,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 技術棧（雛形階段）
 
-- React 18 UMD ＋ `@babel/standalone`（瀏覽器端即時轉譯 `type="text/babel"` 的 JSX），**無打包工具**
-- Tailwind CSS CDN（`cdn.tailwindcss.com`）＋ 全站單一 `styles/shared.css`
-- 字體 Noto Sans TC / Noto Serif TC；Icon 用 FontAwesome 6 與 Phosphor Icons
-- 無 npm、無 build、無測試框架
+無 npm、無 build、無測試框架。實際引入的函式庫與字體看 `05_Prototype/index.html` 的 `<head>`。
 
 ## 重要限制
 
@@ -74,11 +71,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 開啟與預覽
 
-```bash
-# 任意靜態伺服器皆可，起在 05_Prototype 底下：
-cd 05_Prototype
-npx serve .
-python -m http.server 8080
-```
+任意靜態伺服器皆可，但**必須起在 `05_Prototype/` 底下**。
 
 Babel standalone 需經 HTTP 載入 `components/*.jsx`，直接用 `file://` 開啟會被 CORS 擋住。
