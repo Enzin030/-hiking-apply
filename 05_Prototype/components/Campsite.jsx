@@ -48,11 +48,15 @@ const CAMPSITE_KINDS = {
   forestry:   [{ key: "camp", label: "宿營地", built: true }, { key: "area", label: "區域申請及抽籤", built: true }],
 };
 
-/* 餘額 0 視為已滿，其餘視為尚有餘額——正式站未提供每日承載量，不編造中間級距 */
+/*
+  餘額 0 視為已滿，其餘視為尚有餘額——正式站未提供每日承載量，不編造中間級距。
+  玉山 bed_6 的餘額是一組兩個數字「(116,0)」（對應總表第二層的山屋床位／營地營位），
+  所以取出所有數字，任一項大於 0 就算尚有餘額，不能只看串接後的字串。
+*/
 const remainFlag = (value) => {
-  const n = parseInt(String(value).replace(/[^\d]/g, ""), 10);
-  if (!Number.isFinite(n)) return null;
-  return n > 0 ? "is-yes" : "is-no";
+  const nums = String(value).match(/\d+/g);
+  if (!nums) return null;
+  return nums.some((n) => parseInt(n, 10) > 0) ? "is-yes" : "is-no";
 };
 
 /* ── 說明區（正式站 alert 原文，逐條保留，含 FB 社團連結）── */

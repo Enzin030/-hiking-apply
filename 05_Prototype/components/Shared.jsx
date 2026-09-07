@@ -778,24 +778,24 @@ function ExperienceNav({
     「待建置」徽章由 .th-expcard .is-todo::after 提供，樣式與改動前相同。
   */
   const renderItem = (it, i) => {
-    const external = it.kind === "external";
-    const icon = external ? (
-      <i className="fa-solid fa-arrow-up-right-from-square"></i>
+    const isVideo = it.kind === "video" || it.kind === "external";
+    const icon = isVideo ? (
+      <i className="fa-solid fa-circle-play"></i>
     ) : null;
     if (!it.href) {
       return (
         <li key={i}>
-          <span className="is-todo">{icon}{it.label}</span>
+          <span className="is-todo">{it.label}{icon}</span>
         </li>
       );
     }
     return (
       <li key={i}>
         <a href={it.href}
-           target={external ? "_blank" : undefined}
-           rel={external ? "noopener noreferrer" : undefined}>
-          {icon}
+           target={isVideo ? "_blank" : undefined}
+           rel={isVideo ? "noopener noreferrer" : undefined}>
           {it.label}
+          {icon}
         </a>
       </li>
     );
