@@ -1,0 +1,78 @@
+<!--
+  head.html — 全站共用的 <head> 片段（計畫 §5 階段 1.3）
+  ============================================================
+  用法：已遷移頁的 <head> 只留下面這段（順序不可調換）＋ <title> 與頁面專屬 meta：
+
+      <title>…</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="assets/tailwind.config.js"></script>
+      <link rel="stylesheet" href="assets/css/index.css" />
+      <script src="assets/includes/head-loader.js" data-page-init="…"></script>
+
+  其餘（meta、favicon、字型、圖示、Vue、共用元件）一律由本檔提供。
+  **不要**把本檔內容再貼回頁面——同頁的共用資源只能載入一次。
+
+  「並存」的語意：指**不同頁面可採不同機制**——已遷移頁用本片段，
+  未遷移頁維持原本寫死的 <head>。**不是**在同一頁追加整份新 head。
+
+  ------------------------------------------------------------
+  為什麼 Tailwind 與 index.css 留在頁面、不放進本檔
+  （2026-09-07 實測結論，改動前請先重跑實測）
+  ------------------------------------------------------------
+  一、**Tailwind 動態插入會產生競態。** 把 cdn.tailwindcss.com 交給 loader
+      以 createElement 動態載入時，Tailwind 的 class 掃描與頁面 DOM 的解析、
+      以及 Vue 掛載後才產生的節點會賽跑。實測同一頁重跑，Tailwind 產生的
+      <style> 有時 5340 bytes（含島內 utility）、有時只有 4647 bytes
+      （漏掉島內 utility，畫面字級與底色整片跑掉），且**不會有任何錯誤訊息**。
+      → Tailwind 與其 config 必須維持**由 parser 同步插入**，與改版前一致。
+
+  二、**cascade 順序必須維持改版前的結論。** Tailwind CDN 在 runtime 把 <style>
+      插在 <head> 尾端，所以它一定晚於所有 parser 插入的 <link>。
+      改版前實測 open.html／campsite.html／apply-2.html／notice_a1.html：
+      Tailwind 的 <style> 都在 head 第 19 個子節點，styles/shared.css 在第 15 個。
+      → **同優先序時 Tailwind utility 勝過 .th-*。**
+      若把 index.css 交給 loader 動態插入，它會落在 Tailwind 的 <style>
+      **之後**，勝負就反轉，全站元件外觀會無聲位移（計畫 §8 的已知風險）。
+      → index.css 也必須靜態 link，維持「Tailwind 在後、Tailwind 勝」。
+
+  三、要壓過 Tailwind 請提高選擇器優先序，不要改載入順序（Tailwind 是 runtime
+      插入，改 link 位置沒用），也不要用 !important（§6.5）。
+
+  ------------------------------------------------------------
+  本檔負責的載入順序（由 head-loader.js 逐支綁 onload 保證）：
+      字型／圖示 → Vue → 共用元件 → 頁面初始化
+  全部成功才發 includesLoaded 事件；任一支失敗具名回報並發 includesFailed。
+  ============================================================
+-->
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="assets/favicon.ico" sizes="any" />
+
+<!-- 字型與圖示：純樣式資源，插入時序不影響 cascade 結論 -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+<!--
+  Vue 3 global build。**必須是含 runtime template compiler 的 global build**，
+  不可換成 runtime-only（vue.runtime.global.prod.js）——本案的頁面版面是寫在
+  .html 裡的 in-DOM template，runtime-only 無法編譯它，畫面會整片空白。
+
+  這不是 build step：template 編譯發生在瀏覽器、逐 template 進行，與
+  @babel/standalone 載入 2.9MB 轉譯器再全量轉換 328KB JSX 不同量級（§1 用語精確化）。
+-->
+<script src="https://unpkg.com/vue@3.5.42/dist/vue.global.prod.js" integrity="sha384-bqTg8NKlUS8kbe8Sak41ZAg1OAW/cc4kyI+FqMhCpzsyG7B39KgZfDOKA3HnKhCV" crossorigin="anonymous"></script>
+
+<!--
+  共用元件（階段 2 建立後在此逐支掛上，一檔一元件）：
+  <script src="assets/components/th-page-shell.js"></script>
+  <script src="assets/components/th-header.js"></script>
+  <script src="assets/components/th-footer.js"></script>
+  <script src="assets/components/th-modal.js"></script>
+  <script src="assets/components/th-date-picker.js"></script>
+
+  app-boot.js（createApp、全域註冊、掛載島容器）待 §5 階段 1.5 的掛載契約
+  經使用者確認後才加入：
+  <script src="assets/app-boot.js"></script>
+-->
