@@ -16,11 +16,11 @@ function TodoLink({ label, className = "", onDark }) {
 */
 const HEADER_NAV = [
   { key: "bulletin", label: "公布欄", url: "news.html" },
-  { key: "apply",    label: "登山申請", url: "apply-1.html" },
-  { key: "notice",   label: "登山須知", url: "notice.html" },
-  { key: "status",   label: "登山路線開放狀態", url: "open.html" },
-  { key: "campsite", label: "宿營地與床位查詢", url: "campsite.html" },
-  { key: "info",     label: "旅遊登山資訊", url: null },
+  { key: "know",     label: "認識登山", url: "notice.html" },
+  { key: "plan",     label: "規劃行程", url: "open.html" },
+  { key: "apply",    label: "辦理申請", url: "apply-1.html" },
+  { key: "check",    label: "行前確認", url: "campsite.html" },
+  { key: "finish",   label: "完成登山", url: "applySearch.html" },
 ];
 
 /* 工具列項目（網站導覽／警特報／RSS） */
@@ -682,11 +682,15 @@ function Callout({ type, icon, children }) {
   標題「依據登山經驗建議參考資料」；本雛形沿用同一種呈現方式。
   項目與 href 取自 notice.aspx 的 modal 原始碼，括號內註記舊站對應頁；
   本雛形尚未建置的頁面留 href: null，點擊不導頁。
+
+  2026-09-07：面板改為登山旅程五階段的流程式版面——序號徽章（01–05，由陣列順序推導）
+  ＋ 虛線山徑 ＋ 階段箭頭，襯底為 assets/teach/mountain-journey-background.svg。
+  資料結構未變，只動呈現。
 */
 const EXPERIENCE_GROUPS = [
   {
-    icon: "fa-solid fa-book-open",
-    title: "學習登山者",
+    icon: "fa-solid fa-mountain",
+    title: "認識登山",
     sub: "獲取登山知識",
     groups: [
       {
@@ -707,8 +711,8 @@ const EXPERIENCE_GROUPS = [
   },
   {
     icon: "fa-solid fa-map-location-dot",
-    title: "規劃登山者",
-    sub: "查詢登山資料",
+    title: "規劃行程",
+    sub: "選擇路線與地圖",
     items: [
       { label: "登山路線圖資查詢", old: "web_map2.aspx" },
       { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
@@ -719,19 +723,21 @@ const EXPERIENCE_GROUPS = [
   },
   {
     icon: "fa-solid fa-pen-to-square",
-    title: "申請登山者",
+    title: "辦理申請",
     sub: "申請／修改資料",
     items: [
       { label: "線上申請", href: "apply-1.html", old: "apply_1.aspx" },
       { label: "草稿編輯", old: "apply_2_1.aspx" },
-      { label: "申請進度查詢", old: "apply_3.aspx" },
+      /* 舊站入口是 applySearch.aspx（四選一），apply_3.aspx 是其中的進度查詢頁；
+         本雛形把兩者併為 applySearch.html（2026-09-07 裁決）。 */
+      { label: "申請進度查詢", href: "applySearch.html", old: "apply_3.aspx" },
       { label: "申請資料異動", old: "apply_2.aspx" },
       { label: "繳費／退費（含退費日期）查詢", old: "apply_4.aspx" },
     ],
   },
   {
-    icon: "fa-solid fa-person-hiking",
-    title: "前往學習者",
+    icon: "fa-solid fa-calendar-check",
+    title: "行前確認",
     sub: "必要整備",
     items: [
       { label: "路線開放狀態查詢", href: "open.html", old: "open.aspx" },
@@ -740,14 +746,17 @@ const EXPERIENCE_GROUPS = [
     ],
   },
   {
-    icon: "fa-solid fa-flag-checkered",
-    title: "完成登山者",
+    icon: "fa-solid fa-person-hiking",
+    title: "完成登山",
     sub: "下山回報",
     items: [{ label: "出園回報", old: "apply_6.aspx" }],
   },
 ];
 
-function ExperienceNav({ title = "依據登山經驗建議參考資料", label = "快捷選單" }) {
+function ExperienceNav({
+  title = "依據登山經驗建議參考資料",
+  label = "快捷選單",
+}) {
   const [open, setOpen] = React.useState(false);
 
   // 開啟時鎖背景捲動，Esc 關閉
@@ -762,17 +771,30 @@ function ExperienceNav({ title = "依據登山經驗建議參考資料", label =
     };
   }, [open]);
 
+  /*
+    未建置的項目輸出非連結的 <span>，不給 `#` 假路徑（2026-09-02 裁決）——
+    原本是 <a href="#" onClick={preventDefault}>，看起來像連結、可聚焦、可複製網址，
+    點下去卻沒有反應；Header／Footer／麵包屑早已改用 TodoLink 的作法，這裡跟上。
+    「待建置」徽章由 .th-expcard .is-todo::after 提供，樣式與改動前相同。
+  */
   const renderItem = (it, i) => {
     const external = it.kind === "external";
-    const todo = !it.href;
+    const icon = external ? (
+      <i className="fa-solid fa-arrow-up-right-from-square"></i>
+    ) : null;
+    if (!it.href) {
+      return (
+        <li key={i}>
+          <span className="is-todo">{icon}{it.label}</span>
+        </li>
+      );
+    }
     return (
       <li key={i}>
-        <a href={it.href || "#"}
-           className={todo ? "is-todo" : ""}
+        <a href={it.href}
            target={external ? "_blank" : undefined}
-           rel={external ? "noopener noreferrer" : undefined}
-           onClick={todo ? (e) => e.preventDefault() : undefined}>
-          <i className={external ? "fa-solid fa-arrow-up-right-from-square" : "fa-solid fa-angle-right"}></i>
+           rel={external ? "noopener noreferrer" : undefined}>
+          {icon}
           {it.label}
         </a>
       </li>
@@ -792,22 +814,29 @@ function ExperienceNav({ title = "依據登山經驗建議參考資料", label =
           <div className="th-quickpanel" role="dialog" aria-modal="true" aria-label={title}
                onClick={(e) => e.stopPropagation()}>
             <div className="th-quickpanel-head">
-              <h2>{title}</h2>
+              <div className="th-quickpanel-heading">
+                <h2>{title}</h2>
+              </div>
               <button type="button" className="th-quickpanel-close" onClick={() => setOpen(false)} aria-label="關閉">
                 <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
             <div className="th-quickpanel-body">
+              {/* 頂部階段步驟列 (完全比照首頁 5 階段風格) */}
+              <ul className="th-quick-steps">
+                {EXPERIENCE_GROUPS.map((g) => (
+                  <li key={g.title} className="th-quick-step">
+                    <span className="step-circle"><i className={g.icon}></i></span>
+                    <strong>{g.title}</strong>
+                    <small>{g.sub}</small>
+                  </li>
+                ))}
+              </ul>
+
+              {/* 下方選單卡片 */}
               <div className="th-expnav-grid">
                 {EXPERIENCE_GROUPS.map((g) => (
                   <div className="th-expcard" key={g.title}>
-                    <div className="th-expcard-head">
-                      <span className="th-expcard-icon"><i className={g.icon}></i></span>
-                      <div>
-                        <div className="th-expcard-title">{g.title}</div>
-                        <div className="th-expcard-sub">{g.sub}</div>
-                      </div>
-                    </div>
                     {g.groups && g.groups.map((sub) => (
                       <div className="th-expcard-group" key={sub.label}>
                         <div className="th-expcard-grouptitle">{sub.label}</div>
