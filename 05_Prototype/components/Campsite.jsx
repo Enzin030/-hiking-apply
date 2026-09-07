@@ -4,22 +4,29 @@
 
   依 2026-09-02 使用者裁決：
   一、11 張子頁收成單一頁面，上層機關 Tab ＋ 次層類別子選，不做 11 張獨立頁。
-      已實作：雪霸宿營地（bed_1）／路線（bed_10）、太魯閣山屋（bed_4）／路線（bed_5）、
-      林業署宿營地（bed_0）／區域申請及抽籤（bed_11）。玉山五個子選尚未建置。
+      11 個子選全部已建：雪霸宿營地（bed_1）／路線（bed_10）、
+      太魯閣山屋（bed_4）／路線（bed_5）、林業署宿營地（bed_0）／區域申請及抽籤（bed_11）、
+      玉山宿營地（bed_6）／單日往返（bed_7）／抽籤結果（bed_3）／抽籤日期（bed_8）／
+      可申請退費日期（bed_9）。
   二、月曆格以主要數字為主角（大字），其餘計數收進點格後的明細彈窗，欄位一項不減。
       各子選的計數項目不一致，一律取正式站原樣，不對齊成同一組：
       雪霸宿營地 7 項、雪霸路線 5 項、太魯閣山屋 3 項、太魯閣路線 4 項、
-      林業署區域 2 項（剩餘數量／現在申請量，且「剩餘數量」非每日都有）。
+      林業署區域 2 項（剩餘數量／現在申請量，且「剩餘數量」非每日都有）、
+      玉山 5 項（餘額／排隊預約／審核中／核准入園，加一項正式站沒給標籤的括號數對）。
+      玉山 bed_6 的餘額是一組兩個數字「(116,0)」，對應總表第二層的山屋床位／營地營位。
 
   資料：components/CampsiteData.jsx（雪霸宿營地，37 個）
         components/CampsiteRouteData.jsx（雪霸路線，8 個登山口）
         components/CampsiteTarokoData.jsx（太魯閣，14 處山屋＋19 條路線）
         components/CampsiteForestryData.jsx（林業署，4 個宿營地＋25 個區域）
+        components/CampsiteYushanData.jsx（玉山，27 處宿營地＋5 條單日往返路線＋三張日期／公告表）
         皆為正式站實跑轉檔，腳本在 .scratch/outputs/，非手抄。
   版型沿用 shared.css 的 bulletin-* 查詢型骨架與 th-flag 狀態膠囊。
-  兩種月曆：BedCalendar／DayModal 給有「餘額」概念的雪霸與太魯閣；
+  兩種月曆：BedCalendar／DayModal 給有「餘額」概念的雪霸、太魯閣與玉山前兩個子選；
   ForestryCalendar／ForestryDayModal 給林業署——後者沒有餘額，0 不等於額滿，
   不能套 remainFlag 的紅／綠語意，故分開寫，不硬塞成同一個元件。
+  玉山的抽籤結果／抽籤日期／可申請退費日期沒有月曆，是列表與日期表，另以
+  YushanLotView 與 PlainTableCard 呈現。
 
   餘額與申請量都是即時資料，本頁是快照，畫面上明示擷取日期，不假裝即時查詢。
 */
@@ -28,7 +35,7 @@
 const CAMPSITE_ORGS = [
   { key: "shei-pa",  label: "雪霸",           built: true },
   { key: "taroko",   label: "太魯閣",         built: true },
-  { key: "yushan",   label: "玉山",           built: false },
+  { key: "yushan",   label: "玉山",           built: true },
   { key: "forestry", label: "林業及自然保育署", built: true },
 ];
 
@@ -42,9 +49,9 @@ const CAMPSITE_ORGS = [
 const CAMPSITE_KINDS = {
   "shei-pa":  [{ key: "camp", label: "宿營地", built: true }, { key: "route", label: "路線", built: true }],
   taroko:     [{ key: "hut", label: "山屋", built: true }, { key: "route", label: "路線", built: true }],
-  yushan:     [{ key: "camp", label: "宿營地", built: false }, { key: "oneday", label: "單日往返路線", built: false },
-               { key: "lot", label: "抽籤結果", built: false }, { key: "lotdate", label: "抽籤日期", built: false },
-               { key: "refund", label: "可申請退費日期", built: false }],
+  yushan:     [{ key: "camp", label: "宿營地", built: true }, { key: "oneday", label: "單日往返路線", built: true },
+               { key: "lot", label: "抽籤結果", built: true }, { key: "lotdate", label: "抽籤日期", built: true },
+               { key: "refund", label: "可申請退費日期", built: true }],
   forestry:   [{ key: "camp", label: "宿營地", built: true }, { key: "area", label: "區域申請及抽籤", built: true }],
 };
 
@@ -116,8 +123,15 @@ function DayModal({ site, day, onClose, snapshot, detailPage, orgId, idParam }) 
           <table className="th-table th-table--zebra camp-daytable">
             <tbody>
               {site.labels.map((label, i) => (
-                <tr key={label}>
-                  <th scope="row">{label}{label === "外籍提前" && <span className="camp-sub">（外國人＋本國人）</span>}</th>
+                <tr key={label || `unlabeled-${i}`}>
+                  {/*
+                    玉山 bed_6 的日格最後一項正式站沒有給標籤（說明區也沒解釋），
+                    不自己編一個名字，標明是正式站未標示並列為待確認。
+                  */}
+                  <th scope="row">
+                    {label || <span className="camp-sub">（正式站未標示項目，[待確認]）</span>}
+                    {label === "外籍提前" && <span className="camp-sub">（外國人＋本國人）</span>}
+                  </th>
                   <td className={label === "餘額" ? "camp-strong" : ""}>{day.v[i]}</td>
                 </tr>
               ))}
@@ -326,11 +340,24 @@ function SheipaCampView() {
 */
 const normalizeHead = (head) => {
   if (!head || !head.length) return { rows: [], leaf: [] };
-  if (typeof head[0] === "string") {
-    const leaf = head.map((t) => ({ t, c: 1, r: 1 }));
-    return { rows: [leaf], leaf };
-  }
-  return { rows: head, leaf: head[0] };
+  const rows = typeof head[0] === "string" ? [head.map((t) => ({ t, c: 1, r: 1 }))] : head;
+  if (rows.length === 1) return { rows, leaf: rows[0].map((h) => ({ t: h.t })) };
+  /*
+    兩層表頭要算出**實際欄數**，不能拿第一層的格數當欄數——
+    玉山 bed_6 的「平日承載量(人)」colSpan=2（底下是山屋床位／營地營位），
+    第一層只有 4 格但實際是 6 欄；照 4 欄畫會少畫兩欄、資料整排錯位。
+    rowSpan 跨到底的格自成一欄，其餘依 colSpan 依序吃第二層的格。
+  */
+  const sub = [...rows[1]];
+  const leaf = [];
+  rows[0].forEach((h) => {
+    if (h.r >= rows.length) { leaf.push({ t: h.t }); return; }
+    for (let i = 0; i < (h.c || 1); i++) {
+      const s = sub.shift();
+      leaf.push({ t: s && s.t ? `${h.t} ${s.t}` : h.t });
+    }
+  });
+  return { rows, leaf };
 };
 
 /*
@@ -760,6 +787,180 @@ function ForestryAreaView() {
   );
 }
 
+/* ══════════ 玉山（bed_6／bed_7 月曆型；bed_3／bed_8／bed_9 日期與公告型）══════════
+   前兩個與雪霸／太魯閣同構，直接吃 NodeCalendarView；
+   後三個沒有月曆，是列表與日期表，另寫。依據見 components/CampsiteYushanData.jsx 檔頭。
+*/
+
+/* ── 玉山「宿營地」子選（正式站 bed_6）── */
+function YushanCampView() {
+  return (
+    <React.Fragment>
+      <Callout>
+        <ul className="camp-notice">
+          {YUSHAN_CAMP_NOTICE.map((t, i) => <li key={i}>{t}</li>)}
+        </ul>
+      </Callout>
+      <NodeCalendarView
+        summary={YUSHAN_CAMP_SUMMARY} nodes={YUSHAN_CAMP_NODES}
+        weekHead={YUSHAN_WEEK_HEAD} snapshot={YUSHAN_SNAPSHOT_DATE}
+        orgId={YUSHAN_ORG_ID} detailPage={YUSHAN_CAMP_DETAIL_PAGE} idParam={YUSHAN_CAMP_ID_PARAM}
+        summaryTitle="宿營地承載量" summaryIcon="fa-solid fa-tent" summaryUnit="處"
+        /* 「山屋床位／營地營位」是正式站表頭第二層的原文，非推導 */
+        summaryHint="平日／假日承載量各分「山屋床位」與「營地營位」兩欄，為正式站表頭原文；點宿營地名稱可切換下方月曆。"
+        selectLabel="宿營地" selectIcon="fa-solid fa-tent"
+        calTitle="宿營地每日餘額"
+      />
+    </React.Fragment>
+  );
+}
+
+/* ── 玉山「單日往返路線」子選（正式站 bed_7）── */
+function YushanOnedayView() {
+  return (
+    <NodeCalendarView
+      summary={YUSHAN_ONEDAY_SUMMARY} nodes={YUSHAN_ONEDAY_NODES}
+      weekHead={YUSHAN_WEEK_HEAD} snapshot={YUSHAN_SNAPSHOT_DATE}
+      orgId={YUSHAN_ORG_ID} detailPage={YUSHAN_ONEDAY_DETAIL_PAGE} idParam={YUSHAN_ONEDAY_ID_PARAM}
+      summaryTitle="單日往返路線承載量" summaryIcon="fa-solid fa-route" summaryUnit="條路線"
+      summaryHint="平日／假日承載量為正式站表頭原文（單位：人）；點路線名稱可切換下方月曆。"
+      selectLabel="路線" selectIcon="fa-solid fa-route"
+      calTitle="路線每日餘額"
+    />
+  );
+}
+
+/*
+  ── 玉山「抽籤結果」子選（正式站 bed_3）──
+  這是公告列表不是名單表：選宿營地後列出該地的抽籤結果公告（標題／發布單位）。
+*/
+function YushanLotView() {
+  const [draft, setDraft] = React.useState(YUSHAN_LOT_NODES[0].id);
+  const [nodeId, setNodeId] = React.useState(YUSHAN_LOT_NODES[0].id);
+  const node = YUSHAN_LOT_NODES.find((n) => n.id === nodeId) || YUSHAN_LOT_NODES[0];
+  const submit = (e) => { e.preventDefault(); setNodeId(draft); };
+
+  /* 表頭取自正式站實抓，不寫死；有連結的儲存格連回現行網站 */
+  const columns = (node.head.length ? node.head : ["標題", "發布單位"]).map((h, i) => ({
+    key: `c${i}`,
+    label: h,
+    render: (r) => {
+      const cell = r.cells[i] || { t: "" };
+      if (!cell.link) return cell.t || "—";
+      return (
+        <a className="th-inline-link"
+           href={`https://service.skyeyes.tw/hikenationpark/${cell.link.href}`}
+           target="_blank" rel="noopener noreferrer">
+          <i className="fa-solid fa-arrow-up-right-from-square"></i>{cell.link.text || cell.t}
+        </a>
+      );
+    },
+  }));
+  const rows = node.rows.map((cells, i) => ({ id: `${node.id}-${i}`, cells }));
+
+  return (
+    <React.Fragment>
+      <form className="bulletin-card" onSubmit={submit}>
+        <div className="bulletin-filter-row">
+          <span className="bulletin-filter-label"><i className="fa-solid fa-tent"></i>宿營地</span>
+          <select className="th-select camp-select" value={draft}
+                  onChange={(e) => setDraft(e.target.value)} aria-label="宿營地">
+            {YUSHAN_LOT_NODES.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
+          </select>
+          <button type="submit" className="th-btn th-btn-primary">
+            <i className="fa-solid fa-magnifying-glass"></i>查詢
+          </button>
+        </div>
+      </form>
+
+      <div className="bulletin-section-head">
+        <h2 className="th-section-title">抽籤結果公告</h2>
+        <span className="bulletin-count">{node.name}／共 <strong>{rows.length}</strong> 則</span>
+      </div>
+
+      <DataTable columns={columns} rows={rows} rowKey="id" className="th-table--zebra"
+                 empty="正式站此宿營地目前沒有抽籤結果公告" />
+      <div className="camp-legend">
+        <span className="camp-legend-hint">
+          公告內容為 {YUSHAN_SNAPSHOT_DATE} 自現行網站擷取的快照；公告詳細內容尚未建置，連結前往現行網站。
+        </span>
+      </div>
+    </React.Fragment>
+  );
+}
+
+/*
+  正式站 bed_8／bed_9 的表格沒有 thead，表頭是 tbody 第一列。
+  這裡把第一列當表頭、其餘當資料；只有一列（例如 bed_9 的「查無資料」）時不硬拆。
+*/
+function PlainTableCard({ table, title, icon, emptyHint }) {
+  const rows = (table && table.rows) || [];
+  const hasHeader = rows.length > 1;
+  const head = hasHeader ? rows[0].map((c) => c.t) : [];
+  const body = hasHeader ? rows.slice(1) : [];
+  const columns = head.map((h, i) => ({
+    key: `c${i}`,
+    label: h,
+    render: (r) => {
+      const cell = r.cells[i] || { t: "" };
+      if (!cell.link) return cell.t || "—";
+      return (
+        <a className="th-inline-link"
+           href={`https://service.skyeyes.tw/hikenationpark/${cell.link.href}`}
+           target="_blank" rel="noopener noreferrer">
+          <i className="fa-solid fa-arrow-up-right-from-square"></i>{cell.link.text || cell.t}
+        </a>
+      );
+    },
+  }));
+
+  return (
+    <SectionCard title={title} icon={icon} note={hasHeader ? `共 ${body.length} 筆` : undefined}>
+      {table && table.notice && table.notice.map((n, i) => (
+        <Callout key={i}>{n}</Callout>
+      ))}
+      {hasHeader ? (
+        <DataTable columns={columns} rows={body.map((cells, i) => ({ id: i, cells }))}
+                   rowKey="id" className="th-table--zebra" />
+      ) : (
+        <Callout type="warning">
+          {/* 正式站自己就寫「查無資料」，照抄，不編一張假的表 */}
+          正式站目前的內容是「{rows[0] ? rows[0].map((c) => c.t).join("／") : "查無資料"}」。
+          {emptyHint && <span className="th-todo-link">{emptyHint}</span>}
+        </Callout>
+      )}
+      <div className="camp-legend">
+        <span className="camp-legend-hint">內容為 {YUSHAN_SNAPSHOT_DATE} 自現行網站擷取的快照。</span>
+      </div>
+    </SectionCard>
+  );
+}
+
+/* ── 玉山「抽籤日期」子選（正式站 bed_8）── */
+function YushanLotDateView() {
+  return (
+    <PlainTableCard table={YUSHAN_LOTDATE_TABLE} title="抽籤日期" icon="fa-solid fa-calendar-days" />
+  );
+}
+
+/* ── 玉山「可申請退費日期」子選（正式站 bed_9）── */
+function YushanRefundView() {
+  return (
+    <React.Fragment>
+      <PlainTableCard
+        table={YUSHAN_REFUND_TABLE} title="可申請退費日期" icon="fa-solid fa-money-bill-transfer"
+        emptyHint="［待確認］派工卡記載的欄位（未入園可退費期間／宿營地／退費原因／原因／相關訊息）在本次快照未出現，需確認是暫時無資料還是頁面已改版。"
+      />
+      <div className="camp-legend">
+        <span className="camp-legend-hint">
+          退費申請與繳費紀錄請至繳費與退費查詢（正式站 apply_4）：
+        </span>
+        <TodoLink label="繳費與退費查詢" />
+      </div>
+    </React.Fragment>
+  );
+}
+
 /*
   子選 → 畫面。key 是「機關:類別」，對應正式站各張 bed_* 子頁。
   trail 是麵包屑末節，比照正式站 site_map.aspx 的頁名。
@@ -772,6 +973,11 @@ const CAMPSITE_VIEWS = {
   "taroko:route":  { view: TarokoRouteView,  trail: "太魯閣路線查詢" },
   "forestry:camp": { view: ForestryCampView, trail: "林業及自然保育署宿營地查詢" },
   "forestry:area": { view: ForestryAreaView, trail: "林業及自然保育署區域申請及抽籤查詢" },
+  "yushan:camp":   { view: YushanCampView,    trail: "玉山宿營地查詢" },
+  "yushan:oneday": { view: YushanOnedayView,  trail: "玉山單日往返路線查詢" },
+  "yushan:lot":    { view: YushanLotView,     trail: "玉山抽籤結果查詢" },
+  "yushan:lotdate":{ view: YushanLotDateView, trail: "玉山抽籤日期" },
+  "yushan:refund": { view: YushanRefundView,  trail: "玉山可申請退費日期查詢" },
 };
 
 /* 切機關時，原本的類別多半不存在（雪霸 camp → 太魯閣 hut），落回該機關第一個已建類別 */
