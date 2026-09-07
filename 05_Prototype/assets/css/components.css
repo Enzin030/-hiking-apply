@@ -15,3 +15,30 @@
    目前刻意留空：階段 1.2 只建立落點，不搬既有樣式。
    階段 2 建立的五支共用元件外觀一律寫進本檔，不得臨時寫在別處待日後搬移。
    ============================================================ */
+
+/* ============================================================
+   th-header
+   ============================================================ */
+
+/*
+  頂欄陰影。
+
+  為什麼不寫成 Tailwind 的 shadow-[var(--sh-header)]：
+  **實測 Tailwind CDN 無法處理 shadow 任意值裡的 var()**——它會產生
+  `box-shadow: none`，而且**不報錯、不警告**，陰影就這樣無聲消失
+  （2026-09-07 階段 3.0 的視覺回歸抓到，computed boxShadow 由
+  `rgba(0,0,0,0.05) 0px 2px 10px 0px` 變成 `none`）。
+
+  原因是 Tailwind 的 shadow utility 要把顏色拆出來組成 --tw-shadow-colored，
+  無法解析的值就整條失效。**顏色與字級的 var() 沒有這個問題**
+  （text-[var(--x)]、bg-[var(--x)]、text-[length:var(--x)] 實測皆正常）。
+
+  → 凡是 shadow，一律寫成這裡的元件 class，不要用 Tailwind 任意值。
+
+  優先序：本檔隨 index.css 載入，晚於 shared.css、早於 Tailwind 的 runtime
+  <style>。th-header 的 markup 移除 shadow utility 後該元素沒有任何 Tailwind
+  shadow 類別，因此不存在競爭。
+*/
+.th-header-bar {
+  box-shadow: var(--sh-header);
+}
