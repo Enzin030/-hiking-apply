@@ -2115,44 +2115,44 @@ body.th-noscroll {
 .th-expcard .is-todo {
   display: flex;
   align-items: baseline;
-  gap: 7px;
+  gap: 4px;
   color: var(--fg-2);
 }
 
-.th-expcard a:hover {
-  color: var(--national-700);
-}
-
-.th-expcard a i,
-.th-expcard .is-todo i {
-  font-size: 10px;
-  color: var(--slate-300);
+.th-expcard a::before,
+.th-expcard .is-todo::before,
+.th-expcard-grouptitle::before {
+  content: "•";
+  color: var(--national-800);
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1;
+  margin-right: 4px;
   flex-shrink: 0;
 }
 
-.th-expcard a:hover i {
-  color: var(--national-700);
+.th-expcard .is-todo::before {
+  color: var(--slate-400);
 }
 
-/* 本雛形尚未建置的頁面：非連結元素（span），不給 `#` 假路徑 */
-.th-expcard .is-todo {
-  color: var(--fg-4);
-  cursor: default;
+.th-expcard a:hover::before {
+  color: var(--national-900);
 }
 
-.th-expcard .is-todo:hover {
-  color: var(--fg-4);
-}
-
-.th-expcard .is-todo::after {
-  content: "待建置";
-  font-size: 10px;
-  color: var(--fg-4);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-xs);
-  padding: 0 4px;
-  margin-left: auto;
+/* 影片按鈕及圖示風格 */
+.th-expcard a i.fa-circle-play,
+.th-expcard .is-todo i.fa-circle-play {
+  font-size: 13px;
+  color: var(--national-800);
+  margin-right: 4px;
   flex-shrink: 0;
+}
+
+/* 移除子層選單項目前方的 Bullet 圓點 */
+.th-expcard ul.th-expcard-nested a::before,
+.th-expcard ul.th-expcard-nested .is-todo::before {
+  content: none !important;
+  display: none !important;
 }
 
 .th-expcard-group {
@@ -2165,6 +2165,8 @@ body.th-noscroll {
   font-size: var(--fs-sm);
   font-weight: 400;
   color: var(--fg-1);
+  display: flex;
+  align-items: baseline;
 }
 
 .th-expcard ul.th-expcard-nested {
