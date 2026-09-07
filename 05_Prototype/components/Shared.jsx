@@ -16,11 +16,11 @@ function TodoLink({ label, className = "", onDark }) {
 */
 const HEADER_NAV = [
   { key: "bulletin", label: "公布欄", url: "news.html" },
-  { key: "know",     label: "認識登山", url: "notice.html" },
-  { key: "plan",     label: "規劃行程", url: "open.html" },
-  { key: "apply",    label: "辦理申請", url: "apply-1.html" },
-  { key: "check",    label: "行前確認", url: "campsite.html" },
-  { key: "finish",   label: "完成登山", url: "applySearch.html" },
+  { key: "apply",    label: "登山申請", url: "apply-1.html" },
+  { key: "notice",   label: "登山須知", url: "notice.html" },
+  { key: "status",   label: "登山路線開放狀態", url: "open.html" },
+  { key: "campsite", label: "宿營地與床位查詢", url: "campsite.html" },
+  { key: "info",     label: "旅遊登山資訊", url: null },
 ];
 
 /* 工具列項目（網站導覽／警特報／RSS） */
@@ -778,24 +778,25 @@ function ExperienceNav({
     「待建置」徽章由 .th-expcard .is-todo::after 提供，樣式與改動前相同。
   */
   const renderItem = (it, i) => {
-    const isVideo = it.kind === "video" || it.kind === "external";
-    const icon = isVideo ? (
-      <i className="fa-solid fa-circle-play"></i>
+    const external = it.kind === "external";
+    const icon = external ? (
+      <i className="fa-solid fa-arrow-up-right-from-square"></i>
     ) : null;
     if (!it.href) {
       return (
         <li key={i}>
-          <span className="is-todo">{it.label}{icon}</span>
+          <span className={`is-todo ${external ? "is-external" : ""}`}>{icon}{it.label}</span>
         </li>
       );
     }
     return (
       <li key={i}>
         <a href={it.href}
-           target={isVideo ? "_blank" : undefined}
-           rel={isVideo ? "noopener noreferrer" : undefined}>
-          {it.label}
+           className={external ? "is-external" : undefined}
+           target={external ? "_blank" : undefined}
+           rel={external ? "noopener noreferrer" : undefined}>
           {icon}
+          {it.label}
         </a>
       </li>
     );
