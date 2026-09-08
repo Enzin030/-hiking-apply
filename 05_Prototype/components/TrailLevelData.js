@@ -1,4 +1,21 @@
-// DEPRECATED 2026-09-08：已改用同名 .js，請勿編輯此檔
+/* ============================================================
+   TrailLevelData.js — 由 TrailLevelData.jsx 產生的純資料版本（階段 0）
+   ------------------------------------------------------------
+   與 .jsx 的唯一差異：top-level `const FOO =` 改為 `window.FOO =`，
+   因此本檔是**一般 <script>**，不經 @babel/standalone 轉譯。
+
+   v4 原本拍板「TrailLevelData 整支不動」，理由是 information_6.html 是使用者
+   正在開發的新頁，只切 open.html 會造成「兩份併存＋使用者正在編輯其中一份」。
+   2026-09-08 遷移 information_6 時一併處理，並且**兩個消費端同時切換**
+   （information_6.html 與 open.html），所以不會留下兩份併存的漂移風險——
+   open.html 仍是 React 版，只是資料改由一般 script 提供，與階段 0 其他頁相同。
+
+   檔尾原有的 `Object.assign(window, {...})` 保留：它額外導出 OFFICIAL_SITE
+   這個別名（Information6 用它），改寫成 window.* 後那行仍可正確讀到值。
+
+   資料內容請改上游來源，不要只改這裡——舊 .jsx 仍保留，兩份必須同步。
+   ============================================================ */
+
 /*
   國家公園步道分級的難度等級資料（第 0～6 級）。
   內容來源：舊站 https://service.skyeyes.tw/hikenationpark/information_6.aspx（逐字），
@@ -7,16 +24,16 @@
   原本只存在 Information6.jsx 內，為避免兩頁各抄一份而抽出。
 */
 
-const OFFICIAL = "https://service.skyeyes.tw/hikenationpark/";
+window.OFFICIAL = "https://service.skyeyes.tw/hikenationpark/";
 /* 個人及團體裝備檢查表 PDF：本地尚未取得檔案，暫連正式站絕對網址 */
-const KIT_PDF = OFFICIAL + "images/%E5%80%8B%E4%BA%BA%E5%8F%8A%E5%9C%98%E9%AB%94%E8%A3%9D%E5%82%99%E6%AA%A2%E6%9F%A5%E8%A1%A8.pdf";
+window.KIT_PDF = OFFICIAL + "images/%E5%80%8B%E4%BA%BA%E5%8F%8A%E5%9C%98%E9%AB%94%E8%A3%9D%E5%82%99%E6%AA%A2%E6%9F%A5%E8%A1%A8.pdf";
 
 /*
   kit    — 建議裝備為純文字時的原文（第 0～2 級）
   kitRef — 建議裝備含「個人及團體裝備檢查表」連結時，連結之後的原文（第 3～6 級）
   desc   — 字串；第 6 級為兩個分項，故用陣列
 */
-const TRAIL_LEVELS = [
+window.TRAIL_LEVELS = [
   {
     level: 0,
     desc: "步道平整，設施良好，坡度平緩且可供輪椅及嬰幼兒車通行。",
