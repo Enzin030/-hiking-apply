@@ -1830,3 +1830,237 @@ body.th-noscroll {
     width: 100%;
   }
 }
+
+
+/* ############################################################
+   階段 3（四頁零互動）— 補三支元件所擁有的 CSS
+   ############################################################
+
+   th-link-list／th-step-list／th-callout 是為了遷移 apply_teach、notice 這兩頁
+   才移植的（原 Shared.jsx 的 LinkList／StepList／Callout）。階段 3.0b 當時
+   刻意沒複製它們的 CSS，理由是「元件還沒移植，複製進來會有沒人用的規則」；
+   現在移植了，依同一條判準（已移植元件在 template 實際輸出的 class）補上。
+
+   同樣是**複製**，shared.css 原處全部保留（§4.2）——還有頁面在用。
+   已檢查本批無 url()，不涉第四類靜默失敗（相對路徑）。
+   ############################################################ */
+
+/* ------------------------------------------------------------
+   th-link-list
+   ------------------------------------------------------------ */
+.th-linklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.th-linklist>li {
+  border-top: 1px solid var(--slate-100);
+}
+.th-linklist>li:first-child {
+  border-top: none;
+}
+.th-linkrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 24px;
+  font-size: var(--fs-md);
+  color: var(--fg-1);
+  transition: background 0.15s ease;
+}
+a.th-linkrow:hover {
+  background: var(--bg-2);
+  color: var(--national-700);
+}
+.th-linkrow-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-pill);
+  background: var(--bg-3);
+  color: var(--fg-3);
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.th-linkrow-text {
+  flex: 1;
+  min-width: 0;
+  line-height: var(--lh-snug);
+}
+.th-linkrow-icon {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--fg-4);
+}
+a.th-linkrow:hover .th-linkrow-icon {
+  color: var(--national-700);
+}
+.th-linkrow.is-todo {
+  color: var(--fg-3);
+  cursor: default;
+}
+.th-linkrow.is-todo:hover {
+  background: none;
+  color: var(--fg-3);
+}
+.th-todo-tag {
+  flex-shrink: 0;
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  color: var(--warning-fg);
+  background: var(--warning-bg);
+  border: 1px solid #fde68a;
+  border-radius: var(--r-xs);
+  padding: 1px 7px;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ------------------------------------------------------------
+   th-step-list
+   ------------------------------------------------------------ */
+.th-steplist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.th-steprow {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.th-steprow-num {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-pill);
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.th-steprow-body {
+  flex: 1;
+  min-width: 0;
+}
+.th-steprow-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin: 6px 0 8px;
+  line-height: var(--lh-snug);
+}
+.th-steprow-body p {
+  margin: 0 0 10px;
+  text-align: justify;
+}
+.th-steprow-body p:last-child {
+  margin-bottom: 0;
+}
+.th-substeps {
+  margin: 0;
+  padding-left: 22px;
+  list-style: decimal outside;
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+}
+.th-substeps li {
+  line-height: var(--lh-base);
+  padding-left: 4px;
+  margin-top: 6px;
+}
+.th-substeps li:first-child {
+  margin-top: 0;
+}
+.th-shot-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.th-shot {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.th-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.th-shot figcaption {
+  padding: 8px 12px;
+  border-top: 1px solid var(--slate-200);
+  color: var(--fg-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-base);
+}
+.th-shot-placeholder {
+  margin-top: 12px;
+  border: 1px dashed var(--slate-300);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  color: var(--fg-4);
+  font-size: var(--fs-xs);
+  text-align: center;
+  padding: 28px 16px;
+}
+.th-shot-placeholder i {
+  display: block;
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: var(--slate-300);
+}
+
+/* ------------------------------------------------------------
+   th-callout
+   ------------------------------------------------------------ */
+.th-callout {
+  display: flex;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--r-lg);
+  background: var(--bg-mist);
+  border: 1px solid var(--national-200);
+  color: var(--fg-2);
+  line-height: var(--lh-base);
+  text-align: justify;
+}
+.th-callout>i {
+  flex-shrink: 0;
+  color: var(--national-700);
+  font-size: 15px;
+  margin-top: 3px;
+}
+.th-callout.is-warning {
+  background: var(--warning-bg);
+  border-color: #fde68a;
+}
+.th-callout.is-warning>i {
+  color: var(--warning-fg);
+}
+.th-callout strong {
+  color: var(--fg-1);
+}
+.th-callout-src {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+}
+
+@media (max-width: 640px) {
+  .th-callout {
+    padding: 14px;
+  }
+}
