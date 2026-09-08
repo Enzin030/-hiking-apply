@@ -85,6 +85,12 @@
   --warning-fg: #b45309;
   --danger-fg: #dc2626;             /* asterisk warnings */
   --danger-soft: #ef4444;           /* pinned-pin red */
+  /* 2026-09-08（遷移 notice）新增：紅色按鈕的 hover 深色。
+     來源是 shared.css 的 .th-video-btn:hover 原本寫死的 #b91c1c；
+     該規則要移進 pages.css，而 §6.1.1 禁止 pages.css 出現 hex 字面值，
+     故收成 token。命名沿用既有的 --national-700-hover 慣例。
+     只加在 tokens.css，不動 design_system（32 頁未遷移頁靠它）。 */
+  --danger-fg-hover: #b91c1c;
 
   /* --------------------------------------------------------
      PARK-PROCESS COLOR CODES

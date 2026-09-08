@@ -2,33 +2,105 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>登山須知 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（notice）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/notice.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script type="text/babel" src="components/Notice.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
+<div id="th-app">
+
+  <th-header active="notice"></th-header>
+
+  <th-page-shell
+    :trail="['登山須知']"
+    title="登山須知"
+    lead="本站整合國家公園署、林業及自然保育署、警政署等機關之登山申辦規定。"
+    updated="2026-09-01">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!--
+      .p-notice-actions／.p-notice-video-btn 是本頁專用樣式，遷移時依 §6.2 由
+      .th-notice-actions／.th-video-btn 改名，規則見 assets/css/pages.css。
+    -->
+    <div class="p-notice-actions">
+      <a class="p-notice-video-btn" :href="safetyVideo" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-youtube"></i>登山安全影片（HOT）
+      </a>
+    </div>
+
+    <!--
+      **這段的換行位置是刻意的，改動前先讀完這段。**（2026-09-08 實測）
+
+      JSX 與 Vue template 對空白的處理不同：
+      - JSX 會把「行首／行尾的換行＋縮排」整段去掉
+      - Vue 的 whitespace: 'condense' 只刪「純空白且含換行」的節點；
+        「文字＋換行＋縮排」會被折疊成「文字＋一個空白」
+
+      所以要與 React 版逐字相同，換行只能出現在**兩個文字之間**
+      （那裡 JSX 也會折成一個空白），不能出現在文字與標籤之間：
+
+        。↵進入…      ← 要保留：JSX 也會變成「。 進入」的一個空白
+        許可證。↵<span> ← 不可換行：JSX 沒有空白，Vue 會多一個
+
+      實測那一個多出來的空白讓內層 div 由 866.28px 變成 869.64px，
+      全頁 600 個像素不同（文字 justify 重新分配 ＋ 待確認徽章右移約 3px）。
+    -->
+    <th-callout type="warning">各機關申辦規定不同，<strong>同一趟行程若跨越多個管理機關，須分別符合各機關規定</strong>。
+      進入山地管制區者另須申請入山許可證。<span class="th-todo-tag">待確認</span><span class="th-callout-src">本段非正式站原文，為我方新增，來源待業務確認。</span></th-callout>
+
+    <!--
+      .th-notice-grid 維持原名：applySearch.html 也在用且尚未遷移，改名會弄壞那頁。
+      規則已複製到 pages.css，shared.css 原處保留（§4.2）。
+    -->
+    <div class="th-notice-grid">
+      <section class="th-card" v-for="s in primary" :key="s.id" :id="s.id">
+        <div class="th-card-head">
+          <i :class="s.icon"></i>
+          <h2 class="th-card-title">{{ s.title }}</h2>
+          <span class="th-card-note">{{ s.items.length }} 項</span>
+        </div>
+        <div class="th-card-body is-flush">
+          <th-link-list :items="s.items" :numbered="true"></th-link-list>
+        </div>
+      </section>
+    </div>
+
+    <div class="th-notice-grid is-secondary">
+      <section class="th-card" v-for="s in secondary" :key="s.id" :id="s.id">
+        <div class="th-card-head">
+          <i :class="s.icon"></i>
+          <h2 class="th-card-title">{{ s.title }}</h2>
+          <span class="th-card-note">{{ s.items.length }} 項</span>
+        </div>
+        <div class="th-card-body is-flush">
+          <th-link-list :items="s.items" :numbered="true"></th-link-list>
+        </div>
+      </section>
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>

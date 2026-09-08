@@ -25,3 +25,77 @@
 
    目前刻意留空：階段 1.2 只建立落點，不搬既有樣式。
    ============================================================ */
+
+
+/* ############################################################
+   notice.html（2026-09-08 遷移）
+   ############################################################
+
+   §5 階段 3 第 5 項在這一頁**同時出現了兩種情況**，是很好的對照：
+
+   一、**單頁專用 → 本該「移動」，但本輪只能「複製」**
+       .th-notice-actions（2 條）與 .th-video-btn（4 條）grep 只有 Notice.jsx 用，
+       依規則應從 shared.css 移走並依 §6.2 改名為 .p-notice-*。
+       改名與 markup 已在同一次提交完成（本檔的 .p-notice-actions／
+       .p-notice-video-btn），**但 shared.css 的原規則沒有刪除**：
+       該檔有使用者未提交的 .th-expcard 修改（+69/-14），我無法只暫存自己那幾行
+       而不把使用者的進行中工作一起提交進去。原規則現在是死規則（改名後沒人用），
+       等使用者的工作提交後再刪 —— 已列入回報的待確認清單。
+
+   二、**兩頁共用 → 只複製，且不可改名**
+       .th-notice-grid（4 條，含 @media）除 Notice.jsx 外，**ApplySearch.jsx 也在用**，
+       而 applySearch 還沒遷移。所以：名稱維持 .th-notice-grid（改名會弄壞那一頁），
+       規則複製一份到這裡，shared.css 原處保留（§4.2）。
+       它不屬於任何元件，所以放 pages.css 而不是 components.css——
+       這是計畫分類法沒涵蓋的第三種情況（跨頁共用但無元件擁有者），已回報。
+   ############################################################ */
+
+.th-notice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+  gap: 24px;
+  align-items: start;
+}
+.th-notice-grid.is-secondary {
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+.th-notice-grid>* {
+  min-width: 0;
+}
+.p-notice-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.p-notice-video-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--r-md);
+  background: var(--danger-fg);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: var(--lh-snug);
+  text-decoration: none;
+}
+.p-notice-video-btn:hover {
+  background: var(--danger-fg-hover);
+  color: var(--fg-on-dark);
+}
+.p-notice-video-btn i {
+  font-size: 16px;
+}
+
+@media (max-width: 640px) {
+  .th-notice-grid {
+    gap: 20px;
+  }
+  .p-notice-actions {
+    justify-content: stretch;
+  }
+  .p-notice-video-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
