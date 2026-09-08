@@ -71,7 +71,11 @@
 8. **`apply_1_3_1` 等 8 處 `IndexOf("apply_2.aspx")` 重複兩次**——原本要允許的第二個來源是哪一頁（Q6）？
 9. **`ucDatePicker` vs `ucDatePicker2`**（625 行差 2 行，差在 `De_EnCode`）應該用哪一個（Q49）？
 10. **status `17`** 在同一支檔案裡既稱「初審完成」又稱「備取」（`YuShanFun.cs:2251`、`:2361`），何者為準？
-11. **抽籤後統計只有「排隊預約」一格對 `afterstatus is null` 做退回**，其餘五格沒有（`:2300` vs `:2311` 等）——刻意或漏寫？
+11. **抽籤已公告的 node＋date 上，抽籤「之前」送出的案件，`afterstatus` 會不會被回填？**
+    已確認 `afterstatus` 為 null 屬正常口徑（null＝排隊預約，三處寫法一致），
+    且七格統計只在 `ballot` 有 `publictime` 時才被呼叫——所以「上百萬筆消失」是誤讀，**不是問題**。
+    但抽籤程序本身在 `manasystem/`（後台，本輪未讀），若它沒回填舊案，
+    那些案件在同一日期的六格裡仍會只落在「排隊預約」。這一題要問，範圍比原先小得多。
 12. **抽籤前 status 17 那格缺 `IsNotRecovery` 排除條件**（`:2257`），同函式其他格都有——刻意或漏寫？
 13. **`status = 7`** 在玉山歸「排隊預約」、在太魯閣當「候補」篩選（`YuShanFun.cs:2300` vs `taroko_waitinglist.cs:91`），是否同一語意？
 14. **共同承載量**除了硬編碼的 `climblineid in (28,109)`（`taroko_waitinglist.cs:76-79`）之外還有哪些組合，有沒有被實作？

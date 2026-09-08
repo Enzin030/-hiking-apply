@@ -326,14 +326,25 @@
 - **答**：**不是**。抽籤前讀 `applylist.status`；抽籤後讀 `booking.afterstatus`。
 - **出處**：`YuShanFun.cs:2234` 等（前，`status in (4)`）vs `:2311` 等（後，`afterstatus in (0)`）。
 
-### Q36. 一筆抽籤後 `afterstatus` 還沒寫入（null）的案件，會出現在哪些統計格？
+### Q36. 一筆 `afterstatus` 是 null 的案件，會出現在哪些統計格？
 
 - **答**：**只會出現在「排隊預約」那一格**。該格的條件多了一段 null 退回：
   `afterstatus in (6,3,7) or (afterstatus is null and al.status in (6,3,7))`。
-  其餘五格（中籤 0／待補件 1,9,10／複審完成 11／核准入園 4／備取 12／備取 17）
-  **只比對 `afterstatus`，沒有 null 退回** → 這筆案件從那些統計中消失。
-- **出處**：`YuShanFun.cs:2300`（有 null 退回）vs `:2311`、`:2322`、`:2333`、`:2344`、`:2356`、`:2367`（皆無）。
-- **你可能會以為**：統計數字加總等於總案件數。抽籤後只要有 `afterstatus` 未回填的案件，就不會相等。
+  其餘六格只比對 `afterstatus`，沒有 null 退回。
+- **但這不是缺陷，是口徑。** `afterstatus` 為 null 代表「這筆案件還沒有抽籤後狀態」，
+  而全系統把 null 一律當成「排隊預約」處理，三處寫法一致：
+  `:2300` 的 null 退回、`YuShanFun.cs:2436` 與 `bedCode.cs:1093` 的 `ISNULL(afterstatus,6)`、
+  `hike_api_code.cs:646-648` `getStatusTitle` 的 `default` 分支（顯示「排隊預約」）。
+  一筆沒有抽籤後狀態的案件，本來就不該出現在「中籤」「核准入園」那些格子裡。
+- **出處**：`YuShanFun.cs:2300` vs `:2311`、`:2322`、`:2333`、`:2344`、`:2356`、`:2367`；
+  寫入端 `apply_1_4.aspx.cs:1105-1113`（只在該日抽籤已公告後送出的案件才寫）；
+  呼叫端 `apply_1_4.aspx.cs:10460-10481`（只在 `ballot` 有 `publictime` 時才呼叫抽籤後版本）。
+- **不要被這個數字騙到**：DB 全表 `afterstatus IS NULL` 有 1,084,958 筆，
+  **但那是無條件全表計數**，含不抽籤的宿營地、未公告的日期、三家機關與全部歷年資料，
+  這些永遠不會進入抽籤後統計。**不可解讀為「上百萬筆案件從統計消失」。**
+- **真正還沒答的是更小的一題**：在抽籤已公告的 node＋date 上，
+  抽籤「之前」就送出的案件是否被回填 `afterstatus`？抽籤程序在 `manasystem/`（後台，本輪未讀），
+  無法從已讀 code 判定。`[缺口]`
 
 ### Q37. `IsNotRecovery` 這個排除條件，每一格都套嗎？
 
