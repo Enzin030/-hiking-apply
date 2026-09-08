@@ -1897,3 +1897,62 @@ a.th-linkrow:hover .th-linkrow-icon {
    任一選擇器的細化規則**一起複製，否則兩者的先後會反轉。
    稽核腳本見 scratchpad/audit_copy.py（可重跑）。
    ############################################################ */
+
+
+/* ------------------------------------------------------------
+   th-table-pager（原 Shared.jsx 的 BulletinPager）
+   ------------------------------------------------------------
+   從 shared.css 複製，原處保留（§4.2）。已依 §6.4.2b 把 .bulletin-pager 與
+   .bulletin-page-* 的**全部**規則依原順序一起複製。
+
+   **@media 條件必須一起搬**（2026-09-08 踩到）：shared.css 的
+   `@media (max-width: 768px) { .bulletin-pager { justify-content: center } }`
+   第一次複製時被我攤平成頂層規則，於是桌機寬度也套用了 center，
+   分頁列由靠右變成置中——computed 指紋當時沒抓到，因為我的屬性清單裡
+   沒有 justify-content；是全頁像素比對抓到的。
+------------------------------------------------------------ */
+
+.bulletin-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 20px;
+}
+.bulletin-page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.bulletin-page-btn:hover:not(:disabled) {
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+.bulletin-page-btn.is-active {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
+}
+.bulletin-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.bulletin-page-gap {
+  padding: 0 2px;
+  color: var(--fg-4);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 768px) {
+  .bulletin-pager {
+    justify-content: center;
+  }
+}

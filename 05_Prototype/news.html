@@ -2,33 +2,200 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>公布欄｜最新消息、違規名單、檔案下載、常見問答 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<title>公布欄 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  階段 3 逐頁遷移（news，中組）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+
+  本頁的 ?tab= 網址同步與「刻意不加 popstate」的理由寫在 components/news.js 檔頭。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/news.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script type="text/babel" src="components/News.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js。class 沿用原 JSX 最外層 -->
+<div id="th-app" class="bg-white min-h-screen text-slate-800 antialiased">
+
+  <th-header active="bulletin"></th-header>
+
+  <!-- bare：版面自帶結構，不要 th-page-main 的 flex 包裝 -->
+  <th-page-shell :trail="['公布欄', tab.label]" :title="tab.label" :bare="true">
+
+    <!-- 頁籤列 -->
+    <div class="bulletin-tabs">
+      <nav class="bulletin-tabs-nav" aria-label="公布欄分頁">
+        <button v-for="(t, idx) in tabs" :key="t.key" type="button"
+                :class="['bulletin-tab', { 'is-active': activeTab === idx }]"
+                :aria-current="activeTab === idx ? 'page' : null"
+                @click="changeTab(idx)">
+          <i :class="t.icon"></i><span>{{ t.label }}</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- 篩選卡（四頁籤共用外框，第二列依頁籤換條件） -->
+    <form class="bulletin-card" @submit.prevent="submitFilter">
+      <div class="bulletin-filter-row">
+        <span class="bulletin-filter-label">
+          <i class="fa-solid fa-building"></i>發布單位
+        </span>
+        <button v-for="a in allAgencies" :key="a.id" type="button"
+                :class="['th-chip', { 'is-active': draft.agency === a.id }]"
+                :aria-pressed="draft.agency === a.id"
+                @click="setDraftField({ agency: a.id })">{{ a.label }}</button>
+      </div>
+
+      <div class="bulletin-filter-row">
+        <span class="bulletin-filter-label">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          {{ tab.key === 'download' ? '檔案名稱' : '查詢條件' }}
+        </span>
+
+        <div class="th-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="th-input" name="keyword"
+                 :placeholder="searchPlaceholder"
+                 :value="draft.q" @input="setDraftField({ q: $event.target.value })" />
+        </div>
+
+        <!-- 最新消息：發布日期起訖 -->
+        <template v-if="tab.key === 'news'">
+          <span class="bulletin-filter-label bulletin-filter-label--inline">
+            <i class="fa-regular fa-calendar-days"></i>發布日期
+          </span>
+          <input type="date" name="startDate" class="th-input th-input--date"
+                 :value="draft.start" @input="setDraftField({ start: $event.target.value })" />
+          <span class="bulletin-sep">至</span>
+          <input type="date" name="endDate" class="th-input th-input--date"
+                 :value="draft.end" @input="setDraftField({ end: $event.target.value })" />
+        </template>
+
+        <!-- 違規名單：排序 -->
+        <template v-if="tab.key === 'violation'">
+          <span class="bulletin-filter-label bulletin-filter-label--inline">
+            <i class="fa-solid fa-arrow-down-wide-short"></i>排序
+          </span>
+          <select name="sort" class="th-select"
+                  :value="draft.sort" @change="setDraftField({ sort: $event.target.value })">
+            <option value="date_desc">違規或核定日期 新→舊</option>
+            <option value="date_asc">違規或核定日期 舊→新</option>
+          </select>
+        </template>
+
+        <!-- 常見問答：發布類別 -->
+        <template v-if="tab.key === 'faq'">
+          <span class="bulletin-filter-label bulletin-filter-label--inline">
+            <i class="fa-solid fa-tags"></i>發布類別
+          </span>
+          <select name="category" class="th-select"
+                  :value="draft.cat" @change="setDraftField({ cat: $event.target.value })">
+            <option v-for="c in faqCategories" :key="c" :value="c">{{ c === 'all' ? '全部類別' : c }}</option>
+          </select>
+        </template>
+
+        <button type="submit" class="th-btn th-btn-primary">
+          <i class="fa-solid fa-magnifying-glass"></i>查詢
+        </button>
+        <button type="button" class="th-btn th-btn-ghost" @click="resetFilter">
+          <i class="fa-solid fa-rotate-left"></i>重置
+        </button>
+      </div>
+    </form>
+
+    <!-- 筆數列（不再放區塊次標——頁面主標已在上方，四頁籤皆同名） -->
+    <div class="bulletin-section-head">
+      <span class="bulletin-count">
+        共 <strong>{{ filtered.length }}</strong> {{ tab.unit }}<template v-if="totalPages > 1">　｜　第 {{ safePage }} / {{ totalPages }} 頁</template>
+      </span>
+    </div>
+
+    <!--
+      表格的格內容依「頁籤 × 欄位」分派。原 React 是把 render 函式塞進 columns，
+      這裡改走 scoped slot，版面因此留在 HTML（§5 階段 3 第 1 項）。
+    -->
+    <p-news-table :columns="columns" :rows="pageRows" :empty-text="'尚無符合條件的' + tab.label + '資料'">
+      <template #cell="{ row, column }">
+
+        <!-- 四個頁籤都有的發布單位徽章 -->
+        <p-news-agency-badge v-if="column.key === 'org'" :agency-id="row.agencyId" :org="row.org"></p-news-agency-badge>
+
+        <!-- 最新消息 -->
+        <template v-else-if="tab.key === 'news'">
+          <template v-if="column.key === 'date'">{{ dateSlash(row.date) }}</template>
+          <template v-else-if="column.key === 'title'">
+            <button type="button" class="bulletin-link" @click="openModal({
+              title: row.title, org: row.org, agencyId: row.agencyId,
+              meta: '發布日期：' + dateSlash(row.date), body: row.content
+            })">{{ row.title }}</button>
+            <span v-if="row.pinned" class="bulletin-pin">置頂</span>
+          </template>
+        </template>
+
+        <!-- 違規名單 -->
+        <template v-else-if="tab.key === 'violation'">
+          <template v-if="column.key === 'ban'">{{ row.banStart }}<br />{{ row.banEnd }}</template>
+          <span v-else-if="column.key === 'category'" class="bulletin-tag bulletin-tag--warn">{{ row.category }}</span>
+          <template v-else>{{ row[column.key] }}</template>
+        </template>
+
+        <!-- 檔案下載 -->
+        <template v-else-if="tab.key === 'download'">
+          <template v-if="column.key === 'title'"><span>{{ row.title }}</span><a v-for="(f, i) in row.files" :key="i" :href="f.href" target="_blank" rel="noopener noreferrer" :class="'bulletin-file ' + f.format.toLowerCase()"><i :class="fileIcons[f.format] || 'fa-regular fa-file'"></i>{{ f.format }}</a></template>
+        </template>
+
+        <!-- 常見問答 -->
+        <template v-else>
+          <span v-if="column.key === 'cat'" class="bulletin-tag">{{ row.cat }}</span>
+          <button v-else-if="column.key === 'q'" type="button" class="bulletin-link" @click="openModal({
+            title: row.q, org: row.org, agencyId: row.agencyId,
+            meta: '異動日期：' + row.date + '　｜　發布類別：' + row.cat, body: row.a
+          })">{{ row.q }}</button>
+          <template v-else>{{ row[column.key] }}</template>
+        </template>
+      </template>
+    </p-news-table>
+
+    <th-table-pager :page="safePage" :total-pages="totalPages" @change="page = $event"></th-table-pager>
+  </th-page-shell>
+
+  <!--
+    明細彈窗（最新消息全文／常見問答解答）。
+    **刻意不用 th-modal**，三處不同會改變行為或 DOM：
+    (1) 這裡的標題是 h3，th-modal 是 h2
+    (2) 這裡的順序是 徽章 → 標題 → meta，th-modal 是 meta → 標題
+    (3) 這裡沒有 Esc 關閉，th-modal 有——加上去是改行為，不是遷移
+    所以照原樣寫在頁面裡，class 仍是共用的 .bulletin-modal*。
+  -->
+  <div v-if="modalItem" class="bulletin-modal-overlay" @click="modalItem = null">
+    <div class="bulletin-modal" role="dialog" aria-modal="true" @click.stop>
+      <div class="bulletin-modal-head">
+        <div>
+          <p-news-agency-badge :agency-id="modalItem.agencyId" :org="modalItem.org"></p-news-agency-badge>
+          <h3 class="bulletin-modal-title">{{ modalItem.title }}</h3>
+          <div class="bulletin-modal-meta">{{ modalItem.meta }}</div>
+        </div>
+        <button type="button" class="bulletin-modal-close" aria-label="關閉" @click="modalItem = null">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="bulletin-modal-body">{{ modalItem.body }}</div>
+    </div>
+  </div>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>
