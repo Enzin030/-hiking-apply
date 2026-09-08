@@ -2,33 +2,111 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RSS 訂閱 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（rss，輕組）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/rss.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script type="text/babel" src="components/Rss.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
+<div id="th-app">
+
+  <!-- RSS 不屬於主導覽任何一項（正式站放在工具列），故不傳 active，不點亮任何項目 -->
+  <th-header></th-header>
+
+  <th-page-shell
+    :trail="['RSS 訂閱']"
+    title="RSS 訂閱"
+    lead="訂閱本站的 RSS 頻道，各機關的入園公告與異動有更新時，閱讀器會自動通知，不需要每天回來看，也不必留下電子郵件或任何個人資料。"
+    updated="2026-09-03">
+
+    <template #nav>
+      <th-page-nav :items="[
+        { id: 'feeds', label: '可訂閱的頻道' },
+        { id: 'what', label: '何謂 RSS？' },
+        { id: 'how', label: '如何訂閱' }
+      ]"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="feeds">
+      <div class="th-card-head">
+        <i class="fa-solid fa-square-rss"></i>
+        <h2 class="th-card-title">可訂閱的頻道</h2>
+        <span class="th-card-note">{{ feeds.length }} 個頻道</span>
+      </div>
+      <!-- 原 SectionCard flush＋內層再包一個 th-card-body，照原樣保留兩層 -->
+      <div class="th-card-body is-flush">
+        <div class="th-card-body">
+          <th-callout type="warning">目前僅<strong>最新消息</strong>一個頻道有訂閱網址，且該端點實測無法取得內容
+            （見表格內註記）；其餘頻道正式站尚未提供 feed，本頁不編造網址。
+            各頻道的實際供應範圍與更新頻率 <strong>[待確認]</strong>。</th-callout>
+        </div>
+        <!-- 四欄有三欄要輸出元素，走 th-data-table 的 cell scoped slot -->
+        <th-data-table :columns="columns" :rows="feeds" row-key="key" table-class="p-rss-table">
+          <template #cell="{ row, column, value }">
+
+            <span v-if="column.key === 'label'" class="p-rss-channel">
+              <i :class="row.icon"></i>
+              <span>{{ row.label }}</span>
+            </span>
+
+            <template v-else-if="column.key === 'url'">
+              <span v-if="row.todo" class="p-rss-url is-todo">尚未提供<span class="th-todo-tag">待建置</span></span>
+              <template v-else>
+                <p-rss-feed-url :url="row.url"></p-rss-feed-url>
+                <p v-if="row.status === 'maintenance'" class="p-rss-url-note"><i class="fa-solid fa-triangle-exclamation"></i>此端點 2026-09-03 實測回傳「系統維護中」，尚無法取得內容。</p>
+              </template>
+            </template>
+
+            <a v-else-if="column.key === 'page'" class="th-inline-link" :href="row.page">前往<i class="fa-solid fa-angle-right"></i></a>
+
+            <template v-else>{{ value }}</template>
+          </template>
+        </th-data-table>
+      </div>
+    </section>
+
+    <section class="th-card" id="what">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info"></i>
+        <h2 class="th-card-title">何謂 RSS？</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- 定義段落沿用正式站原文，未改寫 -->
+        <p>RSS（Real Simple Syndication）－網頁資料交換技術架構，是一種用來分發和匯集網頁內容的 XML 格式，您可以想像您可以訂閱許多您有興趣的資訊來源，但是不用留下基本資料、電子郵件信箱⋯⋯， 對於 RSS 的訂閱者而言，可以最快的得到最新訊息以及頭條新聞，而不用被動式的去每個網站上去搜索。</p>
+        <p class="th-table-note">本段文字取自正式站 RssWeb.aspx 原文。</p>
+      </div>
+    </section>
+
+    <section class="th-card" id="how">
+      <div class="th-card-head">
+        <i class="fa-solid fa-list-check"></i>
+        <h2 class="th-card-title">如何訂閱</h2>
+      </div>
+      <div class="th-card-body">
+        <th-step-list :steps="steps"></th-step-list>
+        <th-callout>各家閱讀器的操作介面不同，實際新增訂閱的步驟請依所用軟體的說明為準。</th-callout>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>

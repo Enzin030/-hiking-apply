@@ -271,3 +271,126 @@
     padding: 20px 16px;
   }
 }
+
+
+/* ############################################################
+   rss.html（RSS 訂閱，2026-09-08 遷移）
+   ############################################################
+
+   全部單頁專用（grep 確認只有 Rss.jsx 用），依 §6.2 與 markup 同一次提交改名。
+   原本就已是頁面前綴（.rss-*），這裡統一成計畫規定的 .p-<頁名>-* 形式：
+     .rss-url／-text／-note → .p-rss-url／-text／-note
+     .rss-channel → .p-rss-channel      .rss-copy → .p-rss-copy
+     .rss-offscreen → .p-rss-offscreen  .tbl-rss  → .p-rss-table
+   長的先換，否則 .rss-url 會先吃掉 .rss-url-text。
+
+   shared.css 原規則未刪（該檔有使用者未提交的修改），成死規則待階段 4 清。
+   ############################################################ */
+
+.th-table.p-rss-table th:nth-child(1) {
+  width: 156px;
+}
+.th-table.p-rss-table th:nth-child(2) {
+  width: 24%;
+}
+.th-table.p-rss-table th:nth-child(4) {
+  width: 96px;
+}
+.p-rss-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.p-rss-channel i {
+  color: var(--national-700);
+  font-size: 14px;
+}
+.p-rss-url {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.p-rss-url-text {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-sm);
+  color: var(--national-800);
+  word-break: break-all;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.p-rss-url-text:hover {
+  color: var(--national-900);
+}
+.p-rss-copy {
+  flex-shrink: 0;
+}
+.p-rss-url.is-todo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-3);
+}
+.p-rss-url-note {
+  margin: 8px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--warning-fg);
+  line-height: var(--lh-base);
+}
+.p-rss-url-note i {
+  margin-top: 2px;
+}
+.p-rss-offscreen {
+  position: fixed;
+  top: -1000px;
+  left: -1000px;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .th-table.p-rss-table {
+    display: block;
+  }
+  .th-table.p-rss-table thead {
+    display: none;
+  }
+  .th-table.p-rss-table tbody,
+  .th-table.p-rss-table tbody tr {
+    display: block;
+  }
+  .th-table.p-rss-table th:nth-child(1),
+  .th-table.p-rss-table th:nth-child(2),
+  .th-table.p-rss-table th:nth-child(4) {
+    width: auto;
+  }
+  .th-table.p-rss-table tbody tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .th-table.p-rss-table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .th-table.p-rss-table tbody td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+    text-align: left;
+  }
+  .th-table.p-rss-table tbody td+td {
+    margin-top: 10px;
+  }
+  .th-table.p-rss-table tbody td:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--fg-3);
+    letter-spacing: var(--tracking-wide);
+  }
+}
