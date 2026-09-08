@@ -137,3 +137,137 @@
 .p-home-tile-ic--blue {
   color: var(--home-panel-apply);
 }
+
+
+/* ############################################################
+   web_illustrate.html（本站使用說明，2026-09-08 遷移）
+   ############################################################
+
+   全部是單頁專用：grep 確認 .th-faq* 與 .th-page-cta* 只有 WebIllustrate.jsx 用，
+   依 §6.2 與 markup 同一次提交改名為 .p-illustrate-*。
+
+   對照表（長的先換，否則 .th-faq 會先吃掉 .th-faq-link）：
+     .th-faq            → .p-illustrate-faq
+     .th-faq-body       → .p-illustrate-faq-body
+     .th-faq-links      → .p-illustrate-faq-links
+     .th-faq-link       → .p-illustrate-faq-link
+     .th-page-cta       → .p-illustrate-cta
+     .th-page-cta-text  → .p-illustrate-cta-text
+
+   **shared.css 的原規則沒有刪除**：該檔有使用者未提交的修改，無法只暫存我這幾行。
+   改名後原規則成為死規則，等使用者提交後由階段 4 統一清（同 notice 的情況）。
+
+   .th-table-note 未改名也未複製：grep 有四個消費端（ApplySearch／Information6／
+   Rss／WebIllustrate），其中 ApplySearch 尚未遷移 → 依 §4.2 維持原名、原處保留。
+   ############################################################ */
+
+.p-illustrate-faq {
+  display: flex;
+  flex-direction: column;
+}
+.p-illustrate-faq details {
+  border-top: 1px solid var(--slate-100);
+}
+.p-illustrate-faq details:first-child {
+  border-top: none;
+}
+.p-illustrate-faq summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+  transition: color 0.15s ease;
+}
+.p-illustrate-faq summary::-webkit-details-marker {
+  display: none;
+}
+.p-illustrate-faq summary:hover {
+  color: var(--national-700);
+}
+.p-illustrate-faq details[open] summary {
+  color: var(--national-700);
+}
+.p-illustrate-faq summary i {
+  font-size: 13px;
+  color: var(--fg-4);
+  transition: transform 0.25s ease;
+}
+.p-illustrate-faq details[open] summary i {
+  transform: rotate(180deg);
+  color: var(--national-700);
+}
+.p-illustrate-faq-body {
+  padding: 0 24px 18px;
+  color: var(--fg-2);
+  line-height: var(--lh-base);
+  text-align: justify;
+}
+.p-illustrate-faq-body p {
+  margin: 0 0 8px;
+}
+.p-illustrate-faq-body p:last-child {
+  margin-bottom: 0;
+}
+.p-illustrate-faq-body a {
+  color: var(--national-700);
+  font-weight: 500;
+}
+.p-illustrate-faq-body a i {
+  font-size: 11px;
+  margin-left: 5px;
+}
+.p-illustrate-faq-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  margin: 12px 0 0;
+}
+.p-illustrate-faq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  color: var(--national-700);
+}
+.p-illustrate-faq-link.is-todo {
+  color: var(--fg-3);
+  font-weight: 400;
+  cursor: default;
+}
+.p-illustrate-faq-link i {
+  font-size: 11px;
+}
+.p-illustrate-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 24px;
+  padding: 28px 24px;
+  background: var(--bg-mist);
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-xl);
+}
+.p-illustrate-cta-text {
+  margin: 0;
+  color: var(--fg-2);
+}
+
+@media (max-width: 640px) {
+  .p-illustrate-faq summary {
+    padding: 14px 16px;
+  }
+  .p-illustrate-faq-body {
+    padding: 0 16px 16px;
+  }
+  .p-illustrate-cta {
+    padding: 20px 16px;
+  }
+}
