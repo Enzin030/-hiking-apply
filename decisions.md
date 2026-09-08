@@ -78,3 +78,5 @@
 - [2026-09-03] 舊範本 `template/1.html` 移入 `.scratch/frontend-舊雛形/template-1.html`，不直接刪除 — 比照 2026-08-24「舊雛形、簡報產生器、舊規範移入 `.scratch/`」的前例；`.scratch/` 不進版控，git 歷史仍留得住原檔。`template/` 底下只剩 `page.html` ＋ `PageName.jsx`，新頁沒有第二個起手處可選，也就不會再長出分頁 CSS。同時把前一 session 的比對暫存 `f_inline.tmp`／`f_shared.tmp` 移出 `05_Prototype/`（兩者本就在 `.gitignore` 內）。
 - [2026-09-07] **`applySearch.aspx` 與 `apply_3.aspx` 併為單頁 `applySearch.html`** — 原任務卡寫「applySearch 只是轉導頁」，實抓正式站後確認並非如此：它是「請選擇操作方式」的四選一入口，四顆按鈕分別連 `apply_3`（進度查詢）／`apply_2`（異動及取消）／`apply_4`（線上繳費）／`apply_5`（線上退費），`apply_3` 才是查詢表單頁。取捨在「新頁檔名比照舊站 aspx」與本卡「不另做一張」之間，經使用者裁決採單頁：入口四張卡照舊站呈現，「申請進度查詢」就地展開表單與結果區，另三項出待建置標記等各自的卡接上。頁內標題採導覽列名稱「申請進度查詢／繳費／異動／取消」。
 - [2026-09-07] **`apply_5.aspx`（國家公園線上退費）目前沒有對應任務卡** — 前台缺口盤點把繳費與退費併在「繳費與退費查詢頁」（`apply_4`）一張卡，但正式站是兩支獨立頁面、兩個入口按鈕。退費頁的規格歸屬待決定：併入 `apply_4` 那張卡，或另開一張。
+- [2026-09-08] `--home-panel-edu`／`--home-panel-apply` 列為將來收斂 tokens 的候選 — 這兩個是首頁雙卡片面板標頭的單點專用色（原本寫死在 Index.jsx 的 inline style），為了同時滿足「§7 禁 inline style」與「§6.1.1 禁 pages.css 出現 hex」才收成 token；它們不屬於既有色階，全站只有首頁兩處使用
+- [2026-09-08] 複製 CSS 前先確認規則存在於 HEAD — 階段 3.0b 曾把使用者當時未提交的 `.th-expcard` 修改複製進 `components.css` 並提交，造成「定版複製 vs 未提交原檔」的分裂；已撤除，規則寫入 v4 §6.4.2

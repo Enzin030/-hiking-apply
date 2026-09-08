@@ -15,11 +15,9 @@
    目前刻意留空：階段 1.2 只建立落點，不搬既有樣式。
    階段 2 建立的五支共用元件外觀一律寫進本檔，不得臨時寫在別處待日後搬移。
    ============================================================ */
-
 /* ============================================================
    th-header
    ============================================================ */
-
 /*
   頂欄陰影。
 
@@ -42,11 +40,9 @@
 .th-header-bar {
   box-shadow: var(--sh-header);
 }
-
 /* ============================================================
    th-date-picker
    ============================================================ */
-
 /*
   欄位錯誤訊息。shared.css 只有 .th-field-hint（灰字說明），沒有錯誤色，
   所以這是階段 2／3.0 唯一「真正新增的元件外觀」——依 §6.1 落在本檔，
@@ -58,8 +54,6 @@
 .th-field-error {
   color: var(--danger-fg);
 }
-
-
 /* ============================================================
    th-doc — 詳細須知頁的長文排版（th-doc.js 那組元件的外觀）
    ------------------------------------------------------------
@@ -87,17 +81,14 @@
    內容逐字複製，未做任何調整——階段 3 的驗收是外觀不變
    （已驗：notice_a1 全頁 1440x9135 像素與 React 版完全相同）。
    ============================================================ */
-
 /* ============ 詳細須知頁 — 長文排版 ============
    內容逐字取自正式站，這裡只處理可讀性：段落間距、條列懸掛縮排、子標題區隔。 */
 .th-doc-block {
   margin: 0 0 16px;
 }
-
 .th-doc-block:last-child {
   margin-bottom: 0;
 }
-
 .th-doc-h {
   margin: 0 0 8px;
   font-size: var(--fs-md);
@@ -105,29 +96,24 @@
   color: var(--fg-1);
   line-height: var(--lh-snug);
 }
-
 .th-doc-line {
   margin: 0 0 6px;
   color: var(--fg-2);
   line-height: 1.75;
 }
-
 .th-doc-line:last-child {
   margin-bottom: 0;
 }
-
 /* 條列行（1. / (1) / （一）／一、）縮排，讓編號對齊、續行不吃到編號位置 */
 .th-doc-line.is-item {
   padding-left: 20px;
   text-indent: -20px;
 }
-
 .th-doc-note {
   margin: 8px 0 0;
   font-size: var(--fs-sm);
   color: var(--fg-3);
 }
-
 /* 內文連結：品牌 sage（--national-700 #587a68）與內文灰藍（--fg-2 #475569）明度太接近，
    長文裡看不出是連結；改用同色系但更深更飽和的 --national-800（#166534），
    並加粗、拉開底線間距。不用藍色，避免與整站綠色調衝突。 */
@@ -144,7 +130,6 @@
   border-radius: var(--r-xs);
   transition: background 0.12s, text-decoration-color 0.12s;
 }
-
 .th-doc-block a:hover,
 .th-doc-note a:hover,
 .th-callout a:hover {
@@ -153,7 +138,6 @@
   text-decoration-color: var(--national-800);
   box-shadow: 0 0 0 2px var(--national-50);
 }
-
 /* 表格內的連結不加背景，避免撐開儲存格 */
 .th-table a {
   color: var(--national-800);
@@ -161,29 +145,24 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-
 /* 步道分級表這類寬表：字級縮一級，欄寬交給 .th-table-wrap 內部捲動 */
 .th-table.th-table-compact {
   font-size: var(--fs-sm);
 }
-
 .th-table.th-table-compact th,
 .th-table.th-table-compact td {
   padding: 8px 12px;
 }
-
 /* 群組表格：第一欄只在群組首列有字，用留白呈現正式站的 rowspan 合併效果 */
 .th-table.th-table-grouped td:first-child {
   color: var(--fg-1);
   font-weight: 500;
 }
-
 /* 頁尾返回鍵，對應正式站底部的「返回」 */
 .th-doc-back {
   display: flex;
   justify-content: center;
 }
-
 .th-linkrow-back {
   display: inline-flex;
   align-items: center;
@@ -196,12 +175,10 @@
   font-size: var(--fs-md);
   text-decoration: none;
 }
-
 .th-linkrow-back:hover {
   border-color: var(--national-700);
   color: var(--national-700);
 }
-
 /* 條列（正式站的 <ol>/<ul>）— 編號靠外，續行對齊文字 */
 /* Tailwind preflight 會把 ol/ul 的 list-style 清掉，這裡明確加回來，
    否則正式站原本有的編號與項目符號會整個消失 */
@@ -209,39 +186,30 @@
   margin: 0 0 16px;
   padding-left: 24px;
 }
-
 ol.th-doc-list {
   list-style: decimal;
 }
-
 ul.th-doc-list {
   list-style: disc;
 }
-
 .th-doc-list:last-child {
   margin-bottom: 0;
 }
-
 .th-doc-list>li {
   margin-bottom: 10px;
   color: var(--fg-2);
   line-height: 1.75;
 }
-
 .th-doc-list>li:last-child {
   margin-bottom: 0;
 }
-
 .th-doc-list>li::marker {
   color: var(--fg-3);
   font-weight: 500;
 }
-
 .th-doc-list .th-doc-line {
   margin-bottom: 2px;
 }
-
-
 /* ############################################################
    階段 3.0b — 已元件化元件所擁有的 CSS（2026-09-07 一次性複製）
    ############################################################
@@ -306,7 +274,6 @@ ul.th-doc-list {
    內容逐字複製，除上述 url() 路徑外未做任何調整。@media 內的規則連同其
    media 條件一起複製（§6.1.1「響應式規則不得拆散」）。
    ############################################################ */
-
 /* ------------------------------------------------------------
    th-todo-link
    ------------------------------------------------------------ */
@@ -341,7 +308,6 @@ ul.th-doc-list {
   font-size: 9px;
   padding: 0 3px;
 }
-
 /* ------------------------------------------------------------
    th-breadcrumb
    ------------------------------------------------------------ */
@@ -370,13 +336,11 @@ ul.th-doc-list {
   color: var(--fg-1);
   font-weight: 500;
 }
-
 @media (max-width: 900px) {
   .th-crumb {
     padding: 12px 16px;
   }
 }
-
 /* ------------------------------------------------------------
    th-stepper
    ------------------------------------------------------------ */
@@ -471,19 +435,16 @@ ul.th-doc-list {
 .th-step.is-done .lbl-title {
   color: var(--slate-600);
 }
-
 @media (max-width: 900px) {
   .th-stepper {
     padding: 16px 16px;
   }
 }
-
 @media (max-width: 600px) {
   .th-stepper {
     padding: 14px 12px;
   }
 }
-
 /* ------------------------------------------------------------
    th-page-nav
    ------------------------------------------------------------ */
@@ -517,13 +478,11 @@ ul.th-doc-list {
 .th-pagenav a:hover {
   color: var(--national-700);
 }
-
 @media (max-width: 1023px) {
   .th-pagenav {
     display: none;
   }
 }
-
 /* ------------------------------------------------------------
    th-page-shell
    ------------------------------------------------------------ */
@@ -589,13 +548,11 @@ ul.th-doc-list {
   margin: 0;
   color: var(--fg-2);
 }
-
 @media (max-width: 1023px) {
   .th-page-body.has-nav {
     display: block;
   }
 }
-
 @media (max-width: 900px) {
   .th-page-title {
     font-size: 22px;
@@ -604,7 +561,6 @@ ul.th-doc-list {
     padding: 0 16px;
   }
 }
-
 @media (max-width: 640px) {
   .th-page-body.has-nav {
     gap: 20px;
@@ -613,7 +569,6 @@ ul.th-doc-list {
     padding: 20px 16px;
   }
 }
-
 /* ------------------------------------------------------------
    th-header（選單面板與語言下拉）
    ------------------------------------------------------------ */
@@ -809,7 +764,6 @@ ul.th-doc-list {
 body.th-noscroll {
   overflow: hidden;
 }
-
 /* ------------------------------------------------------------
    th-quick-nav
    ------------------------------------------------------------ */
@@ -972,169 +926,6 @@ body.th-noscroll {
 .th-expnav-grid::before {
   display: none;
 }
-.th-expcard {
-  position: relative;
-  background: var(--bg-1);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-sm);
-  padding: 20px 18px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.th-expcard-step {
-  display: none;
-}
-.th-expcard:not(:first-child)::before {
-  display: none;
-}
-.th-expcard-head {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 6px;
-}
-.th-expcard-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--r-pill);
-  background: var(--bg-mist-2);
-  color: var(--national-700);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  flex-shrink: 0;
-}
-.th-expcard-title {
-  font-size: var(--fs-md);
-  font-weight: 700;
-  color: var(--fg-1);
-  line-height: var(--lh-snug);
-}
-.th-expcard-sub {
-  font-size: var(--fs-xxs);
-  color: var(--fg-3);
-}
-.th-expcard ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.th-expcard li {
-  font-size: var(--fs-sm);
-  line-height: var(--lh-snug);
-}
-.th-expcard a,
-.th-expcard .is-todo {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-  color: var(--fg-2);
-}
-.th-expcard a::before,
-.th-expcard .is-todo::before,
-.th-expcard-grouptitle::before {
-  content: "•";
-  color: var(--national-800);
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 1;
-  margin-right: 4px;
-  flex-shrink: 0;
-}
-.th-expcard .is-todo::before {
-  color: var(--slate-400);
-}
-.th-expcard a:hover::before {
-  color: var(--national-900);
-}
-.th-expcard a.is-external,
-.th-expcard ul.th-expcard-nested a.is-external {
-  color: var(--national-800) !important;
-  font-weight: 400 !important;
-  text-decoration: underline !important;
-  text-underline-offset: 3px !important;
-  text-decoration-color: var(--national-800) !important;
-}
-.th-expcard a.is-external:hover,
-.th-expcard ul.th-expcard-nested a.is-external:hover {
-  color: var(--national-900) !important;
-  text-decoration-color: var(--national-900) !important;
-}
-.th-expcard a.is-external::before,
-.th-expcard ul.th-expcard-nested a.is-external::before,
-.th-expcard .is-todo.is-external::before,
-.th-expcard ul.th-expcard-nested .is-todo.is-external::before {
-  content: none !important;
-  display: none !important;
-}
-.th-expcard a.is-external i,
-.th-expcard .is-todo.is-external i,
-.th-expcard a i.fa-arrow-up-right-from-square,
-.th-expcard .is-todo i.fa-arrow-up-right-from-square {
-  display: inline-block !important;
-  text-decoration: none !important;
-  font-size: 11px !important;
-  color: inherit !important;
-  margin-right: 7px !important;
-  margin-left: 0 !important;
-  flex-shrink: 0 !important;
-}
-.th-expcard ul.th-expcard-nested a:not(.is-external)::before,
-.th-expcard ul.th-expcard-nested .is-todo:not(.is-external)::before {
-  content: "◦" !important;
-  color: var(--national-800);
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 1;
-  margin-right: 4px;
-  flex-shrink: 0;
-}
-.th-expcard .is-todo {
-  color: var(--fg-4);
-  cursor: default;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.th-expcard .is-todo::after {
-  content: "待建置";
-  font-size: 10px;
-  color: var(--fg-4);
-  background: var(--slate-100);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-xs);
-  padding: 0 4px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-.th-expcard-group {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.th-expcard-grouptitle {
-  font-size: var(--fs-sm);
-  font-weight: 400;
-  color: var(--fg-1);
-  display: flex;
-  align-items: baseline;
-}
-.th-expcard ul.th-expcard-nested {
-  padding-left: 20px !important;
-  border-left: none;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  margin-top: 4px;
-}
-
 @media (max-width: 640px) {
   .th-quickbtn {
     right: 16px;
@@ -1156,7 +947,6 @@ body.th-noscroll {
     grid-template-columns: 1fr;
   }
 }
-
 @media (max-width: 768px) {
   .th-quick-steps {
     grid-template-columns: repeat(2, 1fr);
@@ -1173,17 +963,11 @@ body.th-noscroll {
     font-size: 22px;
   }
 }
-
 @media (max-width: 1024px) {
   .th-expnav-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .th-expnav-grid::before,
-  .th-expcard:not(:first-child)::before {
-    display: none;
-  }
 }
-
 /* ------------------------------------------------------------
    th-modal
    ------------------------------------------------------------ */
@@ -1249,7 +1033,6 @@ body.th-noscroll {
   line-height: var(--lh-loose);
   white-space: pre-line;
 }
-
 /* ------------------------------------------------------------
    th-data-table
    ------------------------------------------------------------ */
@@ -1356,7 +1139,6 @@ body.th-noscroll {
 .th-table.tbl-rss th:nth-child(4) {
   width: 96px;
 }
-
 @media (max-width: 768px) {
   .th-table--zebra thead {
     display: none;
@@ -1398,7 +1180,6 @@ body.th-noscroll {
     color: var(--fg-3);
   }
 }
-
 @media (max-width: 640px) {
   .th-table th,
   .th-table td {
@@ -1486,7 +1267,6 @@ body.th-noscroll {
     letter-spacing: var(--tracking-wide);
   }
 }
-
 /* ------------------------------------------------------------
    th-date-picker
    ------------------------------------------------------------ */
@@ -1562,7 +1342,6 @@ body.th-noscroll {
 .th-search .th-input {
   padding-left: 42px;
 }
-
 @media (max-width: 768px) {
   .th-select,
   .th-input--date {
@@ -1570,7 +1349,6 @@ body.th-noscroll {
     width: 100%;
   }
 }
-
 /* ------------------------------------------------------------
    th-calendar-grid
    ------------------------------------------------------------ */
@@ -1668,7 +1446,6 @@ body.th-noscroll {
   outline: 2px solid var(--national-700);
   outline-offset: -2px;
 }
-
 @media (max-width: 768px) {
   .camp-cal-cell {
     min-height: 68px;
@@ -1692,7 +1469,6 @@ body.th-noscroll {
     display: none;
   }
 }
-
 /* ------------------------------------------------------------
    th-fc-stepper
    ------------------------------------------------------------ */
@@ -1766,7 +1542,6 @@ body.th-noscroll {
 .fc-step.is-done .fc-step-label {
   color: var(--slate-600);
 }
-
 /* ------------------------------------------------------------
    th-card（區塊卡片，markup 在頁面）
    ------------------------------------------------------------ */
@@ -1816,7 +1591,6 @@ body.th-noscroll {
 .th-card-body>.th-callout {
   margin-bottom: 16px;
 }
-
 @media (max-width: 640px) {
   .th-card-body {
     padding: 16px;
@@ -1830,8 +1604,6 @@ body.th-noscroll {
     width: 100%;
   }
 }
-
-
 /* ############################################################
    階段 3（四頁零互動）— 補三支元件所擁有的 CSS
    ############################################################
@@ -1844,7 +1616,6 @@ body.th-noscroll {
    同樣是**複製**，shared.css 原處全部保留（§4.2）——還有頁面在用。
    已檢查本批無 url()，不涉第四類靜默失敗（相對路徑）。
    ############################################################ */
-
 /* ------------------------------------------------------------
    th-link-list
    ------------------------------------------------------------ */
@@ -1917,7 +1688,6 @@ a.th-linkrow:hover .th-linkrow-icon {
   padding: 1px 7px;
   letter-spacing: var(--tracking-wide);
 }
-
 /* ------------------------------------------------------------
    th-step-list
    ------------------------------------------------------------ */
@@ -2021,7 +1791,6 @@ a.th-linkrow:hover .th-linkrow-icon {
   margin-bottom: 8px;
   color: var(--slate-300);
 }
-
 /* ------------------------------------------------------------
    th-callout
    ------------------------------------------------------------ */
@@ -2058,9 +1827,26 @@ a.th-linkrow:hover .th-linkrow-icon {
   font-size: var(--fs-xxs);
   color: var(--fg-3);
 }
-
 @media (max-width: 640px) {
   .th-callout {
     padding: 14px;
   }
 }
+
+/* ############################################################
+   .th-expcard* 已於 2026-09-08 撤除（使用者裁決）
+   ############################################################
+
+   階段 3.0b 複製 th-quick-nav 的 CSS 時，一併把**使用者當時未提交**的
+   .th-expcard 修改（4 條選擇器、6 條含 !important）複製了進來並提交。
+   HEAD 的 shared.css 沒有那些規則，工作樹才有。
+
+   留著會造成分裂：components.css 有一份定版複製、shared.css 那份還沒提交，
+   改一邊另一邊不動且不報錯（已遷移頁由 components.css 勝出）。
+   故整個 .th-expcard* 區塊撤除，快捷選單的外觀暫時全部由 shared.css 提供
+   （已遷移頁仍載入 shared.css，外觀不變——已像素驗證）。
+   **等使用者提交那份修改後再複製回來。**
+
+   由此得到的一般規則（v4 §6.4.2 已載明）：
+   **複製任何規則前先確認它存在於 HEAD；只在工作樹裡的跳過並回報。**
+   ############################################################ */
