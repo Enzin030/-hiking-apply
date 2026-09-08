@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-08：該頁已遷移為 Vue（notice_a1–a10／b1–b7（17 頁）＋ components/notice-detail.js），本檔已無任何
+// <script> 引用，請勿編輯。實際刪除排在階段 4——階段 3 剩餘頁面
+// 仍需對照 Shared.jsx，故舊 JSX 一併保留到階段 3 結束。
 /*
   詳細須知頁共用 renderer（17 張子頁共用）。
   內容來自 NoticeDetailData.jsx，本檔只負責版面；新增第 2～17 頁時只需加資料，不改本檔。

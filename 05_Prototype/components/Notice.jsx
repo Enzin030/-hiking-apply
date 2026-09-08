@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-08：該頁已遷移為 Vue（notice.html ＋ components/notice.js），本檔已無任何
+// <script> 引用，請勿編輯。實際刪除排在階段 4——階段 3 剩餘頁面
+// 仍需對照 Shared.jsx，故舊 JSX 一併保留到階段 3 結束。
 /*
   登山須知
   內容來源：正式站 https://service.skyeyes.tw/hikenationpark/notice.aspx（逐字）

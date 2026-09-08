@@ -50,6 +50,7 @@
        這是計畫分類法沒涵蓋的第三種情況（跨頁共用但無元件擁有者），已回報。
    ############################################################ */
 
+/* §6.6 白名單：兩頁共用（notice ＋ 尚未遷移的 applySearch），改名會弄壞後者 */
 .th-notice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
@@ -287,6 +288,7 @@
    shared.css 原規則未刪（該檔有使用者未提交的修改），成死規則待階段 4 清。
    ############################################################ */
 
+/* §6.6 白名單：.th-table 是多選擇器規則帶入的（§6.4.2b），不是本頁自造 */
 .th-table.p-rss-table th:nth-child(1) {
   width: 156px;
 }
@@ -1161,6 +1163,7 @@
   border-color: var(--national-700-hover);
   color: var(--fg-on-dark);
 }
+/* §6.6 白名單：這是頁面對 th-todo-link 元件的覆寫，元件名必須留著才選得到 */
 .p-open-act.th-todo-link:hover {
   border-color: var(--slate-200);
   color: var(--fg-4);

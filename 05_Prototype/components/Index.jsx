@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-08：該頁已遷移為 Vue（index.html ＋ components/index-page.js），本檔已無任何
+// <script> 引用，請勿編輯。實際刪除排在階段 4——階段 3 剩餘頁面
+// 仍需對照 Shared.jsx，故舊 JSX 一併保留到階段 3 結束。
 /* 首頁 Index — 資訊與申請並重版型（115 改版）
    2026-09-03 版面統一：本檔原是 index.html 內嵌的 <script type="text/babel">，
    同名的舊 components/Index.jsx 沒有任何頁面引用、內容也已過期，一併由本檔取代。
