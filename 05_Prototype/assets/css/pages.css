@@ -99,3 +99,41 @@
     justify-content: center;
   }
 }
+
+
+/* ############################################################
+   index.html（首頁，2026-09-08 遷移）
+   ############################################################
+
+   這幾條是把原 Index.jsx 的 **inline style** 搬出來（§7 禁止 inline style）：
+     PanelHead  style={{ background: color }}                 → .p-home-panelhead--edu／--apply
+     PanelHead  style={{ fontFamily, letterSpacing }}         → .p-home-panelhead-title
+     IconTile   style={{ color: accent }}                     → .p-home-tile-ic--green／--blue
+
+   色值收成 tokens（--home-panel-edu／--home-panel-apply），理由見 tokens.css：
+   §6.1.1 禁止 pages.css 出現 hex 字面值。左側圓鈕的 accent 原本就是
+   #587a68＝--national-700，直接用既有 token。
+
+   都是首頁專用，grep 確認無其他頁面使用，故放 pages.css 並以 .p-home-* 命名（§6.2）。
+   ############################################################ */
+
+.p-home-panelhead--edu {
+  background: var(--home-panel-edu);
+}
+
+.p-home-panelhead--apply {
+  background: var(--home-panel-apply);
+}
+
+.p-home-panelhead-title {
+  font-family: var(--font-sans);
+  letter-spacing: 0.15em;
+}
+
+.p-home-tile-ic--green {
+  color: var(--national-700);
+}
+
+.p-home-tile-ic--blue {
+  color: var(--home-panel-apply);
+}

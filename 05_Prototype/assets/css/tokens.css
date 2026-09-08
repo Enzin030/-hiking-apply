@@ -104,6 +104,18 @@
   --park-police:    #5a6e7a;   /* 警政署 */
 
   /* --------------------------------------------------------
+     2026-09-08（遷移首頁）新增：首頁雙卡片的面板標頭底色。
+     來源是 Index.jsx 寫死在 inline style 的 #2d4b3e 與 #35484d
+     （PanelHead 的 color prop）。§7 禁 inline style、§6.1.1 禁 pages.css
+     出現 hex 字面值，兩條合起來就必須收成 token。
+     --home-panel-apply 同時是右側圓鈕圖示的 accent（原值相同）；
+     左側圓鈕的 accent #587a68 已有 --national-700，不另加。
+     只加在 tokens.css，不動 design_system（32 頁未遷移頁靠它）。
+  -------------------------------------------------------- */
+  --home-panel-edu:   #2d4b3e;
+  --home-panel-apply: #35484d;
+
+  /* --------------------------------------------------------
      TYPE — Noto family, the de-facto Traditional-Chinese
      gov / civic stack. Serif headings, sans body.
   -------------------------------------------------------- */
