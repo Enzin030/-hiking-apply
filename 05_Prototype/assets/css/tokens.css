@@ -93,6 +93,23 @@
   --danger-fg-hover: #b91c1c;
 
   /* --------------------------------------------------------
+     2026-09-08（遷移 apply-1）新增四個。前三個是**補完既有的
+     bg／fg／border 三件組**——success 與 warning 本來就有 border，
+     info／danger 缺，而 apply-1 的狀態徽章與膠囊需要：
+  -------------------------------------------------------- */
+  --danger-bg: #fef2f2;             /* 暫停／熱門徽章底色 */
+  --danger-border: #fecaca;         /* 暫停膠囊框線 */
+  --warning-border: #fde68a;        /* 抽籤膠囊框線 */
+
+  /* 深色遮罩。同一組色（--slate-900 = rgb(15,23,42)）另有 0.55 的用法在
+     shared.css 的 .bulletin-modal-overlay，兩個 alpha 不同，故分開命名。
+     值為 rgba 是刻意的：tokens.css 是變數宣告檔，§6.1.1 的「禁 hex/rgb」
+     限制的是 pages.css。 */
+  --scrim: rgba(15, 23, 42, 0.55);        /* 一般彈窗遮罩，與 shared.css 的
+                                             .bulletin-modal-overlay 同值 */
+  --scrim-strong: rgba(15, 23, 42, .82);  /* 圖片上的難度徽章底 */
+
+  /* --------------------------------------------------------
      PARK-PROCESS COLOR CODES
      (used on bulletin tags — green by default, but each
       managing agency could be color-coded here)
@@ -149,6 +166,8 @@
   -------------------------------------------------------- */
   --fs-nav: 16px;       /* 主導覽字級。**不可改大**：六個項目加三個「待建置」
                            標記後，18px 在 1280 容器內塞不下同一行 */
+  --fs-2xs: 11px;       /* apply-1 的篩選計數徽章。原本寫死在 inline style，
+                           既有階梯 xxs=12、3xs=10 都不是 11，而外觀不得改變 */
   --fs-3xs: 10px;       /* 下拉箭頭等小圖示 */
 
   /* line height + tracking */

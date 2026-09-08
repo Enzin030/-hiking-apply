@@ -51,8 +51,103 @@
   預留給未來的卡控（計畫 §6.4 提到的 th-form-field 統一出口）。
   顏色取 tokens 的 --danger-fg，不新增色票。
 */
-.th-field-error {
+/* 依 shared.css 原順序重新複製整個 input 家族——見下方註解 */
+.th-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.th-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.th-label .req {
   color: var(--danger-fg);
+  margin-right: 2px;
+}
+.th-label-en {
+  font-weight: 500;
+  color: var(--fg-3);
+  font-size: var(--fs-xxs);
+  margin-left: 4px;
+}
+.th-field-hint {
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+}
+.th-input,
+.th-select,
+.th-textarea {
+  min-height: 42px;
+  padding: 9px 12px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.th-input,
+.th-textarea {
+  width: 100%;
+}
+.th-select {
+  padding-right: 32px;
+}
+.th-field .th-select {
+  width: 100%;
+}
+.th-input:hover,
+.th-select:hover {
+  border-color: var(--slate-400);
+}
+.th-input:focus,
+.th-select:focus,
+.th-textarea:focus {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+.th-input::placeholder,
+.th-textarea::placeholder {
+  color: var(--fg-4);
+}
+.th-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.th-input-readonly {
+  display: flex;
+  align-items: center;
+  background: var(--bg-2);
+  color: var(--fg-3);
+  cursor: default;
+  user-select: none;
+}
+.th-input-group {
+  position: relative;
+}
+.th-input-group .icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg-4);
+  font-size: 14px;
+  pointer-events: none;
+}
+.th-input-group .th-input {
+  padding-left: 36px;
+}
+.th-input--date {
+  flex: 0 0 auto;
+  width: 165px;
 }
 /* ============================================================
    th-doc — 詳細須知頁的長文排版（th-doc.js 那組元件的外觀）
@@ -1270,75 +1365,6 @@ body.th-noscroll {
 /* ------------------------------------------------------------
    th-date-picker
    ------------------------------------------------------------ */
-.th-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-.th-label {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--fg-2);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.th-label .req {
-  color: var(--danger-fg);
-  margin-right: 2px;
-}
-.th-field-hint {
-  font-size: var(--fs-xxs);
-  color: var(--fg-3);
-}
-.th-input,
-.th-select,
-.th-textarea {
-  min-height: 42px;
-  padding: 9px 12px;
-  background: var(--bg-1);
-  border: 1px solid var(--slate-300);
-  border-radius: var(--r-md);
-  font-family: inherit;
-  font-size: var(--fs-sm);
-  color: var(--fg-1);
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.th-input,
-.th-textarea {
-  width: 100%;
-}
-.th-field .th-select {
-  width: 100%;
-}
-.th-input:hover,
-.th-select:hover {
-  border-color: var(--slate-400);
-}
-.th-input:focus,
-.th-select:focus,
-.th-textarea:focus {
-  border-color: var(--national-700);
-  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
-}
-.th-input::placeholder,
-.th-textarea::placeholder {
-  color: var(--fg-4);
-}
-.th-input-readonly {
-  display: flex;
-  align-items: center;
-  background: var(--bg-2);
-  color: var(--fg-3);
-  cursor: default;
-  user-select: none;
-}
-.th-input--date {
-  flex: 0 0 auto;
-  width: 165px;
-}
 .th-search .th-input {
   padding-left: 42px;
 }
@@ -1832,7 +1858,6 @@ a.th-linkrow:hover .th-linkrow-icon {
     padding: 14px;
   }
 }
-
 /* ############################################################
    .th-expcard* 已於 2026-09-08 撤除（使用者裁決）
    ############################################################
@@ -1849,4 +1874,26 @@ a.th-linkrow:hover .th-linkrow-icon {
 
    由此得到的一般規則（v4 §6.4.2 已載明）：
    **複製任何規則前先確認它存在於 HEAD；只在工作樹裡的跳過並回報。**
+   ############################################################ */
+
+/* ############################################################
+   input 家族的順序修正（2026-09-08，遷移 apply-1 時發現）
+   ############################################################
+
+   **踩到的坑**：階段 3.0b 複製 th-date-picker 擁有的 .th-input 時，命中的是
+   shared.css 的**多選擇器規則** `.th-input, .th-select, .th-textarea`，
+   於是連 .th-select／.th-textarea 的基礎樣式一起搬了過來。
+   但 shared.css 裡**更後面**還有 `.th-select { padding-right: 32px }`，那條沒被複製。
+
+   後果：index.css 晚於 shared.css → 複製過來的多選擇器規則（含 padding: 9px 12px）
+   位置變成最後，把 shared.css 那條 padding-right: 32px 蓋掉。
+   apply-1 的排序下拉因此少了右側 20px 的箭頭空間（192px → 172px），
+   **而且不會報錯**。
+
+   **修正方式**：把 shared.css 的整個 input 家族**依原順序**重新複製一次，
+   不再只挑自己「擁有」的那幾條。
+
+   **一般規則**：複製多選擇器規則時，必須連同 shared.css 裡**後面所有針對其中
+   任一選擇器的細化規則**一起複製，否則兩者的先後會反轉。
+   稽核腳本見 scratchpad/audit_copy.py（可重跑）。
    ############################################################ */
