@@ -2,34 +2,93 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>檜谷山莊山屋與營地收費基準 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（notice_b4）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）：
+    1. Tailwind CDN
+    2. tailwind.config.js
+    3. shared.css   ← 先
+    4. index.css    ← 後
+
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）：
+  依 §4.2，共用規則是「複製到 components.css、shared.css 原規則保留」，
+  兩邊同名時後者勝。順序倒過來的話改 components.css 永遠沒效果，而且不報錯。
+
+  本頁仍需要 shared.css：.th-doc-*／.th-card／.th-crumb 等規則還有其他 16 頁
+  在用，依 §4.2 要等最後一個消費端遷完才能搬走。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/notice-detail.js"></script>
 </head>
 <body>
-<div id="root" data-notice="b4"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
+
+<!--
+  掛載契約（assets/app-boot.js 檔頭的六條）：
+  - 容器 id 固定 #th-app，包住全頁內容
+  - 已遷移頁**不留 #root**（React 已從本頁移除）
+  - 逐頁參數沿用原本的慣例：原本是 <div id="root" data-notice="b4">，
+    由 NoticeDetail.jsx 讀 rootEl.dataset.notice；現在改由 app-boot 讀出
+    容器的 data-*，以 $page 提供給所有元件（此處是 $page.notice）
+  - class 承接原本 NoticeDetailApp 最外層那個 <div>（原本沒有 class，
+    這裡也不加，維持外觀不變）
+-->
+<div id="th-app" data-notice="b4">
+
+  <!-- 契約：th-header／th-footer 置於 th-page-shell 之外 -->
+  <th-header active="notice"></th-header>
+
+  <!-- 正式站未標更新日期，這裡不填 updated，避免捏造（照原 JSX 的註解） -->
+  <th-page-shell :trail="['登山須知', data.title]" :title="data.title">
+
+    <!-- 只有一個區塊的頁面（如 notice_a2）不需要頁內目錄，故 v-if -->
+    <template #nav v-if="hasNav">
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!--
+      區塊卡片。原本是 Shared.jsx 的 <SectionCard>，是三層固定 markup，
+      屬於「該頁版面」，所以依 §5 階段 3 第 1 項搬回 HTML，不做成元件。
+      文件內容的遞迴渲染留在 th-doc-body（17 頁共用，見 assets/components/th-doc.js）。
+    -->
+    <section v-for="(b, i) in data.blocks" :key="i" class="th-card" :id="'blk' + (i + 1)">
+      <div v-if="b.title" class="th-card-head">
+        <h2 class="th-card-title">{{ b.title }}</h2>
+      </div>
+      <div class="th-card-body">
+        <th-doc-body :body="b.body"></th-doc-body>
+      </div>
+    </section>
+
+    <!-- 對應正式站頁尾的「返回」按鈕 -->
+    <div class="th-doc-back">
+      <a class="th-linkrow-back" href="notice.html">
+        <i class="fa-solid fa-angle-left"></i>返回登山須知
+      </a>
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!--
+  資料檔：階段 0 已改為一般 <script>（window.NOTICE_DETAILS），不經 Babel。
+  放在 body 底部、page-init 之前，載入順序由文件順序保證。
+-->
 <script src="components/NoticeDetailData.js"></script>
-<script type="text/babel" src="components/NoticeDetail.jsx"></script>
+
+<!--
+  本頁已無 React／Babel（§5 階段 3 第 7 項）。
+  其餘 16 頁公告仍是舊寫法，本次不動——一頁一次提交。
+-->
 </body>
 </html>
