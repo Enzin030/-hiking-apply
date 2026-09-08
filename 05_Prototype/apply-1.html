@@ -24,7 +24,7 @@
 <body>
 
 <!-- 掛載契約見 assets/app-boot.js。data-screen-label 沿用原 JSX 最外層的屬性 -->
-<div id="th-app" data-screen-label="01 路線選擇">
+<div id="th-app" v-cloak data-screen-label="01 路線選擇">
 
   <!-- 原 JSX 把 SuspendedModal 放在最前面，順序照原樣 -->
   <p-apply1-suspend-modal :route="suspendedRoute" @close="suspendedRoute = null"></p-apply1-suspend-modal>

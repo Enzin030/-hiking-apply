@@ -31,7 +31,7 @@
   - data-* 由 app-boot 讀出後以 $page 提供（此處示範 data-demo）
   - 版面寫在 HTML 裡（in-DOM template），不進 JS 字串
 -->
-<div id="th-app" class="bg-white text-slate-800 antialiased" data-demo="a1">
+<div id="th-app" v-cloak class="bg-white text-slate-800 antialiased" data-demo="a1">
   <section class="th-page-inner" style="padding:24px">
     <h2 class="text-2xl font-bold">Vue 島：{{ title }}</h2>
     <p class="text-sm text-slate-500">
