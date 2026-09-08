@@ -2,35 +2,218 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>登山路線開放狀態 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（open，中組）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+
+  兩個彈窗改用共用的 th-modal（DOM 同構），理由與 Esc 的語意對照寫在
+  components/open.js 檔頭。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/open.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js。class 沿用原 JSX 最外層 -->
+<div id="th-app" class="bg-white min-h-screen text-slate-800 antialiased">
+
+  <th-header active="status"></th-header>
+
+  <!-- bare：版面自帶結構，不要 th-page-main 的 flex 包裝 -->
+  <th-page-shell :trail="['登山路線開放狀態']" title="登山路線開放狀態" :bare="true">
+
+    <form class="bulletin-card" @submit.prevent="submit">
+      <div class="bulletin-filter-row">
+        <span class="bulletin-filter-label">
+          <i class="fa-solid fa-building"></i>機關
+        </span>
+        <button v-for="o in orgButtons" :key="o.key" type="button"
+                :class="['th-chip', { 'is-active': draft.org === o.key }]"
+                :aria-pressed="draft.org === o.key"
+                @click="changeOrg(o.key)">{{ o.label }}</button>
+      </div>
+
+      <div class="bulletin-filter-row">
+        <span class="bulletin-filter-label">
+          <i class="fa-solid fa-route"></i>登山主路線
+        </span>
+        <select class="th-select p-open-select" :value="draft.mainRoute"
+                @change="setField({ mainRoute: $event.target.value })"
+                aria-label="登山主路線">
+          <option value="all">全部路線（{{ mainRoutes.length }} 條主路線）</option>
+          <option v-for="m in mainRoutes" :key="m" :value="m">{{ m }}</option>
+        </select>
+      </div>
+
+      <div class="bulletin-filter-row">
+        <span class="bulletin-filter-label">
+          <i class="fa-solid fa-magnifying-glass"></i>關鍵字查詢
+        </span>
+        <div class="th-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="th-input"
+                 placeholder="請輸入路線名稱、主路線或備註關鍵字"
+                 :value="draft.q" @input="setField({ q: $event.target.value })" />
+        </div>
+        <button type="submit" class="th-btn th-btn-primary">
+          <i class="fa-solid fa-magnifying-glass"></i>查詢
+        </button>
+        <button type="button" class="th-btn th-btn-ghost" @click="reset">
+          <i class="fa-solid fa-rotate-left"></i>清除條件
+        </button>
+      </div>
+    </form>
+
+    <div class="bulletin-section-head">
+      <h2 class="th-section-title">路線申請對照資訊</h2>
+      <span class="bulletin-count">
+        共 <strong>{{ rows.length }}</strong> 筆<span v-if="rows.length > 0">／第 {{ page }} 頁（共 {{ totalPages }} 頁）</span>
+      </span>
+    </div>
+
+    <!-- 圖例：原 Legend 是無狀態的區域元件，屬本頁版面，直接寫在這裡 -->
+    <div class="p-open-legend">
+      <div class="p-open-legend-row">
+        <span class="p-open-legend-label">可否申請</span>
+        <span v-for="k in ['yes', 'no']" :key="k" :class="['th-flag', canApplyMeta[k].cls]">
+          <i :class="canApplyMeta[k].icon"></i>{{ canApplyMeta[k].label }}
+        </span>
+      </div>
+      <div class="p-open-legend-row">
+        <span class="p-open-legend-label">路線現況</span>
+        <span v-for="k in ['open', 'closed', 'proof', 'snow']" :key="k" :class="['th-flag', statusMeta[k].cls]">
+          <i :class="statusMeta[k].icon"></i>{{ statusMeta[k].label }}
+        </span>
+      </div>
+    </div>
+
+    <!-- 兩層表頭：上排 rowSpan/colSpan 與下排四個「是否須要申請」子欄，照原樣手寫 -->
+    <div class="th-table-wrap th-table-card p-open-table-wrap">
+      <table class="th-table th-table--zebra p-open-table">
+        <thead>
+          <tr>
+            <th rowspan="2" class="col-org">機關</th>
+            <th rowspan="2" class="col-main">登山主路線</th>
+            <th rowspan="2" class="col-name2">路線名稱</th>
+            <th rowspan="2" class="col-can">可否申請</th>
+            <th rowspan="2" class="col-status">路線現況</th>
+            <th colspan="4" class="col-needs">是否須要申請</th>
+            <th rowspan="2" class="col-level">登山路線<br />難度等級</th>
+            <th rowspan="2" class="col-fn">功能</th>
+          </tr>
+          <tr>
+            <th class="col-need">入園證</th>
+            <th class="col-need">林業及自然保育署<br />自然保護留區</th>
+            <th class="col-need">林業及自然保育署<br />住宿</th>
+            <th class="col-need">警政署<br />入山證</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-if="pageRows.length > 0">
+            <tr v-for="(r, i) in pageRows" :key="r.fId + '-' + r.cId + '-' + i">
+              <td class="col-org" data-label="機關">
+                <span :class="'bulletin-badge agency-' + (orgBadge[r.orgLabel] || 'nps')">{{ r.orgLabel }}</span>
+              </td>
+              <td class="col-main" data-label="登山主路線">{{ r.mainRoute }}</td>
+              <td class="col-name2" data-label="路線名稱">{{ r.name }}</td>
+              <td class="col-can" data-label="可否申請">
+                <span v-if="canApplyMeta[r.canApply]" :class="['th-flag', canApplyMeta[r.canApply].cls]"><i :class="canApplyMeta[r.canApply].icon"></i>{{ canApplyMeta[r.canApply].label }}</span>
+              </td>
+              <td class="col-status" data-label="路線現況">
+                <span v-if="statusMeta[r.status]" :class="['th-flag', statusMeta[r.status].cls]"><i :class="statusMeta[r.status].icon"></i>{{ statusMeta[r.status].label }}</span>
+              </td>
+              <td v-for="c in needColumns" :key="c.key" class="col-need" :data-label="c.label">
+                <i v-if="r[c.key]" class="fa-solid fa-check p-open-need-yes" aria-label="須申請"></i>
+                <span v-else class="p-open-need-no" aria-label="免申請">—</span>
+              </td>
+              <td class="col-level" data-label="難度等級">
+                <span v-if="r.level === null" class="p-open-need-no">—</span>
+                <button v-else type="button" :class="'p-open-level-btn th-level lv-' + r.level"
+                        @click="levelModal = r.level">第 {{ r.level }} 級</button>
+              </td>
+              <td class="col-fn" data-label="功能">
+                <div class="p-open-actions">
+                  <a class="p-open-act is-primary" href="apply-1.html">
+                    <i class="fa-solid fa-pen-to-square"></i>申請
+                  </a>
+                  <!-- 路線介紹頁尚未建置，不給假連結 -->
+                  <span v-if="r.hasIntro" class="p-open-act th-todo-link">
+                    <i class="fa-solid fa-circle-info"></i>介紹
+                  </span>
+                  <button v-if="r.note" type="button" class="p-open-act" @click="noteModal = r">
+                    <i class="fa-regular fa-note-sticky"></i>備註
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <tr v-else>
+            <td colspan="11">
+              <div class="th-empty">
+                <i class="fa-solid fa-inbox"></i>查無符合條件的路線，請調整查詢條件。
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <th-table-pager :page="page" :total-pages="totalPages" @change="page = $event"></th-table-pager>
+
+    <th-callout>表格內容為各機關提供之路線申請對照資訊，實際可申請日期與承載量仍以線上申請流程之查驗結果為準。</th-callout>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+  <!--
+    難度等級彈窗。判空必須用 !== null：難度有第 0 級，用真假值會讓它點不開
+    （原 React 寫的也是 levelModal !== null）。
+  -->
+  <th-modal v-if="levelModal !== null && levelRow" meta="登山路線難度等級"
+            :title="'第 ' + levelRow.level + ' 級'" body-class="p-open-modal-def"
+            @close="levelModal = null">
+    <dl>
+      <dt>說明</dt>
+      <dd>
+        <ol v-if="isArray(levelRow.desc)" class="th-cell-ol">
+          <li v-for="d in levelRow.desc" :key="d">{{ d }}</li>
+        </ol>
+        <template v-else>{{ levelRow.desc }}</template>
+      </dd>
+      <dt>適合對象</dt>
+      <dd>{{ levelRow.who }}</dd>
+      <dt>建議裝備</dt>
+      <dd>
+        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf"></i>個人及團體裝備檢查表</a>{{ levelRow.kitRef }}</span>
+        <template v-else>{{ levelRow.kit }}</template>
+      </dd>
+    </dl>
+  </th-modal>
+
+  <!-- 備註彈窗 -->
+  <th-modal v-if="noteModal" meta="登山路線備註" :title="noteModal.name" @close="noteModal = null">
+    {{ noteModal.note }}<div v-if="noteModal.closures.length > 0" class="p-open-closures">
+      <p class="p-open-closures-title">部分關閉日期、原因</p>
+      <ul><li v-for="c in noteModal.closures" :key="c">{{ c }}</li></ul>
+    </div>
+  </th-modal>
+
+</div>
+
+<!-- 資料檔：階段 0 已改為一般 <script> -->
 <script src="components/TrailLevelData.js"></script>
 <script src="components/OpenStatusData.js"></script>
-<script type="text/babel" src="components/OpenStatus.jsx"></script>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>
