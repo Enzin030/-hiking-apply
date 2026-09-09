@@ -2500,6 +2500,7 @@
   text-align: center;
 }
 
+/* §6.6 白名單：頁內對 th-input／th-select 的覆寫，元件名必須留著才選得到 */
 .p-apply3-members-row .th-input,
 .p-apply3-members-row .th-select {
   padding: 7px 10px;
@@ -2584,6 +2585,8 @@
   justify-content: center;
 }
 
+/* §6.6 白名單：同上。**.p-apply3-day-row 整族在 Apply3.jsx 沒有任何 markup
+   使用**（原檔就是死規則），依 §4.2 照抄未刪，列入階段 4 的清理對象 */
 .p-apply3-day-row .th-input {
   background: #fff;
 }
