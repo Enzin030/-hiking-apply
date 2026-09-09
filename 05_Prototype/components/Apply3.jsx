@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-09：該頁已遷移為 Vue（apply-3.html ＋
+// components/apply-3.js），本檔已無任何 <script> 引用，請勿編輯。
+// 實際刪除排在階段 4。
 /* Page 3: Trip Registration */
 
 function getParam(key) {

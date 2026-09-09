@@ -2133,3 +2133,583 @@
   gap: 12px;
   justify-content: flex-end;
 }
+
+
+/* ############################################################
+   apply-3.html（2026-09-09 遷移）
+   ############################################################
+
+   .p3-* → .p-apply3-*（§6.2 單頁專用樣式改名）。整族只有該頁用，
+   且已確認沒有任何規則把該族與其他族混在同一個選擇器清單裡（那是第五類
+   靜默失敗的來源）。@media 層級照原樣保留（攤平是第六類）。
+   依 §4.2，shared.css 的原規則保留不刪，階段 4 統一清。
+
+   ############################################################ */
+
+.p-apply3-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.p-apply3-route-card {
+  background: #fff;
+  border: 1px solid var(--slate-100);
+  border-radius: 16px;
+  box-shadow: var(--sh-card);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.p-apply3-route-head {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.p-apply3-route-thumb {
+  width: 140px;
+  height: 100px;
+  border-radius: 12px;
+  background: var(--slate-200);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.p-apply3-route-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.p-apply3-route-thumb-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(15, 23, 42, .85);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.p-apply3-route-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.p-apply3-route-info h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--fg-1);
+  margin: 0 0 6px;
+}
+
+.p-apply3-route-info-sub {
+  font-size: 13px;
+  color: var(--slate-600);
+  margin-bottom: 10px;
+}
+
+.p-apply3-route-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.p-apply3-route-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  color: var(--slate-700);
+  font-weight: 500;
+}
+
+.p-apply3-route-tag i {
+  color: var(--national-700);
+  font-size: 11px;
+}
+
+.p-apply3-route-tag.tag-warn {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: var(--warning-fg);
+}
+
+.p-apply3-route-tag.tag-warn i {
+  color: var(--warning-fg);
+}
+
+.p-apply3-route-change {
+  margin-left: auto;
+  align-self: flex-start;
+  font-size: 13px;
+  color: var(--national-700);
+  background: none;
+  border: 1px solid var(--slate-200);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.p-apply3-route-change:hover {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+}
+
+.p-apply3-route-warn {
+  padding: 14px 20px;
+  background: #fffbeb;
+  border-top: 1px solid #fde68a;
+  font-size: 13px;
+  color: var(--warning-fg);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  line-height: 1.6;
+}
+
+.p-apply3-route-warn i {
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.p-apply3-route-warn strong {
+  color: #92400e;
+  font-weight: 700;
+}
+
+.p-apply3-section {
+  background: #fff;
+  border: 1px solid var(--slate-100);
+  border-radius: 16px;
+  box-shadow: var(--sh-card);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.p-apply3-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--slate-100);
+  background: #fff;
+}
+
+.p-apply3-section-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--national-700);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.p-apply3-section-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.p-apply3-section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--fg-1);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-apply3-section-title-en {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-3);
+  letter-spacing: .025em;
+}
+
+.p-apply3-section-sub {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin: 2px 0 0;
+}
+
+.p-apply3-section-body {
+  padding: 24px;
+}
+
+.p-apply3-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.p-apply3-grid-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.p-apply3-grid-1 {
+  grid-template-columns: 1fr;
+}
+
+.p-apply3-grid-full {
+  grid-column: 1 / -1;
+}
+
+.p-apply3-radio-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.p-apply3-radio {
+  flex: 1;
+  min-width: 90px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--slate-300);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--slate-700);
+  cursor: pointer;
+  transition: .15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.p-apply3-radio:hover {
+  border-color: var(--national-700);
+}
+
+.p-apply3-radio input {
+  margin: 0;
+  accent-color: var(--national-700);
+}
+
+.p-apply3-radio.is-active {
+  background: var(--bg-mist);
+  border-color: var(--national-700);
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.p-apply3-date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.p-apply3-date-input {
+  flex: 1;
+}
+
+.p-apply3-date-arrow {
+  color: var(--slate-400);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.p-apply3-date-result {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--slate-600);
+}
+
+.p-apply3-date-result span {
+  background: #fff;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--bg-mist-2);
+}
+
+.p-apply3-date-result span strong {
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.p-apply3-members {
+  border: 1px solid var(--slate-200);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.p-apply3-members-head {
+  display: grid;
+  grid-template-columns: 40px 1.2fr 1.5fr 1fr 1fr 0.8fr 60px;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fff;
+  border-bottom: 1px solid var(--slate-200);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--slate-600);
+}
+
+.p-apply3-members-row {
+  display: grid;
+  grid-template-columns: 40px 1.2fr 1.5fr 1fr 1fr 0.8fr 60px;
+  gap: 8px;
+  padding: 10px 14px;
+  align-items: center;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.p-apply3-members-row:last-child {
+  border-bottom: none;
+}
+
+.p-apply3-members-row .leader-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--national-700);
+  color: #fff;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.p-apply3-members-row .row-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--slate-500);
+  text-align: center;
+}
+
+.p-apply3-members-row .th-input,
+.p-apply3-members-row .th-select {
+  padding: 7px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.p-apply3-members-row .row-del {
+  background: none;
+  border: none;
+  color: var(--slate-400);
+  font-size: 14px;
+  cursor: pointer;
+  transition: .15s;
+}
+
+.p-apply3-members-row .row-del:hover {
+  color: var(--danger-soft);
+}
+
+.p-apply3-members-row .row-del:disabled {
+  opacity: .25;
+  cursor: not-allowed;
+}
+
+.p-apply3-members-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #fff;
+  font-size: 13px;
+  color: var(--slate-600);
+}
+
+.p-apply3-members-foot strong {
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.p-apply3-add-member {
+  background: #fff;
+  border: 1px dashed var(--national-700);
+  color: var(--national-700);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: .15s;
+}
+
+.p-apply3-add-member:hover {
+  background: var(--bg-mist);
+}
+
+.p-apply3-day-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.p-apply3-day-pill {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: var(--national-700);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-apply3-day-row .th-input {
+  background: #fff;
+}
+
+.p-apply3-submit {
+  /* alias: th-footbar */
+}
+
+.p-apply3-submit-info {
+  /* alias: th-footbar-info */
+}
+
+.p-apply3-summary {
+  /* alias: th-sidebar */
+}
+
+.p-apply3-summary-head {
+  /* alias: th-sidebar-head */
+}
+
+.p-apply3-summary-body {
+  /* alias: th-sidebar-body */
+}
+
+.p-apply3-summary-row {
+  /* alias: th-sidebar-row */
+}
+
+.p-apply3-summary-checklist {
+  /* alias: th-sidebar-checklist */
+}
+
+.p-apply3-police-note {
+  background: var(--info-bg);
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid var(--info-fg);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--slate-700);
+  line-height: 1.6;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.p-apply3-police-note i {
+  color: var(--info-fg);
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.p-apply3-police-note strong {
+  color: var(--info-fg);
+}
+
+@media (max-width: 1100px) {
+  .p-apply3-layout {
+      grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+  .p-apply3-grid,
+    .p-apply3-grid-3 {
+      grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+  .p-apply3-members-head {
+      display: none;
+    }
+
+  .p-apply3-members-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+  .p-apply3-members-row .th-input::before,
+    .p-apply3-members-row .th-select::before {
+      content: attr(data-label);
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--slate-500);
+      margin-bottom: 4px;
+    }
+
+  .p-apply3-members-row>div::before {
+      display: block;
+      content: attr(data-label);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate-500);
+      margin-bottom: 2px;
+    }
+}
+
+
+/* ############################################################
+   apply-3.html 的靜態 inline style（2026-09-09）
+   ############################################################
+
+   原 Apply3.jsx 有四處 style={{...}}，值全部固定，依 2026-09-09 通則收成
+   class。本頁沒有依資料算出來的 style，所以一處 :style 都不需要留。
+   宣告由 JSX 的 style 物件機械轉換（camelCase→kebab、純數字補 px）。
+   ############################################################ */
+
+.p-apply3-days-select {
+  flex: 1;
+}
+
+.p-apply3-id-cell {
+  display: flex;
+  gap: 4px;
+}
+
+.p-apply3-idtype-select {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.p-apply3-plan-textarea {
+  min-height: 140px;
+}
