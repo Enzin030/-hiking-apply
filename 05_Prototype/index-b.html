@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="description" content="臺灣登山服務網首頁改版示意：登山安全資訊、行程規劃與申請服務。" />
+<title>臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  首頁 B 案（2026-09-09 由 05_Prototype/hiking-site/ 移植）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+
+  與來源的三個刻意差異（2026-09-09 使用者指定）：
+  1. **頁首／頁尾改用共用的 th-header／th-footer**。來源自帶一套 Tailwind
+     頁首與頁尾；本頁要與現行 index.html 做兩種方案切換展示，頁首頁尾必須一致。
+     連帶：來源 app.js 有 76 行是語言下拉與行動選單的行為，th-header 已內建
+     （含 Escape 關閉），整段不移植。
+  2. **快捷選單改用 th-quick-nav**。來源那段 .th-quickmask／.th-quickpanel
+     是手抄自 Shared.jsx 的 ExperienceNav（原檔註解自己寫明），直接用共用元件；
+     來源的 openQuickMenu／closeQuickMenu 一併不移植。
+  3. **色系改吃 tokens.css**，class 加 .p-indexb- 前綴（見 pages.css 該節）。
+
+  來源 app.js 的 sitemap／search 兩個彈窗**沒有移植**：它們的觸發鈕在來源的
+  自有頁首上，改用 th-header 之後沒有觸發點，移植過來會是死碼。
+  openStage() 在來源就已是死碼（點階段實際呼叫的是 openQuickMenu）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="styles/shared.css" />
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/index-b.js"></script>
+</head>
+<!-- p-indexb-body：來源 style.css 是整頁專用樣式表，含 :root／body／*／button
+     這類全域選擇器。搬進 pages.css 後必須鎖進本頁，否則會打到全部 32 頁
+     （實測 notice_b3 高度 3523→3635）。作用域用 :where() 前綴，不改特異性。 -->
+<body class="p-indexb-body">
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <a class="p-indexb-skip" href="#services">跳至主要內容</a>
+
+  <th-header></th-header>
+
+  <!-- 最新消息輪播 -->
+  <section class="p-indexb-announcements" aria-label="最新消息">
+    <div class="p-indexb-announcement-inner"><b><i class="fa-solid fa-bullhorn p-indexb-icon" aria-hidden="true"></i>最新消息</b><span class="p-indexb-divider"></span><button
+        type="button"
+        class="text-white hover:underline text-left flex-1 truncate bg-transparent border-0 p-0 font-normal flex items-center min-w-0"
+        @click="newsOpen = true"><span :class="'bulletin-badge agency-' + notice.agencyId + ' mr-2 shrink-0'">{{ notice.org }}</span><span class="truncate">{{ notice.title }}</span></button>
+      <div class="p-indexb-announcement-controls"><button type="button" aria-label="上一則公告" @click="showNotice(-1)"><i
+            class="fa-solid fa-chevron-left"></i></button><button type="button" aria-label="下一則公告" @click="showNotice(1)"><i
+            class="fa-solid fa-chevron-right"></i></button><a href="news.html" class="p-indexb-all-news hover:underline">全部公告 →</a></div>
+    </div>
+  </section>
+
+  <main>
+    <div class="p-indexb-hero-copy">
+      <p>走進山林<br>守護臺灣的美好</p><span>一座山・一段更好的自己</span>
+    </div>
+
+    <section class="p-indexb-journey" aria-label="登山流程">
+      <div class="p-indexb-steps">
+        <!-- 點階段開快捷選單——來源就是這個行為（openStage 是死碼） -->
+        <button v-for="(s, i) in stages" :key="s.title" class="p-indexb-step"
+                :aria-label="s.title + '：查看相關資訊'" @click="openQuick">
+          <span class="p-indexb-step-circle"><i :class="[iconOf(s.icon), 'p-indexb-icon']" aria-hidden="true"></i></span>
+          <strong>{{ s.title }}</strong>
+          <small>{{ s.subtitle }}</small>
+        </button>
+      </div>
+    </section>
+
+    <div class="p-indexb-services" id="services">
+      <section class="p-indexb-service-panel p-indexb-education">
+        <div class="p-indexb-panel-heading"><i class="fa-solid fa-book-open p-indexb-icon" aria-hidden="true"></i>
+          <div>
+            <h2 class="text-white">登山教育及路線介紹</h2>
+            <p>掌握登山安全知識，探索山域與路線資訊</p>
+          </div>
+        </div>
+        <div class="p-indexb-panel-body">
+          <div v-for="g in eduGroups" :key="g.key" :class="['p-indexb-link-group', g.extra]">
+            <h3><i :class="[iconOf(g.icon), 'p-indexb-icon']" aria-hidden="true"></i>{{ g.title }}</h3>
+            <div class="p-indexb-link-grid">
+              <button v-for="it in groups[g.key]" :key="it[0]"
+                      :class="['p-indexb-resource-link', { wide: it[0].length > 15 }]"
+                      @click="detailLabel = it[0]">
+                <i :class="[iconOf(it[1]), 'p-indexb-icon']" aria-hidden="true"></i><span class="p-indexb-label">{{ it[0] }}</span><span v-if="g.key === 'map'" class="p-indexb-chip">地圖</span><span class="p-indexb-chevron" aria-hidden="true">›</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="p-indexb-service-panel p-indexb-application">
+        <div class="p-indexb-panel-heading"><i class="fa-solid fa-pen-to-square p-indexb-icon" aria-hidden="true"></i>
+          <div>
+            <h2 class="text-white">登山線上申請</h2>
+            <p>查詢申請條件與名額，完成登山申請</p>
+          </div>
+        </div>
+        <div class="p-indexb-panel-body"><button class="p-indexb-apply-button" @click="detailLabel = '開始登山申請'"><i class="fa-solid fa-pen-to-square p-indexb-icon" aria-hidden="true"></i>開始登山申請
+            <span>→</span></button>
+          <div v-for="g in applyGroups" :key="g.key" class="p-indexb-link-group">
+            <h3><i :class="[iconOf(g.icon), 'p-indexb-icon']" aria-hidden="true"></i>{{ g.title }}</h3>
+            <div class="p-indexb-link-grid">
+              <button v-for="it in groups[g.key]" :key="it[0]"
+                      :class="['p-indexb-resource-link', { wide: it[0].length > 15 }]"
+                      @click="detailLabel = it[0]">
+                <i :class="[iconOf(it[1]), 'p-indexb-icon']" aria-hidden="true"></i><span class="p-indexb-label">{{ it[0] }}</span><span class="p-indexb-chevron" aria-hidden="true">›</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 快捷選單：共用元件（來源那段是手抄自 ExperienceNav 的複本） -->
+  <th-quick-nav ref="quicknav"></th-quick-nav>
+  <th-footer></th-footer>
+
+  <!-- 公告內容彈窗 -->
+  <th-modal v-if="newsOpen" :title="notice.title" @close="newsOpen = false">
+    <template #head>
+      <div>
+        <span :class="'bulletin-badge agency-' + notice.agencyId">{{ notice.org }}</span>
+        <h3 class="bulletin-modal-title">{{ notice.title }}</h3>
+        <div class="bulletin-modal-meta">發布日期：{{ notice.date }}</div>
+      </div>
+    </template>
+    {{ notice.content }}
+  </th-modal>
+
+  <!-- 服務入口的雛形提示彈窗 -->
+  <th-modal v-if="detailLabel" :title="detailLabel" @close="detailLabel = ''">
+    <div class="p-indexb-prototype-note">
+      <strong>{{ detailLabel }}</strong>
+      <p>此頁為首頁改版互動雛型，尚未串接正式{{ detailLabel.includes('申請') ? '申請服務' : '內容' }}。正式上線時，此入口將導向對應服務。</p>
+    </div>
+  </th-modal>
+
+</div>
+
+<!-- 本頁不載入 React／Babel（來源本來就沒有） -->
+</body>
+</html>
