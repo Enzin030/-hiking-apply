@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-09：階段 3 已全數完成（32/32），本檔已無任何
+// <script> 引用。其內容已拆到 assets/components/ 的共用元件與各頁的
+// 頁面區域元件，請勿編輯。實際刪除排在階段 4。
 /* Shared components used across all pages */
 
 /*
