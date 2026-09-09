@@ -70,8 +70,8 @@
           <h2 class="fc-section-title">
             <i class="ph-bold ph-users-three"></i>隊伍基本資料
           </h2>
-          <div class="th-field" style="max-width: 400px">
-            <label class="th-label">隊伍名稱 <span style="color: var(--danger-fg)">*</span></label>
+          <div class="th-field p-fc2-team-field">
+            <label class="th-label">隊伍名稱 <span class="p-fc2-required">*</span></label>
             <input
               type="text"
               class="th-input"
@@ -129,7 +129,7 @@
               <input type="radio" name="payment" :value="opt.id"
                      :checked="payment === opt.id"
                      @change="payment = opt.id"
-                     style="display: none" />
+                     class="p-fc2-payment-radio" />
               <div class="fc2-payment-icon">
                 <i :class="opt.icon"></i>
               </div>
@@ -155,7 +155,7 @@
               <div class="fc2-cost-label">
                 <i :class="f.icon"></i>{{ f.label }}
               </div>
-              <div class="fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else style="color: var(--fg-4)">—</span></div>
+              <div class="fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else class="p-fc2-cost-dash">—</span></div>
             </div>
 
             <!-- 每晚明細 -->

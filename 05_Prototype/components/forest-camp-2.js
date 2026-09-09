@@ -72,6 +72,16 @@
    | 區域元件 Stepper2             | options.components 的 p-fc2-stepper | 只有這頁用 |
 
    ------------------------------------------------------------
+   靜態 inline style 已收成 .p-fc2-* class（2026-09-09 裁決）
+   ------------------------------------------------------------
+   原 JSX 有五處 inline style，值全是固定的，依 §7「禁止 inline style」
+   收進 assets/css/pages.css：
+     maxWidth:400 → .p-fc2-team-field      color:--danger-fg → .p-fc2-required
+     display:none → .p-fc2-payment-radio   color:--fg-4      → .p-fc2-cost-dash
+     width:120    → .p-fc2-stepper-input
+   **只收靜態的**：forest-camp-1 的可用量長條是依資料算出來的，維持 :style。
+
+   ------------------------------------------------------------
    addDays 照搬，**不可換成 th-date-utils**
    ------------------------------------------------------------
    本頁的 addDays 走 `new Date(dateStr)` ＋ `toISOString().slice(0,10)`，
@@ -130,7 +140,7 @@ const pFc2Stepper = {
   },
   emits: ["change"],
   template: `
-    <div class="fc-stepper-input" style="width: 120px">
+    <div class="fc-stepper-input p-fc2-stepper-input">
       <button class="fc-stepper-btn" @click="$emit('change', Math.max(min, value - 1))" :disabled="value <= min">
         <i class="fa-solid fa-minus"></i>
       </button>

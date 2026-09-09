@@ -1234,3 +1234,46 @@
     flex: 0 0 100%;
   }
 }
+
+
+/* ############################################################
+   forest-camp-2.html（2026-09-09 遷移）
+   ############################################################
+
+   這幾條是把原 ForestCamp2.jsx 的 **靜態 inline style** 搬出來（§7 禁止
+   inline style），與 index.html 那一節同一個作法：
+
+     .th-field   style={{ maxWidth: 400 }}              → .p-fc2-team-field
+     隊名必填星號 style={{ color: "var(--danger-fg)" }}  → .p-fc2-required
+     付款 radio  style={{ display: "none" }}            → .p-fc2-payment-radio
+     費用破折號   style={{ color: "var(--fg-4)" }}       → .p-fc2-cost-dash
+     Stepper2    style={{ width: 120 }}                 → .p-fc2-stepper-input
+
+   **只收靜態的**。forest-camp-1 的可用量長條（width 依百分比、底色依狀態）
+   是算出來的，收成 class 會改變行為，那些維持 :style 綁定。
+
+   .p-fc2-stepper-input 是加在既有的 .fc-stepper-input 之上的修飾 class，
+   不改 .fc-stepper-input 本身——那支兩頁共用（見 forest-camp-1.html 檔頭）。
+   pages.css 在 index.css 的 @import 順序中最後，且 index.css link 在
+   shared.css 之後，所以這條的 width 勝出。
+   ############################################################ */
+
+.p-fc2-team-field {
+  max-width: 400px;
+}
+
+.p-fc2-required {
+  color: var(--danger-fg);
+}
+
+.p-fc2-payment-radio {
+  display: none;
+}
+
+.p-fc2-cost-dash {
+  color: var(--fg-4);
+}
+
+.p-fc2-stepper-input {
+  width: 120px;
+}
