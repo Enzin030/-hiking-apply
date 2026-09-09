@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-09：已改由 assets/components/th-forest-camp-shared.js ＋ th-date-utils.js 取代，
+// 本檔已無任何 <script> 引用，請勿編輯。實際刪除排在階段 4。
+// 兩頁（forest-camp-1／2）都已遷移，本檔隨之成為零引用。
 /*
   山屋住宿申請流程（forest-camp-1／2）共用的資料與元件。
 

@@ -1,3 +1,5 @@
+// DEPRECATED 2026-09-09：已改由 forest-camp-2.html ＋ components/forest-camp-2.js 取代，
+// 本檔已無任何 <script> 引用，請勿編輯。實際刪除排在階段 4。
 /* ForestCamp Step 2: 行程計畫 — 隊名、付款方式、每日床位/營位選擇 */
 
 const PAYMENT_OPTIONS = [

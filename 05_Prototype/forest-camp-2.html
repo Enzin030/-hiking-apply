@@ -2,35 +2,212 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（forest-camp-2，重組第三頁）
+  ------------------------------------------------------------
+  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+
+  .fc-*／.fc2-* 全族維持在 shared.css，不改名也不複製（理由見
+  forest-camp-1.html 檔頭與 components/forest-camp-2.js 檔頭）。
+
+  **文字節點的換行位置是刻意的**：第一個子節點若是文字，就必須緊接在
+  開標籤後面，不能換行縮排——JSX 會把那段換行整段刪掉，Vue 卻會折成
+  一個前導空白（notice.html 檔內有實測紀錄）。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/forest-camp-2.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script src="components/RouteData.js"></script>
-<script type="text/babel" src="components/ForestCampShared.jsx"></script>
-<script type="text/babel" src="components/ForestCamp2.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js。data-screen-label 沿用原 JSX 最外層那個 div -->
+<div id="th-app" v-cloak data-screen-label="FC-02 行程計畫">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '行程計畫']" title="山屋住宿申請" :bare="true">
+
+    <template #stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
+    </template>
+
+    <div class="fc-layout">
+      <!-- 左欄：主表單 -->
+      <div class="fc-main">
+
+        <!-- 行程摘要 banner -->
+        <div class="fc2-summary-bar">
+          <div class="fc2-summary-item">
+            <i class="ph-bold ph-house"></i>
+            <span>{{ cabin.name }}</span>
+          </div>
+          <div class="fc2-summary-sep"></div>
+          <div class="fc2-summary-item">
+            <i class="fa-regular fa-calendar"></i>
+            <span>{{ fmtDate(startDate) }}</span>
+          </div>
+          <div class="fc2-summary-sep"></div>
+          <div class="fc2-summary-item">
+            <i class="ph-bold ph-moon"></i>
+            <span>{{ nights }} 晚</span>
+          </div>
+          <div class="fc2-summary-sep"></div>
+          <div class="fc2-summary-item">
+            <i class="ph-bold ph-users"></i>
+            <span>{{ headcount }} 人</span>
+          </div>
+        </div>
+
+        <!-- 隊伍名稱 -->
+        <div class="fc-section">
+          <h2 class="fc-section-title">
+            <i class="ph-bold ph-users-three"></i>隊伍基本資料
+          </h2>
+          <div class="th-field" style="max-width: 400px">
+            <label class="th-label">隊伍名稱 <span style="color: var(--danger-fg)">*</span></label>
+            <input
+              type="text"
+              class="th-input"
+              placeholder="例：玉山山難救助訓練隊"
+              maxlength="40"
+              :value="teamName"
+              @input="teamName = $event.target.value" />
+            <div class="th-field-hint">2–40 字，供識別申請隊伍使用</div>
+          </div>
+        </div>
+
+        <!-- 每晚住宿配置 -->
+        <div class="fc-section">
+          <h2 class="fc-section-title">
+            <i class="ph-bold ph-bed"></i>每日住宿床位 / 營位
+          </h2>
+          <p class="fc2-section-desc">請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。</p>
+
+          <div v-for="i in nightIndexes" :key="i"
+               :class="['fc2-night-block', { 'is-filled': nightTotal(i) > 0 }]">
+            <div class="fc2-night-head">
+              <div class="fc2-night-badge">第 {{ i + 1 }} 晚</div>
+              <div class="fc2-night-date">{{ fmtDate(nightDate(i)) }}</div>
+              <div v-if="nightTotal(i) > 0" class="fc2-night-ok">
+                <i class="fa-solid fa-check"></i> 已填寫
+              </div>
+            </div>
+            <div class="fc2-night-rows">
+              <div v-for="f in cabin.facilities" :key="f.id" class="fc2-facility-row">
+                <div class="fc2-facility-left">
+                  <span class="fc2-facility-icon">
+                    <i :class="f.icon"></i>
+                  </span>
+                  <div>
+                    <div class="fc2-facility-name">{{ f.label }}</div>
+                    <div class="fc2-facility-price">NT$ {{ f.pricePerNight }} / {{ f.unit }}<span v-if="qtyOf(i, f.id) > 0" class="fc2-facility-subtotal">= NT$ {{ qtyOf(i, f.id) * f.pricePerNight }}</span></div>
+                  </div>
+                </div>
+                <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"
+                               :max="Math.min(f.max, headcount)"
+                               @change="setQty(i, f.id, $event)"></p-fc2-stepper>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 付款方式 -->
+        <div class="fc-section">
+          <h2 class="fc-section-title">
+            <i class="ph-bold ph-credit-card"></i>付款方式
+          </h2>
+          <div class="fc2-payment-grid">
+            <label v-for="opt in paymentOptions" :key="opt.id"
+                   :class="['fc2-payment-card', { 'is-selected': payment === opt.id }]">
+              <input type="radio" name="payment" :value="opt.id"
+                     :checked="payment === opt.id"
+                     @change="payment = opt.id"
+                     style="display: none" />
+              <div class="fc2-payment-icon">
+                <i :class="opt.icon"></i>
+              </div>
+              <div class="fc2-payment-label">{{ opt.label }}</div>
+              <div class="fc2-payment-note">{{ opt.note }}</div>
+              <div v-if="payment === opt.id" class="fc2-payment-check">
+                <i class="fa-solid fa-check"></i>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右欄：費用小計 -->
+      <aside class="fc-aside">
+        <div class="fc2-cost-card">
+          <div class="th-sidebar-head">
+            <i class="ph-bold ph-receipt"></i>
+            <span>費用試算</span>
+          </div>
+          <div class="fc2-cost-body">
+            <div v-for="f in subtotals" :key="f.id" class="fc2-cost-row">
+              <div class="fc2-cost-label">
+                <i :class="f.icon"></i>{{ f.label }}
+              </div>
+              <div class="fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else style="color: var(--fg-4)">—</span></div>
+            </div>
+
+            <!-- 每晚明細 -->
+            <div v-if="grandTotal > 0" class="fc2-cost-detail">
+              <template v-for="i in nightIndexes" :key="i">
+                <div v-if="nightCost(i) > 0" class="fc2-cost-detail-row">
+                  <span>{{ fmtDate(nightDate(i)) }}</span>
+                  <span>NT$ {{ nightCost(i).toLocaleString() }}</span>
+                </div>
+              </template>
+            </div>
+
+            <div class="fc2-cost-total">
+              <span>預估總費用</span>
+              <span class="fc2-cost-total-num">NT$ {{ grandTotal.toLocaleString() }}</span>
+            </div>
+            <div class="fc2-cost-note">實際費用以審核通過後帳單為準。場地費不含膳食。</div>
+          </div>
+        </div>
+
+        <!-- 驗證提示 -->
+        <div v-if="!canNext" class="fc2-validation-tips">
+          <div class="fc2-vt-head">
+            <i class="ph-bold ph-list-checks"></i>尚需完成
+          </div>
+          <div v-if="teamName.trim().length < 2" class="fc2-vt-item">
+            <i class="fa-solid fa-circle-dot"></i>填寫隊伍名稱
+          </div>
+          <div v-if="!nightsValid" class="fc2-vt-item">
+            <i class="fa-solid fa-circle-dot"></i>每晚至少選 1 個床位或營位
+          </div>
+          <div v-if="payment === ''" class="fc2-vt-item">
+            <i class="fa-solid fa-circle-dot"></i>選擇付款方式
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 底部操作列 -->
+    <div class="fc-footbar">
+      <button class="th-btn th-btn-ghost" @click="goBack">
+        <i class="fa-solid fa-arrow-left"></i>上一步
+      </button>
+      <button class="th-btn th-btn-primary" :disabled="!canNext" @click="handleNext">下一步：隊伍資料<i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>
