@@ -1,3 +1,7 @@
+// DEPRECATED 2026-09-09：該頁已遷移為 Vue（forest-camp-1.html ＋
+// components/forest-camp-1.js），本檔已無任何 <script> 引用，請勿編輯。
+// 實際刪除排在階段 4。ForestCampShared.jsx 仍被未遷移的 forest-camp-2
+// 載入，故該檔此時不加註記。
 /* ForestCamp Step 1: 日期確認 & 床位/營位查詢 */
 
 // 山屋設定資料、步驟列與日期工具已抽至 components/ForestCampShared.jsx（兩頁共用）
