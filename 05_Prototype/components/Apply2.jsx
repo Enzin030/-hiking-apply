@@ -1,3 +1,7 @@
+// DEPRECATED 2026-09-09：該頁已遷移為 Vue（apply-2.html ＋
+// components/apply-2.js），本檔已無任何 <script> 引用，請勿編輯。
+// 實際刪除排在階段 4。本檔 113–292 行的 NP_CONSENT 是原作者標為
+// deprecated 的零引用死碼，未移植到新檔——需要時查這裡。
 /* Page 2: Consent / Notices
  * 依 ?unit 分三種模式：
  *   national-park  → yushan / shei-pa / taroko：逐條勾選同意書

@@ -58,6 +58,28 @@
        window.thComponents = window.thComponents || {};
        window.thComponents["th-header"] = { props: {...}, template: `...` };
 
+   ------------------------------------------------------------
+   mounted() 裡不能量版面 —— v-cloak 那時還在（2026-09-09 實測）
+   ------------------------------------------------------------
+   `[v-cloak] { display: none }` 是靠 Vue 掛載後移除屬性才解除的，而
+   **`mounted()` 執行時屬性還在**，整個 `#th-app` 仍是 `display: none`。
+   於是 `getBoundingClientRect()`／`offsetTop`／`clientHeight` 全部回 0。
+
+   實測（apply-2 的 scroll-spy）：19 條條文的 top 全讀成 0，於是全部滿足
+   `top <= 160`，「目前條款」停在最後一條（React 是第 0 條）。
+   **像素比對抓不到**——.is-active 的視覺差異落在初始捲動範圍外，
+   是互動對照才發現的。
+
+   要在進頁面時先量一次，排進 `requestAnimationFrame`：
+
+     mounted() {
+       window.addEventListener("scroll", this._sync, { passive: true });
+       requestAnimationFrame(() => this.sync());   // ← 不要直接 this.sync()
+     }
+
+   原 React 用 `useEffect`（在 paint 之後才跑）不會遇到這件事，
+   requestAnimationFrame 是最接近的對應。
+
    ============================================================ */
 
 (function () {
