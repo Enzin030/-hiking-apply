@@ -1,3 +1,6 @@
+// DEPRECATED 2026-09-09：該頁已遷移為 Vue（applySearch.html ＋
+// components/apply-search.js），本檔已無任何 <script> 引用，請勿編輯。
+// 實際刪除排在階段 4——階段 3 剩餘頁面仍需對照 Shared.jsx。
 /*
   申請進度查詢／繳費／異動／取消
   對應舊站：https://hike.taiwan.gov.tw/applySearch.aspx（操作入口）

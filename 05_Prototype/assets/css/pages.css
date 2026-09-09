@@ -50,7 +50,7 @@
        這是計畫分類法沒涵蓋的第三種情況（跨頁共用但無元件擁有者），已回報。
    ############################################################ */
 
-/* §6.6 白名單：兩頁共用（notice ＋ 尚未遷移的 applySearch），改名會弄壞後者 */
+/* §6.6 白名單：notice 與 applySearch 兩頁共用，改名要同時改兩頁，遷移期不動 */
 .th-notice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
