@@ -2139,21 +2139,74 @@ body.th-noscroll {
   color: var(--national-900);
 }
 
-/* 影片按鈕及圖示風格 (圖示放於後方) */
-.th-expcard a i.fa-circle-play,
-.th-expcard .is-todo i.fa-circle-play {
-  font-size: 12px;
+/* 外部連結項目：無 Bullet、一般字體（無粗體）、底線僅在文字下（Icon 無底線）、Icon 維持文字顏色、Icon 右側間距增加 */
+.th-expcard a.is-external,
+.th-expcard ul.th-expcard-nested a.is-external {
+  color: var(--national-800) !important;
+  font-weight: 400 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: var(--national-800) !important;
+}
+
+.th-expcard a.is-external:hover,
+.th-expcard ul.th-expcard-nested a.is-external:hover {
+  color: var(--national-900) !important;
+  text-decoration-color: var(--national-900) !important;
+}
+
+.th-expcard a.is-external::before,
+.th-expcard ul.th-expcard-nested a.is-external::before,
+.th-expcard .is-todo.is-external::before,
+.th-expcard ul.th-expcard-nested .is-todo.is-external::before {
+  content: none !important;
+  display: none !important;
+}
+
+.th-expcard a.is-external i,
+.th-expcard .is-todo.is-external i,
+.th-expcard a i.fa-arrow-up-right-from-square,
+.th-expcard .is-todo i.fa-arrow-up-right-from-square {
+  display: inline-block !important;
+  text-decoration: none !important;
+  font-size: 11px !important;
+  color: inherit !important;
+  margin-right: 7px !important;
+  margin-left: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* 子層選單項目：空心 Bullet (◦) */
+.th-expcard ul.th-expcard-nested a:not(.is-external)::before,
+.th-expcard ul.th-expcard-nested .is-todo:not(.is-external)::before {
+  content: "◦" !important;
   color: var(--national-800);
-  margin-left: 6px;
-  margin-right: 0;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  margin-right: 4px;
   flex-shrink: 0;
 }
 
-/* 移除子層選單項目前方的 Bullet 圓點 */
-.th-expcard ul.th-expcard-nested a::before,
-.th-expcard ul.th-expcard-nested .is-todo::before {
-  content: none !important;
-  display: none !important;
+/* 本雛形尚未建置的頁面：非連結元素 (span) 加上「待建置」徽章 */
+.th-expcard .is-todo {
+  color: var(--fg-4);
+  cursor: default;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.th-expcard .is-todo::after {
+  content: "待建置";
+  font-size: 10px;
+  color: var(--fg-4);
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  padding: 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .th-expcard-group {
@@ -2544,7 +2597,7 @@ a.th-linkrow:hover .th-linkrow-icon {
 .th-inline-link {
   display: inline;
   color: var(--national-800);
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -2554,9 +2607,11 @@ a.th-linkrow:hover .th-linkrow-icon {
 }
 
 .th-inline-link i {
+  display: inline-block;
+  text-decoration: none;
   font-size: 11px;
-  margin-right: 4px;
-  color: var(--national-500);
+  margin-right: 7px;
+  color: inherit;
 }
 
 /* 暫連現行網站的標記 */
