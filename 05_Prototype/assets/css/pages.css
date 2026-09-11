@@ -3888,16 +3888,18 @@
 
 
 /* ############################################################
-   index-b.html（首頁 B 案，2026-09-09 由 hiking-site/ 移植）
+   index-b.html（首頁 B 案，2026-09-09 由 05_Prototype/hiking-site/ 移植）
    ############################################################
 
-   來源：05_Prototype/hiking-site/style.css（801 行）。
+   來源：05_Prototype/hiking-site/style.css（801 行）。**該目錄已於階段 4 刪除**，
+   要看原始碼取 git 的 624985e（它最後一次變動的 commit）。
    這一頁是首頁的第二個版型方案，與現行 index.html 並存供切換展示。
 
    兩件改動，都不是原樣搬過來：
    一、**class 改名**（§6.2）：32 個自有 class 加 .p-indexb- 前綴。
-       原檔有 4 個與 shared.css 撞名（active／bulletin-badge／icon／
-       step-circle），先前只靠 style.css 載在 shared.css 之後才沒事——
+       原檔有 4 個與當時 shared.css 撞名（active／bulletin-badge／icon／
+       step-circle），在原目錄裡只靠 style.css 載在 shared.css 之後才沒事——
+       （兩支都已於階段 4 刪除，這個巧合不再是本頁的依賴）
        那是定時炸彈。**bulletin-badge 與 agency-* 不改名**：那是跨頁共用的
        機關徽章，本來就該吃共用樣式。
    二、**色票改吃 tokens.css**：原檔 45 種寫死色值，以 RGB 最近距離

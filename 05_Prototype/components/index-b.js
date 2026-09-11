@@ -1,6 +1,7 @@
 /* ============================================================
    index-b.js — 首頁 B 案
-   原 05_Prototype/hiking-site/app.js（209 行，命令式 DOM 操作）。
+   原 05_Prototype/hiking-site/app.js（209 行，命令式 DOM 操作）；
+   該目錄已於階段 4 刪除，原始碼見 git 624985e。
    版面已搬到 index-b.html，樣式搬到 assets/css/pages.css 的 .p-indexb-* 區塊。
    ============================================================
 
