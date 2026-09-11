@@ -51,6 +51,436 @@
    url() 的相對路徑已依 assets/css/ 的深度修正。
    ############################################################ */
 
+
+/* ############################################################
+   階段 4 步驟 7／7b：第三類 ＋ .fc-* ＋ .th-expcard*（2026-09-11）
+   前置插入，理由同步驟 6：shared.css 整份排在 components.css 之前，
+   附加到末尾會讓這些規則跑到既有規則之後，順序反轉。
+   .th-expcard* 為 2026-09-08 撤除後重新複製，已確認 17 條全部存在於 HEAD。
+   ############################################################ */
+
+.th-section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--fg-1);
+  border-left: 4px solid var(--filter-active);
+  padding-left: 16px;
+  margin: 0 0 20px;
+}
+
+.th-section-title-sub {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--fg-3);
+  margin-top: 6px;
+  letter-spacing: var(--tracking-wide);
+}
+
+.th-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  font-weight: 500;
+  font-size: var(--fs-md);
+  transition: .15s;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.th-btn i {
+  position: relative;
+  top: 1px;
+}
+
+.th-btn-primary {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  box-shadow: var(--sh-md);
+}
+
+.th-btn-primary:hover {
+  background: var(--national-700-hover);
+  border-color: var(--national-700-hover);
+}
+
+.th-btn-primary:disabled {
+  background: var(--slate-300);
+  color: var(--slate-500);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.th-btn-secondary {
+  background: var(--btn-blue);
+  color: #fff;
+}
+
+.th-btn-secondary:hover {
+  background: #2f4a72;
+}
+
+.th-btn-ghost {
+  background: var(--bg-1);
+  color: var(--fg-2);
+  border-color: var(--slate-300);
+}
+
+.th-btn-ghost:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-400);
+  color: var(--national-700);
+}
+
+.th-btn-lg {
+  min-height: 48px;
+}
+
+.th-btn-lg {
+  padding: 14px 28px;
+  font-size: 16px;
+}
+
+.th-btn-sm {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.th-btn-block {
+  width: 100%;
+}
+
+.th-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.th-chip {
+  padding: 6px 14px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-pill);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.th-chip:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-400);
+}
+
+.th-chip.is-active {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
+}
+
+.bulletin-section-head .th-section-title {
+  margin: 0 auto 0 0;
+  font-size: var(--fs-h3);
+}
+
+.th-expcard {
+  position: relative;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-sm);
+  padding: 20px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.th-expcard:not(:first-child)::before {
+  display: none;
+}
+
+.th-expcard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.th-expcard li {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+
+.th-expcard a,
+.th-expcard .is-todo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--fg-2);
+}
+
+.th-expcard a::before,
+.th-expcard .is-todo::before,
+.th-expcard-grouptitle::before {
+  content: "•";
+  color: var(--national-800);
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.th-expcard .is-todo::before {
+  color: var(--slate-400);
+}
+
+.th-expcard a:hover::before {
+  color: var(--national-900);
+}
+
+.th-expcard a.is-external,
+.th-expcard ul.th-expcard-nested a.is-external {
+  color: var(--national-800) !important;
+  font-weight: 400 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: var(--national-800) !important;
+}
+
+.th-expcard a.is-external:hover,
+.th-expcard ul.th-expcard-nested a.is-external:hover {
+  color: var(--national-900) !important;
+  text-decoration-color: var(--national-900) !important;
+}
+
+.th-expcard a.is-external::before,
+.th-expcard ul.th-expcard-nested a.is-external::before,
+.th-expcard .is-todo.is-external::before,
+.th-expcard ul.th-expcard-nested .is-todo.is-external::before {
+  content: none !important;
+  display: none !important;
+}
+
+.th-expcard a.is-external i,
+.th-expcard .is-todo.is-external i,
+.th-expcard a i.fa-arrow-up-right-from-square,
+.th-expcard .is-todo i.fa-arrow-up-right-from-square {
+  display: inline-block !important;
+  text-decoration: none !important;
+  font-size: 11px !important;
+  color: inherit !important;
+  margin-right: 7px !important;
+  margin-left: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.th-expcard ul.th-expcard-nested a:not(.is-external)::before,
+.th-expcard ul.th-expcard-nested .is-todo:not(.is-external)::before {
+  content: "◦" !important;
+  color: var(--national-800);
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.th-expcard .is-todo {
+  color: var(--fg-4);
+  cursor: default;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.th-expcard .is-todo::after {
+  content: "待建置";
+  font-size: 10px;
+  color: var(--fg-4);
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  padding: 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.th-expcard-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.th-expcard-grouptitle {
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--fg-1);
+  display: flex;
+  align-items: baseline;
+}
+
+.th-expcard ul.th-expcard-nested {
+  padding-left: 20px !important;
+  border-left: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.th-table-note {
+  margin: 12px 0 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  line-height: var(--lh-base);
+}
+
+.fc-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 28px;
+  align-items: start;
+}
+
+.fc-section {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh-sm);
+}
+
+.fc-section-title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc-section-title i {
+  color: var(--park-forestry);
+  font-size: 17px;
+}
+
+.fc-stepper-input {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--slate-300);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  height: 42px;
+}
+
+.fc-stepper-btn {
+  width: 42px;
+  height: 100%;
+  border: none;
+  background: var(--bg-2);
+  color: var(--fg-2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fc-stepper-btn:hover:not(:disabled) {
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+}
+
+.fc-stepper-btn:disabled {
+  color: var(--fg-4);
+  cursor: default;
+}
+
+.fc-stepper-val {
+  flex: 1;
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.fc-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fc-footbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  margin-top: 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-card);
+  position: sticky;
+  bottom: 16px;
+}
+
+.th-chip.is-todo {
+  cursor: default;
+  background: var(--bg-2);
+  border-color: var(--slate-200);
+  color: var(--fg-4);
+}
+
+.th-chip.is-todo:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-200);
+  color: var(--fg-4);
+}
+
+@media (max-width: 768px) {
+    .bulletin-filter-row .th-btn {
+      flex: 1 1 40%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .th-expnav-grid::before,
+    .th-expcard:not(:first-child)::before {
+      display: none;
+    }
+}
+
+@media (max-width: 860px) {
+    .fc-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .fc-aside {
+      order: -1;
+    }
+}
+
 .th-accent {
   color: var(--national-700);
 }

@@ -51,6 +51,17 @@
    ############################################################ */
 
 /* §6.6 白名單：notice 與 applySearch 兩頁共用，改名要同時改兩頁，遷移期不動 */
+
+/* ############################################################
+   階段 4 步驟 7：.fc-avail-section .fc-section-title（2026-09-11）
+   §4.1 裁決：祖先 .fc-avail-section 是 forest-camp-1 專屬且要改名，
+   子規則必須與祖先同落點；整條一起搬，不按 class 拆開。
+   ############################################################ */
+
+.fc-avail-section .fc-section-title {
+  border-bottom-color: var(--bg-mist-3);
+}
+
 .th-notice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
