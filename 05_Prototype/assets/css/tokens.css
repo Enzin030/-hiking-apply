@@ -38,8 +38,8 @@
   -------------------------------------------------------- */
   --btn-blue:   #3b5f8f;     /* secondary CTA — steady navy */
   --footer:     #243447;     /* deep navy footer */
-  --sub-footer: #334155;     /* footer sub-band */
-  --filter-active: #587a68;  /* active filter pill */
+  --sub-footer: var(--slate-700);     /* footer sub-band */
+  --filter-active: var(--national-700);  /* active filter pill */
   --bg-gray:    #f5f7f2;     /* faint sage-tinted neutral */
 
   /* --------------------------------------------------------
@@ -57,50 +57,90 @@
   --slate-900: #0f172a;
 
   /* --------------------------------------------------------
+     狀態色的原色階梯（2026-09-11 A2 新增）
+     ------------------------------------------------------------
+     這些值本來直接寫在下面的語意 token 上（--danger-fg: #dc2626）。
+     抽出來的理由：設計師換色票時給的是「危險色要改成什麼」，
+     不是「--danger-fg 這一格」。有階梯才接得住。
+
+     **值一個都沒有變**，只是多了一層名字。
+     來源標註是為了讓下一個人知道這一格原本對應什麼：
+     四組都取自 Tailwind 的預設色階（本專案的既有值本來就抄自那裡）。
+
+     **只建實際用到的格**——補滿 50–900 會造出一堆沒人引用的變數，
+     那與零引用 token 是同一個問題。
+  -------------------------------------------------------- */
+  --red-50:  #fef2f2;    /* Tailwind red-50 */
+  --red-200: #fecaca;    /* Tailwind red-200 */
+  --red-500: #ef4444;    /* Tailwind red-500 */
+  --red-600: #dc2626;    /* Tailwind red-600 */
+  --red-700: #b91c1c;    /* Tailwind red-700 */
+
+  --amber-50:  #fffbeb;  /* Tailwind amber-50 */
+  --amber-200: #fde68a;  /* Tailwind amber-200 */
+  --amber-700: #b45309;  /* Tailwind amber-700 */
+
+  --green-50:  #f0fdf4;  /* Tailwind green-50。與品牌綠 --national-* 是兩套，
+                            這組只服務 success 狀態，不要混用 */
+  --green-200: #bbf7d0;  /* Tailwind green-200 */
+  --green-700: #15803d;  /* Tailwind green-700 */
+
+  --blue-50:  #eff6ff;   /* Tailwind blue-50 */
+  --blue-700: #1d4ed8;   /* Tailwind blue-700 */
+
+  /* 品牌綠的淺色調三階。不是 Tailwind，是本專案自己的霧綠，
+     與 --national-* 同一個色相、更低彩度。換品牌色時這三格要一起換。 */
+  --mist-50:  #f4f9f2;
+  --mist-100: #e2f1e4;
+  --mist-200: #cadcce;
+
+  /* 純白。同時是 surface 與深色底上的前景，兩個語意共用一格。 */
+  --white: #ffffff;
+
+  /* --------------------------------------------------------
      SEMANTIC FOREGROUND / BACKGROUND
   -------------------------------------------------------- */
   --fg-1: var(--slate-800);          /* primary text */
   --fg-2: var(--slate-600);          /* secondary text */
   --fg-3: var(--slate-500);          /* tertiary / metadata */
   --fg-4: var(--slate-400);          /* placeholder / disabled */
-  --fg-on-dark: #ffffff;
-  --fg-on-dark-2: #cbd5e1;
+  --fg-on-dark: var(--white);
 
-  --bg-1: #ffffff;                   /* surface */
+  --bg-1: var(--white);              /* surface */
   --bg-2: var(--slate-50);           /* subtle alt surface */
   --bg-3: var(--bg-gray);            /* sage-neutral panel */
-  --bg-mist: #f4f9f2;                /* alpine mist tint */
-  --bg-mist-2: #e2f1e4;              /* deeper mist */
-  --bg-mist-3: #cadcce;              /* horizon haze */
+  --bg-mist: var(--mist-50);                /* alpine mist tint */
+  --bg-mist-2: var(--mist-100);              /* deeper mist */
+  --bg-mist-3: var(--mist-200);              /* horizon haze */
 
   /* --------------------------------------------------------
      STATUS — lifted from the bulletin pills
   -------------------------------------------------------- */
-  --success-bg: #f0fdf4;
-  --success-fg: #15803d;
-  --success-border: #bbf7d0;
-  --info-bg: #eff6ff;
-  --info-fg: #1d4ed8;
-  --warning-bg: #fffbeb;
-  --warning-fg: #b45309;
-  --danger-fg: #dc2626;             /* asterisk warnings */
-  --danger-soft: #ef4444;           /* pinned-pin red */
+  --success-bg: var(--green-50);
+  --success-fg: var(--green-700);
+  --success-border: var(--green-200);
+  --info-bg: var(--blue-50);
+  --info-fg: var(--blue-700);
+  --warning-bg: var(--amber-50);
+  --warning-fg: var(--amber-700);
+  --danger-fg: var(--red-600);      /* asterisk warnings */
+  --danger-soft: var(--red-500);    /* pinned-pin red */
   /* 2026-09-08（遷移 notice）新增：紅色按鈕的 hover 深色。
      來源是原 shared.css 的 .th-video-btn:hover 寫死的 #b91c1c；
      該規則要移進 pages.css，而 §6.1.1 禁止 pages.css 出現 hex 字面值，
      故收成 token。命名沿用既有的 --national-700-hover 慣例。
      當時只加在 tokens.css、不動 design_system（32 頁未遷移頁靠它）；
      該檔已於階段 4 刪除，本檔是唯一真源。 */
-  --danger-fg-hover: #b91c1c;
+  --danger-fg-hover: var(--red-700);
 
   /* --------------------------------------------------------
      2026-09-08（遷移 apply-1）新增四個。前三個是**補完既有的
      bg／fg／border 三件組**——success 與 warning 本來就有 border，
      info／danger 缺，而 apply-1 的狀態徽章與膠囊需要：
   -------------------------------------------------------- */
-  --danger-bg: #fef2f2;             /* 暫停／熱門徽章底色 */
-  --danger-border: #fecaca;         /* 暫停膠囊框線 */
-  --warning-border: #fde68a;        /* 抽籤膠囊框線 */
+  --danger-bg: var(--red-50);       /* 暫停／熱門徽章底色 */
+  --danger-border: var(--red-200);  /* 暫停膠囊框線 */
+  --warning-border: var(--amber-200); /* 抽籤膠囊框線 */
 
   /* 深色遮罩。同一組色（--slate-900 = rgb(15,23,42)）另有 0.55 的用法在
      .bulletin-modal-overlay，兩個 alpha 不同，故分開命名。
@@ -199,17 +239,4 @@
   --sh-xl:     0 20px 40px -10px rgba(0, 0, 0, 0.15);
 
   /* gradients — alpine mist (used on hero) */
-  --grad-mist: linear-gradient(
-    to bottom,
-    #ffffff 0%,
-    #f4f9f2 40%,
-    #e2f1e4 70%,
-    #cadcce 100%
-  );
-  --grad-card-overlay: linear-gradient(
-    to top,
-    rgba(15, 23, 42, 0.9) 0%,
-    rgba(15, 23, 42, 0.2) 50%,
-    rgba(15, 23, 42, 0) 100%
-  );
 }
