@@ -74,7 +74,7 @@
   display: block;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--fg-3);
   margin-top: 6px;
   letter-spacing: var(--tracking-wide);
@@ -149,12 +149,12 @@
 
 .th-btn-lg {
   padding: 14px 28px;
-  font-size: 16px;
+  font-size: var(--fs-nav);
 }
 
 .th-btn-sm {
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 .th-btn-block {
@@ -239,7 +239,7 @@
 .th-expcard-grouptitle::before {
   content: "•";
   color: var(--national-800);
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: bold;
   line-height: 1;
   margin-right: 4px;
@@ -283,7 +283,7 @@
 .th-expcard .is-todo i.fa-arrow-up-right-from-square {
   display: inline-block !important;
   text-decoration: none !important;
-  font-size: 11px !important;
+  font-size: var(--fs-2xs) !important;
   color: inherit !important;
   margin-right: 7px !important;
   margin-left: 0 !important;
@@ -294,7 +294,7 @@
 .th-expcard ul.th-expcard-nested .is-todo:not(.is-external)::before {
   content: "◦" !important;
   color: var(--national-800);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: bold;
   line-height: 1;
   margin-right: 4px;
@@ -311,7 +311,7 @@
 
 .th-expcard .is-todo::after {
   content: "待建置";
-  font-size: 10px;
+  font-size: var(--fs-3xs);
   color: var(--fg-4);
   background: var(--slate-100);
   border: 1px solid var(--slate-200);
@@ -399,7 +399,7 @@
   border: none;
   background: var(--bg-2);
   color: var(--fg-2);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   cursor: pointer;
   transition: background 0.15s;
   display: flex;
@@ -528,20 +528,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--slate-700);
 }
 
 .th-footbar-info i {
   width: 32px;
   height: 32px;
-  border-radius: 9999px;
+  border-radius: var(--r-pill);
   background: var(--bg-mist-2);
   color: var(--national-700);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .th-footbar-actions {
@@ -574,7 +574,7 @@
 
 .th-sidebar-head i {
   color: var(--national-700);
-  font-size: 16px;
+  font-size: var(--fs-nav);
 }
 
 .th-sidebar-body {
@@ -632,7 +632,7 @@
 .th-sidebar-checklist li i {
   width: 14px;
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: var(--fs-xxs);
   color: var(--slate-300);
 }
 
@@ -664,7 +664,7 @@
 }
 
 .th-flag i {
-  font-size: 12px;
+  font-size: var(--fs-xxs);
 }
 
 .th-flag.is-yes {
@@ -764,7 +764,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--fg-4);
-  font-size: 15px;
+  font-size: var(--fs-md);
   pointer-events: none;
 }
 
@@ -799,7 +799,7 @@
   display: inline-block;
   padding: 3px 12px;
   border: 1px solid var(--national-200);
-  border-radius: 9999px;
+  border-radius: var(--r-pill);
   background: var(--bg-mist);
   color: var(--national-700);
   font-size: var(--fs-xxs);
@@ -880,7 +880,7 @@
 .th-expcard-grouptitle::before {
   content: "•";
   color: var(--national-800);
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: bold;
   line-height: 1;
   margin-right: 4px;
@@ -924,7 +924,7 @@
 .th-expcard .is-todo i.fa-arrow-up-right-from-square {
   display: inline-block !important;
   text-decoration: none !important;
-  font-size: 11px !important;
+  font-size: var(--fs-2xs) !important;
   color: inherit !important;
   margin-right: 7px !important;
   margin-left: 0 !important;
@@ -935,7 +935,7 @@
 .th-expcard ul.th-expcard-nested .is-todo:not(.is-external)::before {
   content: "◦" !important;
   color: var(--national-800);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: bold;
   line-height: 1;
   margin-right: 4px;
@@ -952,7 +952,7 @@
 
 .th-expcard .is-todo::after {
   content: "待建置";
-  font-size: 10px;
+  font-size: var(--fs-3xs);
   color: var(--fg-4);
   background: var(--slate-100);
   border: 1px solid var(--slate-200);
@@ -1044,7 +1044,7 @@
 .th-inline-link i {
   display: inline-block;
   text-decoration: none;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   margin-right: 7px;
   color: inherit;
 }
@@ -1122,7 +1122,7 @@
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 9999px;
+  border-radius: var(--r-pill);
   box-shadow: var(--sh-sm);
   padding: 4px 8px;
 }
@@ -1133,7 +1133,7 @@
   align-items: center;
   justify-content: center;
   color: var(--national-700);
-  font-size: 20px;
+  font-size: var(--fs-h3);
 }
 
 .th-marquee-viewport {
@@ -1162,7 +1162,7 @@
   align-items: center;
   color: var(--fg-1);
   text-decoration: none;
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 500;
   line-height: 1;
   padding: 0 32px 0 0;
@@ -1196,8 +1196,8 @@
   background: var(--national-700);
   color: #fff;
   padding: 7px 16px;
-  border-radius: 9999px;
-  font-size: 13px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
@@ -1266,7 +1266,7 @@
 .th-focusable:focus-visible {
   outline: 2px solid var(--national-700);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: var(--r-xs);
 }
 
 @media (max-width: 700px) {
@@ -1484,7 +1484,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--fg-4);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   pointer-events: none;
 }
 .th-input-group .th-input {
@@ -1611,7 +1611,7 @@
   display: inline-block;
   margin-right: 6px;
   color: var(--danger-fg-hover);
-  font-size: 12px;
+  font-size: var(--fs-xxs);
   text-decoration: none !important;
   vertical-align: 0;
 }
@@ -1757,7 +1757,7 @@ ul.th-doc-list {
 }
 .th-todo-link::after {
   content: "待建置";
-  font-size: 10px;
+  font-size: var(--fs-3xs);
   line-height: 1.5;
   color: var(--fg-4);
   border: 1px solid var(--slate-200);
@@ -1789,7 +1789,7 @@ ul.th-doc-list {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--fg-3);
 }
 .th-crumb a {
@@ -1800,7 +1800,7 @@ ul.th-doc-list {
   color: var(--national-700);
 }
 .th-crumb i {
-  font-size: 10px;
+  font-size: var(--fs-3xs);
   color: var(--slate-300);
 }
 .th-crumb-current {
@@ -1837,7 +1837,7 @@ ul.th-doc-list {
 .th-step-num {
   width: 32px;
   height: 32px;
-  border-radius: 9999px;
+  border-radius: var(--r-pill);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1845,7 +1845,7 @@ ul.th-doc-list {
   border: 2px solid var(--slate-300);
   color: var(--fg-4);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   flex-shrink: 0;
   transition: all 0.2s;
 }
@@ -1898,7 +1898,7 @@ ul.th-doc-list {
   content: "\f00c";
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 .th-step.is-done .th-step-num span {
   display: none;
@@ -1978,7 +1978,7 @@ ul.th-doc-list {
 .th-page-title {
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 28px;
+  font-size: var(--fs-h1);
   line-height: 1.2;
   color: var(--fg-1);
   margin: 0;
@@ -2070,7 +2070,7 @@ ul.th-doc-list {
     color: var(--national-700);
   }
   .th-menubtn i {
-    font-size: 18px;
+    font-size: var(--fs-lg);
   }
 }
 .th-menumask {
@@ -2101,7 +2101,7 @@ ul.th-doc-list {
 }
 .th-menupanel-head button {
   color: var(--fg-3);
-  font-size: 20px;
+  font-size: var(--fs-h3);
 }
 .th-menupanel-head button:hover {
   color: var(--national-700);
@@ -2133,7 +2133,7 @@ ul.th-doc-list {
   color: var(--national-700);
 }
 .th-menunav a i {
-  font-size: 12px;
+  font-size: var(--fs-xxs);
   color: var(--fg-4);
 }
 .th-menunav .th-menunav-todo {
@@ -2161,7 +2161,7 @@ ul.th-doc-list {
   color: var(--national-700);
 }
 .th-menunav-toggle i {
-  font-size: 12px;
+  font-size: var(--fs-xxs);
   color: var(--fg-4);
 }
 .th-menunav-sub {
@@ -2188,7 +2188,7 @@ ul.th-doc-list {
   color: var(--national-700);
 }
 .th-menunav-sub a i {
-  font-size: 12px;
+  font-size: var(--fs-xxs);
   color: var(--fg-4);
 }
 /* 工具列（網站導覽／警特報／RSS…）在選單面板裡各佔一列，不並排 */
@@ -2340,7 +2340,7 @@ ul.th-doc-list {
   font-size: inherit;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: var(--r-sm, 6px);
+  border-radius: var(--r-sm, var(--r-sm));
   transition: all 0.15s ease;
 }
 .th-lang-btn:hover {
@@ -2355,7 +2355,7 @@ ul.th-doc-list {
   min-width: 150px;
   background: var(--bg-1);
   border: 1px solid var(--slate-200, var(--slate-200));
-  border-radius: var(--r-md, 8px);
+  border-radius: var(--r-md, var(--r-md));
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   padding: 6px;
   display: flex;
@@ -2370,7 +2370,7 @@ ul.th-doc-list {
   padding: 8px 12px;
   font-size: var(--fs-nav);
   color: var(--slate-700, var(--slate-700));
-  border-radius: var(--r-sm, 6px);
+  border-radius: var(--r-sm, var(--r-sm));
   background: transparent;
   border: none;
   cursor: pointer;
@@ -2402,7 +2402,7 @@ ul.th-doc-list {
   color: var(--slate-600);
   background: var(--slate-50, #f8fafc);
   border: 1px solid var(--slate-200);
-  border-radius: var(--r-sm, 6px);
+  border-radius: var(--r-sm, var(--r-sm));
   cursor: pointer;
 }
 .th-menu-lang-btn.is-active {
@@ -2441,7 +2441,7 @@ body.th-noscroll {
   transform: translateY(-2px);
 }
 .th-quickbtn i {
-  font-size: 20px;
+  font-size: var(--fs-h3);
 }
 .th-quickbtn span {
   font-size: var(--fs-xxs);
@@ -2495,7 +2495,7 @@ body.th-noscroll {
   border: none;
   background: none;
   color: var(--fg-4);
-  font-size: 20px;
+  font-size: var(--fs-h3);
   line-height: 1;
   padding: 4px 8px;
   border-radius: var(--r-sm);
@@ -2548,7 +2548,7 @@ body.th-noscroll {
   box-shadow: 0 3px 8px rgba(67, 107, 81, 0.1);
 }
 .th-quick-step .step-circle i {
-  font-size: 28px;
+  font-size: var(--fs-h1);
   color: #335c49;
 }
 .th-quick-step.is-active .step-circle,
@@ -2561,13 +2561,13 @@ body.th-noscroll {
   color: var(--fg-on-dark);
 }
 .th-quick-step strong {
-  font-size: 16px;
+  font-size: var(--fs-nav);
   letter-spacing: 1px;
   color: #233c4a;
   font-weight: 700;
 }
 .th-quick-step small {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   margin-top: 2px;
   color: #1a3244;
   font-weight: 400;
@@ -2674,7 +2674,7 @@ body.th-noscroll {
   border: none;
   background: none;
   padding: 4px;
-  font-size: 20px;
+  font-size: var(--fs-h3);
   color: var(--fg-4);
   transition: color 0.15s;
 }
@@ -2773,7 +2773,7 @@ body.th-noscroll {
 }
 .th-table-empty i {
   display: block;
-  font-size: 28px;
+  font-size: var(--fs-h1);
   color: var(--slate-300);
   margin-bottom: 10px;
 }
@@ -3130,7 +3130,7 @@ body.th-noscroll {
   }
   .camp-cal-remain {
     margin-top: 4px;
-    font-size: 15px;
+    font-size: var(--fs-md);
   }
   .camp-cal-week {
     padding: 8px 2px;
@@ -3172,13 +3172,13 @@ body.th-noscroll {
 .fc-step-dot {
   width: 32px;
   height: 32px;
-  border-radius: 9999px;
+  border-radius: var(--r-pill);
   border: 2px solid var(--slate-300);
   background: var(--bg-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--fg-4);
   transition: all 0.2s;
@@ -3240,7 +3240,7 @@ body.th-noscroll {
 }
 .th-card-head i {
   color: var(--national-700);
-  font-size: 16px;
+  font-size: var(--fs-nav);
 }
 .th-card-title {
   font-size: var(--fs-h3);
@@ -3341,7 +3341,7 @@ a.th-linkrow:hover {
 }
 .th-linkrow-icon {
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--fg-4);
 }
 a.th-linkrow:hover .th-linkrow-icon {
@@ -3486,7 +3486,7 @@ a.th-linkrow:hover .th-linkrow-icon {
 .th-callout>i {
   flex-shrink: 0;
   color: var(--national-700);
-  font-size: 15px;
+  font-size: var(--fs-md);
   margin-top: 3px;
 }
 .th-callout.is-warning {
