@@ -31,7 +31,7 @@
   <th-page-shell :trail="['公布欄', tab.label]" :title="tab.label" :bare="true">
 
     <!-- 篩選列（扁平工具列，無卡片外框） -->
-    <form class="bulletin-toolbar" @submit.prevent="submitFilter">
+    <form class="p-news-toolbar" @submit.prevent="submitFilter">
       <div class="bulletin-filter-row">
         <!-- 發布單位下拉選單 -->
         <span class="bulletin-filter-label bulletin-filter-label--inline">發布單位</span>
@@ -56,7 +56,7 @@
         <!-- 最新消息：發布日期起訖 -->
         <template v-if="tab.key === 'news'">
           <span class="bulletin-filter-label bulletin-filter-label--inline">發布日期</span>
-          <div class="bulletin-daterange">
+          <div class="p-news-daterange">
             <!--
               2026-09-10：兩個原生 input[type=date] 改用 th-date-picker（flatpickr）。
               bare 是因為這裡是一列橫向的篩選控制項，不需要 .th-field 的直向容器。
@@ -66,7 +66,7 @@
             <th-date-picker :bare="true" name="startDate" input-class="th-input--date"
                             :model-value="draft.start"
                             @update:model-value="setDraftField({ start: $event })"></th-date-picker>
-            <span class="bulletin-sep">~</span>
+            <span class="p-news-sep">~</span>
             <th-date-picker :bare="true" name="endDate" input-class="th-input--date"
                             :min="draft.start"
                             :model-value="draft.end"
@@ -93,7 +93,7 @@
           </select>
         </template>
 
-        <div class="bulletin-filter-actions">
+        <div class="p-news-filter-actions">
           <button type="submit" class="th-btn th-btn-primary">
             <i class="fa-solid fa-magnifying-glass"></i>查詢
           </button>
@@ -115,8 +115,8 @@
         <template v-else-if="tab.key === 'news'">
           <template v-if="column.key === 'date'">{{ dateSlash(row.date) }}</template>
           <template v-else-if="column.key === 'title'">
-            <a :href="'news_0_1.html?id=' + row.id" class="bulletin-link">
-              <i v-if="row.pinned" class="fa-solid fa-thumbtack bulletin-pin" title="置頂"></i>{{ row.title }}
+            <a :href="'news_0_1.html?id=' + row.id" class="p-news-link">
+              <i v-if="row.pinned" class="fa-solid fa-thumbtack p-news-pin" title="置頂"></i>{{ row.title }}
             </a>
           </template>
         </template>
@@ -124,19 +124,19 @@
         <!-- 違規名單 -->
         <template v-else-if="tab.key === 'violation'">
           <template v-if="column.key === 'ban'">{{ row.banStart }}<br />{{ row.banEnd }}</template>
-          <span v-else-if="column.key === 'category'" class="bulletin-tag bulletin-tag--warn">{{ row.category }}</span>
+          <span v-else-if="column.key === 'category'" class="p-news-tag p-news-tag--warn">{{ row.category }}</span>
           <template v-else>{{ row[column.key] }}</template>
         </template>
 
         <!-- 檔案下載 -->
         <template v-else-if="tab.key === 'download'">
-          <template v-if="column.key === 'title'"><span>{{ row.title }}</span><a v-for="(f, i) in row.files" :key="i" :href="f.href" target="_blank" rel="noopener noreferrer" :class="'bulletin-file ' + f.format.toLowerCase()"><i :class="fileIcons[f.format] || 'fa-regular fa-file'"></i>{{ f.format }}</a></template>
+          <template v-if="column.key === 'title'"><span>{{ row.title }}</span><a v-for="(f, i) in row.files" :key="i" :href="f.href" target="_blank" rel="noopener noreferrer" :class="'p-news-file ' + f.format.toLowerCase()"><i :class="fileIcons[f.format] || 'fa-regular fa-file'"></i>{{ f.format }}</a></template>
         </template>
 
         <!-- 常見問答 -->
         <template v-else>
-          <span v-if="column.key === 'cat'" class="bulletin-tag">{{ row.cat }}</span>
-          <button v-else-if="column.key === 'q'" type="button" class="bulletin-link" @click="openModal({
+          <span v-if="column.key === 'cat'" class="p-news-tag">{{ row.cat }}</span>
+          <button v-else-if="column.key === 'q'" type="button" class="p-news-link" @click="openModal({
             title: row.q, org: row.org, agencyId: row.agencyId,
             meta: '異動日期：' + row.date + '　｜　發布類別：' + row.cat, body: row.a
           })">{{ row.q }}</button>

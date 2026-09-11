@@ -86,17 +86,17 @@ const pFc1AvailBar = {
     barStyle() { return { width: this.pct + "%", background: FC1_BAR_BG[this.status] }; },
   },
   template: `
-    <div v-if="date && nights" class="fc-avail-row">
-      <div class="fc-avail-head">
-        <span class="fc-avail-icon"><i :class="facility.icon"></i></span>
-        <span class="fc-avail-name">{{ facility.label }}</span>
-        <span class="fc-avail-status" :style="{ color: statusColor }">{{ statusLabel }}</span>
-        <span class="fc-avail-count">{{ available }} / {{ facility.max }} {{ facility.unit }}可預訂</span>
+    <div v-if="date && nights" class="p-fc1-avail-row">
+      <div class="p-fc1-avail-head">
+        <span class="p-fc1-avail-icon"><i :class="facility.icon"></i></span>
+        <span class="p-fc1-avail-name">{{ facility.label }}</span>
+        <span class="p-fc1-avail-status" :style="{ color: statusColor }">{{ statusLabel }}</span>
+        <span class="p-fc1-avail-count">{{ available }} / {{ facility.max }} {{ facility.unit }}可預訂</span>
       </div>
       <div class="fc-avail-bar-wrap">
-        <div class="fc-avail-bar" :style="barStyle"></div>
+        <div class="p-fc1-avail-bar" :style="barStyle"></div>
       </div>
-      <div class="fc-avail-meta">
+      <div class="p-fc1-avail-meta">
         <span>每{{ facility.unit }} NT$ {{ facility.pricePerNight }} / 晚</span>
         <span>{{ nights }} 晚 × {{ facility.max }} {{ facility.unit }} 上限</span>
       </div>

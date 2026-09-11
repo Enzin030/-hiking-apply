@@ -35,8 +35,8 @@
   <th-page-shell :trail="['宿營地與床位查詢', current.trail]" title="宿營地與床位查詢" :bare="true">
 
     <!-- 上層：機關 -->
-    <div class="bulletin-tabs">
-      <nav class="bulletin-tabs-nav" aria-label="管理機關">
+    <div class="p-campsite-tabs">
+      <nav class="p-campsite-tabs-nav" aria-label="管理機關">
         <template v-for="o in orgs" :key="o.key">
           <button v-if="o.built" type="button"
                   :class="['bulletin-tab', { 'is-active': org === o.key }]"

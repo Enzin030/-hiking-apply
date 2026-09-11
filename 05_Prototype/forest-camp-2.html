@@ -43,23 +43,23 @@
       <div class="fc-main">
 
         <!-- 行程摘要 banner -->
-        <div class="fc2-summary-bar">
-          <div class="fc2-summary-item">
+        <div class="p-fc2-summary-bar">
+          <div class="p-fc2-summary-item">
             <i class="ph-bold ph-house"></i>
             <span>{{ cabin.name }}</span>
           </div>
-          <div class="fc2-summary-sep"></div>
-          <div class="fc2-summary-item">
+          <div class="p-fc2-summary-sep"></div>
+          <div class="p-fc2-summary-item">
             <i class="fa-regular fa-calendar"></i>
             <span>{{ fmtDate(startDate) }}</span>
           </div>
-          <div class="fc2-summary-sep"></div>
-          <div class="fc2-summary-item">
+          <div class="p-fc2-summary-sep"></div>
+          <div class="p-fc2-summary-item">
             <i class="ph-bold ph-moon"></i>
             <span>{{ nights }} 晚</span>
           </div>
-          <div class="fc2-summary-sep"></div>
-          <div class="fc2-summary-item">
+          <div class="p-fc2-summary-sep"></div>
+          <div class="p-fc2-summary-item">
             <i class="ph-bold ph-users"></i>
             <span>{{ headcount }} 人</span>
           </div>
@@ -88,26 +88,26 @@
           <h2 class="fc-section-title">
             <i class="ph-bold ph-bed"></i>每日住宿床位 / 營位
           </h2>
-          <p class="fc2-section-desc">請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。</p>
+          <p class="p-fc2-section-desc">請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。</p>
 
           <div v-for="i in nightIndexes" :key="i"
                :class="['fc2-night-block', { 'is-filled': nightTotal(i) > 0 }]">
             <div class="fc2-night-head">
-              <div class="fc2-night-badge">第 {{ i + 1 }} 晚</div>
-              <div class="fc2-night-date">{{ fmtDate(nightDate(i)) }}</div>
-              <div v-if="nightTotal(i) > 0" class="fc2-night-ok">
+              <div class="p-fc2-night-badge">第 {{ i + 1 }} 晚</div>
+              <div class="p-fc2-night-date">{{ fmtDate(nightDate(i)) }}</div>
+              <div v-if="nightTotal(i) > 0" class="p-fc2-night-ok">
                 <i class="fa-solid fa-check"></i> 已填寫
               </div>
             </div>
-            <div class="fc2-night-rows">
-              <div v-for="f in cabin.facilities" :key="f.id" class="fc2-facility-row">
-                <div class="fc2-facility-left">
-                  <span class="fc2-facility-icon">
+            <div class="p-fc2-night-rows">
+              <div v-for="f in cabin.facilities" :key="f.id" class="p-fc2-facility-row">
+                <div class="p-fc2-facility-left">
+                  <span class="p-fc2-facility-icon">
                     <i :class="f.icon"></i>
                   </span>
                   <div>
-                    <div class="fc2-facility-name">{{ f.label }}</div>
-                    <div class="fc2-facility-price">NT$ {{ f.pricePerNight }} / {{ f.unit }}<span v-if="qtyOf(i, f.id) > 0" class="fc2-facility-subtotal">= NT$ {{ qtyOf(i, f.id) * f.pricePerNight }}</span></div>
+                    <div class="p-fc2-facility-name">{{ f.label }}</div>
+                    <div class="p-fc2-facility-price">NT$ {{ f.pricePerNight }} / {{ f.unit }}<span v-if="qtyOf(i, f.id) > 0" class="p-fc2-facility-subtotal">= NT$ {{ qtyOf(i, f.id) * f.pricePerNight }}</span></div>
                   </div>
                 </div>
                 <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"
@@ -130,12 +130,12 @@
                      :checked="payment === opt.id"
                      @change="payment = opt.id"
                      class="p-fc2-payment-radio" />
-              <div class="fc2-payment-icon">
+              <div class="p-fc2-payment-icon">
                 <i :class="opt.icon"></i>
               </div>
-              <div class="fc2-payment-label">{{ opt.label }}</div>
-              <div class="fc2-payment-note">{{ opt.note }}</div>
-              <div v-if="payment === opt.id" class="fc2-payment-check">
+              <div class="p-fc2-payment-label">{{ opt.label }}</div>
+              <div class="p-fc2-payment-note">{{ opt.note }}</div>
+              <div v-if="payment === opt.id" class="p-fc2-payment-check">
                 <i class="fa-solid fa-check"></i>
               </div>
             </label>
@@ -145,40 +145,40 @@
 
       <!-- 右欄：費用小計 -->
       <aside class="fc-aside">
-        <div class="fc2-cost-card">
+        <div class="p-fc2-cost-card">
           <div class="th-sidebar-head">
             <i class="ph-bold ph-receipt"></i>
             <span>費用試算</span>
           </div>
-          <div class="fc2-cost-body">
-            <div v-for="f in subtotals" :key="f.id" class="fc2-cost-row">
+          <div class="p-fc2-cost-body">
+            <div v-for="f in subtotals" :key="f.id" class="p-fc2-cost-row">
               <div class="fc2-cost-label">
                 <i :class="f.icon"></i>{{ f.label }}
               </div>
-              <div class="fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else class="p-fc2-cost-dash">—</span></div>
+              <div class="p-fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else class="p-fc2-cost-dash">—</span></div>
             </div>
 
             <!-- 每晚明細 -->
-            <div v-if="grandTotal > 0" class="fc2-cost-detail">
+            <div v-if="grandTotal > 0" class="p-fc2-cost-detail">
               <template v-for="i in nightIndexes" :key="i">
-                <div v-if="nightCost(i) > 0" class="fc2-cost-detail-row">
+                <div v-if="nightCost(i) > 0" class="p-fc2-cost-detail-row">
                   <span>{{ fmtDate(nightDate(i)) }}</span>
                   <span>NT$ {{ nightCost(i).toLocaleString() }}</span>
                 </div>
               </template>
             </div>
 
-            <div class="fc2-cost-total">
+            <div class="p-fc2-cost-total">
               <span>預估總費用</span>
-              <span class="fc2-cost-total-num">NT$ {{ grandTotal.toLocaleString() }}</span>
+              <span class="p-fc2-cost-total-num">NT$ {{ grandTotal.toLocaleString() }}</span>
             </div>
-            <div class="fc2-cost-note">實際費用以審核通過後帳單為準。場地費不含膳食。</div>
+            <div class="p-fc2-cost-note">實際費用以審核通過後帳單為準。場地費不含膳食。</div>
           </div>
         </div>
 
         <!-- 驗證提示 -->
-        <div v-if="!canNext" class="fc2-validation-tips">
-          <div class="fc2-vt-head">
+        <div v-if="!canNext" class="p-fc2-validation-tips">
+          <div class="p-fc2-vt-head">
             <i class="ph-bold ph-list-checks"></i>尚需完成
           </div>
           <div v-if="teamName.trim().length < 2" class="fc2-vt-item">

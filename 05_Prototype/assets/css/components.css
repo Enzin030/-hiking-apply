@@ -1548,16 +1548,16 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.th-table a.bulletin-link {
+.th-table a.p-news-link {
   color: var(--fg-1);
   font-weight: 400;
   text-decoration: none;
 }
-.th-table a.bulletin-link:hover {
+.th-table a.p-news-link:hover {
   color: var(--national-700);
   text-decoration: underline;
 }
-.bulletin-pin {
+.p-news-pin {
   display: inline-block;
   margin-right: 6px;
   color: #b91c1c;

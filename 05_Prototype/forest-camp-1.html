@@ -45,18 +45,18 @@
       <div class="fc-main">
 
         <!-- 山屋資訊卡 -->
-        <div class="fc-cabin-card">
-          <div class="fc-cabin-thumb">
+        <div class="p-fc1-cabin-card">
+          <div class="p-fc1-cabin-thumb">
             <img :src="cabin.image" :alt="cabin.name" />
           </div>
           <div class="fc-cabin-info">
-            <div class="fc-cabin-name">{{ cabin.name }}</div>
-            <div class="fc-cabin-meta">
+            <div class="p-fc1-cabin-name">{{ cabin.name }}</div>
+            <div class="p-fc1-cabin-meta">
               <span><i class="ph-bold ph-buildings"></i>{{ cabin.manager }}</span>
               <span><i class="ph-bold ph-map-pin"></i>{{ cabin.location }}</span>
             </div>
-            <div class="fc-cabin-tags">
-              <span v-for="f in cabin.facilities" :key="f.id" class="fc-tag">
+            <div class="p-fc1-cabin-tags">
+              <span v-for="f in cabin.facilities" :key="f.id" class="p-fc1-tag">
                 <i :class="f.icon"></i>{{ f.label }}（上限 {{ f.max }} {{ f.unit }}）
               </span>
             </div>
@@ -69,7 +69,7 @@
             <i class="fa-regular fa-calendar"></i>選擇行程日期與人數
           </h2>
 
-          <div class="fc-form-grid">
+          <div class="p-fc1-form-grid">
             <!-- 原 ForestCamp1.jsx 自己包了一層 DatePicker，內容與 th-date-picker
                  相同；階段 2 建該元件時就是照這裡的形狀做的（見元件檔頭） -->
             <th-date-picker
@@ -114,13 +114,13 @@
 
           <!-- 原碼的 className 尾端有個永遠成立的三元運算，輸出等於多一個空白，
                DOM 正規化後相同，這裡不重現那個空字串 -->
-          <button class="th-btn th-btn-secondary fc-query-btn" :disabled="!canQuery" @click="handleQuery">
+          <button class="th-btn th-btn-secondary p-fc1-query-btn" :disabled="!canQuery" @click="handleQuery">
             <i class="ph-bold ph-magnifying-glass"></i>查詢床位 / 營位狀況
           </button>
         </div>
 
         <!-- 查詢結果 -->
-        <div v-if="queried" class="fc-section fc-avail-section">
+        <div v-if="queried" class="fc-section p-fc1-avail-section">
           <h2 class="fc-section-title">
             <i class="ph-bold ph-calendar-check"></i>{{ startDate }} 出發，共 {{ nights }} 晚 · {{ headcount }} 人
           </h2>
@@ -128,7 +128,7 @@
           <p-fc1-avail-bar v-for="f in cabin.facilities" :key="f.id"
                            :facility="f" :date="startDate" :nights="nights"></p-fc1-avail-bar>
 
-          <div class="fc-avail-note">
+          <div class="p-fc1-avail-note">
             <i class="ph-bold ph-info"></i>以上為即時查詢結果，實際名額以申請後為準。床位/營位數量將於下一步選擇。
           </div>
         </div>
@@ -136,7 +136,7 @@
 
       <!-- 右欄：山屋須知摘要 -->
       <aside class="fc-aside">
-        <div class="fc-notice-card">
+        <div class="p-fc1-notice-card">
           <div class="th-sidebar-head">
             <i class="ph-bold ph-info"></i>
             <span>申請前注意事項</span>
@@ -149,16 +149,16 @@
           </ul>
         </div>
 
-        <div class="fc-price-card">
+        <div class="p-fc1-price-card">
           <div class="th-sidebar-head">
             <i class="ph-bold ph-currency-circle-dollar"></i>
             <span>費用參考</span>
           </div>
-          <div v-for="f in cabin.facilities" :key="f.id" class="fc-price-row">
+          <div v-for="f in cabin.facilities" :key="f.id" class="p-fc1-price-row">
             <span>{{ f.label }}</span>
             <span>NT$ {{ f.pricePerNight }} / {{ f.unit }} / 晚</span>
           </div>
-          <div class="fc-price-note">實際費用於確認送出時顯示</div>
+          <div class="p-fc1-price-note">實際費用於確認送出時顯示</div>
         </div>
       </aside>
     </div>

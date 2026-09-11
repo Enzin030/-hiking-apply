@@ -45,8 +45,10 @@ temp/
 # vault 設定由 00_Obsidian-共用設定 的 Sync-ObsidianConfig.ps1 管理，不進版控
 .obsidian/
 *.base
-#   schema.base 例外：它是 03_Schema 的資料表結構檢視，屬專案交付資產，不是個人看板。
+#   03_Schema 的檢視例外：資料表結構檢視屬專案交付資產，不是個人看板。
+#   2026-09-11 起實際檔名是 03_Schema/00_目錄.base（參照嘉市災管做法）；schema.base 為舊名保留。
 !schema.base
+!03_Schema/00_目錄.base
 
 # Claudian（Obsidian 外掛）：帳號設定由 00_Obsidian-共用設定 管理，對話紀錄各 vault 自留
 .claudian/

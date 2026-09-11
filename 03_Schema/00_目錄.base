@@ -1,0 +1,159 @@
+filters:
+  and:
+    - file.inFolder("03_Schema")
+views:
+  - type: table
+    name: 目錄
+    filters:
+      and:
+        - RecordType == "schema-doc"
+        - 狀態 != "疑似備份"
+    order:
+      - file.name
+      - 資料表中文名
+      - 狀態
+      - 欄位數
+      - 主鍵欄數
+      - 中文名待補
+    sort:
+      - property: Table
+        direction: ASC
+    summaries:
+      欄位數: Sum
+  - type: table
+    name: 現役資料表
+    filters:
+      and:
+        - RecordType == "schema-doc"
+        - 狀態 == "現役"
+    order:
+      - file.name
+      - 資料表中文名
+      - 欄位數
+      - 主鍵欄數
+      - 中文名待補
+    sort:
+      - property: Table
+        direction: ASC
+    summaries:
+      欄位數: Sum
+  - type: table
+    name: 疑似停用
+    filters:
+      and:
+        - RecordType == "schema-doc"
+        - 狀態 != "現役"
+        - 狀態 != "疑似備份"
+    order:
+      - file.name
+      - 狀態
+      - 狀態依據
+      - 欄位數
+    sort:
+      - property: 狀態
+        direction: ASC
+      - property: Table
+        direction: ASC
+  - type: table
+    name: 單表結構
+    filters:
+      and:
+        - RecordType == "schema-field"
+        - Table == this.Table
+    order:
+      - 鍵值
+      - 欄位名稱
+      - 中文名稱
+      - 資料型別
+      - 長度
+      - 預設值
+      - 允許空值
+      - 備註
+    sort:
+      - property: Seq
+        direction: ASC
+  - type: table
+    name: 所有表結構
+    filters:
+      and:
+        - RecordType == "schema-field"
+        - 表狀態 != "疑似備份"
+    groupBy:
+      property: 資料表
+      direction: ASC
+    order:
+      - 鍵值
+      - 欄位名稱
+      - 中文名稱
+      - 資料型別
+      - 長度
+      - 預設值
+      - 允許空值
+      - 備註
+    sort:
+      - property: Table
+        direction: ASC
+      - property: Seq
+        direction: ASC
+    summaries:
+      欄位名稱: Count
+  - type: table
+    name: 待補中文名
+    filters:
+      and:
+        - RecordType == "schema-field"
+        - 表狀態 != "疑似備份"
+        - 中文名稱 == ""
+    groupBy:
+      property: 資料表
+      direction: ASC
+    order:
+      - 鍵值
+      - 欄位名稱
+      - 中文名稱
+      - 資料型別
+      - 長度
+      - 備註
+    sort:
+      - property: Table
+        direction: ASC
+      - property: Seq
+        direction: ASC
+    summaries:
+      欄位名稱: Count
+  - type: table
+    name: 外鍵關聯
+    filters:
+      and:
+        - RecordType == "schema-field"
+        - 表狀態 != "疑似備份"
+        - 外鍵指向 != ""
+    groupBy:
+      property: 資料表
+      direction: ASC
+    order:
+      - 欄位名稱
+      - 中文名稱
+      - 外鍵指向
+      - 備註
+    sort:
+      - property: Table
+        direction: ASC
+      - property: Seq
+        direction: ASC
+    summaries:
+      欄位名稱: Count
+  - type: table
+    name: 備份表
+    filters:
+      and:
+        - RecordType == "schema-doc"
+        - 狀態 == "疑似備份"
+    order:
+      - file.name
+      - 資料表中文名
+      - 狀態依據
+      - 欄位數
+    sort:
+      - property: Table
+        direction: ASC
