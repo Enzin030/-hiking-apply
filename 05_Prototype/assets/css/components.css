@@ -675,8 +675,8 @@
 
 .th-flag.is-no {
   color: var(--danger-fg);
-  border-color: #fecaca;
-  background: #fef2f2;
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
 }
 
 .th-flag.is-open {
@@ -687,13 +687,13 @@
 
 .th-flag.is-closed {
   color: var(--danger-fg);
-  border-color: #fecaca;
-  background: #fef2f2;
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
 }
 
 .th-flag.is-proof {
   color: var(--warning-fg);
-  border-color: #fde68a;
+  border-color: var(--warning-border);
   background: var(--warning-bg);
 }
 
@@ -814,14 +814,14 @@
 }
 
 .bulletin-badge.agency-yushan {
-  background: #eff6ff;
+  background: var(--info-bg);
   color: #1e40af;
   border-color: #bfdbfe;
 }
 
 .bulletin-badge.agency-taroko {
   background: #f0f7f9;
-  color: #4f6e7a;
+  color: var(--park-taroko);
   border-color: #cfe3ea;
 }
 
@@ -1004,14 +1004,14 @@
 .th-level.lv-4 {
   background: var(--warning-bg);
   color: var(--warning-fg);
-  border-color: #fde68a;
+  border-color: var(--warning-border);
 }
 
 .th-level.lv-5,
 .th-level.lv-6 {
-  background: #fef2f2;
+  background: var(--danger-bg);
   color: var(--danger-fg);
-  border-color: #fecaca;
+  border-color: var(--danger-border);
 }
 
 .th-kit {
@@ -1610,7 +1610,7 @@
 .p-news-pin {
   display: inline-block;
   margin-right: 6px;
-  color: #b91c1c;
+  color: var(--danger-fg-hover);
   font-size: 12px;
   text-decoration: none !important;
   vertical-align: 0;
@@ -1767,7 +1767,7 @@ ul.th-doc-list {
 }
 .th-todo-link.on-dark,
 .th-todo-link.on-dark::after {
-  color: #94a3b8;
+  color: var(--slate-400);
 }
 .th-todo-link.on-dark::after {
   border-color: rgba(148, 163, 184, 0.4);
@@ -2344,7 +2344,7 @@ ul.th-doc-list {
   transition: all 0.15s ease;
 }
 .th-lang-btn:hover {
-  color: var(--national-700, #587a68);
+  color: var(--national-700, var(--national-700));
   background: rgba(88, 122, 104, 0.08);
 }
 .th-lang-dropdown {
@@ -2353,8 +2353,8 @@ ul.th-doc-list {
   right: 0;
   z-index: 9999;
   min-width: 150px;
-  background: #ffffff;
-  border: 1px solid var(--slate-200, #e2e8f0);
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200, var(--slate-200));
   border-radius: var(--r-md, 8px);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   padding: 6px;
@@ -2369,7 +2369,7 @@ ul.th-doc-list {
   width: 100%;
   padding: 8px 12px;
   font-size: var(--fs-nav);
-  color: var(--slate-700, #334155);
+  color: var(--slate-700, var(--slate-700));
   border-radius: var(--r-sm, 6px);
   background: transparent;
   border: none;
@@ -2378,12 +2378,12 @@ ul.th-doc-list {
   text-align: left;
 }
 .th-lang-item:hover {
-  background: var(--slate-100, #f1f5f9);
-  color: var(--national-700, #587a68);
+  background: var(--slate-100, var(--slate-100));
+  color: var(--national-700, var(--national-700));
 }
 .th-lang-item.is-active {
   font-weight: 600;
-  color: var(--national-700, #587a68);
+  color: var(--national-700, var(--national-700));
   background: #f0f7f3;
 }
 .th-menu-lang-options {
@@ -2406,8 +2406,8 @@ ul.th-doc-list {
   cursor: pointer;
 }
 .th-menu-lang-btn.is-active {
-  color: var(--national-700, #587a68);
-  border-color: var(--national-700, #587a68);
+  color: var(--national-700, var(--national-700));
+  border-color: var(--national-700, var(--national-700));
   background: #f0f7f3;
   font-weight: 600;
 }
@@ -2476,7 +2476,7 @@ body.th-noscroll {
   gap: 16px;
   padding: 20px 24px;
   border-bottom: 1px solid var(--slate-200);
-  background: #ffffff;
+  background: var(--bg-1);
 }
 .th-quickpanel-heading {
   border-left: none;
@@ -2508,7 +2508,7 @@ body.th-noscroll {
 .th-quickpanel-body {
   padding: 24px;
   overflow-y: auto;
-  background-color: #ffffff;
+  background-color: var(--bg-1);
   background-image: none;
 }
 .th-quick-steps {
@@ -2558,7 +2558,7 @@ body.th-noscroll {
 }
 .th-quick-step.is-active .step-circle i,
 .th-quick-step:first-child .step-circle i {
-  color: #ffffff;
+  color: var(--fg-on-dark);
 }
 .th-quick-step strong {
   font-size: 16px;
@@ -2751,7 +2751,7 @@ body.th-noscroll {
   background: var(--bg-2);
 }
 .th-table--zebra tbody tr {
-  background: #ffffff;
+  background: var(--bg-1);
 }
 .th-table--zebra tbody tr:nth-child(even) {
   background: #f8faf8;
@@ -3113,8 +3113,8 @@ body.th-noscroll {
   color: var(--danger-fg);
 }
 .camp-cal-cell.is-full:hover {
-  background: #fef2f2;
-  box-shadow: inset 0 0 0 2px #fecaca;
+  background: var(--danger-bg);
+  box-shadow: inset 0 0 0 2px var(--danger-border);
 }
 .camp-cal-cell.is-empty {
   background: var(--bg-2);
@@ -3361,7 +3361,7 @@ a.th-linkrow:hover .th-linkrow-icon {
   font-weight: 500;
   color: var(--warning-fg);
   background: var(--warning-bg);
-  border: 1px solid #fde68a;
+  border: 1px solid var(--warning-border);
   border-radius: var(--r-xs);
   padding: 1px 7px;
   letter-spacing: var(--tracking-wide);
@@ -3491,7 +3491,7 @@ a.th-linkrow:hover .th-linkrow-icon {
 }
 .th-callout.is-warning {
   background: var(--warning-bg);
-  border-color: #fde68a;
+  border-color: var(--warning-border);
 }
 .th-callout.is-warning>i {
   color: var(--warning-fg);
