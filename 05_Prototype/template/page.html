@@ -11,22 +11,21 @@
   改掉 <title>、data-page-init、th-header 的 active、th-page-shell 的
   trail／title／lead／updated，然後開始寫內容。
 
-  **下面這四行必須靜態寫在頁面，順序不可調換**，不要試著收斂進 head-loader
+  **下面這三行必須靜態寫在頁面，順序不可調換**，不要試著收斂進 head-loader
   （已驗證會壞，理由見 assets/includes/head.html 註解）：
 
-      Tailwind → tailwind.config.js → shared.css → index.css
+      Tailwind → tailwind.config.js → index.css
 
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測）。順序反了不會報錯，
-  但 components.css 的規則會被 shared.css 的同名同特異性規則整批蓋掉，
-  畫面看起來「差一點點」而 console 全乾淨。理由見 assets/css/index.css 檔頭。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層
+  （tokens → base → components → pages），順序即層級。
+  Tailwind 的 runtime <style> 由 CDN 插在 head 尾端，永遠在 index.css 之後。
 
-  `shared.css` 正在退場（階段 4）。它還在的期間就照上面的順序放；
-  它被移除後這裡剩三行，index.css 不動。
+  （階段 4 前另有第四行 styles/shared.css，排在 index.css 之前；
+  該檔已退場，不要再加回來。）
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="assets/tailwind.config.js"></script>
-<link rel="stylesheet" href="styles/shared.css" />
 <link rel="stylesheet" href="assets/css/index.css" />
 <!--
   head-loader 負責載入 assets/includes/head.html（字體、FontAwesome、Phosphor、
