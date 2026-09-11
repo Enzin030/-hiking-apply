@@ -464,8 +464,12 @@
 - **答**：`http://localhost:804/masterapi/masterapi.ashx`。正式位址被註解掉在上一行。
 - **出處**：`web.config:76-78`；讀取端 `apply_1_4.aspx.cs:80`、`apply_1_49.aspx.cs:71`、
   `apply_forest_camp_1.aspx.cs:17`、`apply_forest_camp_2.aspx.cs:13`、`bed_0.aspx.cs:18`。
-- **你可能會以為**：這台是正式機的完整副本。**這份 `web.config` 究竟對應哪個環境 `[缺口]`**——
+- **你可能會以為**：這台是正式機的完整副本。**這份 `web.config` 究竟對應哪個環境**——
   見下一題。
+- **`[缺口]` 已於 2026-09-11 關閉**：使用者確認 `10.0.0.51` 是**測試機**
+  （IIS 繫結 `*:443:service.skyeyes.tw`），而它跑的是 `pdftype = "1"`，
+  也就是註解裡的「本機」模式。**環境是測試機、設定卻是本機**，兩者不一致
+  正是下一題那些副作用的來源。
 
 ### Q52. `pdftype` 是什麼值，有什麼後果？
 
@@ -478,6 +482,11 @@
 - **出處**：`web.config:14-15`、`apply_1_4.aspx.cs:4434-4455`。
 - **你可能會以為**：`pdftype` 只影響 PDF 產生方式（名稱如此）。它同時被拿來當
   **環境旗標**，控制與 PDF 無關的日期邏輯。
+- **2026-09-11 補充：它也真的把 PDF 弄壞了。** `qrcodepath.setpath("1")` 走「本機」分支，
+  回傳寫死的 `C:\WEB\Hikenationpark\manasystem\qrcode\`——**該路徑在這台機器上不存在**
+  （站台在 `D:`）。連鎖結果是前台「下載許可證」自 2025-05-08 起產不出 PDF。
+  完整因果鏈見 `2026-09-11-繳費退費與許可證.md` 主題 I。
+  **凡是以 `pdftype` 分流的程式碼都要一併查**，目前已知兩處受害。
 
 ### Q53. 讀取 `WSUrls` 的那幾支頁面，如果 key 被移除會怎樣？
 
@@ -568,8 +577,12 @@
 
 # 本份未涵蓋（與 `divergences.md` 一致）
 
-`apply_2`／`apply_3`／`apply_4`／`apply_5`／`apply_6`、`bed_0`…`bed_11`、
+`apply_2`、`bed_0`…`bed_11`、
 `apply_forest_area_*`／`apply_forest_camp_*`／`apply_npa_*`、
 `App_code` 未讀者（`Paramdata.cs` 69KB、`YuShanFun.cs` 未讀完、`SheipaWebService.cs`、
 `BlackList.cs`、`FiscApi.cs` 金流、`forest.gov.tw/WebServiceforest.cs`、
 `JiujiuHutApi_code/`、`masterApiCode/`）、`NationPark/`（後台，19,233 檔）。
+
+**2026-09-11 補記已涵蓋**：`apply_2_1`（草稿編輯）、`apply_4`（排雲繳費）、
+`apply_5`（排雲退費）、`apply_6`（出園回報）、`apply_3` 的許可證下載段。
+見同目錄 `2026-09-11-繳費退費與許可證.md`（主題 I–M）。
