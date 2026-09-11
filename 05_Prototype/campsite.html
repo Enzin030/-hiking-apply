@@ -7,16 +7,19 @@
   ============================================================
   階段 3 逐頁遷移（campsite，階段 3 最後一頁）
   ------------------------------------------------------------
-  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）。
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
 
   本頁 11 組檢視與 11 支共用件全部在 components/campsite.js 內，走
   createApp options.components——消費端只有這一頁，不升到 assets/components/
   （2026-09-09 使用者裁決，理由見該檔檔頭）。
 
   .camp-* 已依 §6.2 改名為 .p-campsite-*（50 條，含 8 條 @media）並複製進
-  pages.css，逐條覆核過；shared.css 原規則依 §4.2 保留不刪。
+  pages.css，逐條覆核過。（階段 3 期間兩份並存於 shared.css 與 pages.css，依 §4.2；
+  shared.css 已於階段 4 退場，現在只剩 pages.css 這一份。）
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>

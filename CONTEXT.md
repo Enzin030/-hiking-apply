@@ -31,7 +31,7 @@
 - Vue 3 全域建構（`vue.global.prod.js` UMD）＋ in-DOM template，無 build、無 npm
   （2026-09-09 階段 3 完成，32/32 頁已由 React＋Babel 遷移完畢）
 - Tailwind CSS CDN ＋ 四層 CSS（`assets/css/` 的 tokens／base／components／pages，
-  由 `index.css` 串接）；`styles/shared.css` 退場中
+  由 `index.css` 串接）；`styles/shared.css` 已於階段 4 退場
 - FontAwesome 6、Phosphor Icons；Noto Sans TC / Noto Serif TC
 - 頁面即檔案（`05_Prototype/index.html`、`apply-1.html` …），無路由框架
 

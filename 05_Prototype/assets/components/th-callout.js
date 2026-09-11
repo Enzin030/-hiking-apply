@@ -5,7 +5,7 @@
    icon 可覆寫圖示 class。內容走預設 slot（原 React 版是 children，
    內容常含連結，所以必須是 slot 而不是 prop）。
 
-   外觀沿用 shared.css 既有的 .th-callout／.th-callout.is-warning，
+   外觀沿用 components.css 的 .th-callout／.th-callout.is-warning，
    本元件不新增 CSS。
 
    ------------------------------------------------------------

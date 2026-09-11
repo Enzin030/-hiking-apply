@@ -41,7 +41,7 @@
    與 th-page-shell 檔頭記的 `更新日期：` 同一個機制。
    不要為了消掉它去改 DOM 結構。
 
-   外觀沿用 shared.css 既有的 .th-table-wrap／.th-table／.th-table-empty，
+   外觀沿用 components.css 的 .th-table-wrap／.th-table／.th-table-empty，
    本元件不新增 CSS。
    ============================================================ */
 window.thComponents = window.thComponents || {};

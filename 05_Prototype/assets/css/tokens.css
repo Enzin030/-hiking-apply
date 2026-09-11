@@ -4,10 +4,10 @@
    只放變數宣告，不得出現任何規則（選擇器）。歸屬判準見改版計畫 §6.1。
 
    內容來源：design_system/colors_and_type.css 的 :root 區塊。
-   目前是**複製**而非搬移——styles/shared.css 仍 @import 那支，
-   依改版計畫 §4.2「共用資源以最後一個消費端為退場條件」，
-   要等最後一個消費端遷完才能刪原檔。**併存期間兩份數值必須一致**，
-   改色票請同時改兩處（或先與使用者確認要不要直接收斂）。
+   併存期是**複製**而非搬移——當時 styles/shared.css 仍 @import 那支，
+   依 §4.2「共用資源以最後一個消費端為退場條件」要等最後一個消費端遷完。
+   **階段 4 已刪除 shared.css 與 design_system/colors_and_type.css**，
+   本檔是色票的唯一真源，改色票只改這裡。
 
    刻意不含字型的 @import：字型由 assets/includes/head.html 統一載入一次，
    同頁共用資源只能載入一次（改版計畫 §5 階段 1.3）。
@@ -86,7 +86,7 @@
   --danger-fg: #dc2626;             /* asterisk warnings */
   --danger-soft: #ef4444;           /* pinned-pin red */
   /* 2026-09-08（遷移 notice）新增：紅色按鈕的 hover 深色。
-     來源是 shared.css 的 .th-video-btn:hover 原本寫死的 #b91c1c；
+     來源是原 shared.css 的 .th-video-btn:hover 寫死的 #b91c1c；
      該規則要移進 pages.css，而 §6.1.1 禁止 pages.css 出現 hex 字面值，
      故收成 token。命名沿用既有的 --national-700-hover 慣例。
      只加在 tokens.css，不動 design_system（32 頁未遷移頁靠它）。 */
@@ -102,10 +102,10 @@
   --warning-border: #fde68a;        /* 抽籤膠囊框線 */
 
   /* 深色遮罩。同一組色（--slate-900 = rgb(15,23,42)）另有 0.55 的用法在
-     shared.css 的 .bulletin-modal-overlay，兩個 alpha 不同，故分開命名。
+     .bulletin-modal-overlay，兩個 alpha 不同，故分開命名。
      值為 rgba 是刻意的：tokens.css 是變數宣告檔，§6.1.1 的「禁 hex/rgb」
      限制的是 pages.css。 */
-  --scrim: rgba(15, 23, 42, 0.55);        /* 一般彈窗遮罩，與 shared.css 的
+  --scrim: rgba(15, 23, 42, 0.55);        /* 一般彈窗遮罩，與
                                              .bulletin-modal-overlay 同值 */
   --scrim-strong: rgba(15, 23, 42, .82);  /* 圖片上的難度徽章底 */
 

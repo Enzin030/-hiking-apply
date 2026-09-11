@@ -12,7 +12,7 @@
 
    外觀規格（計畫 §5 階段 2）：遮罩透明度 0.55 ＋ blur、圓角 --r-xl、
    max-height:85vh、head 不加 bg-2 底色與左側色條、h2 用 --fs-lg、
-   關閉鈕 --fg-4。以上全部由 styles/shared.css 既有的 .bulletin-modal-*
+   關閉鈕 --fg-4。以上全部由 assets/css/components.css 的 .bulletin-modal-*
    規則提供，本元件不新增任何 CSS（見 assets/components/_README.md）。
 
    ------------------------------------------------------------

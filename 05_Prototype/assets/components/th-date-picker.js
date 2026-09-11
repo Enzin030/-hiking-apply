@@ -34,7 +34,7 @@
    3. 因此它會是十三支元件裡最小的一支，v4 §5 階段 2 擔心的
       「th-date-picker 是其中變數最大者」不成立。
 
-   外觀沿用 shared.css 既有 class：.th-field／.th-label／.th-label .req／
+   外觀沿用 components.css 的 class：.th-field／.th-label／.th-label .req／
    .th-input／.th-field-hint。`.th-field-error` 與 **flatpickr 的主題覆寫**
    寫在 components.css（一律用 tokens，不用 flatpickr 預設的藍色主題）。
 

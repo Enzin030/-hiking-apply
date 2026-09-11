@@ -15,9 +15,9 @@
     2. 語言下拉可切換（th-header，xl 以上）
     3. 右下角快捷選單可開關（th-quick-nav）
 
-  CSS 順序照 v4 階段 3 入場條件的實測結論：**shared.css 在前、index.css 在後**
-  （見 assets/css/index.css 檔頭）。本頁仍需要 shared.css，因為元件沿用它的
-  既有 class，那些規則要等最後一個消費端遷完才能搬進 components.css（§4.2）。
+  CSS 只有一支靜態樣式表 assets/css/index.css（四層，順序即層級）。
+  元件沿用的既有 class 已於階段 4 全部搬進 components.css／pages.css。
+  本頁的日程表改用 .p-campsite-*（階段 4 步驟 9，§8.2 取 (a)）。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>

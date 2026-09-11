@@ -7,15 +7,17 @@
   ============================================================
   階段 3 逐頁遷移（forest-camp-1，重組第二頁）
   ------------------------------------------------------------
-  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）。
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
 
-  .fc-* 整族維持在 shared.css，不改名也不複製：
+  .fc-* 整族在階段 4 步驟 7 移進 components.css，未改名：
   其中 9 個（fc-layout／fc-main／fc-aside／fc-section／fc-section-title／
   fc-stepper-input／fc-stepper-btn／fc-stepper-val／fc-footbar）forest-camp-2
-  也在用，屬「跨頁共用但無元件擁有者」的第三類，依裁決遷移期留在 shared.css、
-  階段 4 才移進 components.css。**不要只把 FC1 專用的那些改名**——同一族拆到
+  也在用，屬「跨頁共用但無元件擁有者」的第三類，所以落在共用層而非 pages.css。
+  **不要只把 FC1 專用的那些改名**——同一族拆到
   兩個檔正是第五類靜默失敗（多選擇器漏複製）的溫床。
   例外是 .fc-step*（步驟條）：它已有元件擁有者 th-fc-stepper，階段 3.0b 已複製
   進 components.css。

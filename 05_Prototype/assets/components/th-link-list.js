@@ -9,7 +9,7 @@
 
    外部網站與檔案下載（PDF）都另開分頁，避免使用者離開本站——照原樣保留。
 
-   外觀沿用 shared.css 既有的 .th-linklist／.th-linkrow／.th-linkrow-num／
+   外觀沿用 components.css 的 .th-linklist／.th-linkrow／.th-linkrow-num／
    .th-linkrow-text／.th-linkrow-icon／.th-todo-tag，本元件不新增 CSS。
    ============================================================ */
 window.thComponents = window.thComponents || {};

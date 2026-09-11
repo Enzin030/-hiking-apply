@@ -7,19 +7,16 @@
   ============================================================
   階段 3 第二頁遷移（2026-09-07）
   ------------------------------------------------------------
-  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）：
     1. Tailwind CDN
     2. tailwind.config.js
-    3. shared.css   ← 先
-    4. index.css    ← 後
+    3. index.css
 
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）：
-  依 §4.2，共用規則是「複製到 components.css、shared.css 原規則保留」，
-  兩邊同名時後者勝。順序倒過來的話改 components.css 永遠沒效果，而且不報錯。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
 
-  本頁仍需要 shared.css：.th-doc-*／.th-card／.th-crumb 等規則還有其他 16 頁
-  在用，依 §4.2 要等最後一個消費端遷完才能搬走。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>

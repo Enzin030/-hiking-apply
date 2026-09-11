@@ -20,8 +20,8 @@
      某頁的卡片真的該長不一樣時，走 §6.3 提升為元件變體（.th-card--compact）
    - !important（唯一例外：覆蓋 Tailwind CDN 的既有衝突，須於該行加註原因，§6.5）
 
-   併行開發：新頁的**專用**樣式一律進本檔，不要寫進 styles/shared.css，
-   否則階段 4 無法刪檔。新頁若需要共用元件的樣式，仍走 components.css（§7）。
+   新頁的**專用**樣式一律進本檔。（併存期的說法是「不要寫進 styles/shared.css，
+   否則階段 4 無法刪檔」——該檔已於階段 4 刪除。）新頁若需要共用元件的樣式，仍走 components.css（§7）。
 
    目前刻意留空：階段 1.2 只建立落點，不搬既有樣式。
    ============================================================ */
@@ -35,9 +35,9 @@
 
    一、**單頁專用 → 本該「移動」，但本輪只能「複製」**
        .th-notice-actions（2 條）與 .th-video-btn（4 條）grep 只有 Notice.jsx 用，
-       依規則應從 shared.css 移走並依 §6.2 改名為 .p-notice-*。
+       依規則應從當時的 shared.css 移走並依 §6.2 改名為 .p-notice-*。
        改名與 markup 已在同一次提交完成（本檔的 .p-notice-actions／
-       .p-notice-video-btn），**但 shared.css 的原規則沒有刪除**：
+       .p-notice-video-btn），**當時 shared.css 的原規則沒有刪除**：
        該檔有使用者未提交的 .th-expcard 修改（+69/-14），我無法只暫存自己那幾行
        而不把使用者的進行中工作一起提交進去。原規則現在是死規則（改名後沒人用），
        等使用者的工作提交後再刪 —— 已列入回報的待確認清單。
@@ -45,7 +45,7 @@
    二、**兩頁共用 → 只複製，且不可改名**
        .th-notice-grid（4 條，含 @media）除 Notice.jsx 外，**ApplySearch.jsx 也在用**，
        而 applySearch 還沒遷移。所以：名稱維持 .th-notice-grid（改名會弄壞那一頁），
-       規則複製一份到這裡，shared.css 原處保留（§4.2）。
+       規則複製一份到這裡，當時 shared.css 原處保留（§4.2）；該檔已於階段 4 刪除。
        它不屬於任何元件，所以放 pages.css 而不是 components.css——
        這是計畫分類法沒涵蓋的第三種情況（跨頁共用但無元件擁有者），已回報。
    ############################################################ */
@@ -113,7 +113,7 @@
   wrapper 仍吃 .th-input--date 的 165px，input 145px，中間多出 20px 空白。
   掛到 wrapper 上畫面才與改版前相同。
 
-  （原本這條在 shared.css，排在 components.css 之前，被
+  （原本這條在 shared.css，當時排在 components.css 之前，被
    `.th-fp-wrap .th-input--date { width: 100% }` 壓過所以沒事；
    搬進 pages.css 之後跑到 components.css 之後，它才開始生效並暴露這個落差。）
 */
@@ -998,8 +998,8 @@
      .th-page-cta       → .p-illustrate-cta
      .th-page-cta-text  → .p-illustrate-cta-text
 
-   **shared.css 的原規則沒有刪除**：該檔有使用者未提交的修改，無法只暫存我這幾行。
-   改名後原規則成為死規則，等使用者提交後由階段 4 統一清（同 notice 的情況）。
+   當時 shared.css 的原規則沒有刪除（該檔有使用者未提交的修改），
+   改名後成為死規則——**已於階段 4 隨該檔一併刪除**。
 
    .th-table-note 未改名也未複製：grep 有四個消費端（ApplySearch／Information6／
    Rss／WebIllustrate），其中 ApplySearch 尚未遷移 → 依 §4.2 維持原名、原處保留。
@@ -1259,11 +1259,12 @@
 
    **未複製也未改名的共用件**：.th-chip（5 頁在用）、.th-search（3 頁）、
    .th-empty（3 頁）、.th-select／.th-btn*／.th-section-title*。
-   它們沒有元件擁有者，且仍有未遷移頁在用 → 依 §4.2 維持原名、留在 shared.css。
-   本頁仍 link shared.css，照樣生效；複製過來只會製造重複而沒有好處
-   （階段 4 收斂 shared.css 時一起處理）。
+   它們當時沒有元件擁有者，且仍有未遷移頁在用 → 依 §4.2 維持原名、留在 shared.css，
+   本頁靠 link shared.css 取得。**階段 4 已把它們搬進 components.css**，
+   現在由四層提供。
 
-   shared.css 的 .p1-* 原規則未刪（該檔有使用者未提交的修改），成死規則待階段 4 清。
+   shared.css 的 .p1-* 原規則當時未刪（該檔有使用者未提交的修改），成死規則，
+   已於階段 4 隨該檔一併刪除。
    ############################################################ */
 
 .p-apply1-layout {
@@ -2097,8 +2098,8 @@
 
    .p-fc2-stepper-input 是加在既有的 .fc-stepper-input 之上的修飾 class，
    不改 .fc-stepper-input 本身——那支兩頁共用（見 forest-camp-1.html 檔頭）。
-   pages.css 在 index.css 的 @import 順序中最後，且 index.css link 在
-   shared.css 之後，所以這條的 width 勝出。
+   pages.css 在 index.css 的 @import 順序中最後，所以這條的 width 勝出。
+   （併存期還多一層理由：index.css link 在 shared.css 之後；該檔已刪除。）
    ############################################################ */
 
 .p-fc2-team-field {

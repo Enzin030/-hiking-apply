@@ -55,7 +55,7 @@
          <template #cell="{ day }">…</template>
        </th-calendar-grid>
 
-   外觀全部沿用 shared.css 既有的 .camp-cal-* 規則，本元件不新增 CSS。
+   外觀全部沿用 components.css 的 .camp-cal-* 規則，本元件不新增 CSS。
    ============================================================ */
 window.thComponents = window.thComponents || {};
 window.thComponents["th-calendar-grid"] = {

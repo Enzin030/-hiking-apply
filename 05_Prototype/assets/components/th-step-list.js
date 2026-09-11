@@ -8,7 +8,7 @@
 
    序號由陣列順序推導（i + 1），不由資料提供——照原樣保留。
 
-   外觀沿用 shared.css 既有的 .th-steplist／.th-steprow／.th-steprow-num／
+   外觀沿用 components.css 的 .th-steplist／.th-steprow／.th-steprow-num／
    .th-steprow-body／.th-steprow-title／.th-substeps／.th-shot-list／.th-shot／
    .th-shot-placeholder，本元件不新增 CSS。
 

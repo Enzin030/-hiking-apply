@@ -7,11 +7,14 @@
   ============================================================
   階段 3 逐頁遷移（forest-camp-2，重組第三頁）
   ------------------------------------------------------------
-  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）。
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
 
-  .fc-*／.fc2-* 全族維持在 shared.css，不改名也不複製（理由見
+  .fc-* 全族在 components.css、未改名；.fc2-* 於階段 4 步驟 8／9 改名為
+  .p-fc2-* 進 pages.css（理由見
   forest-camp-1.html 檔頭與 components/forest-camp-2.js 檔頭）。
 
   **文字節點的換行位置是刻意的**：第一個子節點若是文字，就必須緊接在

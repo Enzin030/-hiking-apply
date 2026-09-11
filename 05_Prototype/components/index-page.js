@@ -6,7 +6,8 @@
    首頁 Index — 資訊與申請並重版型（115 改版）
    2026-09-03 版面統一：原是 index.html 內嵌的 <script type="text/babel">，
    同名的舊 components/Index.jsx 沒有任何頁面引用、內容也已過期，一併取代。
-   樣式在 styles/shared.css 的「首頁」段；本次遷移另把原 inline style 改為
+   樣式在 assets/css/components.css／pages.css（原 shared.css 的「首頁」段，
+   階段 4 已搬走）；本次遷移另把原 inline style 改為
    assets/css/pages.css 的 .p-home-* class（§7 禁 inline style）。
 
    首頁刻意保留自己的置中頁首（landing page 版型），不套用 th-header；

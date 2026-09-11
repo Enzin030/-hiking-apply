@@ -34,8 +34,9 @@ window.thComponents["th-xxx"] = { props: {...}, template: `...` };
 元件若需要**全新的**外觀（既有 class 提供不了的），寫進 `components.css`，
 不得寫在元件檔內或頁面裡。頁面專用樣式放 `pages.css`，命名 `.p-<頁名>-*`。
 
-⚠ **頁面的 `<link>` 順序必須 `shared.css` 在前、`index.css` 在後**
-（2026-09-07 實測，理由見 `assets/css/index.css` 檔頭）。
+⚠ **頁面只 link `assets/css/index.css` 一支樣式表**（階段 4 起）。
+併存期曾要求它排在 `shared.css` 之後，該檔已刪除；理由與實測見
+`assets/css/index.css` 檔頭。
 
 ## 已完成
 

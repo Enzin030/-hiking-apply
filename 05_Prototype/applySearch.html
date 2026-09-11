@@ -7,11 +7,13 @@
   ============================================================
   階段 3 逐頁遷移（applySearch，重組第一頁）
   ------------------------------------------------------------
-  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）。
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
 
-  本頁沒有任何頁面專用 CSS：版面全部由 shared.css 既有的 .th-card／.th-field／
+  本頁沒有任何頁面專用 CSS：版面全部由 components.css 的 .th-card／.th-field／
   .th-chip-row／.th-notice-grid 與 Tailwind utility 組成，所以 pages.css 沒有
   新增 .p-applysearch-*，也沒有 §4.2 的複製案例。
 

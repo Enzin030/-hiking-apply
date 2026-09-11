@@ -142,11 +142,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   共用元件在這一頁的**微調**可以放，元件本身的長相不行。
 - 不要新增 `styles/<頁名>.css`，也不要在頁面寫 `<style>` 或 inline `style`
   （動態綁定的 `:style` 除外）。
-- **`styles/shared.css` 正在退場**（階段 4）。過渡期兩者並存。
+- **`styles/shared.css` 已於階段 4 退場**，四層是唯一的樣式來源。
 
-**`<link>` 順序：`index.css` 必須在 `shared.css` 之後。**
-順序相反時 `components.css` 的規則會被 `shared.css` 的同名規則整批蓋掉——
-**改了永遠沒效果，而且完全不報錯**（2026-09-07 實測，見 `assets/css/index.css` 檔頭）。
+**頁面的 `<head>` 只靜態 link `assets/css/index.css` 一支樣式表。**
+不要為了「這條規則找不到地方放」而另掛 CSS 檔或把 `shared.css` 加回來——
+併存期曾因 `<link>` 順序寫反而讓 `components.css` 整批失效，**改了永遠沒效果
+且完全不報錯**（2026-09-07 實測，見 `assets/css/index.css` 檔頭的那段紀錄）。
 
 ## 遷移踩坑總表
 

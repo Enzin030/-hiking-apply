@@ -7,9 +7,11 @@
   ============================================================
   階段 3 逐頁遷移（notice）
   ------------------------------------------------------------
-  這四行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）。
-  **index.css 一定要在 shared.css 之後**（2026-09-07 實測，見 index.css 檔頭）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +68,7 @@
 
     <!--
       .th-notice-grid 維持原名：applySearch.html 也在用且尚未遷移，改名會弄壞那頁。
-      規則已複製到 pages.css，shared.css 原處保留（§4.2）。
+      規則在 pages.css。
     -->
     <div class="th-notice-grid">
       <section class="th-card" v-for="s in primary" :key="s.id" :id="s.id">
