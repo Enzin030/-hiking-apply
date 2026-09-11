@@ -208,16 +208,16 @@
 
   <!-- th-modal：兩種 body 共用同一個外殼 -->
   <th-modal v-if="modal === 'day'" meta="雪霸｜自訂宿營地" title="2026-09-07"
-            body-class="camp-daybody" @close="modal = null">
-    <table class="th-table th-table--zebra camp-daytable">
+            body-class="p-campsite-daybody" @close="modal = null">
+    <table class="th-table th-table--zebra p-campsite-daytable">
       <tbody>
         <tr v-for="(v, i) in demoDay.v" :key="i">
           <th scope="row">{{ demoDay.labels[i] }}</th>
-          <td :class="demoDay.labels[i] === '餘額' ? 'camp-strong' : ''">{{ v }}</td>
+          <td :class="demoDay.labels[i] === '餘額' ? 'p-campsite-strong' : ''">{{ v }}</td>
         </tr>
       </tbody>
     </table>
-    <p class="camp-daynote">
+    <p class="p-campsite-daynote">
       <span class="th-flag is-yes">
         <i class="fa-solid fa-circle-check"></i>尚有餘額
       </span>
@@ -226,8 +226,8 @@
   </th-modal>
 
   <th-modal v-if="modal === 'forestry'" meta="林業署｜嘉明湖" title="2026-09-07"
-            body-class="camp-daybody" @close="modal = null">
-    <table class="th-table th-table--zebra camp-daytable">
+            body-class="p-campsite-daybody" @close="modal = null">
+    <table class="th-table th-table--zebra p-campsite-daytable">
       <tbody>
         <tr v-for="c in demoForestry" :key="c.label">
           <th scope="row">{{ c.label }}</th>
@@ -235,7 +235,7 @@
         </tr>
       </tbody>
     </table>
-    <p class="camp-daynote">林業署沒有「餘額」概念，0 不等於額滿，故不套紅／綠語意。</p>
+    <p class="p-campsite-daynote">林業署沒有「餘額」概念，0 不等於額滿，故不套紅／綠語意。</p>
   </th-modal>
 
 </div>

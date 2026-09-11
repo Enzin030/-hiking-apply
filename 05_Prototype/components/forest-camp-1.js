@@ -93,7 +93,7 @@ const pFc1AvailBar = {
         <span class="p-fc1-avail-status" :style="{ color: statusColor }">{{ statusLabel }}</span>
         <span class="p-fc1-avail-count">{{ available }} / {{ facility.max }} {{ facility.unit }}可預訂</span>
       </div>
-      <div class="fc-avail-bar-wrap">
+      <div class="p-fc1-avail-bar-wrap">
         <div class="p-fc1-avail-bar" :style="barStyle"></div>
       </div>
       <div class="p-fc1-avail-meta">

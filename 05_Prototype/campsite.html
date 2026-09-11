@@ -39,13 +39,13 @@
       <nav class="p-campsite-tabs-nav" aria-label="管理機關">
         <template v-for="o in orgs" :key="o.key">
           <button v-if="o.built" type="button"
-                  :class="['bulletin-tab', { 'is-active': org === o.key }]"
+                  :class="['p-campsite-tab', { 'is-active': org === o.key }]"
                   :aria-current="org === o.key ? 'page' : null"
                   @click="pickOrg(o.key)">
             <i class="fa-solid fa-mountain-sun"></i><span>{{ o.label }}</span>
           </button>
           <!-- 尚未建置的機關不給可點的 Tab -->
-          <span v-else class="bulletin-tab is-todo th-todo-link">{{ o.label }}</span>
+          <span v-else class="p-campsite-tab is-todo th-todo-link">{{ o.label }}</span>
         </template>
       </nav>
     </div>

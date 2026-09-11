@@ -38,7 +38,7 @@
      meta       標題上方的小字（原 .bulletin-modal-meta，如宿營地名稱）
      closeLabel 關閉鈕的 aria-label，預設「關閉」
      bodyClass  附加在 .bulletin-modal-body 上的修飾 class
-                （campsite 用 "camp-daybody"）
+                （campsite 用 "p-campsite-daybody"）
    emits：
      close      關閉鈕／遮罩／Esc 都會發同一個事件，由頁面決定怎麼收
    slots：

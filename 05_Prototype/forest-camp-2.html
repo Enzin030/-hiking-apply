@@ -91,8 +91,8 @@
           <p class="p-fc2-section-desc">請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。</p>
 
           <div v-for="i in nightIndexes" :key="i"
-               :class="['fc2-night-block', { 'is-filled': nightTotal(i) > 0 }]">
-            <div class="fc2-night-head">
+               :class="['p-fc2-night-block', { 'is-filled': nightTotal(i) > 0 }]">
+            <div class="p-fc2-night-head">
               <div class="p-fc2-night-badge">第 {{ i + 1 }} 晚</div>
               <div class="p-fc2-night-date">{{ fmtDate(nightDate(i)) }}</div>
               <div v-if="nightTotal(i) > 0" class="p-fc2-night-ok">
@@ -123,9 +123,9 @@
           <h2 class="fc-section-title">
             <i class="ph-bold ph-credit-card"></i>付款方式
           </h2>
-          <div class="fc2-payment-grid">
+          <div class="p-fc2-payment-grid">
             <label v-for="opt in paymentOptions" :key="opt.id"
-                   :class="['fc2-payment-card', { 'is-selected': payment === opt.id }]">
+                   :class="['p-fc2-payment-card', { 'is-selected': payment === opt.id }]">
               <input type="radio" name="payment" :value="opt.id"
                      :checked="payment === opt.id"
                      @change="payment = opt.id"
@@ -152,7 +152,7 @@
           </div>
           <div class="p-fc2-cost-body">
             <div v-for="f in subtotals" :key="f.id" class="p-fc2-cost-row">
-              <div class="fc2-cost-label">
+              <div class="p-fc2-cost-label">
                 <i :class="f.icon"></i>{{ f.label }}
               </div>
               <div class="p-fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else class="p-fc2-cost-dash">—</span></div>
@@ -181,13 +181,13 @@
           <div class="p-fc2-vt-head">
             <i class="ph-bold ph-list-checks"></i>尚需完成
           </div>
-          <div v-if="teamName.trim().length < 2" class="fc2-vt-item">
+          <div v-if="teamName.trim().length < 2" class="p-fc2-vt-item">
             <i class="fa-solid fa-circle-dot"></i>填寫隊伍名稱
           </div>
-          <div v-if="!nightsValid" class="fc2-vt-item">
+          <div v-if="!nightsValid" class="p-fc2-vt-item">
             <i class="fa-solid fa-circle-dot"></i>每晚至少選 1 個床位或營位
           </div>
-          <div v-if="payment === ''" class="fc2-vt-item">
+          <div v-if="payment === ''" class="p-fc2-vt-item">
             <i class="fa-solid fa-circle-dot"></i>選擇付款方式
           </div>
         </div>

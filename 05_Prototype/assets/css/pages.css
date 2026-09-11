@@ -692,6 +692,69 @@
   border-bottom-color: var(--bg-mist-3);
 }
 
+
+.p-campsite-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 4px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.p-campsite-tab i {
+  font-size: 16px;
+  color: var(--fg-4);
+  transition: color 0.2s ease;
+}
+
+.p-campsite-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.p-campsite-tab:hover {
+  color: var(--national-700);
+}
+
+.p-campsite-tab:hover::after {
+  background: var(--slate-300);
+}
+
+.p-campsite-tab:hover i {
+  color: var(--national-700);
+}
+
+.p-campsite-tab.is-active {
+  background: transparent;
+  color: var(--national-700);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.p-campsite-tab.is-active::after {
+  background: var(--national-700);
+}
+
+.p-campsite-tab.is-active i {
+  color: var(--national-700);
+}
 .th-notice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
@@ -703,6 +766,145 @@
 }
 .th-notice-grid>* {
   min-width: 0;
+}
+
+.p-fc1-avail-bar-wrap {
+  height: 6px;
+  background: var(--slate-100);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.p-fc1-notice-list {
+  list-style: none;
+  padding: 14px 18px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.p-fc1-notice-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+  line-height: var(--lh-loose);
+}
+
+.p-fc1-notice-list li i {
+  color: var(--park-forestry);
+  font-size: 10px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.p-fc2-night-block {
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.p-fc2-night-block.is-filled {
+  border-color: var(--national-700);
+}
+
+.p-fc2-night-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.p-fc2-night-block.is-filled .p-fc2-night-head {
+  background: var(--bg-mist);
+  border-bottom-color: var(--bg-mist-3);
+}
+
+.p-fc2-payment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.p-fc2-payment-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--bg-1);
+}
+
+.p-fc2-payment-card:hover {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+}
+
+.p-fc2-payment-card.is-selected {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.12);
+}
+
+.p-fc2-cost-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+}
+
+.p-fc2-cost-label i {
+  color: var(--park-forestry);
+  font-size: 14px;
+}
+
+.p-fc2-vt-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: var(--fs-xs);
+  color: var(--warning-fg);
+  padding: 4px 0;
+}
+
+.p-fc2-vt-item i {
+  font-size: 9px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 560px) {
+  .p-fc2-payment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.p-campsite-tab.is-todo {
+  cursor: default;
+  background: transparent;
+  border-bottom-color: transparent;
+  color: var(--fg-4);
+  opacity: 0.6;
+}
+
+.p-campsite-tab.is-todo:hover {
+  background: transparent;
+  border-bottom-color: transparent;
+  color: var(--fg-4);
 }
 .p-notice-actions {
   display: flex;
