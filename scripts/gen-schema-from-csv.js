@@ -286,4 +286,20 @@ if (strays.length) {
 if (diffs.length) {
   console.log('\n差異 ' + diffs.length + ' 筆：');
   diffs.slice(0, 40).forEach(d => console.log('  ' + d));
-  // 主控台只印前 40 筆，但換新的匯出檔時差異可能好幾百筆，而那份清單就是「�
+  // 主控台只印前 40 筆，但換新的匯出檔時差異可能好幾百筆，而那份清單就是「這次改了什麼」，
+  // 截斷等於看不到，所以完整清單一律落檔。
+  const outDir = path.join(ROOT, '.scratch', 'outputs');
+  try {
+    fs.mkdirSync(outDir, { recursive: true });
+    const rp = path.join(outDir, 'schema-diff-' + TODAY + '.md');
+    fs.writeFileSync(rp, '# schema 差異報告 ' + TODAY + '\n\n共 ' + diffs.length + ' 筆\n\n'
+      + diffs.map(d => '- ' + d).join('\n') + '\n', 'utf8');
+    console.log('\n完整差異已寫入 ' + rp);
+  } catch (e) {
+    console.log('\n（完整差異落檔失敗：' + e.message + '）');
+  }
+}
+if (orphans.length) {
+  console.log('\n孤兒欄位筆記 ' + orphans.length + ' 份（未刪除，請人工確認）：');
+  orphans.slice(0, 20).forEach(o => console.log('  ' + o));
+}

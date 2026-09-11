@@ -157,3 +157,17 @@ views:
     sort:
       - property: Table
         direction: ASC
+  - type: table
+    name: 草稿表
+    filters:
+      and:
+        - RecordType == "schema-doc"
+        - 狀態 == "草稿表"
+    order:
+      - file.name
+      - 資料表中文名
+      - 欄位數
+      - 主鍵欄數
+    sort:
+      - property: Table
+        direction: ASC

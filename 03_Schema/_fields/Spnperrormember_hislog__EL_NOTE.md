@@ -13,8 +13,8 @@ Seq: 3
 允許空值: true
 備註: ""
 外鍵指向: ""
-表狀態: "疑似備份"
-真源: "[[03_Schema/_backup/Spnperrormember_hislog|Spnperrormember_hislog]]"
+表狀態: "現役"
+真源: "[[03_Schema/Spnperrormember_hislog|Spnperrormember_hislog]]"
 匯入來源: "01_Raw_Input/現行tableSchema.csv"
 ---
 

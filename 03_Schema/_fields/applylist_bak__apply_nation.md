@@ -11,10 +11,10 @@ Seq: 30
 長度: "200"
 預設值: ""
 允許空值: true
-備註: ""
+備註: "實測值域（2026-09-11）：中華民國／國外；另有空字串、NULL，applylist 另有 4 筆「請選擇」。存中文字串不是 0/1。"
 外鍵指向: ""
-表狀態: "疑似備份"
-真源: "[[03_Schema/_backup/applylist_bak|applylist_bak]]"
+表狀態: "草稿表"
+真源: "[[03_Schema/applylist_bak|applylist_bak]]"
 匯入來源: "01_Raw_Input/現行tableSchema.csv"
 ---
 

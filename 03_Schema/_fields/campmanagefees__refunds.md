@@ -11,7 +11,7 @@ Seq: 12
 長度: ""
 預設值: ""
 允許空值: true
-備註: ""
+備註: "實測 2026-09-11：**全表沒有一筆 > 0**，這一欄形同未使用。退費金額實際記在 campmanagefeesDetail 與 refundsData。"
 外鍵指向: ""
 表狀態: "現役"
 真源: "[[03_Schema/campmanagefees|campmanagefees]]"

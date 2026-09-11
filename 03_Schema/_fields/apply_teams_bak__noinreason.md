@@ -13,8 +13,8 @@ Seq: 20
 允許空值: true
 備註: ""
 外鍵指向: ""
-表狀態: "疑似備份"
-真源: "[[03_Schema/_backup/apply_teams_bak|apply_teams_bak]]"
+表狀態: "草稿表"
+真源: "[[03_Schema/apply_teams_bak|apply_teams_bak]]"
 匯入來源: "01_Raw_Input/現行tableSchema.csv"
 ---
 

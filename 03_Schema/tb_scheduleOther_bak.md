@@ -2,19 +2,19 @@
 cssclasses:
   - schema-doc
 RecordType: "schema-doc"
-Table: "applylist_bak"
-資料表中文名: "入園申請資料表草稿"
-欄位數: 85
+Table: "tb_scheduleOther_bak"
+資料表中文名: "其他路線草稿資料表"
+欄位數: 7
 主鍵欄數: 1
 外鍵數: 0
-狀態: "疑似備份"
-狀態依據: "名稱含 _bak、日期數字或年份區間"
+狀態: "草稿表"
+狀態依據: "描述檔標明為草稿"
 狀態來源: "命名推測"
 描述檔收錄: true
-中文名待補: 5
+中文名待補: 0
 ---
 
-# applylist_bak【入園申請資料表草稿】
+# tb_scheduleOther_bak【其他路線草稿資料表】
 
 [待確認] 資料表用途與業務規則尚未訪談確認；本檔目前只承載現行 DB 的結構事實。
 
