@@ -65,6 +65,24 @@
 <script src="https://unpkg.com/vue@3.5.42/dist/vue.global.prod.js" integrity="sha384-bqTg8NKlUS8kbe8Sak41ZAg1OAW/cc4kyI+FqMhCpzsyG7B39KgZfDOKA3HnKhCV" crossorigin="anonymous"></script>
 
 <!--
+  flatpickr（2026-09-10，模式 2）——日期欄位的外觀。
+  ------------------------------------------------------------
+  換掉原生 input[type=date] 的**理由是外觀，不是功能**：原生的日曆圖示、
+  年/月/日 排版、展開的月曆彈窗都不可控，跨瀏覽器差異明顯（Safari 連日曆圖示都沒有）。
+  功能上原生夠用（單選日期 ＋ min/max），這次純粹為外觀換。
+
+  **仍然沒有 build step**：CDN 載入、integrity 釘版，與 Vue 同一套做法。
+  只有 th-date-picker 這一支元件用到它，消費端一行都不必改——
+  這正是當初把原生 input 包一層的目的。
+
+  外觀不套 flatpickr 預設主題色，一律用 tokens 覆寫，見 components.css 的
+  「flatpickr 主題」區段。zh-tw 語系檔讓月份與星期是中文。
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" integrity="sha384-RkASv+6KfBMW9eknReJIJ6b3UnjKOKC5bOUaNgIY778NFbQ8MtWq9Lr/khUgqtTt" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/zh-tw.min.js" integrity="sha384-M3C50s7wSRhBR3R5c5VHbyT00siKSF/Ae1dXHU0BKNGldKmqIJGxrAI44Sm0tTIB" crossorigin="anonymous"></script>
+
+<!--
   共用元件（階段 2）。一檔一元件，每支只把定義掛進 window.thComponents，
   由 app-boot.js 在 createApp 後一次全域註冊。
 

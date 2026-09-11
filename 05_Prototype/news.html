@@ -30,34 +30,20 @@
   <!-- bare：版面自帶結構，不要 th-page-main 的 flex 包裝 -->
   <th-page-shell :trail="['公布欄', tab.label]" :title="tab.label" :bare="true">
 
-    <!-- 頁籤列 -->
-    <div class="bulletin-tabs">
-      <nav class="bulletin-tabs-nav" aria-label="公布欄分頁">
-        <button v-for="(t, idx) in tabs" :key="t.key" type="button"
-                :class="['bulletin-tab', { 'is-active': activeTab === idx }]"
-                :aria-current="activeTab === idx ? 'page' : null"
-                @click="changeTab(idx)">
-          <i :class="t.icon"></i><span>{{ t.label }}</span>
-        </button>
-      </nav>
-    </div>
-
-    <!-- 篩選卡（四頁籤共用外框，第二列依頁籤換條件） -->
-    <form class="bulletin-card" @submit.prevent="submitFilter">
+    <!-- 篩選列（扁平工具列，無卡片外框） -->
+    <form class="bulletin-toolbar" @submit.prevent="submitFilter">
       <div class="bulletin-filter-row">
-        <span class="bulletin-filter-label">
-          <i class="fa-solid fa-building"></i>發布單位
-        </span>
-        <button v-for="a in allAgencies" :key="a.id" type="button"
-                :class="['th-chip', { 'is-active': draft.agency === a.id }]"
-                :aria-pressed="draft.agency === a.id"
-                @click="setDraftField({ agency: a.id })">{{ a.label }}</button>
-      </div>
+        <!-- 發布單位下拉選單 -->
+        <span class="bulletin-filter-label bulletin-filter-label--inline">發布單位</span>
+        <select name="agency" class="th-select"
+                :value="draft.agency" @change="setDraftField({ agency: $event.target.value })">
+          <option v-for="a in allAgencies" :key="a.id" :value="a.id">
+            {{ a.id === 'all' ? '全部單位' : a.label }}
+          </option>
+        </select>
 
-      <div class="bulletin-filter-row">
-        <span class="bulletin-filter-label">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          {{ tab.key === 'download' ? '檔案名稱' : '查詢條件' }}
+        <span class="bulletin-filter-label bulletin-filter-label--inline">
+          {{ tab.key === 'download' ? '檔案名稱' : '關鍵字' }}
         </span>
 
         <div class="th-search">
@@ -69,21 +55,28 @@
 
         <!-- 最新消息：發布日期起訖 -->
         <template v-if="tab.key === 'news'">
-          <span class="bulletin-filter-label bulletin-filter-label--inline">
-            <i class="fa-regular fa-calendar-days"></i>發布日期
-          </span>
-          <input type="date" name="startDate" class="th-input th-input--date"
-                 :value="draft.start" @input="setDraftField({ start: $event.target.value })" />
-          <span class="bulletin-sep">至</span>
-          <input type="date" name="endDate" class="th-input th-input--date"
-                 :value="draft.end" @input="setDraftField({ end: $event.target.value })" />
+          <span class="bulletin-filter-label bulletin-filter-label--inline">發布日期</span>
+          <div class="bulletin-daterange">
+            <!--
+              2026-09-10：兩個原生 input[type=date] 改用 th-date-picker（flatpickr）。
+              bare 是因為這裡是一列橫向的篩選控制項，不需要 .th-field 的直向容器。
+              迄日的 min 綁起日（元件的 watch 會把值同步給 flatpickr）——
+              這是元件檔頭寫的「日期區間用兩支 picker」那個形狀。
+            -->
+            <th-date-picker :bare="true" name="startDate" input-class="th-input--date"
+                            :model-value="draft.start"
+                            @update:model-value="setDraftField({ start: $event })"></th-date-picker>
+            <span class="bulletin-sep">~</span>
+            <th-date-picker :bare="true" name="endDate" input-class="th-input--date"
+                            :min="draft.start"
+                            :model-value="draft.end"
+                            @update:model-value="setDraftField({ end: $event })"></th-date-picker>
+          </div>
         </template>
 
         <!-- 違規名單：排序 -->
         <template v-if="tab.key === 'violation'">
-          <span class="bulletin-filter-label bulletin-filter-label--inline">
-            <i class="fa-solid fa-arrow-down-wide-short"></i>排序
-          </span>
+          <span class="bulletin-filter-label bulletin-filter-label--inline">排序</span>
           <select name="sort" class="th-select"
                   :value="draft.sort" @change="setDraftField({ sort: $event.target.value })">
             <option value="date_desc">違規或核定日期 新→舊</option>
@@ -93,30 +86,20 @@
 
         <!-- 常見問答：發布類別 -->
         <template v-if="tab.key === 'faq'">
-          <span class="bulletin-filter-label bulletin-filter-label--inline">
-            <i class="fa-solid fa-tags"></i>發布類別
-          </span>
+          <span class="bulletin-filter-label bulletin-filter-label--inline">發布類別</span>
           <select name="category" class="th-select"
                   :value="draft.cat" @change="setDraftField({ cat: $event.target.value })">
             <option v-for="c in faqCategories" :key="c" :value="c">{{ c === 'all' ? '全部類別' : c }}</option>
           </select>
         </template>
 
-        <button type="submit" class="th-btn th-btn-primary">
-          <i class="fa-solid fa-magnifying-glass"></i>查詢
-        </button>
-        <button type="button" class="th-btn th-btn-ghost" @click="resetFilter">
-          <i class="fa-solid fa-rotate-left"></i>重置
-        </button>
+        <div class="bulletin-filter-actions">
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i>查詢
+          </button>
+        </div>
       </div>
     </form>
-
-    <!-- 筆數列（不再放區塊次標——頁面主標已在上方，四頁籤皆同名） -->
-    <div class="bulletin-section-head">
-      <span class="bulletin-count">
-        共 <strong>{{ filtered.length }}</strong> {{ tab.unit }}<template v-if="totalPages > 1">　｜　第 {{ safePage }} / {{ totalPages }} 頁</template>
-      </span>
-    </div>
 
     <!--
       表格的格內容依「頁籤 × 欄位」分派。原 React 是把 render 函式塞進 columns，
@@ -132,11 +115,9 @@
         <template v-else-if="tab.key === 'news'">
           <template v-if="column.key === 'date'">{{ dateSlash(row.date) }}</template>
           <template v-else-if="column.key === 'title'">
-            <button type="button" class="bulletin-link" @click="openModal({
-              title: row.title, org: row.org, agencyId: row.agencyId,
-              meta: '發布日期：' + dateSlash(row.date), body: row.content
-            })">{{ row.title }}</button>
-            <span v-if="row.pinned" class="bulletin-pin">置頂</span>
+            <a :href="'news_0_1.html?id=' + row.id" class="bulletin-link">
+              <i v-if="row.pinned" class="fa-solid fa-thumbtack bulletin-pin" title="置頂"></i>{{ row.title }}
+            </a>
           </template>
         </template>
 

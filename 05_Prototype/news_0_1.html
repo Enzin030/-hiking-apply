@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>最新消息 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  news_0_1.html — 最新消息詳細頁（對應舊站 news_0_1.aspx）
+  標準新聞排版：主標題、Meta 列、富文本內文、附件下載、回列表頁按鈕
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="styles/shared.css" />
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/news-detail.js"></script>
+<style>
+  .news-detail-card {
+    background: #ffffff;
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-xl);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .news-meta-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  .news-meta-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    color: var(--slate-500);
+    font-size: 14px;
+  }
+  .news-rich-content {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--slate-700);
+  }
+  .news-rich-content p {
+    margin-bottom: 14px;
+  }
+  .news-rich-content ol, .news-rich-content ul {
+    margin-bottom: 16px;
+  }
+  .news-rich-content ol {
+    list-style-type: decimal;
+    padding-left: 24px;
+  }
+  .news-rich-content ul {
+    list-style-type: disc;
+    padding-left: 24px;
+  }
+  .news-rich-content li {
+    margin-bottom: 6px;
+  }
+  .news-rich-content a {
+    color: var(--national-700);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+  .news-rich-content a:hover {
+    color: var(--national-800);
+  }
+  /* 附件下載區塊 */
+  .news-attachments-box {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--slate-200);
+  }
+  .news-file-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-md);
+    transition: all 0.15s ease;
+    text-decoration: none !important;
+  }
+  .news-file-card:hover {
+    background: #f1f5f9;
+    border-color: var(--national-400);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  .news-file-icon {
+    font-size: 24px;
+    color: var(--national-600);
+  }
+  .news-file-icon.pdf {
+    color: #dc2626;
+  }
+  .news-file-icon.word {
+    color: #2563eb;
+  }
+  /* 卡片外的操作列 */
+  .news-outer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+    margin-bottom: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="news"></th-header>
+
+  <th-page-shell :trail="trail" :title="article.title" :bare="true">
+
+    <article class="news-detail-card">
+      
+      <!-- Meta 資訊列 -->
+      <div class="news-meta-bar">
+        <div class="news-meta-info">
+          <span :class="['bulletin-badge', 'agency-' + article.agencyId]">
+            {{ article.org }}
+          </span>
+          <span class="inline-flex items-center gap-1.5 text-slate-800">
+            <i class="fa-regular fa-calendar-check text-slate-700"></i>
+            發布日期：{{ dateSlash(article.date) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 富文本新聞內文 -->
+      <div v-if="article.bodyHtml" class="news-rich-content" v-html="article.bodyHtml"></div>
+      <div v-else class="news-rich-content whitespace-pre-line">{{ article.content }}</div>
+
+      <!-- 相關附件 -->
+      <div v-if="hasFiles" class="news-attachments-box">
+        <h4 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-paperclip text-slate-500"></i>相關附件
+        </h4>
+        <div class="flex flex-wrap gap-3">
+          <a v-for="(f, i) in article.files" :key="i"
+             :href="f.href" target="_blank" rel="noopener noreferrer"
+             class="news-file-card group">
+            <i :class="['news-file-icon', (f.format || '').toLowerCase(), fileIcons[f.format] || 'fa-regular fa-file-lines']"></i>
+            <span class="font-medium text-slate-800 group-hover:text-emerald-800 text-sm">
+              {{ f.name }}
+            </span>
+            <i class="fa-solid fa-download text-xs text-slate-400 group-hover:text-emerald-700 ml-2"></i>
+          </a>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- 回列表頁按鈕（位於卡片外面下方） -->
+    <div class="news-outer-actions">
+      <a href="news.html?tab=news" class="th-btn th-btn-primary px-6 py-2.5">
+        <i class="fa-solid fa-arrow-left"></i>回列表頁
+      </a>
+    </div>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

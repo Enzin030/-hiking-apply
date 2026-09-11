@@ -84,7 +84,14 @@
               <div class="th-field p-apply3-grid-full">
                 <label class="th-label"><span class="req">*</span>入山日期</label>
                 <div class="p-apply3-date-row">
-                  <input type="date" class="th-input p-apply3-date-input" :value="startDate" @input="startDate = $event.target.value" />
+                  <!--
+                    2026-09-10：原生 input[type=date] 改用 th-date-picker（flatpickr）。
+                    bare 是因為外層的 .th-field 與 <label> 本來就在這裡，
+                    不 bare 會多一層 flex column 把橫向的「日期 → 天數」排版拆開。
+                  -->
+                  <th-date-picker :bare="true" input-class="p-apply3-date-input"
+                                  :model-value="startDate"
+                                  @update:model-value="startDate = $event"></th-date-picker>
                   <i class="p-apply3-date-arrow fa-solid fa-arrow-right"></i>
                   <select class="th-select p-apply3-days-select" :value="days" @change="days = Number($event.target.value)">
                     <option v-for="n in [1, 2, 3, 4, 5, 6, 7]" :key="n" :value="n">{{ n }} 天</option>

@@ -50,7 +50,20 @@
                 @change="setField({ mainRoute: $event.target.value })"
                 aria-label="登山主路線">
           <option value="all">全部路線（{{ mainRoutes.length }} 條主路線）</option>
-          <option v-for="m in mainRoutes" :key="m" :value="m">{{ m }}</option>
+          <!--
+            選「全部」時（6 組）用 <optgroup> 依機關分組；
+            選了特定機關時只會有一組，組標題與已選的頁籤重複，所以維持平的清單。
+            分組邏輯在 components/open.js 的 mainRouteGroups，
+            changeOrg 與 mainRoutes 都沒有動。
+          -->
+          <template v-if="mainRouteGroups.length > 1">
+            <optgroup v-for="g in mainRouteGroups" :key="g.key" :label="g.label">
+              <option v-for="m in g.routes" :key="g.key + '/' + m" :value="m">{{ m }}</option>
+            </optgroup>
+          </template>
+          <template v-else>
+            <option v-for="m in mainRoutes" :key="m" :value="m">{{ m }}</option>
+          </template>
         </select>
       </div>
 

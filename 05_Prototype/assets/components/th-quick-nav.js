@@ -129,9 +129,7 @@ window.thComponents["th-quick-nav"] = {
     <div v-if="open" class="th-quickmask" @click="open = false">
       <div class="th-quickpanel" role="dialog" aria-modal="true" :aria-label="title" @click.stop>
         <div class="th-quickpanel-head">
-          <div class="th-quickpanel-heading">
-            <h2>{{ title }}</h2>
-          </div>
+          <h2 class="bulletin-modal-title" style="margin: 0;">{{ title }}</h2>
           <button type="button" class="th-quickpanel-close" @click="open = false" aria-label="關閉">
             <i class="fa-solid fa-xmark"></i>
           </button>
@@ -139,7 +137,7 @@ window.thComponents["th-quick-nav"] = {
         <div class="th-quickpanel-body">
           <!-- 頂部階段步驟列（完全比照首頁 5 階段風格） -->
           <ul class="th-quick-steps">
-            <li v-for="g in groups" :key="g.title" class="th-quick-step">
+            <li v-for="g in groups" :key="g.title" :class="['th-quick-step', { 'is-active': g.title === '認識登山' }]">
               <span class="step-circle"><i :class="g.icon"></i></span>
               <strong>{{ g.title }}</strong>
               <small>{{ g.sub }}</small>

@@ -2,38 +2,100 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>頁面標題 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
 <!--
-  全站只有這一支樣式表。新頁面不要再建 styles/<頁名>.css——
-  2026-09-03 版面統一已把八支分頁 CSS 併回 shared.css，
-  新樣式請加在 shared.css 對應的區段，或優先沿用既有共用 class。
+  ============================================================
+  新頁範本（Vue 3 global build，零 build step）
+  ------------------------------------------------------------
+  開新頁：把整個 template/ 複製成 <頁名>.html ＋ components/<頁名>.js，
+  改掉 <title>、data-page-init、th-header 的 active、th-page-shell 的
+  trail／title／lead／updated，然後開始寫內容。
+
+  **下面這四行必須靜態寫在頁面，順序不可調換**，不要試著收斂進 head-loader
+  （已驗證會壞，理由見 assets/includes/head.html 註解）：
+
+      Tailwind → tailwind.config.js → shared.css → index.css
+
+  **index.css 一定要在 shared.css 之後**（2026-09-07 實測）。順序反了不會報錯，
+  但 components.css 的規則會被 shared.css 的同名同特異性規則整批蓋掉，
+  畫面看起來「差一點點」而 console 全乾淨。理由見 assets/css/index.css 檔頭。
+
+  `shared.css` 正在退場（階段 4）。它還在的期間就照上面的順序放；
+  它被移除後這裡剩三行，index.css 不動。
+  ============================================================
 -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="styles/shared.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<!--
+  head-loader 負責載入 assets/includes/head.html（字體、FontAwesome、Phosphor、
+  Vue global build、20 支共用元件、app-boot），最後才載 data-page-init 指定的
+  頁面腳本。**data-page-init 的檔名要與實際檔案一致**——打錯不會 404 到你臉上，
+  只會讓頁面以空資料掛載（app-boot 會在 console 明講，看到就是這件事）。
+-->
+<script src="assets/includes/head-loader.js" data-page-init="components/PageName.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script type="text/babel" src="components/PageName.jsx"></script>
+
+<!--
+  掛載契約六條寫在 assets/app-boot.js 檔頭，動這段前先讀。摘要：
+  容器 id 固定 #th-app、一頁一個 createApp、包住 header 到 footer（modal 也在內）、
+  內部不得再建島、不留 #root、逐頁參數用容器的 data-* 經 $page 取用。
+
+  v-cloak 必須加：沒有它，Vue 掛載前的那幾十毫秒會閃現未編譯的 {{ }} 樣板。
+  對應規則 [v-cloak]{display:none} 在 assets/css/index.css 末尾。
+-->
+<div id="th-app" v-cloak>
+
+  <!-- th-header／th-footer 依契約放在 th-page-shell 之外 -->
+  <th-header active="info"></th-header>
+
+  <!--
+    頁面外殼一律用 th-page-shell，不要自刻 <main class="th-page">。
+      trail    麵包屑陣列，元素可為字串或 { label, href }；首頁圖示元件自動補
+      title    h1 主標題
+      lead     標題下方導言（選用）
+      updated  更新日期（選用）
+      bare     版面自帶 grid／自訂排版時給，跳過 .th-page-main 的 flex 包裝
+    stepper／nav 是**具名 slot**，不是 prop（React 時代是 prop，已改）。
+  -->
+  <th-page-shell
+    :trail="['上層分類', '本頁標題']"
+    title="本頁標題"
+    lead="一句話說明本頁提供什麼。"
+    updated="2026-09-10">
+
+    <!-- 給了 #nav 才會變兩欄；不需要頁內目錄就整段刪掉 -->
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="sec1">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info"></i>
+        <h2 class="th-card-title">{{ sectionTitle }}</h2>
+      </div>
+      <div class="th-card-body">
+        <p>內容。</p>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!--
+  **樣板裡的換行位置會影響版面，不是純排版問題。**
+  Vue 的 whitespace: 'condense' 把「文字＋換行＋縮排」折成「文字＋一個空白」。
+  所以換行只能放在**兩個文字之間**，不要放在文字與標籤之間；
+  第一個子節點是文字時，要緊貼開標籤後面。
+  實測一個多出來的空白可以讓內層 div 差 3.36px、全頁 600 個像素不同。
+
+  本頁沒有 React／Babel。不要從舊的 .jsx 起手，那些是已停用的 React 版。
+-->
 </body>
 </html>

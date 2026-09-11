@@ -16,16 +16,26 @@ window.thComponents["th-xxx"] = { props: {...}, template: `...` };
 
 ## 樣式歸屬
 
-**階段 2 沒有新增任何 CSS，`components.css` 仍為空，這是刻意的。**
+**`components.css` 已由階段 3.0b 填入內容**（2026-09-09 起不再為空）。
+四層結構是 `assets/css/` 的 `tokens` → `base` → `components` → `pages`，
+由 `index.css` 以 `@import` 串接。共用元件的樣式歸 `components.css`。
 
-這些元件沿用 `styles/shared.css` 既有的 class（`.th-header`、`.th-menupanel`、
-`.bulletin-modal`…）。依計畫 §4.2「共用資源以最後一個消費端為退場條件」，
-那些規則要等**最後一個消費端遷移完成**才能從 `shared.css` 移走，
-所以現在**不複製、不搬動**。實際複製進 `components.css` 的時機是各頁執行階段 3
-遷移時（§5 階段 3 第 5 項）。
+過渡期兩份並存：這些元件沿用的部分 class（`.th-chip`、`.th-btn*`、
+`.th-section-title*`、`.th-table-note`、`.fc-*`）**目前仍只在 `styles/shared.css`**，
+`components.css` 一條都沒有。依計畫 §4.2「共用資源以最後一個消費端為退場條件」，
+那些規則要等**最後一個消費端遷移完成**才能搬走 —— 32/32 頁已於 2026-09-09 遷完，
+所以搬移排在**階段 4**，逐條的刪／移分類見 repo 根目錄 `階段4-刪除清單.md` §3、§4。
 
-元件若需要**全新的**外觀（既有 class 提供不了的），才寫進 `components.css`，
-不得寫在元件檔內或頁面裡。
+因此改元件樣式前先確認該 class 現在住哪裡：
+`grep -n "<class>" assets/css/components.css styles/shared.css`。
+在 `shared.css` 的就地改該檔，不要在 `components.css` 另立一份 —— 兩份同選擇器
+會讓後載入的檔勝出，而且 console 完全不會出聲。
+
+元件若需要**全新的**外觀（既有 class 提供不了的），寫進 `components.css`，
+不得寫在元件檔內或頁面裡。頁面專用樣式放 `pages.css`，命名 `.p-<頁名>-*`。
+
+⚠ **頁面的 `<link>` 順序必須 `shared.css` 在前、`index.css` 在後**
+（2026-09-07 實測，理由見 `assets/css/index.css` 檔頭）。
 
 ## 已完成
 

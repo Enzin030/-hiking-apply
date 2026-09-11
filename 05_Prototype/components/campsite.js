@@ -948,6 +948,20 @@ thPage({
 
   data() { return { org: "shei-pa", kind: "camp" }; },
 
+  created() {
+    const p = new URLSearchParams(window.location.search);
+    const o = p.get("org");
+    const k = p.get("kind");
+    if (o && CAMPSITE_ORGS.some((item) => item.key === o)) {
+      this.org = o;
+      if (k && (CAMPSITE_KINDS[o] || []).some((item) => item.key === k)) {
+        this.kind = k;
+      } else {
+        this.kind = firstKind(o);
+      }
+    }
+  },
+
   computed: {
     orgs() { return CAMPSITE_ORGS; },
     kindList() { return CAMPSITE_KINDS[this.org] || []; },

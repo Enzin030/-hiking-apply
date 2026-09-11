@@ -2421,6 +2421,16 @@
 
 .p-apply3-date-input {
   flex: 1;
+  width: 100%;
+}
+/*
+  th-date-picker 的 bare 模式在 input 外面多一層 .th-fp-wrap（放日曆圖示用），
+  所以 flex item 變成那一層，尺寸要由它承接；input 自己改吃 width: 100%。
+  不這樣做的話日期欄位會縮成內容寬度，「日期 → 天數」那一列的比例就跑掉。
+*/
+.p-apply3-date-row .th-fp-wrap {
+  flex: 1;
+  min-width: 0;
 }
 
 .p-apply3-date-arrow {

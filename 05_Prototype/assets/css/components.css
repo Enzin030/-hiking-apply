@@ -98,8 +98,33 @@
 .th-textarea {
   width: 100%;
 }
+/*
+  .th-select 的自訂箭頭（2026-09-10，模式 2）
+  ------------------------------------------------------------
+  原本沒有 appearance: none，箭頭由瀏覽器自己畫，跨瀏覽器不一致
+  （Chrome／Firefox／Safari 三種樣子，Safari 還會自帶圓角）。
+
+  **不加 wrapper、不動任何 markup。** <select> 是 replaced element，
+  吃不下 ::before／::after，但吃得下 background —— 所以箭頭用兩道
+  linear-gradient 疊出一個實心三角，顏色直接用 token。
+
+  為什麼不用 SVG data URI：data URI 裡的顏色只能寫死（SVG 當成圖片載入時
+  是獨立文件，`currentColor` 與 CSS 變數都不會解析），那就違反
+  「不新增硬編碼 hex」。gradient 是唯一能讓箭頭顏色跟著 token 走的做法。
+
+  padding-right: 32px 是本來就有的，箭頭放進那塊預留空間，
+  所以**文字可用寬度不變**，版面不受影響。
+*/
 .th-select {
+  appearance: none;
+  -webkit-appearance: none;
   padding-right: 32px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--slate-500) 50%),
+    linear-gradient(135deg, var(--slate-500) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% + 1px), calc(100% - 13px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
 }
 .th-field .th-select {
   width: 100%;
@@ -108,11 +133,40 @@
 .th-select:hover {
   border-color: var(--slate-400);
 }
+/* hover 時箭頭跟著加深，與框線同步 */
+.th-select:hover {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--slate-700) 50%),
+    linear-gradient(135deg, var(--slate-700) 50%, transparent 50%);
+}
 .th-input:focus,
 .th-select:focus,
 .th-textarea:focus {
   border-color: var(--national-700);
   box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+/* focus 時箭頭轉主色，與框線一致 */
+.th-select:focus {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--national-700) 50%),
+    linear-gradient(135deg, var(--national-700) 50%, transparent 50%);
+}
+/*
+  disabled：三種表單欄位一致。原本 .th-select 完全沒有 disabled 樣式，
+  停用時與可用時長得一樣（只有游標不同），這次一併補上。
+*/
+.th-input:disabled,
+.th-select:disabled,
+.th-textarea:disabled {
+  background-color: var(--slate-100);
+  border-color: var(--slate-200);
+  color: var(--fg-4);
+  cursor: not-allowed;
+}
+.th-select:disabled {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--slate-400) 50%),
+    linear-gradient(135deg, var(--slate-400) 50%, transparent 50%);
 }
 .th-input::placeholder,
 .th-textarea::placeholder {
@@ -148,6 +202,18 @@
 .th-input--date {
   flex: 0 0 auto;
   width: 165px;
+}
+/*
+  同上：bare 模式的 flex item 是 .th-fp-wrap，不是 input。
+  news.html 的發布日期起訖用 .th-input--date 收窄，寬度要掛在 wrapper 上，
+  input 自己吃滿。
+*/
+.th-fp-wrap:has(.th-input--date) {
+  flex: 0 0 auto;
+  width: 165px;
+}
+.th-fp-wrap .th-input--date {
+  width: 100%;
 }
 /* ============================================================
    th-doc — 詳細須知頁的長文排版（th-doc.js 那組元件的外觀）
@@ -239,6 +305,23 @@
   font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+.th-table a.bulletin-link {
+  color: var(--fg-1);
+  font-weight: 400;
+  text-decoration: none;
+}
+.th-table a.bulletin-link:hover {
+  color: var(--national-700);
+  text-decoration: underline;
+}
+.bulletin-pin {
+  display: inline-block;
+  margin-right: 6px;
+  color: #b91c1c;
+  font-size: 12px;
+  text-decoration: none !important;
+  vertical-align: 0;
 }
 /* 步道分級表這類寬表：字級縮一級，欄寬交給 .th-table-wrap 內部捲動 */
 .th-table.th-table-compact {
@@ -668,25 +751,30 @@ ul.th-doc-list {
    th-header（選單面板與語言下拉）
    ------------------------------------------------------------ */
 .th-menubtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-lg);
-  background: var(--bg-1);
-  color: var(--fg-2);
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  display: none;
 }
-.th-menubtn:hover {
-  background: var(--bg-2);
-  border-color: var(--slate-400);
-  color: var(--national-700);
-}
-.th-menubtn i {
-  font-size: 18px;
+@media (max-width: 1279px) {
+  .th-menubtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-lg);
+    background: var(--bg-1);
+    color: var(--fg-2);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .th-menubtn:hover {
+    background: var(--bg-2);
+    border-color: var(--slate-400);
+    color: var(--national-700);
+  }
+  .th-menubtn i {
+    font-size: 18px;
+  }
 }
 .th-menumask {
   position: fixed;
@@ -736,7 +824,7 @@ ul.th-doc-list {
   justify-content: space-between;
   gap: 8px;
   padding: 16px 20px;
-  font-size: var(--fs-base);
+  font-size: var(--fs-nav);
   font-weight: 500;
   color: var(--fg-2);
 }
@@ -754,14 +842,79 @@ ul.th-doc-list {
 .th-menunav .th-menunav-todo {
   font-weight: 400;
 }
+/* 行動版：有子選單的項目改成展開鈕，子項就地縮排 */
+.th-menunav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 20px;
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  color: var(--fg-2);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+.th-menunav-toggle:hover,
+.th-menunav-toggle.is-open {
+  background: var(--bg-2);
+  color: var(--national-700);
+}
+.th-menunav-toggle i {
+  font-size: 12px;
+  color: var(--fg-4);
+}
+.th-menunav-sub {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-2);
+  padding-bottom: 6px;
+}
+/* 子項含「待建置」時渲染的是 span.th-todo-link 而不是 a，
+   只寫 `a` 會讓那些項目吃到父層 .th-menunav 的 20px padding 而沒有縮排
+   （2026-09-10 實測：草稿編輯／國家公園出園回報與父層項目對齊）。 */
+.th-menunav-sub a,
+.th-menunav-sub .th-todo-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 20px 12px 36px;   /* 左側縮排，表示層級 */
+  font-size: var(--fs-nav);
+  font-weight: 400;
+  color: var(--fg-3);
+}
+.th-menunav-sub a:hover {
+  color: var(--national-700);
+}
+.th-menunav-sub a i {
+  font-size: 12px;
+  color: var(--fg-4);
+}
+/* 工具列（網站導覽／警特報／RSS…）在選單面板裡各佔一列，不並排 */
 .th-menuutil {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
   padding: 18px 20px;
   font-size: var(--fs-sm);
   color: var(--fg-3);
+}
+.th-menuutil > a,
+.th-menuutil > .th-todo-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--slate-100);
+}
+.th-menuutil > a:hover {
+  color: var(--national-700);
 }
 .th-menuutil button {
   display: inline-flex;
@@ -771,6 +924,111 @@ ul.th-doc-list {
 .th-menuutil button:hover {
   color: var(--national-700);
 }
+/* ── 桌機主導覽的子選單（滑鼠移入展開） ── */
+.th-navsub {
+  position: relative;
+}
+.th-navsub-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: default;   /* 滑鼠裝置靠移入展開，父項不可點，不給手指游標 */
+}
+/* 觸控裝置沒有 hover，父項改成點擊展開，游標語意跟著改 */
+@media (hover: none) {
+  .th-navsub-btn {
+    cursor: pointer;
+  }
+}
+/* 外層只留銜接距離且必須透明：與按鈕之間若有空隙，
+   滑鼠往下移會先觸發 mouseleave 把選單關掉。 */
+.th-navsub-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding-top: 8px;
+}
+.th-navsub-panel {
+  min-width: 168px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.th-navsub-item {
+  display: block;
+  padding: 8px 12px;
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  color: var(--fg-2);
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.th-navsub-item:hover {
+  background: var(--slate-100);
+  color: var(--national-700);
+}
+.th-navsub-item.th-todo-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+  color: var(--fg-4);
+}
+.th-navsub-item.th-todo-link:hover {
+  background: transparent;
+  color: var(--fg-4);
+}
+
+/* ── 桌機工具列的搜尋輸入框 ── */
+.th-hdrsearch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px 10px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  background: var(--bg-1);
+  transition: border-color 0.15s ease;
+}
+.th-hdrsearch:focus-within {
+  border-color: var(--national-700);
+}
+.th-hdrsearch-input {
+  width: 128px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+.th-hdrsearch-input::placeholder {
+  color: var(--fg-4);
+}
+.th-hdrsearch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border-radius: var(--r-md);
+  color: var(--fg-3);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.th-hdrsearch-btn:hover {
+  color: var(--national-700);
+  background: var(--slate-100);
+}
+
 .th-lang-wrapper {
   position: relative;
   display: inline-block;
@@ -813,7 +1071,7 @@ ul.th-doc-list {
   justify-content: space-between;
   width: 100%;
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: var(--fs-nav);
   color: var(--slate-700, #334155);
   border-radius: var(--r-sm, 6px);
   background: transparent;
@@ -843,7 +1101,7 @@ ul.th-doc-list {
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: var(--fs-nav);
   color: var(--slate-600);
   background: var(--slate-50, #f8fafc);
   border: 1px solid var(--slate-200);
@@ -921,43 +1179,40 @@ body.th-noscroll {
   gap: 16px;
   padding: 20px 24px;
   border-bottom: 1px solid var(--slate-200);
-  background: var(--bg-2);
+  background: #ffffff;
 }
 .th-quickpanel-heading {
-  border-left: 4px solid var(--filter-active);
-  padding-left: 14px;
+  border-left: none;
+  padding-left: 0;
 }
-.th-quickpanel-head h2 {
+.th-quickpanel-head h2,
+.th-quickpanel-head .bulletin-modal-title {
   font-family: var(--font-sans);
-  font-size: var(--fs-h3);
+  font-size: var(--fs-lg);
   font-weight: 700;
+  color: var(--fg-1);
   margin: 0;
-  line-height: var(--lh-tight);
+  line-height: var(--lh-snug);
 }
 .th-quickpanel-close {
   border: none;
   background: none;
-  color: var(--fg-3);
+  color: var(--fg-4);
   font-size: 20px;
   line-height: 1;
   padding: 4px 8px;
   border-radius: var(--r-sm);
+  transition: color 0.15s;
 }
 .th-quickpanel-close:hover {
   color: var(--fg-1);
-  background: var(--slate-200);
+  background: var(--slate-100);
 }
 .th-quickpanel-body {
   padding: 24px;
   overflow-y: auto;
-  background-color: #f6faf8;
-  /* 路徑已依 components.css 的位置修正（見本檔開頭「複製 CSS 的相對路徑陷阱」）。
-     shared.css 在 styles/ 底下，寫 ../assets/teach/…；本檔在 assets/css/ 底下，
-     同樣的字串會解析成 assets/assets/teach/…，所以必須改成 ../teach/…。 */
-  background-image: url("../teach/mountain-journey-background.svg");
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100% auto;
+  background-color: #ffffff;
+  background-image: none;
 }
 .th-quick-steps {
   display: grid;
@@ -998,6 +1253,15 @@ body.th-noscroll {
 .th-quick-step .step-circle i {
   font-size: 28px;
   color: #335c49;
+}
+.th-quick-step.is-active .step-circle,
+.th-quick-step:first-child .step-circle {
+  background: var(--national-700);
+  border-color: var(--national-700);
+}
+.th-quick-step.is-active .step-circle i,
+.th-quick-step:first-child .step-circle i {
+  color: #ffffff;
 }
 .th-quick-step strong {
   font-size: 16px;
@@ -1106,7 +1370,7 @@ body.th-noscroll {
 .bulletin-modal-meta {
   margin-top: 6px;
   font-size: var(--fs-xs);
-  color: var(--fg-3);
+  color: var(--fg-1);
 }
 .bulletin-modal-close {
   flex-shrink: 0;
@@ -1153,10 +1417,10 @@ body.th-noscroll {
 }
 .th-table tbody td.col-date,
 .th-table tbody td.col-daterange {
-  color: var(--fg-3);
+  color: var(--fg-1);
 }
 .th-table tbody td.col-name {
-  font-weight: 700;
+  font-weight: 400;
 }
 .th-table-wrap {
   overflow-x: auto;
@@ -1189,8 +1453,11 @@ body.th-noscroll {
 .th-table tbody tr:hover {
   background: var(--bg-2);
 }
+.th-table--zebra tbody tr {
+  background: #ffffff;
+}
 .th-table--zebra tbody tr:nth-child(even) {
-  background: var(--bg-2);
+  background: #f8faf8;
 }
 .th-table--zebra tbody tr:hover {
   background: var(--bg-mist);
@@ -1367,6 +1634,92 @@ body.th-noscroll {
    ------------------------------------------------------------ */
 .th-search .th-input {
   padding-left: 42px;
+}
+
+/* ------------------------------------------------------------
+   flatpickr 主題（2026-09-10，模式 2）
+   ------------------------------------------------------------
+   **一律用 tokens 覆寫，不套 flatpickr 預設的藍色主題。**
+
+   ⚠ 每條選擇器都比 flatpickr 自己的多一層限定，這不是排版習慣，是必要的：
+   `flatpickr.min.css` 由 head-loader 動態插入，**落在靜態四行之後**
+   （實測 head 內順序：shared.css=0、index.css=1、flatpickr.min.css=5）。
+   同特異性時後者勝，所以照抄它的選擇器會完全沒效果——而且不報錯，
+   畫面就是一片 flatpickr 藍。這是第三類層疊反轉的另一種形狀：
+   **head-loader 注入的任何 CSS 都排在四層之後。**
+
+   做法是加祖先 `.flatpickr-calendar`（或把 class 寫兩次）把特異性抬高一級，
+   不用 `!important`（§6.5 禁用）。
+
+   彈窗 append 在 <body> 底下、不在 #th-app 內，所以只能靠 .flatpickr-* 這組
+   class 本身限定，不能靠頁面的祖先。
+   ------------------------------------------------------------ */
+.flatpickr-calendar.flatpickr-calendar {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+}
+.flatpickr-calendar.arrowTop.arrowTop::before,
+.flatpickr-calendar.arrowTop.arrowTop::after {
+  border-bottom-color: var(--bg-1);
+}
+.flatpickr-calendar.arrowBottom.arrowBottom::before,
+.flatpickr-calendar.arrowBottom.arrowBottom::after {
+  border-top-color: var(--bg-1);
+}
+
+.flatpickr-calendar .flatpickr-months,
+.flatpickr-calendar .flatpickr-months .flatpickr-month {
+  background: transparent;
+  color: var(--fg-1);
+  fill: var(--fg-1);
+}
+.flatpickr-calendar .flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month input.cur-year {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover svg {
+  fill: var(--national-700);
+}
+
+.flatpickr-calendar span.flatpickr-weekday {
+  color: var(--fg-3);
+  font-weight: 700;
+}
+
+.flatpickr-calendar .flatpickr-day {
+  color: var(--fg-1);
+  border-radius: var(--r-md);
+}
+.flatpickr-calendar .flatpickr-day:hover,
+.flatpickr-calendar .flatpickr-day:focus {
+  background: var(--national-50);
+  border-color: var(--national-50);
+}
+.flatpickr-calendar .flatpickr-day.today {
+  border-color: var(--national-400);
+}
+.flatpickr-calendar .flatpickr-day.today:hover {
+  background: var(--national-50);
+  color: var(--fg-1);
+}
+.flatpickr-calendar .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-day.selected:hover {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+}
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover,
+.flatpickr-calendar .flatpickr-day.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.nextMonthDay {
+  color: var(--fg-4);
 }
 @media (max-width: 768px) {
   .th-select,

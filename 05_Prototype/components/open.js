@@ -122,6 +122,49 @@ thPage({
       return out.sort(function (a, b) { return a.localeCompare(b, "zh-Hant"); });
     },
 
+    /*
+      主路線下拉的 <optgroup> 分組（2026-09-10，模式 2）
+      ------------------------------------------------------------
+      432 條主路線攤成一張平的清單，捲起來找不到東西。改用原生 <optgroup>
+      依每列的 filterKey 分組。
+
+      **這是新增的 computed，mainRoutes 與 changeOrg 一行都沒動。**
+      mainRoutes 仍負責「全部路線（N 條）」那個計數，兩者取的是同一個 pool。
+
+      組的順序照 OPEN_ORG_BUTTONS，與上面那排機關頁籤一致——
+      不用 Object.keys 的偶然順序。
+
+      **只有選「全部」時才有多組**；選了特定機關時 pool 已被篩成單一 filterKey，
+      這時 optgroup 只會有一組、標題與已選的頁籤重複，所以那種情況維持平的清單
+      （樣板用 groups.length > 1 判斷）。
+
+      注意「其他路線」同時出現在 shei-pa 與 yushan 兩組（資料就是這樣），
+      所以分組後的總數 433 比去重後的 432 多一條。這是刻意保留的：
+      兩組各自列出自己的「其他路線」才對得上該機關的資料，
+      而 value 相同，選哪一個結果都一樣。
+    */
+    mainRouteGroups() {
+      var org = this.draft.org;
+      var pool = org === "all"
+        ? OPEN_STATUS_ROWS
+        : OPEN_STATUS_ROWS.filter(function (r) { return r.filterKey === org; });
+      var byKey = {};
+      pool.forEach(function (r) {
+        (byKey[r.filterKey] || (byKey[r.filterKey] = {}))[r.mainRoute] = true;
+      });
+      var out = [];
+      OPEN_ORG_BUTTONS.forEach(function (b) {
+        if (b.key === "all" || !byKey[b.key]) return;
+        out.push({
+          key: b.key,
+          label: b.label,
+          routes: Object.keys(byKey[b.key])
+            .sort(function (a, c) { return a.localeCompare(c, "zh-Hant"); }),
+        });
+      });
+      return out;
+    },
+
     rows() {
       var f = this.filter;
       var q = f.q.trim();

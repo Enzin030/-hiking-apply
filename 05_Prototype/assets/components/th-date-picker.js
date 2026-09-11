@@ -1,8 +1,28 @@
 /* ============================================================
-   th-date-picker — 日期欄位（原生 input[type=date] 的薄包裝）
+   th-date-picker — 日期欄位（flatpickr 彈窗 ＋ label／hint／error）
    ------------------------------------------------------------
-   **本元件不是自訂日曆彈窗，是原生 input[type=date] 加一層 label／hint／error。**
-   2026-09-07 經使用者確認採此設計。
+   **2026-09-10 由原生 input[type=date] 改為 flatpickr（模式 2，理由是外觀）。**
+   原生的日曆圖示、年/月/日 排版、展開的月曆彈窗都不可控，跨瀏覽器差異明顯
+   （Safari 連日曆圖示都沒有）。功能上原生夠用（單選 ＋ min/max），純為外觀換。
+
+   **消費端一行都沒改** —— props、emits、v-model 的值格式（"YYYY-MM-DD"）
+   全部不變。這正是 2026-09-07 決定「包一層薄 wrapper」的目的：
+   換掉底層實作時，頁面不需要知道。
+
+   ------------------------------------------------------------
+   降級：flatpickr 沒載到時會怎樣
+   ------------------------------------------------------------
+   `initPicker()` 開頭檢查 `typeof flatpickr === "undefined"`，沒載到就直接 return，
+   欄位維持成一個普通的文字輸入框（`type="text"`＋`placeholder="YYYY-MM-DD"`）。
+   仍可鍵入、仍會 emit，只是沒有彈窗。**不會整頁壞掉，也不會靜默出錯**。
+
+   ⚠ 但這時 **min／max 不會生效**（原本由原生 input 的屬性負責，
+   現在改由 flatpickr 的 minDate／maxDate 負責）。降級狀態下需要卡控的頁面
+   要自己在送出前檢查。
+
+   ------------------------------------------------------------
+   下面這段是 2026-09-07 採原生方案時的理由，保留供回溯
+   ------------------------------------------------------------
 
    為什麼是薄包裝：
    1. 全站現有四處日期輸入本來就都是原生 input：Apply3.jsx:128、
@@ -15,8 +35,8 @@
       「th-date-picker 是其中變數最大者」不成立。
 
    外觀沿用 shared.css 既有 class：.th-field／.th-label／.th-label .req／
-   .th-input／.th-field-hint。只有 .th-field-error 是新增的（shared.css 沒有），
-   寫在 components.css。
+   .th-input／.th-field-hint。`.th-field-error` 與 **flatpickr 的主題覆寫**
+   寫在 components.css（一律用 tokens，不用 flatpickr 預設的藍色主題）。
 
    **預設不套 .th-input--date**：那支規則寫死 `width: 165px; flex: 0 0 auto`，
    是 news.html 篩選列的情境專用。實際盤點——ForestCamp1 用純 .th-input、
@@ -90,6 +110,13 @@ window.thComponents["th-date-picker"] = {
     name: { type: String, default: "" },
     inputId: { type: String, default: "" },
     inputClass: { type: String, default: "" },
+    /*
+      bare：不輸出外層的 `.th-field`，只留 `.th-fp-wrap > input`。
+      給「頁面已經自己有 .th-field 與 <label>，只想把 input 換成 flatpickr」
+      的情境用——apply-3 的入山日期與 news 的發布日期起訖都是這種。
+      不給 bare 的話會多一層 flex column 容器，把原本的橫向排版拆開。
+    */
+    bare: { type: Boolean, default: false },
   },
 
   emits: ["update:modelValue", "change"],
@@ -104,6 +131,32 @@ window.thComponents["th-date-picker"] = {
 
   computed: {
     resolvedId() { return this.inputId || this.autoId; },
+
+    /*
+      兩個 template 分支（有 .th-field 與 bare）共用同一組 input 屬性。
+      寫成 computed 而不是在樣板裡重複一遍——重複的兩份遲早會漂移，
+      而且那種漂移在 prod build 下不會有任何提示。
+
+      type="text" 而非 "date"：flatpickr 接管彈窗之後，原生的日曆圖示與
+      年/月/日 分段輸入若還在，會與 flatpickr 的彈窗疊在一起。
+      min／max 改由 flatpickr 的 minDate／maxDate 負責（見 initPicker 與 watch），
+      但**值的格式仍是 "YYYY-MM-DD"**，v-model 的契約沒有變。
+    */
+    inputAttrs() {
+      return {
+        type: "text",
+        inputmode: "numeric",
+        autocomplete: "off",
+        placeholder: "YYYY-MM-DD",
+        class: ["th-input", "th-input--fp", this.inputClass],
+        id: this.resolvedId,
+        name: this.name || null,
+        value: this.modelValue,
+        required: this.required,
+        disabled: this.disabled,
+        readonly: this.readonly,
+      };
+    },
   },
 
   methods: {
@@ -113,28 +166,61 @@ window.thComponents["th-date-picker"] = {
     onChange(e) {
       this.$emit("change", e.target.value);
     },
+
+    /* flatpickr 掛載。失敗時**保留原生 input 的行為**，見檔頭「降級」一節。 */
+    initPicker() {
+      if (typeof flatpickr === "undefined" || !this.$refs.input) return;
+      var self = this;
+      this.fp = flatpickr(this.$refs.input, {
+        // **dateFormat 固定 Y-m-d**：v-model 的契約是 "YYYY-MM-DD"，
+        // 換掉它就等於改了所有消費端拿到的值。顯示格式若要中文化，
+        // 用 altInput／altFormat，不要動 dateFormat。
+        dateFormat: "Y-m-d",
+        locale: (window.flatpickr && flatpickr.l10ns && flatpickr.l10ns.zh_tw) || "default",
+        minDate: this.min || null,
+        maxDate: this.max || null,
+        allowInput: true,          // 仍可直接鍵入，不是唯讀欄位
+        disableMobile: true,       // 行動裝置也用同一個彈窗，否則又退回原生外觀
+        onChange: function (dates, str) {
+          // flatpickr 不會觸發原生 input/change 事件，要自己把值送回 v-model
+          self.$emit("update:modelValue", str);
+          self.$emit("change", str);
+        },
+      });
+    },
+    destroyPicker() {
+      if (this.fp) { this.fp.destroy(); this.fp = null; }
+    },
+  },
+
+  mounted() {
+    this.initPicker();
+  },
+
+  beforeUnmount() {
+    this.destroyPicker();
+  },
+
+  watch: {
+    // min／max 是 reactive prop（forest-camp-1 的迄日 min 綁起日），
+    // 值變了要同步給 flatpickr，否則限制會停在初始值。
+    min(v) { if (this.fp) this.fp.set("minDate", v || null); },
+    max(v) { if (this.fp) this.fp.set("maxDate", v || null); },
+    // 頁面用程式改值時（不是使用者操作），要讓彈窗的選取狀態跟上
+    modelValue(v) {
+      if (this.fp && v !== this.fp.input.value) this.fp.setDate(v || "", false);
+    },
   },
 
   template: `
-    <div class="th-field">
+    <div v-if="!bare" class="th-field">
       <label v-if="label" class="th-label" :for="resolvedId">
         {{ label }}<span v-if="required" class="req">*</span>
       </label>
-      <input
-        type="date"
-        :class="['th-input', inputClass]"
-        :id="resolvedId"
-        :name="name || null"
-        :value="modelValue"
-        :min="min || null"
-        :max="max || null"
-        :required="required"
-        :disabled="disabled"
-        :readonly="readonly"
-        @input="onInput"
-        @change="onChange" />
+      <span class="th-fp-wrap"><input v-bind="inputAttrs" ref="input" @input="onInput" @change="onChange" /></span>
       <div v-if="error" class="th-field-hint th-field-error">{{ error }}</div>
       <div v-else-if="hint" class="th-field-hint">{{ hint }}</div>
     </div>
+    <span v-else class="th-fp-wrap"><input v-bind="inputAttrs" ref="input" @input="onInput" @change="onChange" /></span>
   `,
 };

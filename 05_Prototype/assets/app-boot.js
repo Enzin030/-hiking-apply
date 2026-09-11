@@ -133,6 +133,19 @@
     }
     if (!checkContract(el)) return;
 
+    // **掛載成功不等於初始化生效。** 純靜態頁沒有 page-init 是正常的（見檔頭「用法」），
+    // 但頁面若宣告了 data-page-init 而 thPage() 從未被呼叫，就是壞掉了——
+    // 腳本 404、檔名打錯、或在呼叫前先拋錯，都會讓這裡以空 options 掛載，
+    // 畫面渲染出外殼、資料全空，而 console 一聲不吭（prod build 不發 warning）。
+    var declared = document.querySelector("script[data-page-init]");
+    if (declared && !pageOptions) {
+      console.error(
+        "[app-boot] 頁面宣告了 data-page-init=\"" +
+        declared.getAttribute("data-page-init") +
+        "\"，但 thPage() 從未被呼叫。將以空 options 掛載——" +
+        "頁面資料不會生效。請確認該腳本存在、且在頂層呼叫了 thPage()。"
+      );
+    }
     var options = pageOptions || {};
     var app = Vue.createApp(options);
 
