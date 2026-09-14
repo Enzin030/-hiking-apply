@@ -2066,12 +2066,111 @@ ul.th-doc-list {
   }
 }
 /* ------------------------------------------------------------
-   th-header（選單面板與語言下拉）
+   th-header（骨架、窄版就地展開、語言下拉）
+   ------------------------------------------------------------
+   2026-09-14（批次 1）依設計師前台web 改寫：
+   - 窄版（≤900px）由「右側滑入抽屜」改為**頁首往下就地展開**，
+     原本的 .th-menumask／.th-menupanel／.th-menunav／.th-menuutil／
+     .th-menu-lang-* 一併移除（唯一消費端是 th-header）。
+     body.th-noscroll 保留——th-quick-nav 還在用。
+   - 頁首骨架（.th-header-inner／.th-brand／.th-utility／.th-nav）由 Tailwind
+     搬到這裡：窄版要靠 .th-header.is-nav-open 切換顯示，那不是 utility class
+     表達得了的狀態。**本批數值一律沿用改版前的實測值**（標誌 64／56／40、
+     站名 24／20／16、頁首內距 12px），字級與尺寸對齊排在批次 2。
    ------------------------------------------------------------ */
-.th-menubtn {
-  display: none;
+.th-header-inner {
+  max-width: 80rem;          /* 與原 max-w-7xl 相同 */
+  margin: 0 auto;
+  padding: 0 2rem;           /* 原 px-4 sm:px-6 lg:px-8 的桌機值 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 8px;
 }
-@media (max-width: 1279px) {
+
+.th-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+.th-brand:hover { opacity: 0.9; }
+
+.th-logo {
+  height: 64px;
+  width: auto;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.th-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: var(--fs-h2);
+  color: var(--fg-1);
+  letter-spacing: var(--tracking-wide);
+  margin-top: 4px;
+  min-width: 0;
+  white-space: nowrap;
+}
+.th-wordmark-lead { font-size: 30px; }
+.th-accent { color: var(--national-700); }
+
+/* 右側：工具列 ＋ 主導覽（桌機靠右直排，窄版整列展開） */
+.th-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.th-utility {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+.th-utility > * { flex-shrink: 0; }
+
+.th-utility-link {
+  color: var(--fg-3);
+  transition: color 0.15s ease;
+}
+.th-utility-link:hover { color: var(--national-700); }
+
+.th-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--slate-300);
+}
+
+.th-caret { font-size: var(--fs-3xs); transition: transform 0.15s ease; }
+
+/* 主導覽：901–1280 之間會換行（與設計檔相同），不擠壓站名 */
+.th-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.th-navlink {
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  color: var(--fg-2);
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.th-navlink:hover { color: var(--national-700); }
+.th-navlink.is-current { color: var(--national-700); }
+
+/* 窄版開合鈕：斷點由 1279 下修為 900，與設計檔一致 */
+.th-menubtn { display: none; }
+@media (max-width: 900px) {
   .th-menubtn {
     display: inline-flex;
     align-items: center;
@@ -2090,159 +2189,46 @@ ul.th-doc-list {
     border-color: var(--slate-400);
     color: var(--national-700);
   }
-  .th-menubtn i {
-    font-size: var(--fs-lg);
+  .th-menubtn i { font-size: var(--fs-lg); }
+}
+
+/* ── 窄版（≤900px）：頁首往下就地展開 ───────────────────────── */
+@media (max-width: 900px) {
+  .th-header-inner { padding: 0 1rem; }
+  .th-brand { flex: 1 1 auto; min-width: 0; }
+  .th-logo { height: 40px; margin-right: 8px; }
+  .th-wordmark { font-size: var(--fs-md); white-space: normal; }
+  .th-wordmark-lead { font-size: var(--fs-lg); }
+
+  .th-header-right {
+    display: none;
+    width: 100%;
+    align-items: flex-start;
+    padding-bottom: 8px;
   }
+  .th-header.is-nav-open .th-header-right { display: flex; }
+
+  .th-utility { width: 100%; }
+  /* 搜尋框在窄版獨佔一列，排在輔助連結之後 */
+  .th-hdrsearch { flex: 1 1 100%; order: 1; }
+  .th-hdrsearch-input { width: 100%; }
+  .th-utility .th-divider:last-of-type { display: none; }
+
+  .th-nav {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+  .th-navlink { width: 100%; padding: 8px 0; }
 }
-.th-menumask {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  justify-content: flex-end;
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .th-logo { height: 56px; }
+  .th-wordmark { font-size: var(--fs-h3); }
+  .th-wordmark-lead { font-size: var(--fs-h2); }
 }
-.th-menupanel {
-  width: min(360px, 88vw);
-  height: 100%;
-  background: var(--bg-1);
-  box-shadow: var(--sh-xl);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-.th-menupanel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px;
-  border-bottom: 1px solid var(--slate-200);
-  font-weight: 700;
-  color: var(--fg-1);
-}
-.th-menupanel-head button {
-  color: var(--fg-3);
-  font-size: var(--fs-h3);
-}
-.th-menupanel-head button:hover {
-  color: var(--national-700);
-}
-.th-menunav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.th-menunav li {
-  border-bottom: 1px solid var(--slate-100);
-}
-.th-menunav a,
-.th-menunav .th-menunav-todo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 16px 20px;
-  font-size: var(--fs-nav);
-  font-weight: 500;
-  color: var(--fg-2);
-}
-.th-menunav a:hover {
-  background: var(--bg-2);
-  color: var(--national-700);
-}
-.th-menunav a.is-active {
-  color: var(--national-700);
-}
-.th-menunav a i {
-  font-size: var(--fs-xxs);
-  color: var(--fg-4);
-}
-.th-menunav .th-menunav-todo {
-  font-weight: 400;
-}
-/* 行動版：有子選單的項目改成展開鈕，子項就地縮排 */
-.th-menunav-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: 100%;
-  padding: 16px 20px;
-  font-size: var(--fs-nav);
-  font-weight: 500;
-  color: var(--fg-2);
-  background: transparent;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-}
-.th-menunav-toggle:hover,
-.th-menunav-toggle.is-open {
-  background: var(--bg-2);
-  color: var(--national-700);
-}
-.th-menunav-toggle i {
-  font-size: var(--fs-xxs);
-  color: var(--fg-4);
-}
-.th-menunav-sub {
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-2);
-  padding-bottom: 6px;
-}
-/* 子項含「待建置」時渲染的是 span.th-todo-link 而不是 a，
-   只寫 `a` 會讓那些項目吃到父層 .th-menunav 的 20px padding 而沒有縮排
-   （2026-09-10 實測：草稿編輯／國家公園出園回報與父層項目對齊）。 */
-.th-menunav-sub a,
-.th-menunav-sub .th-todo-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 20px 12px 36px;   /* 左側縮排，表示層級 */
-  font-size: var(--fs-nav);
-  font-weight: 400;
-  color: var(--fg-3);
-}
-.th-menunav-sub a:hover {
-  color: var(--national-700);
-}
-.th-menunav-sub a i {
-  font-size: var(--fs-xxs);
-  color: var(--fg-4);
-}
-/* 工具列（網站導覽／警特報／RSS…）在選單面板裡各佔一列，不並排 */
-.th-menuutil {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-  padding: 18px 20px;
-  font-size: var(--fs-sm);
-  color: var(--fg-3);
-}
-.th-menuutil > a,
-.th-menuutil > .th-todo-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--slate-100);
-}
-.th-menuutil > a:hover {
-  color: var(--national-700);
-}
-.th-menuutil button {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.th-menuutil button:hover {
-  color: var(--national-700);
-}
-/* ── 桌機主導覽的子選單（滑鼠移入展開） ── */
+
 .th-navsub {
   position: relative;
 }
@@ -2263,24 +2249,54 @@ ul.th-doc-list {
 }
 /* 外層只留銜接距離且必須透明：與按鈕之間若有空隙，
    滑鼠往下移會先觸發 mouseleave 把選單關掉。 */
+/* 2026-09-14（批次 1）：下拉改為貼齊按鈕下緣、與按鈕之間無空隙
+   （有空隙的話滑鼠往下移會先觸發 mouseleave 把選單關掉）。
+   靠近視窗右緣時由 JS 加上 .is-right 改為右對齊。 */
 .th-navsub-dropdown {
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   z-index: 9999;
-  padding-top: 8px;
 }
+.th-navsub-dropdown.is-right { left: auto; right: 0; }
 .th-navsub-panel {
-  min-width: 168px;
+  min-width: 220px;
+  max-width: 340px;
+  max-height: 70vh;
+  overflow-y: auto;
   background: var(--bg-1);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-md);
+  border: 1px solid var(--border-ui);
+  border-radius: 0 0 var(--r-md) var(--r-md);
   box-shadow: var(--sh-lg);
   padding: 6px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+/* 目前所在頁的子項（設計檔以 aria-current="page" 標記） */
+.th-navsub-item[aria-current="page"] {
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  font-weight: 700;
+}
+/* 窄版：下拉改為就地展開的手風琴，不做浮動定位 */
+@media (max-width: 900px) {
+  .th-navsub { width: 100%; }
+  .th-navsub-btn { width: 100%; justify-content: space-between; padding: 8px 0; }
+  .th-navsub-dropdown {
+    position: static;
+    width: 100%;
+  }
+  .th-navsub-panel {
+    min-width: 0;
+    max-width: none;
+    max-height: none;
+    margin: 4px 0 8px;
+    border-radius: var(--r-md);
+    box-shadow: none;
+    background: var(--bg-2);
+  }
+  .th-navsub-dropdown.is-right { right: auto; }
 }
 .th-navsub-item {
   display: block;
@@ -2402,39 +2418,31 @@ ul.th-doc-list {
   background: var(--slate-100, var(--slate-100));
   color: var(--national-700, var(--national-700));
 }
-.th-lang-item.is-active {
+.th-lang-item.is-active,
+.th-lang-item[aria-current="true"] {
   font-weight: 600;
   color: var(--national-700, var(--national-700));
   background: var(--bg-selected);
 }
-.th-menu-lang-options {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
-  padding-left: 8px;
-}
-.th-menu-lang-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  font-size: var(--fs-nav);
-  color: var(--slate-600);
-  background: var(--slate-50, #f8fafc);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-sm, var(--r-sm));
-  cursor: pointer;
-}
-.th-menu-lang-btn.is-active {
-  color: var(--national-700, var(--national-700));
-  border-color: var(--national-700, var(--national-700));
-  background: var(--bg-selected);
-  font-weight: 600;
-}
+.th-lang-tick { font-size: var(--fs-xs); color: var(--national-700); }
 body.th-noscroll {
   overflow: hidden;
 }
+/* 僅螢幕報讀器可見（2026-09-14 批次 1）：外連的「（另開新視窗）」等
+   只朗讀、不顯示的文字。不可改用 display:none／visibility:hidden——
+   那會讓報讀器一併讀不到。 */
+.th-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ------------------------------------------------------------
    th-quick-nav
    ------------------------------------------------------------ */

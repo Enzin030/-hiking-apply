@@ -1,7 +1,9 @@
 /* ============================================================
    th-footer — 全站頁尾（原 Shared.jsx 的 Footer）
    ------------------------------------------------------------
-   無互動。DOM 與 class 照原樣。
+   無互動。DOM 與 class 照原樣，唯一的例外是標題階層：
+   2026-09-14（批次 1）h3／h4 改為 h2／h3，消除 h1 → h3 跳階（WCAG 1.3.1，
+   設計檔 ACCESSIBILITY.md 同樣的修正）。class 沒動，外觀不變。
 
    2026-09-07 階段 3.0：原本寫死的 Tailwind 任意值已全部改為 tokens（13 處）。
    對照表（值逐一相同，非近似）：
@@ -50,9 +52,9 @@ window.thComponents["th-footer"] = {
             </div>
             <div class="w-full">
               <div class="flex flex-col xl:flex-row xl:items-end justify-between mb-4 gap-2 pb-0.5">
-                <h3 class="font-serif font-bold text-xl text-white tracking-wide leading-none">
+                <h2 class="font-serif font-bold text-xl text-white tracking-wide leading-none">
                   臺灣登山申請一站式服務網
-                </h3>
+                </h2>
                 <span class="text-slate-400 text-[length:var(--fs-xs)] leading-none mb-1 xl:mb-0">
                   最後更新日期：{{ siteUpdated }}
                 </span>
@@ -65,9 +67,9 @@ window.thComponents["th-footer"] = {
 
           <div class="flex flex-col sm:flex-row gap-16 lg:gap-20 xl:gap-28 shrink-0 mt-4 lg:mt-0 lg:mr-8 xl:mr-16">
             <div>
-              <h4 class="text-white font-bold text-[length:var(--fs-md)] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
+              <h3 class="text-white font-bold text-[length:var(--fs-md)] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
                 服務專區
-              </h4>
+              </h3>
               <!-- 常見問答＝公布欄第四個頁籤（帶 ?tab=faq 直接落在該頁籤）；
                    聯絡我們（舊站 contact.aspx）尚未建置，不給 \`#\` 假連結 -->
               <ul class="space-y-3 text-[length:var(--fs-sm)]">
@@ -80,9 +82,9 @@ window.thComponents["th-footer"] = {
               </ul>
             </div>
             <div>
-              <h4 class="text-white font-bold text-[length:var(--fs-md)] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
+              <h3 class="text-white font-bold text-[length:var(--fs-md)] mb-4 pb-2 border-b border-slate-600/50 inline-block w-full sm:w-auto leading-none">
                 政策宣告
-              </h4>
+              </h3>
               <ul class="space-y-3 text-[length:var(--fs-sm)]">
                 <li v-for="p in policyLinks" :key="p">
                   <th-todo-link :label="p" :on-dark="true"></th-todo-link>

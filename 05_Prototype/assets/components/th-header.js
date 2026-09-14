@@ -1,12 +1,24 @@
 /* ============================================================
    th-header — 全站頁首（原 Shared.jsx 的 Header，含兩個互動）
    ------------------------------------------------------------
-   互動一：**選單面板**（.th-menubtn／.th-menumask／.th-menupanel）
+   互動一：**窄版就地展開的導覽**（.th-menubtn 切換 .th-header.is-nav-open）
    互動二：**語言下拉**（.th-lang-wrapper／.th-lang-dropdown）
+   互動三：**主選單下拉**（.th-navsub／.th-navsub-dropdown）
 
-   水平導覽只在 xl（≥1280px）以上呈現——六個項目加上三個「待建置」標記後，
-   1280 容器內僅容得下一行 16px 文字，再窄就會把站名擠掉。
-   xl 以下改用收合選單（含手機，原本手機完全沒有導覽入口）。
+   2026-09-14（批次 1）依設計師前台web 改寫互動一與三：
+   - 窄版由「右側滑入抽屜（role=dialog／遮罩／鎖捲動）」改為**頁首往下就地展開**，
+     子選單就地手風琴。抽屜宣告 aria-modal 卻沒有 focus trap，是名不副實的
+     AA 缺陷；改成非 modal 之後那個問題不存在，不是修好、是不需要了。
+   - 下拉改 Disclosure Pattern 的完整鍵盤行為：↓ 開啟並聚焦第一項、↑↓ 循環、
+     Home／End 跳首尾、Esc 關閉並把焦點還給按鈕、Tab 移出自動關閉。
+   - 桌機滑鼠移入展開、移出延遲 220ms 收合（WCAG 1.4.13「可停留」）。
+     **不再以 focusin 自動展開**——那會把子項全部插進 Tab 序列
+     （宿營地一項就多 11 站），與設計檔的鍵盤模型不同。
+   - 補 aria-controls／aria-current、語系項目的 lang 屬性、外連的「另開新視窗」報讀文字。
+
+   水平導覽在 ≥901px 呈現（2026-09-14 由 1280 下修，與設計檔同斷點）。
+   901–1280 之間主導覽會**換行**成兩到三列、頁首因此變高，與設計檔行為相同
+   （實測設計檔 1100 時頁首 110px、901 時 136px，兩者皆無水平溢位）。
    導覽字級（--fs-nav = 16px）不可改大：18px 在 1280 容器內塞不下同一行。
 
    ------------------------------------------------------------
@@ -114,10 +126,9 @@ window.thComponents["th-header"] = {
 
   data() {
     return {
-      menuOpen: false,
+      menuOpen: false,    // 窄版：頁首往下就地展開
       langOpen: false,
-      navOpen: "",        // 桌機：目前展開子選單的 nav key（滑鼠移入／鍵盤聚焦）
-      mobileSubOpen: "",  // 行動版：目前就地展開的 nav key
+      navOpen: "",        // 目前展開的主選單 key（桌機下拉與窄版手風琴共用）
       canHover: true,     // 裝置是否支援 hover（觸控裝置為 false，改用點擊展開）
       currentLang: "zh-TW",
       nav: window.TH_HEADER_NAV,
@@ -131,31 +142,53 @@ window.thComponents["th-header"] = {
       var self = this;
       return this.languages.find(function (l) { return l.key === self.currentLang; }) || this.languages[0];
     },
-  },
 
-  watch: {
-    // 選單開啟時鎖背景捲動
-    menuOpen(open) {
-      document.body.classList[open ? "add" : "remove"]("th-noscroll");
+    /* 目前網址的「檔名＋查詢字串」，用來標記子選單的 aria-current="page" */
+    here() {
+      return {
+        file: window.location.pathname.split("/").pop() || "index.html",
+        query: window.location.search.replace(/^\?/, ""),
+      };
+    },
+
+    /* 目前這一頁對應的子選單項目 key（全站唯一一個） */
+    currentChildKey() {
+      var here = this.here, exact = null, sameFile = null;
+      this.nav.forEach(function (group) {
+        (group.children || []).forEach(function (c) {
+          if (!c.url) return;
+          var parts = c.url.split("?");
+          if (parts[0] !== here.file) return;
+          if ((parts[1] || "") === here.query) { if (!exact) exact = c.key; }
+          if (!sameFile) sameFile = c.key;
+        });
+      });
+      return exact || sameFile;
     },
   },
 
   mounted() {
     var self = this;
+
     this._onKey = function (e) {
-      if (e.key === "Escape") {
-        self.menuOpen = false; self.langOpen = false; self.navOpen = "";
-      }
+      if (e.key !== "Escape") return;
+      /* 按鈕與選單上的 keydown 已經處理過的 Esc 不再處理一次：
+         那些處理器都呼叫了 preventDefault，沒擋掉的話這裡會接著往外關一層
+         （實測窄版按 Esc 收子選單，會連整個展開的導覽一起關掉）。 */
+      if (e.defaultPrevented) return;
+      /* 由內而外關，每一層都把焦點還給觸發它的按鈕 */
+      if (self.langOpen) { self.closeLang(true); return; }
+      if (self.navOpen) { self.closeNav(true); return; }
+      if (self.menuOpen) { self.closeMenu(true); }
     };
+
     this._onClickOutside = function (e) {
-      if (self.$refs.langWrapper && !self.$refs.langWrapper.contains(e.target)) {
-        self.langOpen = false;
+      if (self.langOpen && self.$refs.langWrapper && !self.$refs.langWrapper.contains(e.target)) {
+        self.closeLang(false);
       }
-      /* 觸控裝置靠點擊展開，就必須靠點擊外部收合——滑鼠裝置有 mouseleave，不需要 */
-      if (!self.canHover && self.navOpen && !e.target.closest(".th-navsub")) {
-        self.navOpen = "";
-      }
+      if (self.navOpen && !e.target.closest(".th-navsub")) self.closeNav(false);
     };
+
     document.addEventListener("keydown", this._onKey);
     document.addEventListener("mousedown", this._onClickOutside);
 
@@ -166,217 +199,285 @@ window.thComponents["th-header"] = {
     this.canHover = this._hoverMq.matches;
     this._onHoverMq = function (e) { self.canHover = e.matches; self.navOpen = ""; };
     this._hoverMq.addEventListener("change", this._onHoverMq);
+
+    /* 窄版斷點與 CSS 的 900px 同一個值：跨過斷點時把展開狀態清乾淨，
+       否則桌機留下的 navOpen 會在窄版變成一個已展開的手風琴。 */
+    this._narrowMq = window.matchMedia("(max-width: 900px)");
+    this._onNarrowMq = function () { self.navOpen = ""; self.menuOpen = false; };
+    this._narrowMq.addEventListener("change", this._onNarrowMq);
   },
 
   unmounted() {
     document.removeEventListener("keydown", this._onKey);
     document.removeEventListener("mousedown", this._onClickOutside);
     if (this._hoverMq) this._hoverMq.removeEventListener("change", this._onHoverMq);
-    document.body.classList.remove("th-noscroll");
+    if (this._narrowMq) this._narrowMq.removeEventListener("change", this._onNarrowMq);
+    clearTimeout(this._navTimer);
   },
 
   methods: {
-    pickLang(key, closeDropdown) {
-      this.currentLang = key;
-      if (closeDropdown) this.langOpen = false;
+    isNarrow() { return this._narrowMq ? this._narrowMq.matches : false; },
+
+    /* ── 互動一：窄版就地展開 ──────────────────────────────── */
+    toggleMenu() { this.menuOpen ? this.closeMenu(false) : (this.menuOpen = true); },
+
+    closeMenu(focusBtn) {
+      this.menuOpen = false;
+      this.navOpen = "";
+      if (focusBtn && this.$refs.menuBtn) this.$refs.menuBtn.focus();
     },
 
-    /* 桌機子選單：滑鼠移入展開，但鍵盤族沒有 hover，所以同時收 focusin。
-       focusout 要確認焦點真的離開整個 wrapper 才關，否則在父項與子項之間
-       移動焦點會被自己關掉。 */
-    onNavFocusOut(e, key) {
-      if (!e.currentTarget.contains(e.relatedTarget) && this.navOpen === key) {
-        this.navOpen = "";
+    /* ── 互動三：主選單下拉 ────────────────────────────────── */
+    navMenuId(key) { return "th-navmenu-" + key; },
+    navBtnId(key) { return "th-navbtn-" + key; },
+
+    navLinks(key) {
+      var menu = this.$el.querySelector("#" + this.navMenuId(key));
+      return menu ? Array.prototype.slice.call(menu.querySelectorAll("a[href]")) : [];
+    },
+
+    openNav(key, focusFirst) {
+      this.navOpen = key;
+      var self = this;
+      this.$nextTick(function () {
+        self.positionNav(key);
+        if (focusFirst) {
+          var links = self.navLinks(key);
+          if (links.length) links[0].focus();
+        }
+      });
+    },
+
+    closeNav(focusBtn) {
+      var key = this.navOpen;
+      if (!key) return;
+      this.navOpen = "";
+      if (focusBtn) {
+        var btn = this.$el.querySelector("#" + this.navBtnId(key));
+        if (btn) btn.focus();
       }
     },
 
-    /* 觸控裝置（無 hover）：點父項展開／收合。滑鼠裝置不介入，
-       否則已由 mouseenter 開啟的選單會被同一次點擊立刻關掉。 */
-    onNavToggle(key) {
-      if (this.canHover) return;
-      this.navOpen = this.navOpen === key ? "" : key;
+    /* 子選單超出視窗右緣時改為右對齊（設計檔的 .is-right） */
+    positionNav(key) {
+      if (this.isNarrow()) return;
+      var menu = this.$el.querySelector("#" + this.navMenuId(key));
+      if (!menu) return;
+      menu.classList.remove("is-right");
+      if (menu.getBoundingClientRect().right > window.innerWidth - 8) menu.classList.add("is-right");
     },
 
-    /* 行動版子選單：就地縮排展開，一次只開一個 */
-    toggleMobileSub(key) {
-      this.mobileSubOpen = this.mobileSubOpen === key ? "" : key;
+    onNavClick(key, e) {
+      /* 桌機滑鼠已因 hover 展開時，再點標題不該把它關掉（常見誤操作）。
+         e.detail === 0 代表是鍵盤 Enter／Space 觸發的 click，仍照常切換。 */
+      var byMouse = e && e.detail > 0;
+      if (byMouse && this.canHover && !this.isNarrow() && this.navOpen === key) return;
+      this.navOpen === key ? this.closeNav(false) : this.openNav(key, false);
+    },
+
+    onNavBtnKey(e, key) {
+      if (e.key === "ArrowDown") { e.preventDefault(); this.openNav(key, true); }
+      else if (e.key === "Escape" && this.navOpen === key) { e.preventDefault(); this.closeNav(true); }
+    },
+
+    onNavMenuKey(e, key) {
+      var list = this.navLinks(key);
+      if (!list.length) return;
+      var idx = list.indexOf(document.activeElement);
+      if (e.key === "Escape") { e.preventDefault(); this.closeNav(true); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); list[(idx + 1) % list.length].focus(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); list[(idx - 1 + list.length) % list.length].focus(); }
+      else if (e.key === "Home") { e.preventDefault(); list[0].focus(); }
+      else if (e.key === "End") { e.preventDefault(); list[list.length - 1].focus(); }
+    },
+
+    /* 焦點離開整個項目才關（父項與子項之間移動不算離開） */
+    onNavFocusOut(e, key) {
+      if (this.navOpen === key && !e.currentTarget.contains(e.relatedTarget)) this.navOpen = "";
+    },
+
+    /* 桌機 hover：移入開啟、移出延遲 220ms 才收合，游標才來得及移進選單
+       （WCAG 1.4.13「可停留」）。**不收 focusin**：Tab 不應自動展開子選單，
+       否則子項會全部插進 Tab 序列（宿營地一項就多 11 站）。 */
+    onNavEnter(key) {
+      if (!this.canHover || this.isNarrow()) return;
+      clearTimeout(this._navTimer);
+      this.openNav(key, false);
+    },
+
+    onNavLeave() {
+      if (!this.canHover || this.isNarrow()) return;
+      var self = this;
+      clearTimeout(this._navTimer);
+      this._navTimer = setTimeout(function () { self.navOpen = ""; }, 220);
+    },
+
+    /* 子項是不是目前這一頁（設計檔以 aria-current="page" 標記）。
+       規則：檔名＋查詢字串完全相同者優先；網址沒帶查詢字串時（例如直接開
+       news.html，頁面自己會落在第一個頁籤），退而標記同檔名的第一個子項。
+       用 computed 一次算完，避免同檔名的多個頁籤同時被標記。 */
+    isCurrentChild(child) {
+      return !!child.key && child.key === this.currentChildKey;
+    },
+
+    /* ── 互動二：語言下拉 ──────────────────────────────────── */
+    langItems() {
+      var menu = this.$refs.langMenu;
+      return menu ? Array.prototype.slice.call(menu.querySelectorAll("button")) : [];
+    },
+
+    openLang(focusFirst) {
+      this.langOpen = true;
+      var self = this;
+      this.$nextTick(function () {
+        if (focusFirst) {
+          var list = self.langItems();
+          if (list.length) list[0].focus();
+        }
+      });
+    },
+
+    closeLang(focusBtn) {
+      this.langOpen = false;
+      if (focusBtn && this.$refs.langBtn) this.$refs.langBtn.focus();
+    },
+
+    onLangBtnKey(e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); this.openLang(true); }
+      else if (e.key === "Escape" && this.langOpen) { e.preventDefault(); this.closeLang(true); }
+    },
+
+    onLangMenuKey(e) {
+      var list = this.langItems();
+      if (!list.length) return;
+      var idx = list.indexOf(document.activeElement);
+      if (e.key === "Escape") { e.preventDefault(); this.closeLang(true); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); list[(idx + 1) % list.length].focus(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); list[(idx - 1 + list.length) % list.length].focus(); }
+      else if (e.key === "Home") { e.preventDefault(); list[0].focus(); }
+      else if (e.key === "End") { e.preventDefault(); list[list.length - 1].focus(); }
+    },
+
+    onLangFocusOut(e) {
+      if (this.langOpen && this.$refs.langWrapper && !this.$refs.langWrapper.contains(e.relatedTarget)) {
+        this.langOpen = false;
+      }
+    },
+
+    pickLang(key) {
+      this.currentLang = key;
+      this.closeLang(true);
     },
   },
 
   template: `
-    <header class="w-full bg-white sticky top-0 z-50 th-header-bar border-b border-slate-100 py-3">
+    <header class="th-header th-header-bar" :class="{ 'is-nav-open': menuOpen }">
       <!-- 無障礙骨架（2026-09-14）：Tab 前兩站固定為「跳至主要內容 → 上方導盲磚」。
            放在 header 內而非 header 前，是為了不讓本元件變成多根節點；
            header 是 sticky，已是兩者的定位基準。#main 由 th-page-shell 提供。 -->
       <a v-if="skipLink" class="th-skip-link" href="#main">跳至主要內容</a>
       <a class="th-accesskey" id="AU" href="#AU" accesskey="U"
          title="快速鍵 Alt+U：上方選單連結區" aria-label="上方選單連結區（快速鍵 Alt+U）"><span aria-hidden="true">:::</span></a>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap justify-between items-center gap-y-2">
 
-          <!--
-            站名是全站識別（wordmark），不是各頁主標題——頁面主標題是 th-page-shell 的 h1。
-            用 <a> 而非帶 click 的 div，兼顧鍵盤可聚焦與單一 h1 的語意。
-            行動版：拿掉 shrink-0、縮小字級並允許換行，避免撐寬 documentElement。
-          -->
-          <a href="index.html"
-             class="flex items-center min-w-0 shrink lg:shrink-0 hover:opacity-90 transition"
-             aria-label="臺灣登山申請一站式服務網 首頁">
-            <img src="assets/logo-mark.png" alt="國家公園署" class="h-10 sm:h-14 lg:h-16 w-auto shrink-0 mr-2 sm:mr-3" />
-            <span class="font-serif font-extrabold text-base sm:text-xl lg:text-2xl text-slate-800 tracking-wide mt-1 min-w-0 lg:whitespace-nowrap">
-              <span class="text-lg sm:text-2xl lg:text-3xl">臺灣<span class="text-[var(--national-700)]">登山申請</span></span>一站式服務網
-            </span>
-          </a>
+      <div class="th-header-inner">
 
-          <!-- 桌機（≥1280px）：工具列 ＋ 水平主導覽 -->
-          <div class="flex-col items-end gap-3 hidden xl:flex">
-            <div class="flex items-center gap-3 text-[length:var(--fs-sm)] text-slate-500">
-              <template v-for="u in utility" :key="u.label">
-                <a v-if="u.url" :href="u.url"
-                   :target="u.external ? '_blank' : null"
-                   :rel="u.external ? 'noopener noreferrer' : null"
-                   class="hover:text-[var(--national-700)] transition">{{ u.label }}</a>
-                <th-todo-link v-else :label="u.label"></th-todo-link>
-                <div class="w-px h-3 bg-slate-300"></div>
-              </template>
+        <!--
+          站名是全站識別（wordmark），不是各頁主標題——頁面主標題是 th-page-shell 的 h1。
+          用 <a> 而非帶 click 的 div，兼顧鍵盤可聚焦與單一 h1 的語意。
+        -->
+        <a href="index.html" class="th-brand" aria-label="臺灣登山申請一站式服務網 首頁">
+          <img src="assets/logo-mark.png" alt="國家公園署" class="th-logo" />
+          <span class="th-wordmark"><span class="th-wordmark-lead">臺灣<span class="th-accent">登山申請</span></span>一站式服務網</span>
+        </a>
 
-              <!-- 互動二：語言下拉 -->
-              <div class="th-lang-wrapper" ref="langWrapper">
-                <button type="button" class="th-lang-btn hover:text-[var(--national-700)] transition"
-                        @click="langOpen = !langOpen"
-                        :aria-expanded="langOpen ? 'true' : 'false'" aria-haspopup="true">
-                  <i class="ph ph-globe text-[length:var(--fs-sm)] relative top-px"></i>
-                  <span>{{ currentLangObj.label }}</span>
-                  <i :class="['fa-solid fa-chevron-down text-[length:var(--fs-3xs)] transition-transform', { 'rotate-180': langOpen }]"></i>
-                </button>
-                <div v-if="langOpen" class="th-lang-dropdown">
-                  <button v-for="lang in languages" :key="lang.key" type="button"
-                          :class="['th-lang-item', { 'is-active': currentLang === lang.key }]"
-                          @click="pickLang(lang.key, true)">
-                    <span>{{ lang.label }}</span>
-                    <i v-if="currentLang === lang.key" class="fa-solid fa-check text-xs text-[var(--national-700)]"></i>
-                  </button>
-                </div>
-              </div>
+        <!-- 窄版（≤900px）：就地展開／收合，不是抽屜，所以沒有 aria-haspopup="dialog" -->
+        <button type="button" class="th-menubtn" ref="menuBtn"
+                :aria-expanded="menuOpen ? 'true' : 'false'" aria-controls="th-header-nav"
+                :aria-label="menuOpen ? '收合選單' : '展開選單'" @click="toggleMenu">
+          <i class="ph-bold ph-list" aria-hidden="true"></i>
+        </button>
 
-              <div class="w-px h-3 bg-slate-300"></div>
-              <!-- 雛形無後端，送出只擋掉預設行為 -->
-              <form class="th-hdrsearch" role="search" @submit.prevent>
-                <input type="search" name="q" class="th-hdrsearch-input" placeholder="搜尋"
-                       aria-label="搜尋站內內容" />
-                <button type="submit" class="th-hdrsearch-btn" aria-label="搜尋">
-                  <i class="ph-bold ph-magnifying-glass text-[length:var(--fs-md)] relative top-px"></i>
-                </button>
-              </form>
-            </div>
+        <div class="th-header-right" id="th-header-nav">
 
-            <nav class="flex items-center gap-6" aria-label="主要導覽">
-              <template v-for="n in nav" :key="n.key">
-                <!-- 有 children：父項只展開、不可點；滑鼠移入或鍵盤聚焦皆可開 -->
-                <div v-if="n.children" class="th-navsub"
-                     @mouseenter="canHover && (navOpen = n.key)"
-                     @mouseleave="canHover && (navOpen = '')"
-                     @focusin="navOpen = n.key" @focusout="onNavFocusOut($event, n.key)">
-                  <button type="button" @click="onNavToggle(n.key)"
-                          :class="['th-navsub-btn font-medium transition text-[length:var(--fs-nav)] whitespace-nowrap',
-                                   active === n.key ? 'text-[var(--national-700)]' : 'text-slate-600 hover:text-[var(--national-700)]']"
-                          :aria-expanded="navOpen === n.key ? 'true' : 'false'" aria-haspopup="true">
-                    {{ n.label }}
-                    <i :class="['fa-solid fa-chevron-down text-[length:var(--fs-3xs)] transition-transform', { 'rotate-180': navOpen === n.key }]"></i>
-                  </button>
-                  <!-- 外層只負責留出銜接距離（透明），白卡在內層：
-                       兩者之間不能有空隙，否則滑鼠往下移會先觸發 mouseleave 把選單關掉 -->
-                  <div v-if="navOpen === n.key" class="th-navsub-dropdown">
-                    <div class="th-navsub-panel">
-                      <template v-for="c in n.children" :key="c.key">
-                        <a v-if="c.url" :href="c.url" class="th-navsub-item">{{ c.label }}</a>
-                        <th-todo-link v-else :label="c.label" extra-class="th-navsub-item"></th-todo-link>
-                      </template>
-                    </div>
-                  </div>
-                </div>
-                <a v-else-if="n.url" :href="n.url"
-                   :class="['font-medium transition text-[length:var(--fs-nav)] whitespace-nowrap',
-                            active === n.key ? 'text-[var(--national-700)]' : 'text-slate-600 hover:text-[var(--national-700)]']">
-                  {{ n.label }}
-                </a>
-                <th-todo-link v-else :label="n.label"
-                              extra-class="th-todo-link-nav text-[length:var(--fs-nav)] whitespace-nowrap"></th-todo-link>
-              </template>
-            </nav>
-          </div>
-
-          <!-- xl 以下：收合按鈕（互動一的開啟入口） -->
-          <button type="button" class="th-menubtn xl:hidden" @click="menuOpen = true"
-                  aria-haspopup="dialog" :aria-expanded="menuOpen ? 'true' : 'false'" aria-label="開啟選單">
-            <i class="ph-bold ph-list"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- 互動一：選單面板 -->
-      <div v-if="menuOpen" class="th-menumask" @click="menuOpen = false">
-        <div class="th-menupanel" role="dialog" aria-modal="true" aria-label="網站選單" @click.stop>
-          <div class="th-menupanel-head">
-            <span>選單</span>
-            <button type="button" @click="menuOpen = false" aria-label="關閉選單">
-              <i class="ph-bold ph-x"></i>
-            </button>
-          </div>
-
-          <nav class="th-menunav" aria-label="主要導覽">
-            <ul>
-              <li v-for="n in nav" :key="n.key">
-                <!-- 有 children：點父項就地展開，子項縮排列出 -->
-                <template v-if="n.children">
-                  <button type="button" class="th-menunav-toggle"
-                          :class="mobileSubOpen === n.key ? 'is-open' : null"
-                          @click="toggleMobileSub(n.key)"
-                          :aria-expanded="mobileSubOpen === n.key ? 'true' : 'false'">
-                    {{ n.label }}
-                    <i :class="['fa-solid fa-chevron-down transition-transform', { 'rotate-180': mobileSubOpen === n.key }]"></i>
-                  </button>
-                  <div v-if="mobileSubOpen === n.key" class="th-menunav-sub">
-                    <template v-for="c in n.children" :key="c.key">
-                      <a v-if="c.url" :href="c.url">
-                        {{ c.label }}<i class="fa-solid fa-angle-right"></i>
-                      </a>
-                      <th-todo-link v-else :label="c.label" extra-class="th-menunav-todo"></th-todo-link>
-                    </template>
-                  </div>
-                </template>
-                <a v-else-if="n.url" :href="n.url" :class="active === n.key ? 'is-active' : null">
-                  {{ n.label }}<i class="fa-solid fa-angle-right"></i>
-                </a>
-                <th-todo-link v-else :label="n.label" extra-class="th-menunav-todo"></th-todo-link>
-              </li>
-            </ul>
-          </nav>
-
-          <div class="th-menuutil">
+          <div class="th-utility">
             <template v-for="u in utility" :key="u.label">
               <a v-if="u.url" :href="u.url"
                  :target="u.external ? '_blank' : null"
-                 :rel="u.external ? 'noopener noreferrer' : null">{{ u.label }}</a>
+                 :rel="u.external ? 'noopener noreferrer' : null"
+                 class="th-utility-link">{{ u.label }}<span v-if="u.external" class="th-sr-only">（另開新視窗）</span></a>
               <th-todo-link v-else :label="u.label"></th-todo-link>
+              <span class="th-divider" aria-hidden="true"></span>
             </template>
-            <div class="w-full mt-2 pt-2 border-t border-slate-100">
-              <div class="text-xs text-slate-400 font-medium mb-1.5 flex items-center gap-1">
-                <i class="ph ph-globe"></i> 語言 / Language
-              </div>
-              <div class="th-menu-lang-options">
+
+            <!-- 互動二：語言下拉 -->
+            <div class="th-lang-wrapper" ref="langWrapper" @focusout="onLangFocusOut">
+              <button type="button" class="th-lang-btn" ref="langBtn" id="th-lang-btn"
+                      @click="langOpen ? closeLang(false) : openLang(false)"
+                      @keydown="onLangBtnKey"
+                      :aria-expanded="langOpen ? 'true' : 'false'" aria-haspopup="true"
+                      aria-controls="th-lang-list">
+                <i class="ph ph-globe" aria-hidden="true"></i>
+                <span>{{ currentLangObj.label }}</span>
+                <i :class="['fa-solid fa-chevron-down th-caret', { 'rotate-180': langOpen }]" aria-hidden="true"></i>
+              </button>
+              <div v-if="langOpen" class="th-lang-dropdown" id="th-lang-list" ref="langMenu"
+                   aria-labelledby="th-lang-btn" @keydown="onLangMenuKey">
+                <!-- 每個語系項目都要帶 lang（WCAG 3.1.2）：少了它，報讀器會用中文語音
+                     硬唸「English」「日本語」。目前語系另加 aria-current。 -->
                 <button v-for="lang in languages" :key="lang.key" type="button"
-                        :class="['th-menu-lang-btn', { 'is-active': currentLang === lang.key }]"
-                        @click="pickLang(lang.key, false)">
+                        :lang="lang.key === 'zh-TW' ? 'zh-Hant-TW' : lang.key"
+                        :class="['th-lang-item', { 'is-active': currentLang === lang.key }]"
+                        :aria-current="currentLang === lang.key ? 'true' : null"
+                        @click="pickLang(lang.key)">
                   <span>{{ lang.label }}</span>
-                  <i v-if="currentLang === lang.key" class="fa-solid fa-check text-xs"></i>
+                  <i v-if="currentLang === lang.key" class="fa-solid fa-check th-lang-tick" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
-            <button type="button" class="mt-2">
-              <i class="ph-bold ph-magnifying-glass"></i> 搜尋
-            </button>
+
+            <span class="th-divider" aria-hidden="true"></span>
+            <!-- 雛形無後端，送出只擋掉預設行為 -->
+            <form class="th-hdrsearch" role="search" @submit.prevent>
+              <input type="search" name="q" class="th-hdrsearch-input" placeholder="搜尋"
+                     aria-label="搜尋站內內容" />
+              <button type="submit" class="th-hdrsearch-btn" aria-label="搜尋">
+                <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>
+              </button>
+            </form>
           </div>
+
+          <nav class="th-nav" aria-label="主要導覽">
+            <template v-for="n in nav" :key="n.key">
+              <!-- 有 children：父項只負責展開，不可點 -->
+              <div v-if="n.children" class="th-navsub" :class="{ 'is-active': active === n.key }"
+                   @mouseenter="onNavEnter(n.key)" @mouseleave="onNavLeave()"
+                   @focusout="onNavFocusOut($event, n.key)">
+                <button type="button" class="th-navsub-btn" :id="navBtnId(n.key)"
+                        :class="active === n.key ? 'is-current' : null"
+                        @click="onNavClick(n.key, $event)" @keydown="onNavBtnKey($event, n.key)"
+                        :aria-expanded="navOpen === n.key ? 'true' : 'false'" aria-haspopup="true"
+                        :aria-controls="navMenuId(n.key)">
+                  {{ n.label }}
+                  <i :class="['fa-solid fa-chevron-down th-caret', { 'rotate-180': navOpen === n.key }]" aria-hidden="true"></i>
+                </button>
+                <div v-if="navOpen === n.key" class="th-navsub-dropdown" :id="navMenuId(n.key)"
+                     :aria-labelledby="navBtnId(n.key)" @keydown="onNavMenuKey($event, n.key)">
+                  <div class="th-navsub-panel">
+                    <template v-for="c in n.children" :key="c.key">
+                      <a v-if="c.url" :href="c.url" class="th-navsub-item"
+                         :aria-current="isCurrentChild(c) ? 'page' : null">{{ c.label }}</a>
+                      <th-todo-link v-else :label="c.label" extra-class="th-navsub-item"></th-todo-link>
+                    </template>
+                  </div>
+                </div>
+              </div>
+              <a v-else-if="n.url" :href="n.url" class="th-navlink"
+                 :class="active === n.key ? 'is-current' : null"
+                 :aria-current="active === n.key ? 'page' : null">{{ n.label }}</a>
+              <th-todo-link v-else :label="n.label" extra-class="th-todo-link-nav th-navlink"></th-todo-link>
+            </template>
+          </nav>
+
         </div>
       </div>
     </header>
