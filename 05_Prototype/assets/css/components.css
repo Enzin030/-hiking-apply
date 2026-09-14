@@ -124,7 +124,7 @@
 
 .th-btn-secondary {
   background: var(--btn-blue);
-  color: #fff;
+  color: var(--fg-on-dark);
 }
 
 .th-btn-secondary:hover {
@@ -486,7 +486,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: #fff;
+  background: var(--bg-1);
   box-shadow: var(--sh-header);
   border-bottom: 1px solid var(--slate-100);
   padding: 12px 0;
@@ -514,7 +514,7 @@
   z-index: 30;
   margin: 24px -32px 0;
   padding: 16px 32px;
-  background: #fff;
+  background: var(--bg-1);
   border-top: 1px solid var(--slate-200);
   box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.1);
   display: flex;
@@ -699,7 +699,7 @@
 
 .th-flag.is-snow {
   color: var(--info-fg);
-  border-color: #bfdbfe;
+  border-color: var(--info-border);
   background: var(--info-bg);
 }
 
@@ -816,7 +816,7 @@
 .bulletin-badge.agency-yushan {
   background: var(--info-bg);
   color: #1e40af;
-  border-color: #bfdbfe;
+  border-color: var(--info-border);
 }
 
 .bulletin-badge.agency-taroko {
@@ -1194,7 +1194,7 @@
   align-items: center;
   gap: 6px;
   background: var(--national-700);
-  color: #fff;
+  color: var(--fg-on-dark);
   padding: 7px 16px;
   border-radius: var(--r-pill);
   font-size: var(--fs-xs);
@@ -1882,7 +1882,7 @@ ul.th-doc-list {
 }
 .th-step.is-current .th-step-num {
   background: var(--national-700);
-  color: #fff;
+  color: var(--fg-on-dark);
   border-color: var(--national-700);
   box-shadow: 0 0 0 4px rgba(88, 122, 104, 0.15);
 }
@@ -1962,7 +1962,7 @@ ul.th-doc-list {
    th-page-shell
    ------------------------------------------------------------ */
 .th-page {
-  background: #fff;
+  background: var(--bg-1);
   min-height: 100vh;
   padding-bottom: 80px;
 }
@@ -2384,7 +2384,7 @@ ul.th-doc-list {
 .th-lang-item.is-active {
   font-weight: 600;
   color: var(--national-700, var(--national-700));
-  background: #f0f7f3;
+  background: var(--bg-selected);
 }
 .th-menu-lang-options {
   display: flex;
@@ -2408,7 +2408,7 @@ ul.th-doc-list {
 .th-menu-lang-btn.is-active {
   color: var(--national-700, var(--national-700));
   border-color: var(--national-700, var(--national-700));
-  background: #f0f7f3;
+  background: var(--bg-selected);
   font-weight: 600;
 }
 body.th-noscroll {
@@ -2541,7 +2541,7 @@ body.th-noscroll {
   height: 72px;
   border: 1px solid #c5d7d2;
   border-radius: 50%;
-  background: #fff;
+  background: var(--bg-1);
   display: grid;
   place-items: center;
   margin: 5px 0 6px;
@@ -3107,7 +3107,7 @@ body.th-noscroll {
 }
 .camp-cal-cell.is-full {
   cursor: pointer;
-  background: #fff8f8;
+  background: var(--danger-bg-subtle);
 }
 .camp-cal-cell.is-full .camp-cal-remain {
   color: var(--danger-fg);
@@ -3204,7 +3204,7 @@ body.th-noscroll {
 .fc-step.is-current .fc-step-dot {
   border-color: var(--national-700);
   background: var(--national-700);
-  color: #fff;
+  color: var(--fg-on-dark);
   box-shadow: 0 0 0 4px rgba(88, 122, 104, 0.15);
 }
 .fc-step.is-current .fc-step-label {

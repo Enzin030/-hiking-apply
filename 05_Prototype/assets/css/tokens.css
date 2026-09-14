@@ -70,6 +70,7 @@
      **只建實際用到的格**——補滿 50–900 會造出一堆沒人引用的變數，
      那與零引用 token 是同一個問題。
   -------------------------------------------------------- */
+  --red-25:  #fff8f8;    /* 非 Tailwind，本專案自訂；比 red-50 更淡 */
   --red-50:  #fef2f2;    /* Tailwind red-50 */
   --red-200: #fecaca;    /* Tailwind red-200 */
   --red-500: #ef4444;    /* Tailwind red-500 */
@@ -86,6 +87,7 @@
   --green-700: #15803d;  /* Tailwind green-700 */
 
   --blue-50:  #eff6ff;   /* Tailwind blue-50 */
+  --blue-200: #bfdbfe;   /* Tailwind blue-200 */
   --blue-700: #1d4ed8;   /* Tailwind blue-700 */
 
   /* 品牌綠的淺色調三階。不是 Tailwind，是本專案自己的霧綠，
@@ -93,6 +95,7 @@
   --mist-50:  #f4f9f2;
   --mist-100: #e2f1e4;
   --mist-200: #cadcce;
+  --mist-75:  #f0f7f3;   /* 介於 50 與 100 之間；語言選單的選中項底色 */
 
   /* 純白。同時是 surface 與深色底上的前景，兩個語意共用一格。 */
   --white: #ffffff;
@@ -111,6 +114,7 @@
   --bg-3: var(--bg-gray);            /* sage-neutral panel */
   --bg-mist: var(--mist-50);                /* alpine mist tint */
   --bg-mist-2: var(--mist-100);              /* deeper mist */
+  --bg-selected: var(--mist-75);             /* 選中項底色 */
   --bg-mist-3: var(--mist-200);              /* horizon haze */
 
   /* --------------------------------------------------------
@@ -121,6 +125,7 @@
   --success-border: var(--green-200);
   --info-bg: var(--blue-50);
   --info-fg: var(--blue-700);
+  --info-border: var(--blue-200);  /* 2026-09-14 C：補完 info 的 bg／fg／border 三件組 */
   --warning-bg: var(--amber-50);
   --warning-fg: var(--amber-700);
   --danger-fg: var(--red-600);      /* asterisk warnings */
@@ -140,6 +145,7 @@
   -------------------------------------------------------- */
   --danger-bg: var(--red-50);       /* 暫停／熱門徽章底色 */
   --danger-border: var(--red-200);  /* 暫停膠囊框線 */
+  --danger-bg-subtle: var(--red-25); /* 日曆已額滿格，比 --danger-bg 更淡 */
   --warning-border: var(--amber-200); /* 抽籤膠囊框線 */
 
   /* 深色遮罩。同一組色（--slate-900 = rgb(15,23,42)）另有 0.55 的用法在

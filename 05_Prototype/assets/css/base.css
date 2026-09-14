@@ -129,7 +129,7 @@ body {
 body {
   font-family: var(--font-sans);
   color: var(--fg-1);
-  background: #fff;
+  background: var(--bg-1);
   -webkit-font-smoothing: antialiased;
 }
 
