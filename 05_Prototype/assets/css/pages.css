@@ -4703,12 +4703,6 @@ body:where(.p-indexb-body):before {
   font-weight: 700;
   color: var(--fg-1);
 }
-.p-sitemap-heading a {
-  color: var(--national-700);
-}
-.p-sitemap-heading a:hover {
-  color: var(--national-700-hover);
-}
 .p-sitemap-ext {
   margin-left: 6px;
   font-size: var(--fs-xxs);

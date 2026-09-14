@@ -52,19 +52,23 @@ const SITEMAP_GROUPS = (function () {
     const n = byKey[key] || {};
     return n.url || null;
   }
+  /* 單項組：標題本身不做連結，底下放一個同名子項（2026-09-14 使用者裁決） */
+  function single(item) {
+    return [Object.assign({}, item)];
+  }
 
   return [
-    { key: "sitemap",  label: "網站導覽", url: "sitemap.html", current: true },
+    { key: "sitemap",  label: "網站導覽", children: single({ key: "sitemap", label: "網站導覽", url: "sitemap.html", current: true }) },
     { key: "bulletin", label: "公布欄", children: children("bulletin") },
     { key: "apply",    label: "登山申請", children: children("apply") },
-    { key: "notice",   label: "登山須知", url: leaf("notice") },
-    { key: "status",   label: "登山路線開放狀態", url: leaf("status") },
+    { key: "notice",   label: "登山須知", children: single({ key: "notice", label: "登山須知", url: leaf("notice") }) },
+    { key: "status",   label: "登山路線開放狀態", children: single({ key: "status", label: "登山路線開放狀態", url: leaf("status") }) },
     { key: "campsite", label: "宿營地與床位查詢", children: children("campsite") },
     { key: "info",     label: "旅遊登山資訊", children: children("info") },
     /* 頁首沒有此項；雛形已有頁面 */
-    { key: "illustrate", label: "本站使用說明", url: "web_illustrate.html" },
-    { key: "warning",  label: "警特報", url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true },
-    { key: "rss",      label: "RSS訂閱", url: "rss.html" },
+    { key: "illustrate", label: "本站使用說明", children: single({ key: "illustrate", label: "本站使用說明", url: "web_illustrate.html" }) },
+    { key: "warning",  label: "警特報", children: single({ key: "warning", label: "警特報", url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true }) },
+    { key: "rss",      label: "RSS訂閱", children: single({ key: "rss", label: "RSS訂閱", url: "rss.html" }) },
     /* 與 th-footer 同步：常見問答＝公布欄第四頁籤，其餘四項 footer 亦為待建置 */
     { key: "siteinfo", label: "網站資訊", children: [
       { key: "faq",      label: "常見問答", url: "news.html?tab=faq" },

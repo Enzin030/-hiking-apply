@@ -29,23 +29,23 @@
   <!-- 正式站導覽頁無導言，本頁不另編 lead -->
   <th-page-shell
     :trail="['網站導覽']"
-    title="網站導覽"
-    updated="2026-09-14">
+    title="網站導覽">
 
     <section class="th-card">
       <div class="th-card-body">
         <!--
           本頁是無障礙檢測重點：階層一律用巢狀 ul／li，每項是真實 <a>。
-          每組名稱用 h2（h1 是 th-page-shell 的頁標題），螢幕閱讀器可用標題跳組。
+          每組名稱用 h2 純文字、不做連結（h1 是 th-page-shell 的頁標題），螢幕閱讀器可用標題跳組；
+          只有一項的組也在標題下放一個同名子項（2026-09-14 使用者裁決）。
           雛形尚未建置的項目走 th-todo-link（非連結的 span），不給 `#` 假連結。
           資料與「刻意不列」清單見 components/sitemap.js 檔頭。
         -->
         <nav aria-label="網站導覽">
           <ul class="p-sitemap-tree">
             <li v-for="g in groups" :key="g.key" class="p-sitemap-group">
-              <h2 class="p-sitemap-heading"><a v-if="g.url && g.external" :href="g.url" target="_blank" rel="noopener noreferrer">{{ g.label }}<i class="fa-solid fa-arrow-up-right-from-square p-sitemap-ext" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><a v-else-if="g.url" :href="g.url" :aria-current="g.current ? 'page' : null">{{ g.label }}</a><th-todo-link v-else-if="!g.children" :label="g.label"></th-todo-link><template v-else>{{ g.label }}</template></h2>
-              <ul v-if="g.children" class="p-sitemap-list">
-                <li v-for="c in g.children" :key="c.key"><a v-if="c.url" :href="c.url">{{ c.label }}</a><th-todo-link v-else :label="c.label"></th-todo-link></li>
+              <h2 class="p-sitemap-heading">{{ g.label }}</h2>
+              <ul class="p-sitemap-list">
+                <li v-for="c in g.children" :key="c.key"><a v-if="c.url && c.external" :href="c.url" target="_blank" rel="noopener noreferrer">{{ c.label }}<i class="fa-solid fa-arrow-up-right-from-square p-sitemap-ext" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><a v-else-if="c.url" :href="c.url" :aria-current="c.current ? 'page' : null">{{ c.label }}</a><th-todo-link v-else :label="c.label"></th-todo-link></li>
               </ul>
             </li>
           </ul>
