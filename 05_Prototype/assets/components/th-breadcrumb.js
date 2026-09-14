@@ -12,13 +12,26 @@ window.thComponents = window.thComponents || {};
 window.thComponents["th-breadcrumb"] = {
   props: { trail: { type: Array, default: () => [] } },
   computed: {
+    /* 區塊名稱 → 該區塊的落點頁。取自 th-header 的主選單資料：
+       有 url 的一級項目用自己的 url，只有子選單的用第一個有 url 的子項。
+       2026-09-14（批次 2）依設計檔讓中間層級可點；**查不到就維持純文字**，
+       不給 `#` 假連結（設計檔的中間層級是 href="#"，那是死連結，不照抄）。 */
+    sectionHrefs() {
+      var map = {};
+      (window.TH_HEADER_NAV || []).forEach(function (n) {
+        if (n.url) { map[n.label] = n.url; return; }
+        var first = (n.children || []).find(function (c) { return !!c.url; });
+        if (first) map[n.label] = first.url;
+      });
+      return map;
+    },
+
     items() {
+      var map = this.sectionHrefs;
       return this.trail.map(function (t, i) {
-        return {
-          label: typeof t === "string" ? t : t.label,
-          href: typeof t === "string" ? null : t.href,
-          index: i,
-        };
+        var label = typeof t === "string" ? t : t.label;
+        var href = typeof t === "string" ? null : t.href;
+        return { label: label, href: href || map[label] || null, index: i };
       });
     },
   },

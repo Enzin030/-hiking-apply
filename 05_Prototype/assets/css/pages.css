@@ -99,12 +99,11 @@
    關鍵字輸入框」，同名會撞。等第二個列表頁要用時再依「二次即提升」
    升到 components.css 並改名 .th-*。
    ------------------------------------------------------------ */
+/* 2026-09-14 使用者裁決：**不要設計檔的霧綠底卡片**（主觀，不是實作錯誤），
+   查詢區維持我方的扁平工具列；標籤位置、欄位高度（--field-h）與按鈕排列
+   仍照設計檔。詳見 decisions.md 同日紀錄，不要「修正」回卡片。 */
 .p-news-filter {
   margin-bottom: 16px;
-  padding: 18px 22px;
-  background: var(--bg-mist);
-  border: 1px solid var(--bg-mist-3);
-  border-radius: var(--r-xl);
 }
 
 .p-news-filter-grid {

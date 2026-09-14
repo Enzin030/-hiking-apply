@@ -74,7 +74,7 @@ window.thComponents["th-footer"] = {
                    聯絡我們（舊站 contact.aspx）尚未建置，不給 \`#\` 假連結 -->
               <ul class="space-y-3 text-[length:var(--fs-sm)]">
                 <li>
-                  <a href="news.html?tab=faq" class="text-slate-400 hover:text-white transition-colors">
+                  <a href="news.html?tab=faq" class="th-footer-link text-slate-400 hover:text-white transition-colors">
                     常見問答
                   </a>
                 </li>
@@ -97,7 +97,7 @@ window.thComponents["th-footer"] = {
       </div>
       <div class="bg-[var(--sub-footer)] py-5 border-t border-slate-700/50 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div class="flex flex-col md:flex-row justify-between items-center w-full gap-4 text-[length:var(--fs-xs)] text-slate-400">
+          <div class="flex flex-col md:flex-row justify-between items-center w-full gap-4 text-[length:var(--fs-xs)] text-slate-300">
             <div class="font-medium text-slate-300 shrink-0">
               Copyright © 內政部國家公園署 著作權所有
             </div>

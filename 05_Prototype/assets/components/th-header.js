@@ -417,7 +417,10 @@ window.thComponents["th-header"] = {
                       :aria-expanded="langOpen ? 'true' : 'false'" aria-haspopup="true"
                       aria-controls="th-lang-list">
                 <i class="ph ph-globe" aria-hidden="true"></i>
-                <span>{{ currentLangObj.label }}</span>
+                <!-- 顯示「語言」而非目前語系：目前語系由選單內的勾號與
+                     aria-current 表達（設計檔的作法），按鈕本身維持固定寬度。 -->
+                <span>語言</span>
+                <span class="th-sr-only">（目前：{{ currentLangObj.label }}）</span>
                 <i :class="['fa-solid fa-chevron-down th-caret', { 'rotate-180': langOpen }]" aria-hidden="true"></i>
               </button>
               <div v-if="langOpen" class="th-lang-dropdown" id="th-lang-list" ref="langMenu"
