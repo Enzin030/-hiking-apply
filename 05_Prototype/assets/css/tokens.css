@@ -168,6 +168,44 @@
   --park-police:    #5a6e7a;   /* 警政署 */
 
   /* --------------------------------------------------------
+     2026-09-14（設計師前台web）新增：無障礙 AA 與機關徽章、欄位節奏。
+     值逐一取自設計檔 css/tokens.css 與 components.css（徽章底／框色
+     在設計檔是寫死 hex，這裡收成 token）。對比數字照設計檔 ACCESSIBILITY.md。
+     與設計檔同值異名者沿用我方名稱，不另立：
+       --pin-fg／-bg／-border → --red-700／--red-50／--red-200
+       --panel-edu-bg／-apply-bg → --home-panel-edu／--home-panel-apply
+       --fg-on-dark-2 → --slate-300；--panel-edu-ic → --national-700
+  -------------------------------------------------------- */
+  /* 可互動元件邊框（輸入框、下拉、次要按鈕、分頁）。白底 3.64:1；
+     --slate-300 只有 1.48:1，低於 WCAG 1.4.11 的 3:1，只能留給裝飾性分隔線 */
+  --border-ui: #7b8799;
+
+  /* 機關徽章：按機關識別色配色（不是狀態色）。fg 對各自 bg 皆 ≥4.5:1 */
+  --badge-yushan-fg:     #557664;   /* on #eef4f0 → 4.53:1 */
+  --badge-yushan-bg:     #eef4f0;
+  --badge-yushan-border: #d4e3da;
+  --badge-sheipa-fg:     #577468;   /* on #eef3f1 → 4.56:1 */
+  --badge-sheipa-bg:     #eef3f1;
+  --badge-sheipa-border: #d6e4df;
+  --badge-taroko-fg:     #4f6e7a;   /* on #eaf0f3 → 4.75:1 */
+  --badge-taroko-bg:     #eaf0f3;
+  --badge-taroko-border: #d0e0e6;
+  --badge-forestry-fg:     #66734b; /* on #f2f4ea → 4.59:1 */
+  --badge-forestry-bg:     #f2f4ea;
+  --badge-forestry-border: #e0e5cd;
+  --badge-police-fg:     #5a6e7a;   /* on #edf1f3 → 4.68:1 */
+  --badge-police-bg:     #edf1f3;
+  --badge-police-border: #d6e0e5;
+  --badge-npa-fg:        #547563;   /* on --national-100 → 4.52:1 */
+  --badge-npa-bg:        var(--national-100);
+  --badge-npa-border:    var(--national-200);
+
+  /* 查詢列的輸入框、下拉、按鈕統一高度，同一排才對得齊 */
+  --field-h: 44px;
+  /* 頁首上下內距。主選單作用中底線依此值對齊頁首下緣，兩者共用 */
+  --header-pad-y: 5px;
+
+  /* --------------------------------------------------------
      2026-09-08（遷移首頁）新增：首頁雙卡片的面板標頭底色。
      來源是 Index.jsx 寫死在 inline style 的 #2d4b3e 與 #35484d
      （PanelHead 的 color prop）。§7 禁 inline style、§6.1.1 禁 pages.css
@@ -188,16 +226,20 @@
                 "PingFang TC", "Microsoft JhengHei", sans-serif;
   --font-serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
 
-  /* font sizes (matching the live site) */
-  --fs-display: 32px;   /* hero brand wordmark */
-  --fs-h1: 28px;
-  --fs-h2: 24px;        /* section titles 最新公告 / 常見問答 */
-  --fs-h3: 20px;
-  --fs-lg: 18px;        /* primary nav */
-  --fs-md: 15px;        /* body, buttons, list rows */
-  --fs-sm: 14px;        /* meta, secondary nav, pills */
-  --fs-xs: 13px;        /* form labels, footer */
-  --fs-xxs: 12px;       /* date pills */
+  /* font sizes
+     2026-09-14 依設計師交付的前台web 整體放大一階（原值依序為
+     32／28／24／20／18／15／14／13／12）。設計檔 tokens.css 與本檔同源，
+     這 9 格是兩個分支的主要差異。下方 --fs-nav／--fs-2xs／--fs-3xs 刻意不跟著改，
+     理由見各自註解與 decisions.md 同日紀錄。 */
+  --fs-display: 34px;   /* hero brand wordmark */
+  --fs-h1: 30px;
+  --fs-h2: 26px;        /* section titles 最新公告 / 常見問答 */
+  --fs-h3: 22px;
+  --fs-lg: 19px;        /* primary nav */
+  --fs-md: 16px;        /* body, buttons, list rows */
+  --fs-sm: 15px;        /* meta, secondary nav, pills */
+  --fs-xs: 14px;        /* form labels, footer */
+  --fs-xxs: 13px;       /* date pills */
 
   /* --------------------------------------------------------
      2026-09-07（階段 3.0）新增兩級字級。當時只有 tokens.css 有、
