@@ -35,7 +35,10 @@ window.thComponents["th-footer"] = {
     };
   },
   template: `
-    <footer class="bg-[var(--footer)] pt-12 mt-auto">
+    <footer class="bg-[var(--footer)] pt-12 mt-auto relative">
+      <!-- 導盲磚：下方選單連結區（2026-09-14 無障礙骨架）。relative 是它的定位基準 -->
+      <a class="th-accesskey th-accesskey-dark" id="AZ" href="#AZ" accesskey="Z"
+         title="快速鍵 Alt+Z：下方選單連結區" aria-label="下方選單連結區（快速鍵 Alt+Z）"><span aria-hidden="true">:::</span></a>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col lg:flex-row justify-between gap-12 lg:gap-10 mb-10">
 

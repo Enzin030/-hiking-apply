@@ -61,7 +61,10 @@ window.thComponents["th-page-shell"] = {
   },
   template: `
     <th-breadcrumb :trail="trail"></th-breadcrumb>
-    <main class="th-page">
+    <main id="main" class="th-page">
+      <!-- 導盲磚：中間主要內容區（2026-09-14 無障礙骨架）。#main 是 th-header 跳至主要內容的目標 -->
+      <a class="th-accesskey" id="AC" href="#AC" accesskey="C"
+         title="快速鍵 Alt+C：中間主要內容區" aria-label="中間主要內容區（快速鍵 Alt+C）"><span aria-hidden="true">:::</span></a>
       <div class="th-page-inner">
         <div class="th-page-head">
           <h1 class="th-page-title">{{ title }}</h1>

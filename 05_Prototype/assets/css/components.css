@@ -3608,3 +3608,128 @@ a.th-linkrow:hover .th-linkrow-icon {
     justify-content: center;
   }
 }
+
+/* ============================================================
+   無障礙骨架：跳至主要內容、導盲磚、跑馬燈暫停鈕
+   ------------------------------------------------------------
+   2026-09-14 依設計師前台web（css/base.css、components.css 與
+   ACCESSIBILITY.md）移植，值改為我方 token，不寫 hex。
+   消費端：th-header（skip link、#AU）、th-page-shell（#AC）、
+   th-footer（#AZ）、index.html 自有頁首（skip link、#AU、#AC、暫停鈕）。
+
+   導盲磚（臺灣無障礙網頁開發規範）：
+   - 「:::」是可見標記，**不可用 display:none / visibility:hidden 隱藏**，
+     那會讓報讀器讀不到，等於拿掉導盲磚；窄版改用 clip 視覺隱藏。
+   - 朗讀名稱由 aria-label 提供，「:::」本身 aria-hidden。
+   - 所在區塊必須是定位基準（position 非 static），否則會跑到錯的位置。
+   ============================================================ */
+.th-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  padding: 10px 18px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  border-radius: 0 0 var(--r-md) 0;
+}
+.th-skip-link:focus,
+.th-skip-link:hover {
+  left: 0;
+  color: var(--fg-on-dark);
+}
+
+.th-accesskey {
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* WCAG 2.5.8 目標尺寸：至少 24×24 CSS px */
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0 4px;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--fg-3);            /* 白底 4.76:1 */
+  text-decoration: none;
+  background: none;
+}
+.th-accesskey:hover { color: var(--national-700); }
+
+/* 深色底（頁尾）用淺色，維持 ≥4.5:1 */
+.th-accesskey-dark { color: var(--slate-300); }
+.th-accesskey-dark:hover { color: var(--fg-on-dark); }
+
+/* 首頁照片底：半透明白底確保任何照片下都可辨識（設計檔為 rgba 白 0.85） */
+.th-accesskey-hero {
+  color: var(--fg-1);
+  background: color-mix(in srgb, var(--white) 85%, transparent);
+  border-radius: var(--r-xs);
+}
+
+/* 窄版（≤900px）「:::」會與標誌重疊：視覺隱藏、鍵盤聚焦時再顯示 */
+@media (max-width: 900px) {
+  .th-accesskey {
+    left: 2px;
+    width: 1px;
+    height: 1px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .th-accesskey:focus,
+  .th-accesskey:focus-visible {
+    width: auto;
+    height: auto;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 0 4px;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    background: var(--white);
+    color: var(--fg-1);
+    border-radius: var(--r-xs);
+  }
+  .th-accesskey-dark:focus,
+  .th-accesskey-dark:focus-visible {
+    background: var(--sub-footer);
+    color: var(--fg-on-dark);
+  }
+}
+
+/* 導盲磚 #AC 的定位基準（th-page-shell 的 main） */
+.th-page { position: relative; }
+
+/* 跑馬燈暫停鈕（WCAG 2.2.2，A 級）：自動捲動超過 5 秒必須能主動停止，
+   只靠 hover／focus 暫停不符規範（鍵盤與觸控使用者停不下來） */
+.th-marquee-pause {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-ui);
+  background: var(--white);
+  color: var(--fg-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.th-marquee-pause:hover {
+  color: var(--national-700);
+  border-color: var(--national-700);
+}
+.th-marquee.is-paused .th-marquee-track { animation-play-state: paused; }

@@ -51,6 +51,8 @@ thPage({
       marqueeItems: MARQUEE_ITEMS,
       eduFunctions: EDU_FUNCTIONS,
       applyLinks: APPLY_LINKS,
+      // 跑馬燈暫停鈕（WCAG 2.2.2）。系統設定「減少動態效果」時以暫停狀態載入
+      marqueePaused: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
     };
   },
 });

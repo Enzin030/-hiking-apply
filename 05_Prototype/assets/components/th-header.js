@@ -198,6 +198,12 @@ window.thComponents["th-header"] = {
 
   template: `
     <header class="w-full bg-white sticky top-0 z-50 th-header-bar border-b border-slate-100 py-3">
+      <!-- 無障礙骨架（2026-09-14）：Tab 前兩站固定為「跳至主要內容 → 上方導盲磚」。
+           放在 header 內而非 header 前，是為了不讓本元件變成多根節點；
+           header 是 sticky，已是兩者的定位基準。#main 由 th-page-shell 提供。 -->
+      <a class="th-skip-link" href="#main">跳至主要內容</a>
+      <a class="th-accesskey" id="AU" href="#AU" accesskey="U"
+         title="快速鍵 Alt+U：上方選單連結區" aria-label="上方選單連結區（快速鍵 Alt+U）"><span aria-hidden="true">:::</span></a>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-wrap justify-between items-center gap-y-2">
 
