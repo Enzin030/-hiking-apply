@@ -1108,3 +1108,160 @@ ORDER BY 1, al.status;
    它會把意外的開頭與下一個結尾配成一對就繼續往下，看起來一切正常。
    要驗必須用「逐字元計數巢狀深度」的方式，確認最終深度回到 0。
    ============================================================================= */
+
+
+/* =============================================================================
+   V 組【2026-09-14 新增】使用者自行執行用
+   目的：結清 mental-model 第 21 題（bedtype 語意）與其連帶的承載量疑點，
+         另補三條低成本但影響判定的查證。
+   全部唯讀（僅 SELECT），無 UPDATE/DELETE/DDL。
+
+   ★ 讀法：每條的「判讀」段寫明什麼結果代表什麼結論。
+     跑完只要把結果貼回來，不必自己下判斷。
+
+   ★ 一個前提（2026-09-11 主題 M）：schema 的欄位中文名**不可當規格看**。
+     `01_Raw_Input/現行tableSchema.csv` 已經寫著
+     `bedlist.bedtype` =「床位類別(1：床位；0：營位)」，
+     而 code（YuShanFun.cs:2265-2280 的 `bl.bedtype`）也以 "1" 判為床位——
+     兩邊一致。但「註解說 1 是床」和「1 真的是床」是兩件事，
+     V1 就是拿資料去否證它：**找一個不可能有營位的點，看它的 bedtype 是不是 1**。
+   ============================================================================= */
+
+-- V1【最優先】bedtype 語意的決定性檢定
+--   原理：node.roomtype 是另一個獨立來源的分類（0床位／1營帳／2共用／3遮蔽物）。
+--   若 bedtype 的 1=床位 成立，則 roomtype=0（純床位）的點，其 bedlist 應幾乎全是 bedtype=1；
+--   roomtype=1（純營帳）的點應幾乎全是 bedtype=0。
+--   表名/欄名來源：bedlist.bedtype（YuShanFun.cs:2265-2280 的 bl.bedtype）、
+--     node.roomtype（tarokoapplyControl/step2.ascx.cs:728）
+SELECT  n.roomtype,
+        bl.bedtype,
+        COUNT(*)                AS 床位列數,
+        COUNT(DISTINCT n.node_id) AS 點數,
+        MIN(n.name)             AS 範例節點
+FROM    bedlist AS bl WITH (NOLOCK)
+        INNER JOIN node AS n WITH (NOLOCK) ON n.node_id = bl.node_id
+GROUP BY n.roomtype, bl.bedtype
+ORDER BY n.roomtype, bl.bedtype;
+/* 判讀
+   期待（＝現行 code 正確）：roomtype=0 那幾列集中在 bedtype=1；roomtype=1 集中在 bedtype=0。
+   若相反（roomtype=0 的點 bedtype 全是 0）→ **0/1 是反的**，
+     全系統的床位數與營位數整組算反，所有 bed_* 查詢頁與規格都要改。
+   若 roomtype=2（共用）兩種都有 → 正常，那正是共用點。
+   若出現 roomtype=3 或 NULL → 見 V2。
+*/
+
+-- V2 node.roomtype 的實際值分布（schema 中文名宣稱有 0/1/2/3 四值，code 只處理 0/1/2）
+--   表名/欄名來源：現行tableSchema.csv（node.roomtype 中文名）、系統概覽第五節
+SELECT  roomtype,
+        COUNT(*)    AS 節點數,
+        MIN(name)   AS 範例節點,
+        MAX(name)   AS 範例節點2
+FROM    node WITH (NOLOCK)
+GROUP BY roomtype
+ORDER BY roomtype;
+/* 判讀
+   若 roomtype=3（遮蔽物）**有資料** → code 的 0/1/2 三分法漏了這一類，
+     這些點的承載量會落在哪一組欄位需要另查（跑 V3 看它們的四個承載量欄位是否為空）。
+   若 3 完全沒有資料 → 那是後台曾有過但未使用的選項，可以不處理，
+     但 mental-model 第 21 題（住宿方式三選項）要據此結案。
+*/
+
+-- V3 承載量四欄位 × roomtype 交叉，並找出哨兵值
+--   目的：① 確認哪一組欄位真的被填 ② 揪出 999/9999/99999 這種「無上限」哨兵
+--   注意 node 另有 generalnnum／holidaynnum（**登山口**承載量，多一個 n），不是床位/營帳，勿混用。
+--   表名/欄名來源：現行tableSchema.csv（node 各承載量欄位中文名）
+SELECT  roomtype,
+        COUNT(*)                                         AS 節點數,
+        SUM(CASE WHEN ISNULL(generalnum,0)  > 0 THEN 1 ELSE 0 END) AS 有床位平日值,
+        SUM(CASE WHEN ISNULL(holidaynum,0)  > 0 THEN 1 ELSE 0 END) AS 有床位假日值,
+        SUM(CASE WHEN ISNULL(generalnumt,0) > 0 THEN 1 ELSE 0 END) AS 有營帳平日值,
+        SUM(CASE WHEN ISNULL(holidaynumt,0) > 0 THEN 1 ELSE 0 END) AS 有營帳假日值,
+        SUM(CASE WHEN ISNULL(generalnnum,0) > 0 THEN 1 ELSE 0 END) AS 有登山口平日值,
+        MAX(generalnum)  AS 床位平日最大,
+        MAX(generalnumt) AS 營帳平日最大,
+        MAX(generalnnum) AS 登山口平日最大
+FROM    node WITH (NOLOCK)
+GROUP BY roomtype
+ORDER BY roomtype;
+/* 判讀
+   期待：roomtype=0 只有床位兩欄有值；=1 只有營帳兩欄；=2 兩組都有。
+   任何「最大值」出現 999／9999／99999 → 那是無上限哨兵（自備搭帳、避難小屋），
+     統計時要排除，直接取 MAX 會得到荒謬數字。
+   若 roomtype=0 的點卻是營帳欄位有值 → 與 V1 一起看，是 bedtype 反了的佐證。
+*/
+
+-- V4 排雲山莊三筆同名 × 繳費費率（FiscApi.cs 寫死 node_id=3 取 fmoney/localmoney）
+--   表名/欄名來源：FiscApi.cs:88-95（sPayNode="3"、fmoney、localmoney）；A16.csv:119-122、:315
+SELECT  node_id, name, type, roomtype,
+        localmoney AS 本國平日, fmoney AS 外籍平日,
+        hlocalmoney AS 本國假日, hfmoney AS 外籍假日,
+        pmoney AS 外籍提前平日, hpmoney AS 外籍提前假日,
+        BedExpense AS 床位費用, generalnum, holidaynum, OrgID
+FROM    node WITH (NOLOCK)
+WHERE   name LIKE N'%排雲%'
+ORDER BY node_id;
+/* 判讀
+   ① node_id=3 的 localmoney 應為 480（機關原文每人每宿 480）。不是 480 就是原文與資料不一致。
+   ② 另兩筆（296 排雲山莊專3、377 排雲山莊()）的費用若非 0，要問為什麼三筆都有價。
+   ③ 若有 type<>'H' 的列（例如 356 排雲登山服務中心）出現在結果裡，
+      表示用 name LIKE 撈會撈到非住宿點，後續查詢一律要加 type='H'。
+*/
+
+-- V5 HolidaySet_TARKO 的維護狀況（太魯閣異動「入園前 3 個工作天」靠它扣假日）
+--   若這張表停止維護，那道檢查就退化成 3 個日曆天，且不會報錯。
+--   表名/欄名來源：apply_2.aspx.cs:141-146
+SELECT  OrgID,
+        COUNT(*)        AS 假日筆數,
+        MIN(Holiday)    AS 最早,
+        MAX(Holiday)    AS 最晚,
+        SUM(CASE WHEN Holiday >= DATEADD(DAY, -365, GETDATE()) THEN 1 ELSE 0 END) AS 近一年筆數,
+        SUM(CASE WHEN Holiday >  GETDATE() THEN 1 ELSE 0 END)                     AS 未來筆數
+FROM    HolidaySet_TARKO WITH (NOLOCK)
+GROUP BY OrgID;
+/* 判讀
+   「未來筆數」為 0 → 已停止維護，太魯閣的 3 工作天實際等於 3 日曆天（民眾少 1-2 天可辦異動）。
+   同型風險：雪季管制日期已被證實停止維護。
+*/
+
+-- V6 九九山莊的承載量是不是 150（notice_b7 八 稱床位 150 床、每日共 150 人）
+--   承載量與 booking 都在本機算（JiujiuHut _bed68Code.cs:114、:123-155）
+SELECT  node_id, name, type, roomtype,
+        generalnum AS 床位平日, holidaynum AS 床位假日,
+        generalnumt AS 營帳平日, holidaynumt AS 營帳假日,
+        holdnum AS 備取數量, OrgID
+FROM    node WITH (NOLOCK)
+WHERE   name LIKE N'%九九%';
+/* 判讀
+   generalnum=holidaynum=150 → 與原文一致，該列可判「一致」。
+   數字不同 → 原文與資料不符，要問林業署哪個為準。
+   查無資料 → 九九山莊不在本機 node 表，前面「承載量在本機算」的結論要收回。
+*/
+
+-- V7 奇萊封閉那筆的現況覆核（封閉原因欄寫著 asdasd，迄日 2027-12-31）
+--   這是 rules-vs-code「最優先兩筆」的 A。距上次查證已 6 天，先確認是否已被清掉。
+--   表名/欄名來源：Fixedclimbmain_closedate（rules-vs-code ★★ A 節、明細 A5）
+SELECT  c.f_id, m.name AS 主路線, c.sdate AS 封閉起, c.edate AS 封閉迄, c.note AS 封閉原因
+FROM    Fixedclimbmain_closedate AS c WITH (NOLOCK)
+        LEFT JOIN Fixedclimbmain AS m WITH (NOLOCK) ON m.f_id = c.f_id
+WHERE   c.edate >= GETDATE()
+ORDER BY c.edate DESC;
+/* 判讀
+   若那筆（奇萊／note=asdasd）還在 → 奇萊主北、連峰、東稜、南峰目前仍被擋住，要立刻問機關。
+   若已消失 → 記一筆「已修正」，該列改判。
+   其他新出現的未來封閉 → 逐筆確認 note 是否為正常公告文字。
+*/
+
+-- V8【補充】booking_bed_yushan.bedtype 的值分布
+--   注意：這個欄位與 bedlist.bedtype **同名但語意不同**
+--   （schema 中文名稱其為「宿營位種類(0一般，1備用，2取消)」），
+--   而 code 判床/營用的是 bedlist.bedtype。跑這條是為了確認兩者確實不可互推，
+--   避免後人 join 錯表。
+SELECT  bedtype, COUNT(*) AS 筆數
+FROM    booking_bed_yushan WITH (NOLOCK)
+GROUP BY bedtype
+ORDER BY bedtype;
+/* 判讀
+   若值域是 {0,1,2} → 與「0一般／1備用／2取消」相容，確認兩欄位不同義，
+     在文件中標明「booking_bed_yushan.bedtype 不是床/營旗標」。
+   若值域只有 {0,1} → 語意可能與 bedlist 相同，那就是另一個要問原廠商的題目。
+*/
