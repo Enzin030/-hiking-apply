@@ -1,10 +1,11 @@
 /* ============================================================
    th-page-shell — 全站唯一的頁面外殼（原 Shared.jsx 的 PageShell）
    ------------------------------------------------------------
-   DOM 結構與改版前完全相同，class 一個不改：
+   DOM 結構（class 與改版前相同）：
 
-     .th-crumb                   麵包屑（th-breadcrumb）
-     main.th-page                白底全幅外框
+     main#main.th-page           白底全幅外框
+       #AC 導盲磚                中間主要內容區（Alt+C）
+       .th-crumb                 麵包屑（th-breadcrumb）
        .th-page-inner            1280 版心置中、左右 32 內距
          .th-page-head           標題／導言／更新日期
          [stepper slot]          申請流程步驟條，非申請頁不給
@@ -60,11 +61,13 @@ window.thComponents["th-page-shell"] = {
     hasNav() { return !!this.$slots.nav; },
   },
   template: `
-    <th-breadcrumb :trail="trail"></th-breadcrumb>
     <main id="main" class="th-page">
-      <!-- 導盲磚：中間主要內容區（2026-09-14 無障礙骨架）。#main 是 th-header 跳至主要內容的目標 -->
+      <!-- 導盲磚：中間主要內容區（2026-09-14 無障礙骨架）。#main 是 th-header 跳至主要內容的目標。
+           麵包屑移進 main、排在導盲磚之後（照設計檔）：原本麵包屑在 main 之外，
+           「:::」會落到頁面標題那一列而不是內容區起點。 -->
       <a class="th-accesskey" id="AC" href="#AC" accesskey="C"
          title="快速鍵 Alt+C：中間主要內容區" aria-label="中間主要內容區（快速鍵 Alt+C）"><span aria-hidden="true">:::</span></a>
+      <th-breadcrumb :trail="trail"></th-breadcrumb>
       <div class="th-page-inner">
         <div class="th-page-head">
           <h1 class="th-page-title">{{ title }}</h1>
