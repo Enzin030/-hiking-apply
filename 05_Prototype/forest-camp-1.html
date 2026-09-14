@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
@@ -53,12 +53,12 @@
           <div class="fc-cabin-info">
             <div class="p-fc1-cabin-name">{{ cabin.name }}</div>
             <div class="p-fc1-cabin-meta">
-              <span><i class="ph-bold ph-buildings"></i>{{ cabin.manager }}</span>
-              <span><i class="ph-bold ph-map-pin"></i>{{ cabin.location }}</span>
+              <span><i class="ph-bold ph-buildings" aria-hidden="true"></i>{{ cabin.manager }}</span>
+              <span><i class="ph-bold ph-map-pin" aria-hidden="true"></i>{{ cabin.location }}</span>
             </div>
             <div class="p-fc1-cabin-tags">
               <span v-for="f in cabin.facilities" :key="f.id" class="p-fc1-tag">
-                <i :class="f.icon"></i>{{ f.label }}（上限 {{ f.max }} {{ f.unit }}）
+                <i :class="f.icon" aria-hidden="true"></i>{{ f.label }}（上限 {{ f.max }} {{ f.unit }}）
               </span>
             </div>
           </div>
@@ -67,7 +67,7 @@
         <!-- 查詢表單 -->
         <div class="fc-section">
           <h2 class="fc-section-title">
-            <i class="fa-regular fa-calendar"></i>選擇行程日期與人數
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>選擇行程日期與人數
           </h2>
 
           <div class="p-fc1-form-grid">
@@ -83,11 +83,11 @@
               <label class="th-label">住宿晚數</label>
               <div class="fc-stepper-input">
                 <button class="fc-stepper-btn" @click="addNights(-1)" :disabled="nights <= cabin.minDays">
-                  <i class="fa-solid fa-minus"></i>
+                  <i class="fa-solid fa-minus" aria-hidden="true"></i>
                 </button>
                 <span class="fc-stepper-val">{{ nights }} 晚</span>
                 <button class="fc-stepper-btn" @click="addNights(1)" :disabled="nights >= cabin.maxDays">
-                  <i class="fa-solid fa-plus"></i>
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
               <div class="th-field-hint">可選 {{ cabin.minDays }}～{{ cabin.maxDays }} 晚</div>
@@ -97,11 +97,11 @@
               <label class="th-label">申請人數</label>
               <div class="fc-stepper-input">
                 <button class="fc-stepper-btn" @click="addHeadcount(-1)" :disabled="headcount <= 1">
-                  <i class="fa-solid fa-minus"></i>
+                  <i class="fa-solid fa-minus" aria-hidden="true"></i>
                 </button>
                 <span class="fc-stepper-val">{{ headcount }} 人</span>
                 <button class="fc-stepper-btn" @click="addHeadcount(1)" :disabled="headcount >= 20">
-                  <i class="fa-solid fa-plus"></i>
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
               <div class="th-field-hint">最多 20 人</div>
@@ -116,21 +116,21 @@
           <!-- 原碼的 className 尾端有個永遠成立的三元運算，輸出等於多一個空白，
                DOM 正規化後相同，這裡不重現那個空字串 -->
           <button class="th-btn th-btn-secondary p-fc1-query-btn" :disabled="!canQuery" @click="handleQuery">
-            <i class="ph-bold ph-magnifying-glass"></i>查詢床位 / 營位狀況
+            <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>查詢床位 / 營位狀況
           </button>
         </div>
 
         <!-- 查詢結果 -->
         <div v-if="queried" class="fc-section p-fc1-avail-section">
           <h2 class="fc-section-title">
-            <i class="ph-bold ph-calendar-check"></i>{{ startDate }} 出發，共 {{ nights }} 晚 · {{ headcount }} 人
+            <i class="ph-bold ph-calendar-check" aria-hidden="true"></i>{{ startDate }} 出發，共 {{ nights }} 晚 · {{ headcount }} 人
           </h2>
 
           <p-fc1-avail-bar v-for="f in cabin.facilities" :key="f.id"
                            :facility="f" :date="startDate" :nights="nights"></p-fc1-avail-bar>
 
           <div class="p-fc1-avail-note">
-            <i class="ph-bold ph-info"></i>以上為即時查詢結果，實際名額以申請後為準。床位/營位數量將於下一步選擇。
+            <i class="ph-bold ph-info" aria-hidden="true"></i>以上為即時查詢結果，實際名額以申請後為準。床位/營位數量將於下一步選擇。
           </div>
         </div>
       </div>
@@ -139,12 +139,12 @@
       <aside class="fc-aside">
         <div class="p-fc1-notice-card">
           <div class="th-sidebar-head">
-            <i class="ph-bold ph-info"></i>
+            <i class="ph-bold ph-info" aria-hidden="true"></i>
             <span>申請前注意事項</span>
           </div>
           <ul class="p-fc1-notice-list">
             <li v-for="(n, i) in cabin.notices" :key="i">
-              <i class="fa-solid fa-circle-dot"></i>
+              <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
               <span>{{ n }}</span>
             </li>
           </ul>
@@ -152,7 +152,7 @@
 
         <div class="p-fc1-price-card">
           <div class="th-sidebar-head">
-            <i class="ph-bold ph-currency-circle-dollar"></i>
+            <i class="ph-bold ph-currency-circle-dollar" aria-hidden="true"></i>
             <span>費用參考</span>
           </div>
           <div v-for="f in cabin.facilities" :key="f.id" class="p-fc1-price-row">
@@ -167,9 +167,9 @@
     <!-- 底部操作列 -->
     <div class="fc-footbar">
       <button class="th-btn th-btn-ghost" @click="goBack">
-        <i class="fa-solid fa-arrow-left"></i>上一步
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
       </button>
-      <button class="th-btn th-btn-primary" :disabled="!queried" @click="handleNext">下一步：行程計畫<i class="fa-solid fa-arrow-right"></i></button>
+      <button class="th-btn th-btn-primary" :disabled="!queried" @click="handleNext">下一步：行程計畫<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
 

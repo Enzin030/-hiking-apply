@@ -86,7 +86,7 @@ window.thComponents["th-doc-paragraph"] = {
   },
   template: `
     <div class="th-doc-block">
-      <h3 v-if="head" class="th-doc-h"><th-doc-inline :parts="head"></th-doc-inline></h3>
+      <h2 v-if="head" class="th-doc-h"><th-doc-inline :parts="head"></th-doc-inline></h2>
       <p v-for="(ln, i) in rest" :key="i" :class="['th-doc-line', { 'is-item': isItem(ln) }]">
         <th-doc-inline :parts="ln"></th-doc-inline>
       </p>
@@ -164,7 +164,7 @@ window.thComponents["th-doc-body"] = {
     <template v-for="(n, i) in body" :key="i">
       <th-doc-table v-if="n.t === 'table'" :node="n"></th-doc-table>
       <th-doc-list v-else-if="n.t === 'list'" :node="n"></th-doc-list>
-      <h3 v-else-if="n.t === 'h'" class="th-doc-h">{{ n.text }}</h3>
+      <h2 v-else-if="n.t === 'h'" class="th-doc-h">{{ n.text }}</h2>
       <p v-else-if="n.t === 'note'" class="th-doc-note">{{ n.text }}</p>
       <th-doc-paragraph v-else :node="n"></th-doc-paragraph>
     </template>

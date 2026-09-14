@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>申請進度查詢/繳費/異動/取消 — 臺灣登山申請一站式服務網</title>
@@ -51,7 +51,7 @@
              （上方已有 h2），故不套用共用的區塊卡片。 -->
         <section class="th-card flex flex-col" v-for="a in actions" :key="a.id">
           <div class="th-card-head">
-            <i :class="a.icon"></i>
+            <i :class="a.icon" aria-hidden="true"></i>
             <h3 class="th-card-title">{{ a.title }}</h3>
           </div>
           <div class="th-card-body flex flex-col gap-3 flex-1">
@@ -60,7 +60,7 @@
               <span class="th-chip" v-for="c in a.cabins" :key="c">{{ c }}</span>
             </div>
             <button v-if="a.built" type="button" class="th-btn th-btn-primary th-btn-block mt-auto" @click="gotoForm">
-              <i class="fa-solid fa-arrow-down"></i>前往查詢
+              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>前往查詢
             </button>
             <th-todo-link v-else label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
           </div>
@@ -71,7 +71,7 @@
     <!-- 原 Shared.jsx 的 SectionCard：三層固定 markup，屬該頁版面，搬回 HTML -->
     <section class="th-card" id="progress">
       <div class="th-card-head">
-        <i class="fa-solid fa-magnifying-glass"></i>
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
         <h2 class="th-card-title">申請進度查詢</h2>
         <span class="th-card-note">舊站標題為「申請進度查詢/許可證下載」</span>
       </div>
@@ -140,7 +140,7 @@
               @input="vcode = $event.target.value" />
             <span class="th-input th-input-readonly sm:w-32 text-center tracking-[0.3em]">7K4M</span>
             <button type="button" class="th-btn th-btn-ghost" disabled>
-              <i class="fa-solid fa-rotate"></i>換一組
+              <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
             </button>
           </div>
           <div class="th-field-hint">
@@ -155,7 +155,7 @@
               清除
             </button>
             <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
-              <i class="fa-solid fa-magnifying-glass"></i>查詢
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
             </button>
           </div>
         </div>
@@ -186,7 +186,7 @@
 
     <section class="th-card" id="rules">
       <div class="th-card-head">
-        <i class="fa-solid fa-circle-info"></i>
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         <h2 class="th-card-title">列印與退費規定</h2>
       </div>
       <div class="th-card-body ">

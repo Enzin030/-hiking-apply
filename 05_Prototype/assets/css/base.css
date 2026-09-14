@@ -152,3 +152,31 @@ img {
 a {
   color: inherit;
 }
+
+/* ============================================================
+   焦點可見（WCAG 2.4.7 / 1.4.11）— 2026-09-14 批次 3
+   ------------------------------------------------------------
+   焦點框 --national-700 對白底 4.77:1，高於非文字對比所需的 3:1。
+   :focus 與 :focus-visible 並寫：前者涵蓋舊版瀏覽器與自動化檢測工具，
+   後者讓現代瀏覽器只在鍵盤操作時顯示。
+   **任何情況都不得寫 outline: none 而不提供替代指示**（見 components.css
+   的 .th-input 系列與 .th-hdrsearch-input）。
+   ============================================================ */
+:focus,
+:focus-visible {
+  outline: 2px solid var(--national-700);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/* 表單元件貼齊邊界，避免與自身圓角形成雙框 */
+.th-input:focus,
+.th-select:focus,
+.th-textarea:focus,
+.th-hdrsearch-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--national-700);
+  outline-offset: 0;
+}

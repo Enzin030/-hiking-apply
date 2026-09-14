@@ -88,7 +88,7 @@ const pFc1AvailBar = {
   template: `
     <div v-if="date && nights" class="p-fc1-avail-row">
       <div class="p-fc1-avail-head">
-        <span class="p-fc1-avail-icon"><i :class="facility.icon"></i></span>
+        <span class="p-fc1-avail-icon"><i :class="facility.icon" aria-hidden="true"></i></span>
         <span class="p-fc1-avail-name">{{ facility.label }}</span>
         <span class="p-fc1-avail-status" :style="{ color: statusColor }">{{ statusLabel }}</span>
         <span class="p-fc1-avail-count">{{ available }} / {{ facility.max }} {{ facility.unit }}可預訂</span>

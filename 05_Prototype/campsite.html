@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>宿營地與床位查詢 — 臺灣登山申請一站式服務網</title>
@@ -44,7 +44,7 @@
                   :class="['p-campsite-tab', { 'is-active': org === o.key }]"
                   :aria-current="org === o.key ? 'page' : null"
                   @click="pickOrg(o.key)">
-            <i class="fa-solid fa-mountain-sun"></i><span>{{ o.label }}</span>
+            <i class="fa-solid fa-mountain-sun" aria-hidden="true"></i><span>{{ o.label }}</span>
           </button>
           <!-- 尚未建置的機關不給可點的 Tab -->
           <span v-else class="p-campsite-tab is-todo th-todo-link">{{ o.label }}</span>
@@ -54,7 +54,7 @@
 
     <!-- 次層：類別 -->
     <div class="bulletin-filter-row p-campsite-kindrow">
-      <span class="bulletin-filter-label"><i class="fa-solid fa-layer-group"></i>查詢類別</span>
+      <span class="bulletin-filter-label"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>查詢類別</span>
       <template v-for="k in kindList" :key="k.key">
         <button v-if="k.built" type="button"
                 :class="['th-chip', { 'is-active': kind === k.key }]"

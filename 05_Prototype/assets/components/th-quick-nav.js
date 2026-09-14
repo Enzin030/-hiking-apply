@@ -132,7 +132,7 @@ window.thComponents["th-quick-nav"] = {
   template: `
     <button type="button" class="th-quickbtn" @click="open = true"
             aria-haspopup="dialog" :aria-expanded="open ? 'true' : 'false'">
-      <i class="ph-bold ph-squares-four"></i>
+      <i class="ph-bold ph-squares-four" aria-hidden="true"></i>
       <span>{{ label }}</span>
     </button>
 
@@ -141,14 +141,14 @@ window.thComponents["th-quick-nav"] = {
         <div class="th-quickpanel-head">
           <h2 class="bulletin-modal-title" style="margin: 0;">{{ title }}</h2>
           <button type="button" class="th-quickpanel-close" @click="open = false" aria-label="關閉">
-            <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           </button>
         </div>
         <div class="th-quickpanel-body">
           <!-- 頂部階段步驟列（完全比照首頁 5 階段風格） -->
           <ul class="th-quick-steps">
             <li v-for="(g, gi) in groups" :key="g.title" :class="['th-quick-step', { 'is-active': gi === 0 }]">
-              <span class="step-circle"><i :class="g.icon"></i></span>
+              <span class="step-circle"><i :class="g.icon" aria-hidden="true"></i></span>
               <strong>{{ g.title }}</strong>
               <small>{{ g.sub }}</small>
             </li>
@@ -162,13 +162,13 @@ window.thComponents["th-quick-nav"] = {
                 <ul class="th-expcard-nested">
                   <li v-for="(it, i) in sub.items" :key="i">
                     <span v-if="!it.href" :class="['is-todo', { 'is-external': isExternal(it) }]">
-                      <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square"></i>{{ it.label }}
+                      <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
                     </span>
                     <a v-else :href="it.href"
                        :class="isExternal(it) ? 'is-external' : null"
                        :target="isExternal(it) ? '_blank' : null"
                        :rel="isExternal(it) ? 'noopener noreferrer' : null">
-                      <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square"></i>{{ it.label }}
+                      <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
                     </a>
                   </li>
                 </ul>
@@ -176,13 +176,13 @@ window.thComponents["th-quick-nav"] = {
               <ul v-if="g.items">
                 <li v-for="(it, i) in g.items" :key="i">
                   <span v-if="!it.href" :class="['is-todo', { 'is-external': isExternal(it) }]">
-                    <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square"></i>{{ it.label }}
+                    <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
                   </span>
                   <a v-else :href="it.href"
                      :class="isExternal(it) ? 'is-external' : null"
                      :target="isExternal(it) ? '_blank' : null"
                      :rel="isExternal(it) ? 'noopener noreferrer' : null">
-                    <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square"></i>{{ it.label }}
+                    <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
                   </a>
                 </li>
               </ul>

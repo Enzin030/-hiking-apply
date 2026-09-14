@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>登山線上申請｜申請須知與同意書 — 臺灣登山申請一站式服務網</title>
@@ -45,7 +45,7 @@
       <!-- 路線資訊欄 -->
       <div v-if="routeData" class="p-apply2-sum-routebar">
         <span class="p-apply2-sum-routeicon" :style="{ background: cfg.color }">
-          <i :class="cfg.icon" class="p-apply2-sum-routeicon-i"></i>
+          <i :class="cfg.icon" class="p-apply2-sum-routeicon-i" aria-hidden="true"></i>
         </span>
         <div>
           <div class="p-apply2-sum-routename">{{ routeData.name }}</div>
@@ -56,7 +56,7 @@
       <!-- 注意事項列表 -->
       <div class="p-apply2-sum-card">
         <div class="p-apply2-sum-cardhead">
-          <i class="ph-bold ph-info p-apply2-sum-cardhead-i" :style="{ color: cfg.color }"></i>
+          <i class="ph-bold ph-info p-apply2-sum-cardhead-i" :style="{ color: cfg.color }" aria-hidden="true"></i>
           <span class="p-apply2-sum-cardtitle">申請前請確認以下事項</span>
         </div>
 
@@ -66,7 +66,7 @@
           <span class="p-apply2-sum-noticeicon"
                 :style="{ background: n.warn ? '#fef3c7' : 'var(--bg-mist-2)' }">
             <i :class="n.icon" class="p-apply2-sum-noticeicon-i"
-               :style="{ color: n.warn ? 'var(--warning-fg)' : cfg.color }"></i>
+               :style="{ color: n.warn ? 'var(--warning-fg)' : cfg.color }" aria-hidden="true"></i>
           </span>
           <!-- 原碼用 dangerouslySetInnerHTML：注意事項含 <strong> 標記 -->
           <div class="p-apply2-sum-noticetext"
@@ -78,9 +78,9 @@
       <!-- 操作按鈕 -->
       <div class="p-apply2-sum-actions">
         <button class="th-btn th-btn-ghost" @click="goApply1">
-          <i class="fa-solid fa-arrow-left"></i>上一步
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
         </button>
-        <button class="th-btn th-btn-primary" @click="goNext">我已了解，進入申請<i class="fa-solid fa-arrow-right"></i></button>
+        <button class="th-btn th-btn-primary" @click="goNext">我已了解，進入申請<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
       </div>
     </th-page-shell>
 
@@ -116,12 +116,12 @@
             <div class="p-apply2-sec-head">
               <div class="p-apply2-sec-head-left">
                 <div class="p-apply2-sec-num">
-                  <i v-if="acked[s.id]" class="fa-solid fa-check"></i>
+                  <i v-if="acked[s.id]" class="fa-solid fa-check" aria-hidden="true"></i>
                   <template v-else>{{ idx + 1 }}</template>
                 </div>
                 <div class="p-apply2-sec-titles">
                   <span class="p-apply2-sec-kicker">{{ s.label }}</span>
-                  <h3 class="p-apply2-sec-title">{{ s.title }}</h3>
+                  <h2 class="p-apply2-sec-title">{{ s.title }}</h2>
                 </div>
               </div>
               <div class="p-apply2-sec-head-right">
@@ -142,7 +142,7 @@
 
         <!-- 側欄目錄（scroll-spy） -->
         <aside class="p-apply2-toc">
-          <h3><i class="ph-bold ph-list-numbers"></i>閱讀定位</h3>
+          <h2><i class="ph-bold ph-list-numbers" aria-hidden="true"></i>閱讀定位</h2>
           <div class="p-apply2-confirm-meter">
             <div class="p-apply2-progress">
               <div class="p-apply2-progress-bar" :style="{ width: (ackedCount / total) * 100 + '%' }"></div>
@@ -171,7 +171,7 @@
       <div :class="['p-apply2-footbar', { 'is-ready': canSubmit }]">
         <div class="p-apply2-footbar-status">
           <div class="p-apply2-footbar-icon">
-            <i :class="canSubmit ? 'fa-solid fa-check' : 'fa-solid fa-list-check'"></i>
+            <i :class="canSubmit ? 'fa-solid fa-check' : 'fa-solid fa-list-check'" aria-hidden="true"></i>
           </div>
           <div>
             <div>已確認 <span class="num">{{ ackedCount }}</span> / {{ total }} 組事項</div>
@@ -180,9 +180,9 @@
 
         <div class="p-apply2-footbar-actions">
           <button class="th-btn th-btn-ghost" @click="goApply1">
-            <i class="fa-solid fa-arrow-left"></i>上一步
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
           </button>
-          <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">同意並下一步<i class="fa-solid fa-arrow-right"></i></button>
+          <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">同意並下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
         </div>
       </div>
     </th-page-shell>

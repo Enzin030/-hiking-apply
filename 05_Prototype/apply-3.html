@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>登山線上申請｜行程登記及登山申請 — 臺灣登山申請一站式服務網</title>
@@ -50,21 +50,21 @@
               <span class="p-apply3-route-thumb-tag">第 {{ routeData?.diff || 3 }} 級</span>
             </div>
             <div class="p-apply3-route-info">
-              <h3>{{ route }}</h3>
+              <h2>{{ route }}</h2>
               <div class="p-apply3-route-info-sub">{{ subroute }}</div>
               <div class="p-apply3-route-tags">
-                <span class="p-apply3-route-tag"><i class="ph-bold ph-buildings"></i>{{ unit }}</span>
-                <span class="p-apply3-route-tag"><i class="ph-bold ph-mountains"></i>{{ routeData?.peak || '玉山主峰 3,952m' }}</span>
-                <span class="p-apply3-route-tag"><i class="fa-regular fa-clock"></i>建議 {{ routeData?.days || 2 }} 天 {{ Math.max(0, (routeData?.days || 2) - 1) }} 夜</span>
-                <span v-if="routeData?.status === 'lottery'" class="p-apply3-route-tag tag-warn"><i class="fa-solid fa-shuffle"></i>抽籤路線</span>
+                <span class="p-apply3-route-tag"><i class="ph-bold ph-buildings" aria-hidden="true"></i>{{ unit }}</span>
+                <span class="p-apply3-route-tag"><i class="ph-bold ph-mountains" aria-hidden="true"></i>{{ routeData?.peak || '玉山主峰 3,952m' }}</span>
+                <span class="p-apply3-route-tag"><i class="fa-regular fa-clock" aria-hidden="true"></i>建議 {{ routeData?.days || 2 }} 天 {{ Math.max(0, (routeData?.days || 2) - 1) }} 夜</span>
+                <span v-if="routeData?.status === 'lottery'" class="p-apply3-route-tag tag-warn"><i class="fa-solid fa-shuffle" aria-hidden="true"></i>抽籤路線</span>
               </div>
             </div>
             <button class="p-apply3-route-change">
-              <i class="fa-solid fa-pen"></i> 變更
+              <i class="fa-solid fa-pen" aria-hidden="true"></i> 變更
             </button>
           </div>
           <div class="p-apply3-route-warn">
-            <i class="fa-solid fa-circle-exclamation"></i>
+            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
             <div>
               <strong>請注意：</strong>本系統公開時段為每日 23:00 至次日 07:00 暫停受理申請。<template v-if="routeData?.status === 'lottery'">本路線需參加抽籤，請依管理處公告時程辦理。</template><template v-else>請確認入園日期、行程天數與每日路線規劃符合管理處規定。</template>
             </div>
@@ -76,7 +76,7 @@
           <div class="p-apply3-section-head">
             <span class="p-apply3-section-num">1</span>
             <div class="p-apply3-section-titles">
-              <h3 class="p-apply3-section-title">行程基本資料</h3>
+              <h2 class="p-apply3-section-title">行程基本資料</h2>
               <p class="p-apply3-section-sub">請確認入山日期與整體行程天數</p>
             </div>
           </div>
@@ -93,7 +93,7 @@
                   <th-date-picker :bare="true" input-class="p-apply3-date-input"
                                   :model-value="startDate"
                                   @update:model-value="startDate = $event"></th-date-picker>
-                  <i class="p-apply3-date-arrow fa-solid fa-arrow-right"></i>
+                  <i class="p-apply3-date-arrow fa-solid fa-arrow-right" aria-hidden="true"></i>
                   <select class="th-select p-apply3-days-select" :value="days" @change="days = Number($event.target.value)">
                     <option v-for="n in [1, 2, 3, 4, 5, 6, 7]" :key="n" :value="n">{{ n }} 天</option>
                   </select>
@@ -117,7 +117,7 @@
               <div class="th-field">
                 <label class="th-label">細部路線圖（選填）</label>
                 <div class="th-input-group">
-                  <i class="icon fa-solid fa-paperclip"></i>
+                  <i class="icon fa-solid fa-paperclip" aria-hidden="true"></i>
                   <input type="text" class="th-input" placeholder="可另上傳 GPX 軌跡檔" />
                 </div>
               </div>
@@ -130,7 +130,7 @@
           <div class="p-apply3-section-head">
             <span class="p-apply3-section-num">2</span>
             <div class="p-apply3-section-titles">
-              <h3 class="p-apply3-section-title">隊員名單</h3>
+              <h2 class="p-apply3-section-title">隊員名單</h2>
               <p class="p-apply3-section-sub">玉山國家公園隊員人數：2–12 人。第 1 位為領隊。</p>
             </div>
           </div>
@@ -169,14 +169,14 @@
                   <option value="guide">嚮導</option>
                 </select>
                 <button class="row-del" @click="removeMember(m.id)" :disabled="members.length <= 1">
-                  <i class="fa-solid fa-xmark"></i>
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
             <div class="p-apply3-members-foot">
               <span>目前 <strong>{{ members.length }}</strong> 人 · 此路線限 2–12 人</span>
               <button class="p-apply3-add-member" @click="addMember" :disabled="members.length >= 12">
-                <i class="fa-solid fa-plus"></i> 新增隊員
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> 新增隊員
               </button>
             </div>
           </div>
@@ -187,7 +187,7 @@
           <div class="p-apply3-section-head">
             <span class="p-apply3-section-num">3</span>
             <div class="p-apply3-section-titles">
-              <h3 class="p-apply3-section-title">路線規劃</h3>
+              <h2 class="p-apply3-section-title">路線規劃</h2>
               <p class="p-apply3-section-sub">通訊裝置、登山技能與機關備註</p>
             </div>
           </div>
@@ -235,7 +235,7 @@
           <div class="p-apply3-section-head">
             <span class="p-apply3-section-num">4</span>
             <div class="p-apply3-section-titles">
-              <h3 class="p-apply3-section-title">留守人資訊</h3>
+              <h2 class="p-apply3-section-title">留守人資訊</h2>
               <p class="p-apply3-section-sub">指定一位行程外人員作為留守聯絡窗口</p>
             </div>
           </div>
@@ -265,13 +265,13 @@
           <div class="p-apply3-section-head">
             <span class="p-apply3-section-num">5</span>
             <div class="p-apply3-section-titles">
-              <h3 class="p-apply3-section-title">警政署入山證申請</h3>
+              <h2 class="p-apply3-section-title">警政署入山證申請</h2>
               <p class="p-apply3-section-sub">本路線進入山地管制區，需同時申請入山許可</p>
             </div>
           </div>
           <div class="p-apply3-section-body">
             <div class="p-apply3-police-note">
-              <i class="fa-solid fa-circle-info"></i>
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
               <div><strong>提示：<br/></strong>本路線位於山地管制區內，系統會自動將以下資料送交警政署辦理入山申請。請確認登山計畫書內容已包含每日預定行程與住宿點。</div>
             </div>
             <div class="p-apply3-grid">
@@ -300,7 +300,7 @@
       <!-- 側欄摘要 -->
       <aside class="th-sidebar">
         <div class="th-sidebar-head">
-          <i class="ph-bold ph-clipboard-text"></i>申請摘要
+          <i class="ph-bold ph-clipboard-text" aria-hidden="true"></i>申請摘要
         </div>
         <div class="th-sidebar-body">
           <div class="th-sidebar-row">
@@ -330,7 +330,7 @@
 
           <ul class="th-sidebar-checklist">
             <li v-for="(c, i) in checks" :key="i" :class="{ 'is-ok': c.ok }">
-              <i :class="c.ok ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>{{ c.label }}
+              <i :class="c.ok ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'" aria-hidden="true"></i>{{ c.label }}
             </li>
           </ul>
         </div>
@@ -339,16 +339,16 @@
 
     <div :class="['th-footbar', { 'is-ready': allOk }]">
       <div class="th-footbar-info">
-        <i :class="allOk ? 'fa-solid fa-check' : 'fa-solid fa-list-check'"></i>
+        <i :class="allOk ? 'fa-solid fa-check' : 'fa-solid fa-list-check'" aria-hidden="true"></i>
         <div>
           <div>必填完成 <strong>{{ doneCount }}</strong> / {{ checks.length }}</div>
         </div>
       </div>
       <div class="th-footbar-actions">
         <button class="th-btn th-btn-ghost" @click="goPrev">
-          <i class="fa-solid fa-arrow-left"></i>上一步
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
         </button>
-        <button class="th-btn th-btn-primary" :disabled="!allOk" @click="submit">送出申請<i class="fa-solid fa-arrow-right"></i></button>
+        <button class="th-btn th-btn-primary" :disabled="!allOk" @click="submit">送出申請<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
       </div>
     </div>
   </th-page-shell>

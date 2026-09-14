@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>最新消息 — 臺灣登山申請一站式服務網</title>
@@ -128,7 +128,7 @@
             {{ article.org }}
           </span>
           <span class="inline-flex items-center gap-1.5 text-slate-800">
-            <i class="fa-regular fa-calendar-check text-slate-700"></i>
+            <i class="fa-regular fa-calendar-check text-slate-700" aria-hidden="true"></i>
             發布日期：{{ dateSlash(article.date) }}
           </span>
         </div>
@@ -140,18 +140,18 @@
 
       <!-- 相關附件 -->
       <div v-if="hasFiles" class="news-attachments-box">
-        <h4 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-paperclip text-slate-500"></i>相關附件
-        </h4>
+        <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-paperclip text-slate-500" aria-hidden="true"></i>相關附件
+        </h2>
         <div class="flex flex-wrap gap-3">
           <a v-for="(f, i) in article.files" :key="i"
              :href="f.href" target="_blank" rel="noopener noreferrer"
              class="news-file-card group">
-            <i :class="['news-file-icon', (f.format || '').toLowerCase(), fileIcons[f.format] || 'fa-regular fa-file-lines']"></i>
+            <i :class="['news-file-icon', (f.format || '').toLowerCase(), fileIcons[f.format] || 'fa-regular fa-file-lines']" aria-hidden="true"></i>
             <span class="font-medium text-slate-800 group-hover:text-emerald-800 text-sm">
               {{ f.name }}
             </span>
-            <i class="fa-solid fa-download text-xs text-slate-400 group-hover:text-emerald-700 ml-2"></i>
+            <i class="fa-solid fa-download text-xs text-slate-400 group-hover:text-emerald-700 ml-2" aria-hidden="true"></i>
           </a>
         </div>
       </div>
@@ -161,7 +161,7 @@
     <!-- 回列表頁按鈕（位於卡片外面下方） -->
     <div class="news-outer-actions">
       <a href="news.html?tab=news" class="th-btn th-btn-primary px-6 py-2.5">
-        <i class="fa-solid fa-arrow-left"></i>回列表頁
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回列表頁
       </a>
     </div>
 

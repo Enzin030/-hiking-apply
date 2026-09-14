@@ -119,8 +119,8 @@ const pCampsiteDayModal = {
         </tbody>
       </table>
       <p v-if="flag" class="p-campsite-daynote">
-        <span :class="['th-flag', flag]"><i :class="flag === 'is-yes' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>{{ flag === 'is-yes' ? '尚有餘額' : '已無餘額' }}</span>餘額為 {{ snapshot }} 擷取之快照，實際可申請數量以線上申請流程查驗結果為準。</p>
-      <p v-if="day.sdate" class="p-campsite-daynote">當日申請隊伍明細：<a class="th-inline-link" :href="detailHref" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>查看明細</a><span class="th-legacy-tag">前往現行網站</span></p>
+        <span :class="['th-flag', flag]"><i :class="flag === 'is-yes' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'" aria-hidden="true"></i>{{ flag === 'is-yes' ? '尚有餘額' : '已無餘額' }}</span>餘額為 {{ snapshot }} 擷取之快照，實際可申請數量以線上申請流程查驗結果為準。</p>
+      <p v-if="day.sdate" class="p-campsite-daynote">當日申請隊伍明細：<a class="th-inline-link" :href="detailHref" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>查看明細</a><span class="th-legacy-tag">前往現行網站</span></p>
     </th-modal>
   `,
 };
@@ -185,7 +185,7 @@ const pCampsiteSiteIntro = {
     <th-callout v-if="!intro" type="warning">「{{ site.name }}」在正式站沒有提供宿營地介紹（海拔、水源、訊號等），此處不補寫。</th-callout>
     <section v-else class="th-card">
       <div class="th-card-head">
-        <i class="fa-solid fa-tent"></i>
+        <i class="fa-solid fa-tent" aria-hidden="true"></i>
         <h2 class="th-card-title">{{ site.name }}</h2>
       </div>
       <div class="th-card-body ">
@@ -198,8 +198,8 @@ const pCampsiteSiteIntro = {
               <li v-for="(l, i) in intro.lines" :key="i">{{ l }}</li>
             </ul>
             <div class="p-campsite-intro-tags">
-              <span v-if="intro.waters" class="p-campsite-tag"><i class="fa-solid fa-droplet"></i>{{ intro.waters.replace(/、$/, '') }}</span>
-              <span v-if="intro.signals" class="p-campsite-tag"><i class="fa-solid fa-tower-broadcast"></i>{{ intro.signals.replace(/、$/, '') }}</span>
+              <span v-if="intro.waters" class="p-campsite-tag"><i class="fa-solid fa-droplet" aria-hidden="true"></i>{{ intro.waters.replace(/、$/, '') }}</span>
+              <span v-if="intro.signals" class="p-campsite-tag"><i class="fa-solid fa-tower-broadcast" aria-hidden="true"></i>{{ intro.signals.replace(/、$/, '') }}</span>
             </div>
           </div>
         </div>
@@ -213,8 +213,8 @@ const pCampsiteCalLegend = {
   props: { site: { type: Object, required: true }, hint: { type: String, default: "" } },
   template: `
     <div class="p-campsite-legend">
-      <span class="th-flag is-yes"><i class="fa-solid fa-circle-check"></i>尚有餘額</span>
-      <span class="th-flag is-no"><i class="fa-solid fa-circle-xmark"></i>已無餘額</span>
+      <span class="th-flag is-yes"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>尚有餘額</span>
+      <span class="th-flag is-no"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>已無餘額</span>
       <span class="p-campsite-legend-hint">{{ hint || ('點日期可看該日 ' + site.labels.length + ' 項計數明細') }}</span>
     </div>
   `,
@@ -253,7 +253,7 @@ const pCampsiteNoticeList = {
   template: `
     <th-callout>
       <ul class="p-campsite-notice">
-        <li v-for="(li, i) in items" :key="i"><template v-if="li.link">{{ before(li) }}<a class="th-inline-link" :href="li.link.href" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>{{ li.link.text }}</a>{{ after(li) }}</template><template v-else>{{ li.text }}</template></li>
+        <li v-for="(li, i) in items" :key="i"><template v-if="li.link">{{ before(li) }}<a class="th-inline-link" :href="li.link.href" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ li.link.text }}</a>{{ after(li) }}</template><template v-else>{{ li.text }}</template></li>
       </ul>
     </th-callout>
   `,
@@ -333,7 +333,7 @@ const pCampsiteNodeCalendar = {
   template: `
       <section v-if="summary" class="th-card">
         <div class="th-card-head">
-          <i :class="summaryIcon"></i>
+          <i :class="summaryIcon" aria-hidden="true"></i>
           <h2 class="th-card-title">{{ summaryTitle }}</h2>
           <span class="th-card-note">共 {{ summary.rows.length }} {{ summaryUnit }}</span>
         </div>
@@ -353,13 +353,13 @@ const pCampsiteNodeCalendar = {
 
       <form class="bulletin-card" @submit.prevent="submit">
         <div class="bulletin-filter-row">
-          <span class="bulletin-filter-label"><i :class="selectIcon"></i>{{ selectLabel }}</span>
+          <span class="bulletin-filter-label"><i :class="selectIcon" aria-hidden="true"></i>{{ selectLabel }}</span>
           <select class="th-select p-campsite-select" :value="draftNode"
                   @change="draftNode = $event.target.value" :aria-label="selectLabel">
             <option v-for="n in nodes" :key="n.id" :value="n.id">{{ n.name }}</option>
           </select>
           <button type="submit" class="th-btn th-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i>查詢
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
       </form>
@@ -473,7 +473,7 @@ const pCampsiteForestryDayModal = {
         </tbody>
       </table>
       <p class="p-campsite-daynote">本頁為 {{ snapshot }} 擷取之快照，實際數量以線上申請流程查驗結果為準。</p>
-      <p v-if="lotUrl" class="p-campsite-daynote">當日抽籤結果：<a class="th-inline-link" :href="lotUrl" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>查詢抽籤結果</a><span class="th-legacy-tag">前往現行網站</span></p>
+      <p v-if="lotUrl" class="p-campsite-daynote">當日抽籤結果：<a class="th-inline-link" :href="lotUrl" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>查詢抽籤結果</a><span class="th-legacy-tag">前往現行網站</span></p>
       <p class="p-campsite-daynote">該日正式站未提供抽籤結果連結。</p>
     </th-modal>
   `,
@@ -506,7 +506,7 @@ const pCampsitePlainTable = {
   template: `
     <section class="th-card">
       <div class="th-card-head">
-        <i :class="icon"></i>
+        <i :class="icon" aria-hidden="true"></i>
         <h2 class="th-card-title">{{ title }}</h2>
         <span v-if="hasHeader" class="th-card-note">共 {{ body.length }} 筆</span>
       </div>
@@ -517,7 +517,7 @@ const pCampsitePlainTable = {
           <template #cell="{ row, column }">
             <a v-if="cellOf(row, column.key).link" class="th-inline-link"
                :href="'https://service.skyeyes.tw/hikenationpark/' + cellOf(row, column.key).link.href"
-               target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>{{ cellOf(row, column.key).link.text || cellOf(row, column.key).t }}</a><template v-else>{{ cellOf(row, column.key).t || '—' }}</template>
+               target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ cellOf(row, column.key).link.text || cellOf(row, column.key).t }}</a><template v-else>{{ cellOf(row, column.key).t || '—' }}</template>
           </template>
         </th-data-table>
         <!-- 正式站自己就寫「查無資料」，照抄，不編一張假的表 -->
@@ -547,13 +547,13 @@ const pCampsiteSheipaCamp = {
 
       <form class="bulletin-card" @submit.prevent="submit">
         <div class="bulletin-filter-row">
-          <span class="bulletin-filter-label"><i class="fa-solid fa-tent"></i>宿營地點</span>
+          <span class="bulletin-filter-label"><i class="fa-solid fa-tent" aria-hidden="true"></i>宿營地點</span>
           <select class="th-select p-campsite-select" :value="draftSite"
                   @change="draftSite = $event.target.value" aria-label="宿營地點">
             <option v-for="s in sites" :key="s.id" :value="s.id">{{ s.name }}</option>
           </select>
           <button type="submit" class="th-btn th-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i>查詢
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
       </form>
@@ -685,13 +685,13 @@ const pCampsiteForestryCamp = {
 
       <form class="bulletin-card" @submit.prevent="submit">
         <div class="bulletin-filter-row">
-          <span class="bulletin-filter-label"><i class="fa-solid fa-tent"></i>宿營地</span>
+          <span class="bulletin-filter-label"><i class="fa-solid fa-tent" aria-hidden="true"></i>宿營地</span>
           <select class="th-select p-campsite-select" :value="draftSite"
                   @change="draftSite = $event.target.value" aria-label="宿營地">
             <option v-for="s in sites" :key="s.id" :value="s.id">{{ s.name }}</option>
           </select>
           <button type="submit" class="th-btn th-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i>查詢
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
       </form>
@@ -750,18 +750,18 @@ const pCampsiteForestryArea = {
   template: `
       <form class="bulletin-card" @submit.prevent="submit">
         <div class="bulletin-filter-row">
-          <span class="bulletin-filter-label"><i class="fa-solid fa-layer-group"></i>區域類別</span>
+          <span class="bulletin-filter-label"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>區域類別</span>
           <select class="th-select p-campsite-select" :value="draftCat"
                   @change="pickCat($event.target.value)" aria-label="區域類別">
             <option v-for="c in cats" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
-          <span class="bulletin-filter-label"><i class="fa-solid fa-mountain"></i>區域名稱</span>
+          <span class="bulletin-filter-label"><i class="fa-solid fa-mountain" aria-hidden="true"></i>區域名稱</span>
           <select class="th-select p-campsite-select" :value="draftArea"
                   @change="draftArea = $event.target.value" aria-label="區域名稱">
             <option v-for="a in draftCatObj.areas" :key="a.id" :value="a.id">{{ a.name }}</option>
           </select>
           <button type="submit" class="th-btn th-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i>查詢
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
       </form>
@@ -814,13 +814,13 @@ const pCampsiteYushanLot = {
   template: `
       <form class="bulletin-card" @submit.prevent="submit">
         <div class="bulletin-filter-row">
-          <span class="bulletin-filter-label"><i class="fa-solid fa-tent"></i>宿營地</span>
+          <span class="bulletin-filter-label"><i class="fa-solid fa-tent" aria-hidden="true"></i>宿營地</span>
           <select class="th-select p-campsite-select" :value="draft"
                   @change="draft = $event.target.value" aria-label="宿營地">
             <option v-for="n in nodes" :key="n.id" :value="n.id">{{ n.name }}</option>
           </select>
           <button type="submit" class="th-btn th-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i>查詢
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
       </form>
@@ -835,7 +835,7 @@ const pCampsiteYushanLot = {
         <template #cell="{ row, column }">
           <a v-if="cellOf(row, column.key).link" class="th-inline-link"
              :href="'https://service.skyeyes.tw/hikenationpark/' + cellOf(row, column.key).link.href"
-             target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i>{{ cellOf(row, column.key).link.text || cellOf(row, column.key).t }}</a><template v-else>{{ cellOf(row, column.key).t || '—' }}</template>
+             target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ cellOf(row, column.key).link.text || cellOf(row, column.key).t }}</a><template v-else>{{ cellOf(row, column.key).t || '—' }}</template>
         </template>
       </th-data-table>
       <div class="p-campsite-legend">

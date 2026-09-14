@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>登山須知 — 臺灣登山申請一站式服務網</title>
@@ -42,7 +42,7 @@
     -->
     <div class="p-notice-actions">
       <a class="p-notice-video-btn" :href="safetyVideo" target="_blank" rel="noopener noreferrer">
-        <i class="fa-brands fa-youtube"></i>登山安全影片（HOT）
+        <i class="fa-brands fa-youtube" aria-hidden="true"></i>登山安全影片（HOT）
       </a>
     </div>
 
@@ -73,7 +73,7 @@
     <div class="th-notice-grid">
       <section class="th-card" v-for="s in primary" :key="s.id" :id="s.id">
         <div class="th-card-head">
-          <i :class="s.icon"></i>
+          <i :class="s.icon" aria-hidden="true"></i>
           <h2 class="th-card-title">{{ s.title }}</h2>
           <span class="th-card-note">{{ s.items.length }} 項</span>
         </div>
@@ -86,7 +86,7 @@
     <div class="th-notice-grid is-secondary">
       <section class="th-card" v-for="s in secondary" :key="s.id" :id="s.id">
         <div class="th-card-head">
-          <i :class="s.icon"></i>
+          <i :class="s.icon" aria-hidden="true"></i>
           <h2 class="th-card-title">{{ s.title }}</h2>
           <span class="th-card-note">{{ s.items.length }} 項</span>
         </div>

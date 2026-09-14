@@ -120,7 +120,7 @@ var pRssFeedUrl = {
     <div class="p-rss-url">
       <a class="p-rss-url-text" :href="url" target="_blank" rel="noopener noreferrer">{{ url }}</a>
       <button type="button" class="th-btn th-btn-ghost th-btn-sm p-rss-copy" @click="copy">
-        <i :class="copied ? 'fa-solid fa-check' : 'fa-regular fa-copy'"></i>{{ copied ? '已複製' : '複製網址' }}
+        <i :class="copied ? 'fa-solid fa-check' : 'fa-regular fa-copy'" aria-hidden="true"></i>{{ copied ? '已複製' : '複製網址' }}
       </button>
     </div>
   `,

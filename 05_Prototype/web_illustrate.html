@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>本站使用說明 — 臺灣登山申請一站式服務網</title>
@@ -54,7 +54,7 @@
     -->
     <section class="th-card" id="permit">
       <div class="th-card-head">
-        <i class="fa-solid fa-id-card"></i>
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
         <h2 class="th-card-title">兩種許可的差別</h2>
         <span class="th-card-note">法源依全國法規資料庫</span>
       </div>
@@ -64,12 +64,13 @@
           不需分別到各機關網站送件。</th-callout>
         <div class="th-table-wrap">
           <table class="th-table">
+            <caption>三種入山入園許可的對照表，欄位為許可種類、法源依據、適用情形、核發機關</caption>
             <thead>
               <tr>
-                <th>許可種類</th>
-                <th>法源依據</th>
-                <th>適用情形</th>
-                <th>核發機關</th>
+                <th scope="col">許可種類</th>
+                <th scope="col">法源依據</th>
+                <th scope="col">適用情形</th>
+                <th scope="col">核發機關</th>
               </tr>
             </thead>
             <tbody>
@@ -97,7 +98,7 @@
 
     <section class="th-card" id="faq">
       <div class="th-card-head">
-        <i class="fa-solid fa-circle-question"></i>
+        <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
         <h2 class="th-card-title">首次使用常見問題</h2>
         <span class="th-card-note">{{ faqs.length }} 則</span>
       </div>
@@ -109,14 +110,14 @@
         -->
         <div class="p-illustrate-faq">
           <details v-for="(f, i) in faqs" :key="f.q" :open="i === 0 ? true : null">
-            <summary>{{ f.q }}<i class="fa-solid fa-chevron-down"></i></summary>
+            <summary>{{ f.q }}<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
             <div class="p-illustrate-faq-body">
               <p>{{ f.a }}</p>
               <!-- 原 FaqLinks 是 WebIllustrate.jsx 內的區域元件，屬本頁版面，故寫在這裡 -->
               <p v-if="f.links && f.links.length" class="p-illustrate-faq-links">
                 <template v-for="l in f.links" :key="l.label">
                   <span v-if="l.todo" class="p-illustrate-faq-link is-todo">{{ l.label }}<span class="th-todo-tag">待建置</span></span>
-                  <a v-else class="p-illustrate-faq-link" :href="l.href">{{ l.label }}<i class="fa-solid fa-angle-right"></i></a>
+                  <a v-else class="p-illustrate-faq-link" :href="l.href">{{ l.label }}<i class="fa-solid fa-angle-right" aria-hidden="true"></i></a>
                 </template>
               </p>
             </div>
@@ -129,7 +130,7 @@
     <div class="p-illustrate-cta">
       <p class="p-illustrate-cta-text">看完說明後，即可開始申請入園／入山許可。</p>
       <a class="th-btn th-btn-primary th-btn-lg" href="apply-1.html">
-        <i class="fa-solid fa-pen-to-square"></i>進入登山申請
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>進入登山申請
       </a>
     </div>
   </th-page-shell>

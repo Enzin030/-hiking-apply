@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>登山線上申請 — 臺灣登山申請一站式服務網</title>
@@ -48,12 +48,12 @@
       <aside class="p-apply1-filters">
         <div class="p-apply1-filter-head">
           <!-- 「篩選條件」與徽章之間那個空白是原 JSX 的字面空白，不可省（見 pages.css 註解） -->
-          <h3><i class="ph-bold ph-funnel"></i>篩選條件 <span v-if="totalActive > 0" class="p-apply1-filter-count">{{ totalActive }}</span></h3>
+          <h3><i class="ph-bold ph-funnel" aria-hidden="true"></i>篩選條件 <span v-if="totalActive > 0" class="p-apply1-filter-count">{{ totalActive }}</span></h3>
           <button class="p-apply1-filter-reset" @click="reset">清除全部</button>
         </div>
 
         <div class="p-apply1-filter-group">
-          <div class="p-apply1-filter-label"><i class="ph-bold ph-buildings"></i>管理機關</div>
+          <div class="p-apply1-filter-label"><i class="ph-bold ph-buildings" aria-hidden="true"></i>管理機關</div>
           <div class="th-chip-row">
             <button v-for="a in agencies" :key="a.id"
                     :class="['th-chip', { 'is-active': agency === a.id }]"
@@ -62,7 +62,7 @@
         </div>
 
         <div class="p-apply1-filter-group">
-          <div class="p-apply1-filter-label"><i class="fa-regular fa-calendar"></i>行程天數</div>
+          <div class="p-apply1-filter-label"><i class="fa-regular fa-calendar" aria-hidden="true"></i>行程天數</div>
           <div class="th-chip-row">
             <button v-for="o in dayOptions" :key="o.v"
                     :class="['th-chip', { 'is-active': days === o.v }]"
@@ -71,7 +71,7 @@
         </div>
 
         <div class="p-apply1-filter-group">
-          <div class="p-apply1-filter-label"><i class="ph-bold ph-mountains"></i>難度等級</div>
+          <div class="p-apply1-filter-label"><i class="ph-bold ph-mountains" aria-hidden="true"></i>難度等級</div>
           <div class="p-apply1-difficulty-row">
             <!-- 再按一次同一級就取消，邏輯在 methods.pickDiff -->
             <button v-for="n in diffLevels" :key="n"
@@ -81,7 +81,7 @@
         </div>
 
         <div class="p-apply1-filter-group">
-          <div class="p-apply1-filter-label"><i class="ph-bold ph-sparkle"></i>快速篩選</div>
+          <div class="p-apply1-filter-label"><i class="ph-bold ph-sparkle" aria-hidden="true"></i>快速篩選</div>
           <label class="p-apply1-toggle p-apply1-toggle-first">
             <input type="checkbox" v-model="hotOnly" />
             <span class="p-apply1-toggle-track"></span>
@@ -100,14 +100,14 @@
         <div class="p-apply1-search-bar">
           <div class="p-apply1-search-row">
             <div class="th-search">
-              <i class="ph-bold ph-magnifying-glass"></i>
+              <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>
               <input type="text" class="th-input"
                      placeholder="搜尋路線名稱、山名或關鍵字（例：玉山主峰、嘉明湖）"
                      v-model="search" />
             </div>
             <!-- 原碼這顆按鈕沒有 onClick：搜尋是即時的，按鈕只是視覺對稱。不要補上行為 -->
             <button class="th-btn th-btn-primary">
-              <i class="ph-bold ph-magnifying-glass"></i>查詢
+              <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>查詢
             </button>
           </div>
           <div class="p-apply1-search-hint">
@@ -132,7 +132,7 @@
         </div>
 
         <div v-if="grouped.length === 0" class="th-empty">
-          <i class="ph-bold ph-binoculars p-apply1-empty-icon"></i>
+          <i class="ph-bold ph-binoculars p-apply1-empty-icon" aria-hidden="true"></i>
           找不到符合條件的路線，請調整篩選條件再試試。
         </div>
 
@@ -140,7 +140,7 @@
           <div class="p-apply1-group-head">
             <div class="p-apply1-group-head-left">
               <span :class="['p-apply1-group-tag', 'tag-' + g.agency]">
-                <i :class="groupIcon(g.agency)"></i>{{ g.name }}
+                <i :class="groupIcon(g.agency)" aria-hidden="true"></i>{{ g.name }}
               </span>
               <span class="p-apply1-group-meta">{{ g.items.length }} 條路線 · {{ agencyDesc[g.agency] }}</span>
             </div>

@@ -50,12 +50,21 @@ window.thComponents["th-data-table"] = {
     columns: { type: Array, required: true },
     rows: { type: Array, default: () => [] },
     rowKey: { type: String, default: "" },
+    /* caption：表格說明，只朗讀不顯示（WCAG 1.3.1 要求表格有說明）。
+       沒給的話由欄位標題組出「資料表，欄位為…」，不留空。 */
+    caption: { type: String, default: "" },
     tableClass: { type: String, default: "" },
     empty: { type: String, default: "查無資料" },
     headRows: { type: Array, default: null },
   },
 
   computed: {
+    captionText() {
+      if (this.caption) return this.caption;
+      var labels = (this.columns || []).map(function (c) { return c.label; }).filter(Boolean);
+      return labels.length ? "資料表，欄位為" + labels.join("、") : "資料表";
+    },
+
     keyOf() { return this.rowKey || this.columns[0].key; },
     isEmpty() { return !this.rows || this.rows.length === 0; },
   },
@@ -76,21 +85,22 @@ window.thComponents["th-data-table"] = {
 
   template: `
     <div v-if="isEmpty" class="th-table-empty">
-      <i class="fa-regular fa-folder-open"></i>{{ empty }}
+      <i class="fa-regular fa-folder-open" aria-hidden="true"></i>{{ empty }}
     </div>
     <div v-else class="th-table-wrap">
       <table :class="['th-table', tableClass]">
+        <caption>{{ captionText }}</caption>
         <thead>
           <template v-if="headRows">
             <tr v-for="(hr, ri) in headRows" :key="ri">
-              <th v-for="(h, hi) in hr" :key="hi"
+              <th v-for="(h, hi) in hr" :key="hi" scope="col"
                   :colspan="spanOf(h, 'colSpan')"
                   :rowspan="spanOf(h, 'rowSpan')"
                   :class="alignClass(h)">{{ h.label }}</th>
             </tr>
           </template>
           <tr v-else>
-            <th v-for="c in columns" :key="c.key" :class="alignClass(c)">{{ c.label }}</th>
+            <th v-for="c in columns" :key="c.key" scope="col" :class="alignClass(c)">{{ c.label }}</th>
           </tr>
         </thead>
         <tbody>

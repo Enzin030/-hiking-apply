@@ -37,9 +37,9 @@ window.thComponents["th-breadcrumb"] = {
   },
   template: `
     <div class="th-crumb">
-      <a href="index.html" aria-label="首頁"><i class="fa-solid fa-house"></i></a>
+      <a href="index.html" aria-label="首頁"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
       <template v-for="(it, i) in items" :key="i">
-        <i class="fa-solid fa-angle-right"></i>
+        <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
         <span v-if="i === items.length - 1" class="th-crumb-current">{{ it.label }}</span>
         <a v-else-if="it.href" :href="it.href">{{ it.label }}</a>
         <span v-else>{{ it.label }}</span>

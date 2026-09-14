@@ -36,7 +36,7 @@ window.thComponents["th-step-list"] = {
             </figure>
           </div>
           <div v-if="s.shot" class="th-shot-placeholder">
-            <i class="fa-regular fa-image"></i>{{ s.shot }}
+            <i class="fa-regular fa-image" aria-hidden="true"></i>{{ s.shot }}
           </div>
         </div>
       </li>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <meta name="description" content="臺灣登山服務網首頁改版示意：登山安全資訊、行程規劃與申請服務。" />
@@ -56,8 +56,8 @@
         class="text-white hover:underline text-left flex-1 truncate bg-transparent border-0 p-0 font-normal flex items-center min-w-0"
         @click="newsOpen = true"><span :class="'bulletin-badge agency-' + notice.agencyId + ' mr-2 shrink-0'">{{ notice.org }}</span><span class="truncate">{{ notice.title }}</span></button>
       <div class="p-indexb-announcement-controls"><button type="button" aria-label="上一則公告" @click="showNotice(-1)"><i
-            class="fa-solid fa-chevron-left"></i></button><button type="button" aria-label="下一則公告" @click="showNotice(1)"><i
-            class="fa-solid fa-chevron-right"></i></button><a href="news.html" class="p-indexb-all-news hover:underline">全部公告 →</a></div>
+            class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><button type="button" aria-label="下一則公告" @click="showNotice(1)"><i
+            class="fa-solid fa-chevron-right" aria-hidden="true"></i></button><a href="news.html" class="p-indexb-all-news hover:underline">全部公告 →</a></div>
     </div>
   </section>
 

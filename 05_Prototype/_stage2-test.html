@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>階段 2 驗收：共用元件（不載入 React／Babel）</title>
@@ -54,7 +54,7 @@
 
     <section class="th-card" id="sec-interactions">
       <div class="th-card-head">
-        <i class="fa-solid fa-hand-pointer"></i>
+        <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
         <h2 class="th-card-title">三個互動</h2>
         <span class="th-card-note">須實測可用</span>
       </div>
@@ -70,7 +70,7 @@
 
     <section class="th-card" id="sec-modal">
       <div class="th-card-head">
-        <i class="fa-regular fa-window-maximize"></i>
+        <i class="fa-regular fa-window-maximize" aria-hidden="true"></i>
         <h2 class="th-card-title">th-modal</h2>
         <span class="th-card-note">涵蓋 campsite 的兩種日明細彈窗</span>
       </div>
@@ -90,7 +90,7 @@
 
     <section class="th-card" id="sec-fc">
       <div class="th-card-head">
-        <i class="fa-solid fa-house-chimney"></i>
+        <i class="fa-solid fa-house-chimney" aria-hidden="true"></i>
         <h2 class="th-card-title">山屋流程共用件</h2>
       </div>
       <div class="th-card-body">
@@ -104,7 +104,7 @@
 
     <section class="th-card" id="sec-date">
       <div class="th-card-head">
-        <i class="fa-regular fa-calendar"></i>
+        <i class="fa-regular fa-calendar" aria-hidden="true"></i>
         <h2 class="th-card-title">th-date-picker ＋ 日期工具</h2>
         <span class="th-card-note">原生 input 薄包裝</span>
       </div>
@@ -151,7 +151,7 @@
 
     <section class="th-card" id="sec-cal">
       <div class="th-card-head">
-        <i class="fa-regular fa-calendar-days"></i>
+        <i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
         <h2 class="th-card-title">th-calendar-grid</h2>
         <span class="th-card-note">一支涵蓋原 BedCalendar 與 ForestryCalendar</span>
       </div>
@@ -197,7 +197,7 @@
     </section>
 
     <div class="th-callout">
-      <i class="fa-solid fa-circle-info"></i>
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
       <div>本頁為拋棄式驗收頁，前綴底線標示非產品頁，不進遷移清單。</div>
     </div>
   </th-page-shell>
@@ -209,6 +209,7 @@
   <th-modal v-if="modal === 'day'" meta="雪霸｜自訂宿營地" title="2026-09-07"
             body-class="p-campsite-daybody" @close="modal = null">
     <table class="th-table th-table--zebra p-campsite-daytable">
+      <caption>當日宿營地數量明細</caption>
       <tbody>
         <tr v-for="(v, i) in demoDay.v" :key="i">
           <th scope="row">{{ demoDay.labels[i] }}</th>
@@ -218,7 +219,7 @@
     </table>
     <p class="p-campsite-daynote">
       <span class="th-flag is-yes">
-        <i class="fa-solid fa-circle-check"></i>尚有餘額
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>尚有餘額
       </span>
       餘額為 2026-09-02 擷取之快照，實際可申請數量以線上申請流程查驗結果為準。
     </p>
@@ -227,6 +228,7 @@
   <th-modal v-if="modal === 'forestry'" meta="林業署｜嘉明湖" title="2026-09-07"
             body-class="p-campsite-daybody" @close="modal = null">
     <table class="th-table th-table--zebra p-campsite-daytable">
+      <caption>林業及自然保育署當日名額明細</caption>
       <tbody>
         <tr v-for="c in demoForestry" :key="c.label">
           <th scope="row">{{ c.label }}</th>

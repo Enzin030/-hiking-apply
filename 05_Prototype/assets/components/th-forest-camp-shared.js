@@ -107,7 +107,7 @@ window.thComponents["th-fc-stepper"] = {
       <template v-for="(s, i) in steps" :key="s.n">
         <div :class="['fc-step', cls(s.n)]">
           <div class="fc-step-dot">
-            <i v-if="s.n < current" class="fa-solid fa-check"></i>
+            <i v-if="s.n < current" class="fa-solid fa-check" aria-hidden="true"></i>
             <span v-else>{{ s.n }}</span>
           </div>
           <span class="fc-step-label">{{ s.label }}</span>

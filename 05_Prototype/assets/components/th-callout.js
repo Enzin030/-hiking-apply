@@ -46,7 +46,7 @@ window.thComponents["th-callout"] = {
   },
   template: `
     <div :class="['th-callout', { 'is-warning': type === 'warning' }]">
-      <i :class="iconClass"></i>
+      <i :class="iconClass" aria-hidden="true"></i>
       <div><slot></slot></div>
     </div>
   `,

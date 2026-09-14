@@ -1,3 +1,7 @@
+/* 2026-09-14（批次 3）：本檔不得再出現 transition: all 或無屬性的簡寫。
+   `all` 會把 outline 一起動畫化，焦點框因此延遲出現，違反 WCAG 2.4.7
+   的「焦點可見」（設計檔 ACCESSIBILITY.md 第六節硬規定第 5 條）。
+   要動畫就逐一列出屬性；transform／opacity 本來就有明列，不受影響。 */
 /* ============================================================
    components.css — 可重用視覺元件（四層樣式的第三層）
    ------------------------------------------------------------
@@ -91,7 +95,7 @@
   border-radius: var(--r-md);
   font-weight: 500;
   font-size: var(--fs-md);
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
@@ -177,7 +181,7 @@
   font-size: var(--fs-xs);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .th-chip:hover {
@@ -1884,7 +1888,7 @@ ul.th-doc-list {
   font-weight: 700;
   font-size: var(--fs-xs);
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 .th-step-label {
   display: flex;
@@ -2488,7 +2492,7 @@ ul.th-doc-list {
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   text-align: left;
 }
 .th-lang-item:hover {
@@ -2834,6 +2838,18 @@ body.th-noscroll {
 }
 .th-table-wrap {
   overflow-x: auto;
+}
+.th-table caption {
+  /* 表格說明只朗讀不顯示（WCAG 1.3.1）；不可用 display:none */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .th-table {
   width: 100%;
@@ -3296,7 +3312,7 @@ body.th-noscroll {
   font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--fg-4);
-  transition: all 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 .fc-step-label {
   font-size: var(--fs-xxs);
@@ -3699,7 +3715,7 @@ a.th-linkrow:hover .th-linkrow-icon {
   color: var(--fg-2);
   font-size: var(--fs-sm);
   font-weight: 500;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .bulletin-page-btn:hover:not(:disabled) {
   border-color: var(--national-700);

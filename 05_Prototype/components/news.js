@@ -357,13 +357,16 @@ var pNewsTable = {
     columns: { type: Array, required: true },
     rows: { type: Array, required: true },
     emptyText: { type: String, required: true },
+    /* 表格說明，只朗讀不顯示（WCAG 1.3.1） */
+    caption: { type: String, required: true },
   },
   template: `
     <div class="th-table-wrap th-table-card">
       <table class="th-table th-table--zebra">
+        <caption>{{ caption }}</caption>
         <thead>
           <tr>
-            <th v-for="c in columns" :key="c.key" :class="c.cls">{{ c.label }}</th>
+            <th v-for="c in columns" :key="c.key" scope="col" :class="c.cls">{{ c.label }}</th>
           </tr>
         </thead>
         <tbody>
@@ -377,7 +380,7 @@ var pNewsTable = {
           <tr v-else>
             <td :colspan="columns.length">
               <div class="th-empty">
-                <i class="fa-solid fa-inbox"></i>{{ emptyText }}
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>{{ emptyText }}
               </div>
             </td>
           </tr>

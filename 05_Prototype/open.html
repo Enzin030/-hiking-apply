@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>登山路線開放狀態 — 臺灣登山申請一站式服務網</title>
@@ -35,7 +35,7 @@
     <form class="bulletin-card" @submit.prevent="submit">
       <div class="bulletin-filter-row">
         <span class="bulletin-filter-label">
-          <i class="fa-solid fa-building"></i>機關
+          <i class="fa-solid fa-building" aria-hidden="true"></i>機關
         </span>
         <button v-for="o in orgButtons" :key="o.key" type="button"
                 :class="['th-chip', { 'is-active': draft.org === o.key }]"
@@ -45,7 +45,7 @@
 
       <div class="bulletin-filter-row">
         <span class="bulletin-filter-label">
-          <i class="fa-solid fa-route"></i>登山主路線
+          <i class="fa-solid fa-route" aria-hidden="true"></i>登山主路線
         </span>
         <select class="th-select p-open-select" :value="draft.mainRoute"
                 @change="setField({ mainRoute: $event.target.value })"
@@ -70,19 +70,19 @@
 
       <div class="bulletin-filter-row">
         <span class="bulletin-filter-label">
-          <i class="fa-solid fa-magnifying-glass"></i>關鍵字查詢
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>關鍵字查詢
         </span>
         <div class="th-search">
-          <i class="fa-solid fa-magnifying-glass"></i>
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
           <input type="text" class="th-input"
                  placeholder="請輸入路線名稱、主路線或備註關鍵字"
                  :value="draft.q" @input="setField({ q: $event.target.value })" />
         </div>
         <button type="submit" class="th-btn th-btn-primary">
-          <i class="fa-solid fa-magnifying-glass"></i>查詢
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
         </button>
         <button type="button" class="th-btn th-btn-ghost" @click="reset">
-          <i class="fa-solid fa-rotate-left"></i>清除條件
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>清除條件
         </button>
       </div>
     </form>
@@ -99,13 +99,13 @@
       <div class="p-open-legend-row">
         <span class="p-open-legend-label">可否申請</span>
         <span v-for="k in ['yes', 'no']" :key="k" :class="['th-flag', canApplyMeta[k].cls]">
-          <i :class="canApplyMeta[k].icon"></i>{{ canApplyMeta[k].label }}
+          <i :class="canApplyMeta[k].icon" aria-hidden="true"></i>{{ canApplyMeta[k].label }}
         </span>
       </div>
       <div class="p-open-legend-row">
         <span class="p-open-legend-label">路線現況</span>
         <span v-for="k in ['open', 'closed', 'proof', 'snow']" :key="k" :class="['th-flag', statusMeta[k].cls]">
-          <i :class="statusMeta[k].icon"></i>{{ statusMeta[k].label }}
+          <i :class="statusMeta[k].icon" aria-hidden="true"></i>{{ statusMeta[k].label }}
         </span>
       </div>
     </div>
@@ -113,22 +113,23 @@
     <!-- 兩層表頭：上排 rowSpan/colSpan 與下排四個「是否須要申請」子欄，照原樣手寫 -->
     <div class="th-table-wrap th-table-card p-open-table-wrap">
       <table class="th-table th-table--zebra p-open-table">
+        <caption>登山路線開放狀態列表，欄位為機關、登山主路線、路線名稱、可否申請、路線現況、是否須要申請（入園證、林業及自然保育署自然保護留區、林業及自然保育署住宿、警政署入山證）、登山路線難度等級與功能</caption>
         <thead>
           <tr>
-            <th rowspan="2" class="col-org">機關</th>
-            <th rowspan="2" class="col-main">登山主路線</th>
-            <th rowspan="2" class="col-name2">路線名稱</th>
-            <th rowspan="2" class="col-can">可否申請</th>
-            <th rowspan="2" class="col-status">路線現況</th>
-            <th colspan="4" class="col-needs">是否須要申請</th>
-            <th rowspan="2" class="col-level">登山路線<br />難度等級</th>
-            <th rowspan="2" class="col-fn">功能</th>
+            <th scope="col" rowspan="2" class="col-org">機關</th>
+            <th scope="col" rowspan="2" class="col-main">登山主路線</th>
+            <th scope="col" rowspan="2" class="col-name2">路線名稱</th>
+            <th scope="col" rowspan="2" class="col-can">可否申請</th>
+            <th scope="col" rowspan="2" class="col-status">路線現況</th>
+            <th scope="col" colspan="4" class="col-needs">是否須要申請</th>
+            <th scope="col" rowspan="2" class="col-level">登山路線<br />難度等級</th>
+            <th scope="col" rowspan="2" class="col-fn">功能</th>
           </tr>
           <tr>
-            <th class="col-need">入園證</th>
-            <th class="col-need">林業及自然保育署<br />自然保護留區</th>
-            <th class="col-need">林業及自然保育署<br />住宿</th>
-            <th class="col-need">警政署<br />入山證</th>
+            <th scope="col" class="col-need">入園證</th>
+            <th scope="col" class="col-need">林業及自然保育署<br />自然保護留區</th>
+            <th scope="col" class="col-need">林業及自然保育署<br />住宿</th>
+            <th scope="col" class="col-need">警政署<br />入山證</th>
           </tr>
         </thead>
         <tbody>
@@ -140,10 +141,10 @@
               <td class="col-main" data-label="登山主路線">{{ r.mainRoute }}</td>
               <td class="col-name2" data-label="路線名稱">{{ r.name }}</td>
               <td class="col-can" data-label="可否申請">
-                <span v-if="canApplyMeta[r.canApply]" :class="['th-flag', canApplyMeta[r.canApply].cls]"><i :class="canApplyMeta[r.canApply].icon"></i>{{ canApplyMeta[r.canApply].label }}</span>
+                <span v-if="canApplyMeta[r.canApply]" :class="['th-flag', canApplyMeta[r.canApply].cls]"><i :class="canApplyMeta[r.canApply].icon" aria-hidden="true"></i>{{ canApplyMeta[r.canApply].label }}</span>
               </td>
               <td class="col-status" data-label="路線現況">
-                <span v-if="statusMeta[r.status]" :class="['th-flag', statusMeta[r.status].cls]"><i :class="statusMeta[r.status].icon"></i>{{ statusMeta[r.status].label }}</span>
+                <span v-if="statusMeta[r.status]" :class="['th-flag', statusMeta[r.status].cls]"><i :class="statusMeta[r.status].icon" aria-hidden="true"></i>{{ statusMeta[r.status].label }}</span>
               </td>
               <td v-for="c in needColumns" :key="c.key" class="col-need" :data-label="c.label">
                 <i v-if="r[c.key]" class="fa-solid fa-check p-open-need-yes" aria-label="須申請"></i>
@@ -157,14 +158,14 @@
               <td class="col-fn" data-label="功能">
                 <div class="p-open-actions">
                   <a class="p-open-act is-primary" href="apply-1.html">
-                    <i class="fa-solid fa-pen-to-square"></i>申請
+                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>申請
                   </a>
                   <!-- 路線介紹頁尚未建置，不給假連結 -->
                   <span v-if="r.hasIntro" class="p-open-act th-todo-link">
-                    <i class="fa-solid fa-circle-info"></i>介紹
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>介紹
                   </span>
                   <button v-if="r.note" type="button" class="p-open-act" @click="noteModal = r">
-                    <i class="fa-regular fa-note-sticky"></i>備註
+                    <i class="fa-regular fa-note-sticky" aria-hidden="true"></i>備註
                   </button>
                 </div>
               </td>
@@ -173,7 +174,7 @@
           <tr v-else>
             <td colspan="11">
               <div class="th-empty">
-                <i class="fa-solid fa-inbox"></i>查無符合條件的路線，請調整查詢條件。
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>查無符合條件的路線，請調整查詢條件。
               </div>
             </td>
           </tr>
@@ -208,7 +209,7 @@
       <dd>{{ levelRow.who }}</dd>
       <dt>建議裝備</dt>
       <dd>
-        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf"></i>個人及團體裝備檢查表</a>{{ levelRow.kitRef }}</span>
+        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i>個人及團體裝備檢查表</a>{{ levelRow.kitRef }}</span>
         <template v-else>{{ levelRow.kit }}</template>
       </dd>
     </dl>

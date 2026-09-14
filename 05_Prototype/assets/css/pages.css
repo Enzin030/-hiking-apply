@@ -320,7 +320,7 @@
   color: var(--fg-2);
   font-size: var(--fs-xxs);
   font-weight: 700;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .p-news-file.pdf {
@@ -1415,7 +1415,10 @@
   color: var(--national-700);
   font-size: var(--fs-nav);
 }
+/* 2026-09-14（批次 3）可點區至少 24×24（WCAG 2.5.8） */
 .p-apply1-filter-reset {
+  min-height: 24px;
+  min-width: 24px;
   background: none;
   border: none;
   padding: 0;
@@ -1462,7 +1465,7 @@
   background: var(--bg-1);
   color: var(--slate-600);
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 .p-apply1-diff:hover {
   border-color: var(--national-700);
@@ -1499,7 +1502,7 @@
   border-radius: var(--r-pill);
   background: var(--slate-200);
   position: relative;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   flex-shrink: 0;
 }
 .p-apply1-toggle-track::after {
@@ -1512,7 +1515,7 @@
   border-radius: var(--r-pill);
   background: var(--bg-1);
   box-shadow: var(--sh-sm);
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 .p-apply1-toggle input:checked+.p-apply1-toggle-track {
   background: var(--national-700);
@@ -1551,7 +1554,7 @@
   border: 1px solid var(--bg-mist-2);
   border-radius: var(--r-pill);
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   color: var(--slate-700);
 }
 .p-apply1-search-hint .tag:hover {
@@ -1640,7 +1643,7 @@
   overflow: hidden;
   display: flex;
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   position: relative;
 }
 .p-apply1-route:hover {
@@ -1798,7 +1801,7 @@
   transform: translateX(2px);
 }
 .p-apply1-route-go i {
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 .p-apply1-route-go.go-muted {
   color: var(--fg-3);
@@ -2369,7 +2372,7 @@
   box-shadow: var(--sh-card);
   margin-bottom: 16px;
   overflow: hidden;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 
 .p-apply2-sec.is-acked {
@@ -2385,7 +2388,7 @@
   gap: 16px;
   background: var(--bg-1);
   border-bottom: 1px solid var(--slate-100);
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   user-select: none;
 }
 
@@ -2409,7 +2412,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 
 .p-apply2-sec.is-acked .p-apply2-sec-num {
@@ -2597,7 +2600,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   user-select: none;
   white-space: nowrap;
   color: var(--slate-700);
@@ -2630,7 +2633,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 
 .p-apply2-sec-check input:checked+.p-apply2-sec-ack-box {
@@ -2768,7 +2771,7 @@
   align-items: flex-start;
   gap: 10px;
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 
 .p-apply2-toc-list li button:hover {
@@ -3346,7 +3349,7 @@
   font-size: var(--fs-xs);
   color: var(--slate-700);
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -3474,13 +3477,16 @@
   border-radius: var(--r-sm);
 }
 
+/* 2026-09-14（批次 3）可點區至少 24×24（WCAG 2.5.8） */
 .p-apply3-members-row .row-del {
+  min-height: 24px;
+  min-width: 24px;
   background: none;
   border: none;
   color: var(--slate-400);
   font-size: var(--fs-sm);
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 
 .p-apply3-members-row .row-del:hover {
@@ -3519,7 +3525,7 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  transition: .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 
 .p-apply3-add-member:hover {

@@ -52,7 +52,7 @@ window.thComponents["th-link-list"] = {
            :rel="newTab(it) ? 'noopener noreferrer' : null">
           <span v-if="numbered" class="th-linkrow-num">{{ i + 1 }}</span>
           <span class="th-linkrow-text">{{ it.label }}</span>
-          <i :class="['th-linkrow-icon', iconOf(it)]"></i>
+          <i :class="['th-linkrow-icon', iconOf(it)]" aria-hidden="true"></i>
         </a>
       </li>
     </ul>

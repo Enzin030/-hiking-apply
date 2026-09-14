@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>RSS 訂閱 — 臺灣登山申請一站式服務網</title>
@@ -43,7 +43,7 @@
 
     <section class="th-card" id="feeds">
       <div class="th-card-head">
-        <i class="fa-solid fa-square-rss"></i>
+        <i class="fa-solid fa-square-rss" aria-hidden="true"></i>
         <h2 class="th-card-title">可訂閱的頻道</h2>
         <span class="th-card-note">{{ feeds.length }} 個頻道</span>
       </div>
@@ -59,7 +59,7 @@
           <template #cell="{ row, column, value }">
 
             <span v-if="column.key === 'label'" class="p-rss-channel">
-              <i :class="row.icon"></i>
+              <i :class="row.icon" aria-hidden="true"></i>
               <span>{{ row.label }}</span>
             </span>
 
@@ -67,11 +67,11 @@
               <span v-if="row.todo" class="p-rss-url is-todo">尚未提供<span class="th-todo-tag">待建置</span></span>
               <template v-else>
                 <p-rss-feed-url :url="row.url"></p-rss-feed-url>
-                <p v-if="row.status === 'maintenance'" class="p-rss-url-note"><i class="fa-solid fa-triangle-exclamation"></i>此端點 2026-09-03 實測回傳「系統維護中」，尚無法取得內容。</p>
+                <p v-if="row.status === 'maintenance'" class="p-rss-url-note"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>此端點 2026-09-03 實測回傳「系統維護中」，尚無法取得內容。</p>
               </template>
             </template>
 
-            <a v-else-if="column.key === 'page'" class="th-inline-link" :href="row.page">前往<i class="fa-solid fa-angle-right"></i></a>
+            <a v-else-if="column.key === 'page'" class="th-inline-link" :href="row.page">前往<i class="fa-solid fa-angle-right" aria-hidden="true"></i></a>
 
             <template v-else>{{ value }}</template>
           </template>
@@ -81,7 +81,7 @@
 
     <section class="th-card" id="what">
       <div class="th-card-head">
-        <i class="fa-solid fa-circle-info"></i>
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         <h2 class="th-card-title">何謂 RSS？</h2>
       </div>
       <div class="th-card-body">
@@ -93,7 +93,7 @@
 
     <section class="th-card" id="how">
       <div class="th-card-head">
-        <i class="fa-solid fa-list-check"></i>
+        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
         <h2 class="th-card-title">如何訂閱</h2>
       </div>
       <div class="th-card-body">

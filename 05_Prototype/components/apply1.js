@@ -83,7 +83,7 @@ var pApply1SuspendModal = {
     <div v-if="route" class="p-apply1-suspend-overlay" @click="$emit('close')">
       <div class="p-apply1-suspend-card" @click.stop>
         <div class="p-apply1-suspend-head">
-          <span class="p-apply1-suspend-icon"><i class="fa-solid fa-circle-xmark"></i></span>
+          <span class="p-apply1-suspend-icon"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i></span>
           <div>
             <div class="p-apply1-suspend-title">此路線暫停申請</div>
             <div class="p-apply1-suspend-name">{{ route.name }}</div>
@@ -153,22 +153,22 @@ var pApply1RouteCard = {
         <div class="p-apply1-route-title-row">
           <h3 class="p-apply1-route-title">{{ title }}</h3>
           <div class="p-apply1-route-badges">
-            <span v-if="r.hot" class="badge-hot"><i class="fa-solid fa-fire"></i>熱門</span>
-            <span v-if="r.status === 'lottery'" class="badge-lottery"><i class="fa-solid fa-shuffle"></i>抽籤</span>
-            <span v-if="isSuspended" class="badge-closed"><i class="fa-solid fa-circle-xmark"></i>暫停</span>
+            <span v-if="r.hot" class="badge-hot"><i class="fa-solid fa-fire" aria-hidden="true"></i>熱門</span>
+            <span v-if="r.status === 'lottery'" class="badge-lottery"><i class="fa-solid fa-shuffle" aria-hidden="true"></i>抽籤</span>
+            <span v-if="isSuspended" class="badge-closed"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>暫停</span>
           </div>
         </div>
         <div class="p-apply1-route-sub">{{ routePath }}</div>
         <div class="p-apply1-route-meta">
-          <span><i class="ph-bold ph-map-trifold"></i>{{ r.routeGroup || r.peak }}</span>
-          <span><i class="fa-regular fa-clock"></i>{{ duration }}</span>
+          <span><i class="ph-bold ph-map-trifold" aria-hidden="true"></i>{{ r.routeGroup || r.peak }}</span>
+          <span><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ duration }}</span>
         </div>
         <div class="p-apply1-route-foot">
           <span :class="['p-apply1-status-pill', statusInfo.cls]">
-            <i :class="statusInfo.icon"></i>{{ statusInfo.label }}
+            <i :class="statusInfo.icon" aria-hidden="true"></i>{{ statusInfo.label }}
           </span>
           <span :class="['p-apply1-route-go', { 'go-muted': isSuspended }]">
-            {{ goLabel }}<i :class="goIcon"></i>
+            {{ goLabel }}<i :class="goIcon" aria-hidden="true"></i>
           </span>
         </div>
       </div>

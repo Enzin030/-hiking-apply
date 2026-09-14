@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>國家公園步道分級 — 臺灣登山申請一站式服務網</title>
@@ -31,7 +31,7 @@
 
     <section class="th-card" id="level-table">
       <div class="th-card-head">
-        <i class="fa-solid fa-signs-post"></i>
+        <i class="fa-solid fa-signs-post" aria-hidden="true"></i>
         <h2 class="th-card-title">步道難度分級表</h2>
         <span class="th-card-note">共 7 級</span>
       </div>
@@ -56,7 +56,7 @@
               JSX 會把行首行尾的換行縮排去掉，Vue 的 condense 會折成一個空白，
               多出來的空白會讓表格欄寬與換行位置跑掉（見 th-callout.js 註解）。
             -->
-            <p v-else-if="column.key === 'kit' && row.kitRef" class="th-kit">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf"></i>個人及團體裝備檢查表</a>{{ row.kitRef }}</p>
+            <p v-else-if="column.key === 'kit' && row.kitRef" class="th-kit">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i>個人及團體裝備檢查表</a>{{ row.kitRef }}</p>
 
             <p v-else-if="column.key === 'kit'" class="th-kit">{{ row.kit }}</p>
 

@@ -78,7 +78,7 @@ window.thComponents["th-modal"] = {
             </div>
           </slot>
           <button type="button" class="bulletin-modal-close" @click="$emit('close')" :aria-label="closeLabel">
-            <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           </button>
         </div>
         <div :class="['bulletin-modal-body', bodyClass]">

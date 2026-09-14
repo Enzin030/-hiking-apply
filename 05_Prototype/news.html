@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <title>公布欄 — 臺灣登山申請一站式服務網</title>
@@ -131,7 +131,8 @@
       表格的格內容依「頁籤 × 欄位」分派。原 React 是把 render 函式塞進 columns，
       這裡改走 scoped slot，版面因此留在 HTML（§5 階段 3 第 1 項）。
     -->
-    <p-news-table :columns="columns" :rows="pageRows" :empty-text="'尚無符合條件的' + tab.label + '資料'">
+    <p-news-table :columns="columns" :rows="pageRows" :empty-text="'尚無符合條件的' + tab.label + '資料'"
+                  :caption="tab.label + '列表，欄位為' + columns.map(function (c) { return c.label; }).join('、')">
       <template #cell="{ row, column }">
 
         <!-- 四個頁籤都有的發布單位徽章 -->
@@ -157,7 +158,7 @@
 
         <!-- 檔案下載 -->
         <template v-else-if="tab.key === 'download'">
-          <template v-if="column.key === 'title'"><span>{{ row.title }}</span><a v-for="(f, i) in row.files" :key="i" :href="f.href" target="_blank" rel="noopener noreferrer" :class="'p-news-file ' + f.format.toLowerCase()"><i :class="fileIcons[f.format] || 'fa-regular fa-file'"></i>{{ f.format }}</a></template>
+          <template v-if="column.key === 'title'"><span>{{ row.title }}</span><a v-for="(f, i) in row.files" :key="i" :href="f.href" target="_blank" rel="noopener noreferrer" :class="'p-news-file ' + f.format.toLowerCase()"><i :class="fileIcons[f.format] || 'fa-regular fa-file'" aria-hidden="true"></i>{{ f.format }}</a></template>
         </template>
 
         <!-- 常見問答 -->
@@ -192,7 +193,7 @@
           <div class="bulletin-modal-meta">{{ modalItem.meta }}</div>
         </div>
         <button type="button" class="bulletin-modal-close" aria-label="關閉" @click="modalItem = null">
-          <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
       <div class="bulletin-modal-body">{{ modalItem.body }}</div>

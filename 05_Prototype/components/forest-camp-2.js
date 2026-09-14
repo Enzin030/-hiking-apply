@@ -142,11 +142,11 @@ const pFc2Stepper = {
   template: `
     <div class="fc-stepper-input p-fc2-stepper-input">
       <button class="fc-stepper-btn" @click="$emit('change', Math.max(min, value - 1))" :disabled="value <= min">
-        <i class="fa-solid fa-minus"></i>
+        <i class="fa-solid fa-minus" aria-hidden="true"></i>
       </button>
       <span class="fc-stepper-val">{{ value }}</span>
       <button class="fc-stepper-btn" @click="$emit('change', Math.min(max, value + 1))" :disabled="value >= max">
-        <i class="fa-solid fa-plus"></i>
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
       </button>
     </div>
   `,
