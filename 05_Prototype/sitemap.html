@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>網站導覽 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  網站導覽（對應正式站 site_map.aspx，2026-09-14 由 template/page.html 起手）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/sitemap.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <!-- 網站導覽在正式站屬工具列，不屬主導覽任何一項，故不傳 active（同 rss.html） -->
+  <th-header></th-header>
+
+  <!-- 正式站導覽頁無導言，本頁不另編 lead -->
+  <th-page-shell
+    :trail="['網站導覽']"
+    title="網站導覽"
+    updated="2026-09-14">
+
+    <section class="th-card">
+      <div class="th-card-body">
+        <!--
+          本頁是無障礙檢測重點：階層一律用巢狀 ul／li，每項是真實 <a>。
+          每組名稱用 h2（h1 是 th-page-shell 的頁標題），螢幕閱讀器可用標題跳組。
+          雛形尚未建置的項目走 th-todo-link（非連結的 span），不給 `#` 假連結。
+          資料與「刻意不列」清單見 components/sitemap.js 檔頭。
+        -->
+        <nav aria-label="網站導覽">
+          <ul class="p-sitemap-tree">
+            <li v-for="g in groups" :key="g.key" class="p-sitemap-group">
+              <h2 class="p-sitemap-heading"><a v-if="g.url && g.external" :href="g.url" target="_blank" rel="noopener noreferrer">{{ g.label }}<i class="fa-solid fa-arrow-up-right-from-square p-sitemap-ext" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><a v-else-if="g.url" :href="g.url" :aria-current="g.current ? 'page' : null">{{ g.label }}</a><th-todo-link v-else-if="!g.children" :label="g.label"></th-todo-link><template v-else>{{ g.label }}</template></h2>
+              <ul v-if="g.children" class="p-sitemap-list">
+                <li v-for="c in g.children" :key="c.key"><a v-if="c.url" :href="c.url">{{ c.label }}</a><th-todo-link v-else :label="c.label"></th-todo-link></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

@@ -4680,3 +4680,51 @@ body:where(.p-indexb-body):before {
         scroll-behavior: auto !important
     }
 }
+
+/* ############################################################
+   sitemap（網站導覽，2026-09-14 新增）
+   ------------------------------------------------------------
+   巢狀 ul／li 的階層，外層每組一格、依寬度自動換欄。
+   待建置項沿用元件 .th-todo-link，本段不覆寫它。
+   ############################################################ */
+.p-sitemap-tree {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 28px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.p-sitemap-heading {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--slate-200);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.p-sitemap-heading a {
+  color: var(--national-700);
+}
+.p-sitemap-heading a:hover {
+  color: var(--national-700-hover);
+}
+.p-sitemap-ext {
+  margin-left: 6px;
+  font-size: var(--fs-xxs);
+}
+.p-sitemap-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+}
+.p-sitemap-list li + li {
+  margin-top: 8px;
+}
+.p-sitemap-list a {
+  color: var(--fg-2);
+}
+.p-sitemap-list a:hover {
+  color: var(--national-700);
+}

@@ -56,7 +56,7 @@ window.TH_HEADER_NAV = [
   ] },
   { key: "apply", label: "登山申請", children: [
     { key: "apply_online", label: "各項線上申請", url: "apply-1.html" },
-    { key: "apply_search", label: "申請進度查詢／繳費／異動／取消", url: "applySearch.html" },
+    { key: "apply_search", label: "申請進度查詢/繳費/異動/取消", url: "applySearch.html" },
     { key: "apply_draft",  label: "草稿編輯", url: null },
     { key: "apply_report", label: "國家公園出園回報", url: null },
   ] },
@@ -89,7 +89,7 @@ window.TH_HEADER_NAV = [
 
 /* 工具列項目（網站導覽／警特報／RSS） */
 window.TH_HEADER_UTILITY = [
-  { label: "網站導覽", url: null },
+  { label: "網站導覽", url: "sitemap.html" },
   { label: "警特報",   url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true },
   { label: "RSS",     url: "rss.html" },
 ];
