@@ -368,7 +368,7 @@ var pNewsTable = {
         </thead>
         <tbody>
           <template v-if="rows.length > 0">
-            <tr v-for="row in rows" :key="row.id">
+            <tr v-for="row in rows" :key="row.id" :class="{ 'is-pinned': row.pinned }">
               <td v-for="c in columns" :key="c.key" :class="c.cls" :data-label="c.label">
                 <slot name="cell" :row="row" :column="c"></slot>
               </td>

@@ -31,76 +31,101 @@
   <!-- bare：版面自帶結構，不要 th-page-main 的 flex 包裝 -->
   <th-page-shell :trail="['公布欄', tab.label]" :title="tab.label" :bare="true">
 
-    <!-- 篩選列（扁平工具列，無卡片外框） -->
-    <form class="p-news-toolbar" @submit.prevent="submitFilter">
-      <div class="bulletin-filter-row">
-        <!-- 發布單位下拉選單 -->
-        <span class="bulletin-filter-label bulletin-filter-label--inline">發布單位</span>
-        <select name="agency" class="th-select"
-                :value="draft.agency" @change="setDraftField({ agency: $event.target.value })">
-          <option v-for="a in allAgencies" :key="a.id" :value="a.id">
-            {{ a.id === 'all' ? '全部單位' : a.label }}
-          </option>
-        </select>
+    <!--
+      查詢卡（2026-09-14 C 批，依設計師前台web）：原本是扁平的一列工具列，
+      改為霧綠底卡片、欄位標籤在上、欄位與按鈕同一排且等高（--field-h）。
+      class 用 .p-news-*：設計檔叫 .th-search，但我方的 .th-search 已經是
+      「帶放大鏡的關鍵字輸入框」（apply-1、open 也在用），同名會撞。
+      其他列表頁沿用舊工具列，等第二個消費端出現再依「二次即提升」升到 components.css。
+    -->
+    <form class="p-news-filter" @submit.prevent="submitFilter">
+      <div class="p-news-filter-grid">
 
-        <span class="bulletin-filter-label bulletin-filter-label--inline">
-          {{ tab.key === 'download' ? '檔案名稱' : '關鍵字' }}
-        </span>
-
-        <div class="th-search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" class="th-input" name="keyword"
-                 :placeholder="searchPlaceholder"
-                 :value="draft.q" @input="setDraftField({ q: $event.target.value })" />
+        <!-- 發布單位 -->
+        <div class="p-news-field">
+          <label class="p-news-label" for="f-agency">發布單位</label>
+          <select id="f-agency" name="agency" class="th-select"
+                  :value="draft.agency" @change="setDraftField({ agency: $event.target.value })">
+            <option v-for="a in allAgencies" :key="a.id" :value="a.id">
+              {{ a.id === 'all' ? '全部單位' : a.label }}
+            </option>
+          </select>
         </div>
 
-        <!-- 最新消息：發布日期起訖 -->
-        <template v-if="tab.key === 'news'">
-          <span class="bulletin-filter-label bulletin-filter-label--inline">發布日期</span>
+        <!-- 最新消息：發布日期起訖（兩支 flatpickr，迄日的 min 綁起日） -->
+        <div v-if="tab.key === 'news'" class="p-news-field">
+          <label class="p-news-label" for="f-start">發布日期</label>
           <div class="p-news-daterange">
-            <!--
-              2026-09-10：兩個原生 input[type=date] 改用 th-date-picker（flatpickr）。
-              bare 是因為這裡是一列橫向的篩選控制項，不需要 .th-field 的直向容器。
-              迄日的 min 綁起日（元件的 watch 會把值同步給 flatpickr）——
-              這是元件檔頭寫的「日期區間用兩支 picker」那個形狀。
-            -->
-            <th-date-picker :bare="true" name="startDate" input-class="th-input--date"
+            <th-date-picker :bare="true" name="startDate" input-class="th-input--date" input-id="f-start"
                             :model-value="draft.start"
                             @update:model-value="setDraftField({ start: $event })"></th-date-picker>
-            <span class="p-news-sep">~</span>
+            <span class="p-news-sep" aria-hidden="true">~</span>
             <th-date-picker :bare="true" name="endDate" input-class="th-input--date"
                             :min="draft.start"
                             :model-value="draft.end"
                             @update:model-value="setDraftField({ end: $event })"></th-date-picker>
           </div>
-        </template>
+        </div>
 
         <!-- 違規名單：排序 -->
-        <template v-if="tab.key === 'violation'">
-          <span class="bulletin-filter-label bulletin-filter-label--inline">排序</span>
-          <select name="sort" class="th-select"
+        <div v-if="tab.key === 'violation'" class="p-news-field">
+          <label class="p-news-label" for="f-sort">排序</label>
+          <select id="f-sort" name="sort" class="th-select"
                   :value="draft.sort" @change="setDraftField({ sort: $event.target.value })">
             <option value="date_desc">違規或核定日期 新→舊</option>
             <option value="date_asc">違規或核定日期 舊→新</option>
           </select>
-        </template>
+        </div>
 
         <!-- 常見問答：發布類別 -->
-        <template v-if="tab.key === 'faq'">
-          <span class="bulletin-filter-label bulletin-filter-label--inline">發布類別</span>
-          <select name="category" class="th-select"
+        <div v-if="tab.key === 'faq'" class="p-news-field">
+          <label class="p-news-label" for="f-cat">發布類別</label>
+          <select id="f-cat" name="category" class="th-select"
                   :value="draft.cat" @change="setDraftField({ cat: $event.target.value })">
             <option v-for="c in faqCategories" :key="c" :value="c">{{ c === 'all' ? '全部類別' : c }}</option>
           </select>
-        </template>
+        </div>
+
+        <!-- 關鍵字 -->
+        <div class="p-news-field p-news-field--grow">
+          <label class="p-news-label" for="f-keyword">
+            {{ tab.key === 'download' ? '檔案名稱' : '標題／內容關鍵字' }}
+          </label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="f-keyword" class="th-input" name="keyword"
+                   :placeholder="searchPlaceholder"
+                   :value="draft.q" @input="setDraftField({ q: $event.target.value })" />
+          </div>
+        </div>
 
         <div class="p-news-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="resetFilter">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
           <button type="submit" class="th-btn th-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i>查詢
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
+
       </div>
     </form>
+
+    <!--
+      列表工具列（設計檔的 .th-listbar）：左筆數、右次要連結。
+      筆數用 role="status" aria-live，查詢後報讀器才會唸出新筆數（WCAG 4.1.3）。
+      設計檔右側還有「歷史消息」，本站沒有這個頁面，不放假連結。
+    -->
+    <div class="p-news-listbar">
+      <div class="p-news-count" role="status" aria-live="polite" aria-atomic="true">
+        共 <strong>{{ filtered.length }}</strong> 筆，第 {{ safePage }} / {{ totalPages }} 頁
+      </div>
+      <div v-if="tab.key === 'news'" class="p-news-listbar-actions">
+        <a href="rss.html" class="p-news-listbar-link">
+          <i class="fa-solid fa-rss" aria-hidden="true"></i>RSS 訂閱
+        </a>
+      </div>
+    </div>
 
     <!--
       表格的格內容依「頁籤 × 欄位」分派。原 React 是把 render 函式塞進 columns，
@@ -116,9 +141,10 @@
         <template v-else-if="tab.key === 'news'">
           <template v-if="column.key === 'date'">{{ dateSlash(row.date) }}</template>
           <template v-else-if="column.key === 'title'">
-            <a :href="'news_0_1.html?id=' + row.id" class="p-news-link">
-              <i v-if="row.pinned" class="fa-solid fa-thumbtack p-news-pin" title="置頂"></i>{{ row.title }}
-            </a>
+            <span v-if="row.pinned" class="p-news-pin">
+              <i class="fa-solid fa-thumbtack" aria-hidden="true"></i>置頂
+            </span>
+            <a :href="'news_0_1.html?id=' + row.id" class="p-news-link">{{ row.title }}</a>
           </template>
         </template>
 

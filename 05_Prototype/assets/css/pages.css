@@ -88,67 +88,153 @@
   width: 100%;
 }
 
-.p-news-toolbar {
-  margin-bottom: 24px;
+/* ------------------------------------------------------------
+   查詢卡（2026-09-14 C 批，依設計師前台web）
+   ------------------------------------------------------------
+   取代原本的扁平工具列 .p-news-toolbar（含 .bulletin-filter-row 的橫排），
+   那組規則已隨 news.html 的樣板一起移除；.bulletin-filter-* 本身留著，
+   campsite 與 open 還在用。
+
+   命名不沿用設計檔的 .th-search：我方 .th-search 已經是「帶放大鏡的
+   關鍵字輸入框」，同名會撞。等第二個列表頁要用時再依「二次即提升」
+   升到 components.css 並改名 .th-*。
+   ------------------------------------------------------------ */
+.p-news-filter {
+  margin-bottom: 16px;
+  padding: 18px 22px;
+  background: var(--bg-mist);
+  border: 1px solid var(--bg-mist-3);
+  border-radius: var(--r-xl);
 }
 
-.p-news-toolbar .bulletin-filter-row {
+.p-news-filter-grid {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-end;
+  gap: 16px;
 }
 
-.p-news-toolbar .th-search {
-  flex: 1 1 320px;
-  min-width: 220px;
+.p-news-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 1 240px;
+  min-width: 0;
 }
 
-/*
-  145px 改掛在 .th-fp-wrap 上（2026-09-11，階段 4 步驟 8）。
-
-  **這是維持行為，不是改善。** 這條規則的意圖是「news 工具列的日期欄位 145px 寬」。
-  flatpickr 化之後承載寬度的元素由 input 變成 .th-fp-wrap，
-  145px 留在 input 上已經是**描述一個不再負責寬度的元素**：
-  wrapper 仍吃 .th-input--date 的 165px，input 145px，中間多出 20px 空白。
-  掛到 wrapper 上畫面才與改版前相同。
-
-  （原本這條在 shared.css，當時排在 components.css 之前，被
-   `.th-fp-wrap .th-input--date { width: 100% }` 壓過所以沒事；
-   搬進 pages.css 之後跑到 components.css 之後，它才開始生效並暴露這個落差。）
-*/
-.p-news-toolbar .th-fp-wrap {
-  width: 145px;
+/* 關鍵字欄位吃掉剩餘寬度 */
+.p-news-field--grow {
+  flex: 1 1 260px;
 }
-.p-news-toolbar .th-input--date {
+
+.p-news-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+}
+
+/* .th-search 本身是 flex: 1 1 260px（給橫向工具列用的）。放進直向的
+   .p-news-field 之後，那個 260px 會變成**高度**的 flex-basis，欄位被撐成 260px 高
+   （實測：關鍵字欄整塊浮在卡片上方）。這裡把它改回由內容決定高度、寬度滿版。 */
+.p-news-filter .th-search {
+  flex: 0 0 auto;
   width: 100%;
+  min-width: 0;
 }
 
-.p-news-toolbar .p-news-filter-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
+/* 同一排的欄位與按鈕等高，才對得齊（設計檔的 --field-h） */
+.p-news-filter .th-select,
+.p-news-filter .th-input,
+.p-news-filter .th-btn {
+  min-height: var(--field-h);
+  height: var(--field-h);
 }
 
 .p-news-filter-actions {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
-  margin-left: auto;
+  flex: 0 0 auto;
 }
 
 .p-news-daterange {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
 }
 
+.p-news-daterange .th-fp-wrap {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.p-news-daterange .th-input--date {
+  width: 100%;
+}
+
 .p-news-sep {
-  color: var(--fg-1);
+  color: var(--fg-2);
   font-size: var(--fs-md);
   line-height: 1;
   user-select: none;
+}
+
+/* 欄位堆疊後按鈕改為整列等分（設計檔 ≤991px 的行為） */
+@media (max-width: 991px) {
+  .p-news-filter-actions {
+    flex: 1 1 100%;
+  }
+  .p-news-filter-actions .th-btn {
+    flex: 1;
+  }
+}
+
+/* ------------------------------------------------------------
+   列表工具列：左筆數、右次要連結（設計檔的 .th-listbar）
+   ------------------------------------------------------------ */
+.p-news-listbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.p-news-count {
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+
+.p-news-count strong {
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.p-news-listbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-news-listbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  text-decoration: none;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+
+.p-news-listbar-link:hover {
+  color: var(--national-700);
+  border-color: var(--national-300);
+  background: var(--national-50);
 }
 
 .p-news-link {
@@ -169,13 +255,40 @@
   text-decoration: underline;
 }
 
+/* 置頂標記（2026-09-14 C 批）：由單一圖釘圖示改為「圖釘＋置頂」紅色膠囊。
+   WCAG 1.4.1 不以顏色單獨表意——底色之外另有「置頂」兩字。
+   文字色 --red-700 對 --red-50 為 5.91:1（--danger-fg 只有 4.41:1，差一點）。 */
 .p-news-pin {
-  display: inline-block;
-  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding: 2px 9px;
+  border: 1px solid var(--red-200);
+  border-radius: var(--r-pill);
+  background: var(--red-50);
   color: var(--danger-fg-hover);
   font-size: var(--fs-xxs);
-  text-decoration: none !important;
-  vertical-align: 0;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+  vertical-align: 2px;
+}
+
+/* 置頂列：整列霧綠底（zebra 的偶數列規則要壓過，故寫在後面並同樣以 tbody tr 選取） */
+.p-news-table .th-table--zebra tbody tr.is-pinned,
+.th-table--zebra tbody tr.is-pinned {
+  background: var(--bg-mist);
+}
+
+.th-table--zebra tbody tr.is-pinned:hover {
+  background: var(--bg-mist-2);
+}
+
+@media (max-width: 768px) {
+  .p-news-pin {
+    margin: 0 0 4px;
+  }
 }
 
 .p-news-tag {

@@ -134,7 +134,8 @@
 .th-btn-ghost {
   background: var(--bg-1);
   color: var(--fg-2);
-  border-color: var(--slate-300);
+  /* 2026-09-14（C 批）：同 .th-input，改為對比足夠的 --border-ui */
+  border-color: var(--border-ui);
 }
 
 .th-btn-ghost:hover {
@@ -807,34 +808,43 @@
   white-space: nowrap;
 }
 
+/* 2026-09-14（C 批）：徽章改為設計檔的**機關識別色**（綠、灰綠系）。
+   原本玉管處是藍、雪管處是橘，看起來像「資訊／警告」狀態色，容易誤讀。
+   文字對各自底色皆 ≥4.5:1（值與對比見 tokens.css）。 */
 .bulletin-badge.agency-nps {
-  background: var(--bg-mist);
-  color: var(--national-700);
-  border-color: var(--national-200);
+  background: var(--badge-npa-bg);
+  color: var(--badge-npa-fg);
+  border-color: var(--badge-npa-border);
+}
+
+.bulletin-badge.agency-police {
+  background: var(--badge-police-bg);
+  color: var(--badge-police-fg);
+  border-color: var(--badge-police-border);
 }
 
 .bulletin-badge.agency-yushan {
-  background: var(--info-bg);
-  color: #1e40af;
-  border-color: var(--info-border);
+  background: var(--badge-yushan-bg);
+  color: var(--badge-yushan-fg);
+  border-color: var(--badge-yushan-border);
 }
 
 .bulletin-badge.agency-taroko {
-  background: #f0f7f9;
-  color: var(--park-taroko);
-  border-color: #cfe3ea;
+  background: var(--badge-taroko-bg);
+  color: var(--badge-taroko-fg);
+  border-color: var(--badge-taroko-border);
 }
 
 .bulletin-badge.agency-sheipa {
-  background: #fff7ed;
-  color: #c2410c;
-  border-color: #ffedd5;
+  background: var(--badge-sheipa-bg);
+  color: var(--badge-sheipa-fg);
+  border-color: var(--badge-sheipa-border);
 }
 
 .bulletin-badge.agency-forestry {
-  background: #f5f8ec;
-  color: #5f6f3c;
-  border-color: #dde5c4;
+  background: var(--badge-forestry-bg);
+  color: var(--badge-forestry-fg);
+  border-color: var(--badge-forestry-border);
 }
 
 .th-expcard {
@@ -1371,13 +1381,15 @@
   font-size: var(--fs-xxs);
   color: var(--fg-3);
 }
+/* 2026-09-14（C 批）：邊框由 --slate-300（白底 1.48:1）改 --border-ui（3.64:1），
+   WCAG 1.4.11 非文字對比需 ≥3:1。裝飾性分隔線仍用 --slate-200/300。 */
 .th-input,
 .th-select,
 .th-textarea {
   min-height: 42px;
   padding: 9px 12px;
   background: var(--bg-1);
-  border: 1px solid var(--slate-300);
+  border: 1px solid var(--border-ui);
   border-radius: var(--r-md);
   font-family: inherit;
   font-size: var(--fs-sm);
@@ -1782,19 +1794,28 @@ ul.th-doc-list {
 /* ------------------------------------------------------------
    th-breadcrumb
    ------------------------------------------------------------ */
+/* 2026-09-14（C 批）依設計檔收緊上下內距（原 16px） */
 .th-crumb {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 16px 32px;
+  padding: 10px 32px;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: var(--fs-xs);
   color: var(--fg-3);
 }
+/* 2026-09-14（C 批）：可點區至少 24×24 CSS px（WCAG 2.5.8 目標尺寸）。
+   原本連結只有文字高度 21px、首頁圖示更窄。 */
 .th-crumb a {
   color: var(--fg-3);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  min-width: 24px;
+  padding: 0 2px;
 }
 .th-crumb a:hover {
   color: var(--national-700);
@@ -2735,11 +2756,13 @@ body.th-noscroll {
   border-bottom: 1px solid var(--slate-100);
   line-height: var(--lh-base);
 }
+/* 2026-09-14（C 批）依設計檔前台web：表頭改霧綠底、深色字、升一級字級
+   （原為 --bg-3 淺灰底、--fg-2、--fs-xs）。 */
 .th-table thead th {
-  background: var(--bg-3);
+  background: var(--bg-mist-2);
   font-weight: 700;
-  font-size: var(--fs-xs);
-  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
   letter-spacing: var(--tracking-wide);
   white-space: nowrap;
   border-bottom: 1px solid var(--slate-200);
@@ -2748,7 +2771,7 @@ body.th-noscroll {
   border-bottom: none;
 }
 .th-table tbody tr:hover {
-  background: var(--bg-2);
+  background: var(--bg-mist);
 }
 .th-table--zebra tbody tr {
   background: var(--bg-1);
@@ -3564,18 +3587,20 @@ a.th-linkrow:hover .th-linkrow-icon {
    沒有 justify-content；是全頁像素比對抓到的。
 ------------------------------------------------------------ */
 
+/* 2026-09-14（C 批）依設計檔：分頁改置中（原靠右） */
 .bulletin-pager {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 6px;
   margin-top: 20px;
 }
+/* 2026-09-14（C 批）：按鈕 38px、邊框改 --border-ui */
 .bulletin-page-btn {
-  min-width: 36px;
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid var(--slate-300);
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--border-ui);
   border-radius: var(--r-md);
   background: var(--bg-1);
   color: var(--fg-2);
