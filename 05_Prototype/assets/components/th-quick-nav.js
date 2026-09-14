@@ -12,6 +12,12 @@
    順序推導）＋ 虛線山徑 ＋ 階段箭頭，襯底為 assets/teach/mountain-journey-background.svg。
    資料結構未變，只動呈現。
 
+   2026-09-14（對照規格 02_Spec/快捷選單.md）：五群名稱與副標改回舊站的**身分命名**
+   （學習／規劃／申請／前往學習／完成登山者），09-07 那組「認識登山／規劃行程…」是
+   階段命名，與舊站不符。另補「山域事故儀表板」（舊站在首頁，本雛形未建置）；
+   原「繳費／退費（含退費日期）查詢」一項拆成國家公園繳費、退費兩個入口並標明適用山屋——
+   舊站該頁實為四個入口，林保署山屋的繳費走「申請進度查詢」，不在這兩項內。
+
    未建置的項目輸出非連結的 <span class="is-todo">，不給 `#` 假路徑
    （2026-09-02 裁決）——原本是 <a href="#" onClick={preventDefault}>，看起來
    像連結、可聚焦、可複製網址，點下去卻沒有反應。「待建置」徽章由
@@ -26,7 +32,7 @@
 window.TH_EXPERIENCE_GROUPS = [
   {
     icon: "fa-solid fa-mountain",
-    title: "認識登山",
+    title: "學習登山者",
     sub: "獲取登山知識",
     groups: [
       {
@@ -43,12 +49,13 @@ window.TH_EXPERIENCE_GROUPS = [
     items: [
       { label: "路線及景點介紹", old: "information_place.aspx" },
       { label: "如何申請入山／入園許可證", href: "web_illustrate.html", old: "web_illustrate.aspx" },
+      { label: "山域事故儀表板" },
     ],
   },
   {
     icon: "fa-solid fa-map-location-dot",
-    title: "規劃行程",
-    sub: "選擇路線與地圖",
+    title: "規劃登山者",
+    sub: "查詢登山資料",
     items: [
       { label: "登山路線圖資查詢", old: "web_map2.aspx" },
       { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
@@ -59,7 +66,7 @@ window.TH_EXPERIENCE_GROUPS = [
   },
   {
     icon: "fa-solid fa-pen-to-square",
-    title: "辦理申請",
+    title: "申請登山者",
     sub: "申請／修改資料",
     items: [
       { label: "線上申請", href: "apply-1.html", old: "apply_1.aspx" },
@@ -68,12 +75,15 @@ window.TH_EXPERIENCE_GROUPS = [
          本雛形把兩者併為 applySearch.html（2026-09-07 裁決）。 */
       { label: "申請進度查詢", href: "applySearch.html", old: "apply_3.aspx" },
       { label: "申請資料異動", old: "apply_2.aspx" },
-      { label: "繳費／退費（含退費日期）查詢", old: "apply_4.aspx" },
+      /* 舊站此處是四個入口之二。分界是機關不是單一山屋：國家公園（玉山）走這兩個獨立入口，
+         林保署山屋的繳費在「申請進度查詢」裡。適用山屋舊站原本就列在入口卡片上。 */
+      { label: "國家公園線上繳費（排雲山莊、觀高山屋）", old: "apply_4.aspx" },
+      { label: "國家公園線上退費（排雲山莊、觀高山屋）", old: "apply_5.aspx" },
     ],
   },
   {
     icon: "fa-solid fa-calendar-check",
-    title: "行前確認",
+    title: "前往學習者",
     sub: "必要整備",
     items: [
       { label: "路線開放狀態查詢", href: "open.html", old: "open.aspx" },
@@ -83,7 +93,7 @@ window.TH_EXPERIENCE_GROUPS = [
   },
   {
     icon: "fa-solid fa-person-hiking",
-    title: "完成登山",
+    title: "完成登山者",
     sub: "下山回報",
     items: [{ label: "出園回報", old: "apply_6.aspx" }],
   },
@@ -137,7 +147,7 @@ window.thComponents["th-quick-nav"] = {
         <div class="th-quickpanel-body">
           <!-- 頂部階段步驟列（完全比照首頁 5 階段風格） -->
           <ul class="th-quick-steps">
-            <li v-for="g in groups" :key="g.title" :class="['th-quick-step', { 'is-active': g.title === '認識登山' }]">
+            <li v-for="(g, gi) in groups" :key="g.title" :class="['th-quick-step', { 'is-active': gi === 0 }]">
               <span class="step-circle"><i :class="g.icon"></i></span>
               <strong>{{ g.title }}</strong>
               <small>{{ g.sub }}</small>
