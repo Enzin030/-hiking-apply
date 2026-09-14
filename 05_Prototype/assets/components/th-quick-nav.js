@@ -60,8 +60,8 @@ window.TH_EXPERIENCE_GROUPS = [
       { label: "登山路線圖資查詢", old: "web_map2.aspx" },
       { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
       { label: "可申請路線查詢", href: "open.html", old: "open.aspx" },
-      { label: "單日往返可申請數量", href: "campsite.html", old: "bed_7.aspx" },
-      { label: "宿營地及山屋可申請數量", href: "campsite.html", old: "bed_0.aspx" },
+      { label: "單日往返可申請數量", href: "campsite.html?org=yushan&kind=oneday", old: "bed_7.aspx" },
+      { label: "宿營地及山屋可申請數量", href: "campsite.html?org=forestry&kind=camp", old: "bed_0.aspx" },
     ],
   },
   {
