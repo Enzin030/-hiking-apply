@@ -45,7 +45,9 @@
 
   <a class="p-indexb-skip" href="#services">跳至主要內容</a>
 
-  <th-header></th-header>
+  <!-- :skip-link="false"：本頁自有指向 #services 的 skip link（第 46 行），
+       且沒有 th-page-shell／#main，元件那一條會是死連結 -->
+  <th-header :skip-link="false"></th-header>
 
   <!-- 最新消息輪播 -->
   <section class="p-indexb-announcements" aria-label="最新消息">
