@@ -117,6 +117,10 @@
 .th-btn-primary:hover {
   background: var(--national-700-hover);
   border-color: var(--national-700-hover);
+  /* color 必寫：實心按鈕若哪天改用 <a> 實作，全站的 a:hover 會把白字蓋成品牌綠，
+     變成深綠底配綠字（設計檔 ACCESSIBILITY.md 專門記過這個坑）。
+     目前是 <button>，寫了不改變現況，是保險。 */
+  color: var(--fg-on-dark);
 }
 
 .th-btn-primary:disabled {
@@ -143,8 +147,9 @@
 }
 
 .th-btn-ghost:hover {
+  /* --bg-2 就是設計檔的 --slate-50，值相同；框線改跟設計檔一樣轉深 */
   background: var(--bg-2);
-  border-color: var(--slate-400);
+  border-color: var(--slate-600);
   color: var(--national-700);
 }
 
@@ -3123,6 +3128,12 @@ body.th-noscroll {
   font-weight: 700;
   color: var(--fg-1);
 }
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month svg {
+  /* fill 必須寫在 svg 上：flatpickr 的箭頭是內層 svg，
+     寫在 .flatpickr-months 上繼承不到，靜態顏色會留在預設的 rgba(0,0,0,.9) */
+  fill: var(--fg-1);
+}
 .flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover svg {
   fill: var(--national-700);
@@ -3137,12 +3148,14 @@ body.th-noscroll {
 
 .flatpickr-calendar .flatpickr-day {
   color: var(--fg-1);
-  border-radius: var(--r-md);
+  /* 2026-09-16：不再覆寫 border-radius，回到 flatpickr 預設的圓形（150px），
+     與設計檔一致。原本寫 --r-md 會讓選取日變成圓角方塊。 */
 }
 .flatpickr-calendar .flatpickr-day:hover,
 .flatpickr-calendar .flatpickr-day:focus {
   background: var(--national-50);
   border-color: var(--national-50);
+  color: var(--national-700);
 }
 .flatpickr-calendar .flatpickr-day.today {
   border-color: var(--national-700);
@@ -3151,7 +3164,7 @@ body.th-noscroll {
 }
 .flatpickr-calendar .flatpickr-day.today:hover {
   background: var(--national-50);
-  color: var(--fg-1);
+  color: var(--national-700);
 }
 .flatpickr-calendar .flatpickr-day.selected,
 .flatpickr-calendar .flatpickr-day.selected:hover {
@@ -3167,7 +3180,12 @@ body.th-noscroll {
 }
 .flatpickr-calendar .flatpickr-day.flatpickr-disabled,
 .flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover {
+  /* hover 必須一起壓掉：上面的 .flatpickr-day:hover 會給停用日霧綠底＋綠字，
+     看起來像可以選（2026-09-16 對照設計檔時發現，屬誤導不是外觀偏好）。 */
   color: var(--fg-4);
+  background: none;
+  border-color: transparent;
+  cursor: not-allowed;
 }
 @media (max-width: 768px) {
   .th-select,
@@ -3736,7 +3754,10 @@ a.th-linkrow:hover .th-linkrow-icon {
   font-weight: 500;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
+/* 2026-09-16：hover 由灰系改為品牌綠系，與設計檔的 .th-pager a:hover 一致
+   （原本底 --bg-2、框 --slate-400，與同一排的「清除／查詢」語言不一致）。 */
 .bulletin-page-btn:hover:not(:disabled) {
+  background: var(--national-50);
   border-color: var(--national-700);
   color: var(--national-700);
 }
