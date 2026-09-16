@@ -413,6 +413,13 @@ thPage({
       applied: Object.assign({}, EMPTY_FILTER),
       page: 1,
       modalItem: null,
+      /* hybrid select（只服務「發布單位」那一支）：自訂清單是否展開。
+         展開與否**只由滑鼠決定**，鍵盤一律交還原生。 */
+      hselOpen: false,
+      /* 下方空間不足時改為向上展開（面板會被視窗底部裁掉的那種情形） */
+      hselUp: false,
+      /* 上下都塞不下時把面板縮到可用高度並讓它自己捲（原生 select 也是這樣做） */
+      hselMaxH: 0,
     };
   },
 
@@ -510,7 +517,94 @@ thPage({
     },
   },
 
+  /* ── hybrid select 的全域收合條件 ──────────────────────────
+     點面板外、捲動、改變視窗大小都收起：自訂面板是絕對定位的，
+     捲動時不會跟著原生 select 走，留在原地會變成「浮在半空的清單」。 */
+  mounted() {
+    var self = this;
+    this._hselOutside = function (e) {
+      if (!self.hselOpen) return;
+      var wrap = self.$refs.hsel;
+      if (wrap && !wrap.contains(e.target)) self.hselOpen = false;
+    };
+    this._hselReset = function () { self.hselOpen = false; };
+    document.addEventListener("mousedown", this._hselOutside);
+    window.addEventListener("scroll", this._hselReset, true);
+    window.addEventListener("resize", this._hselReset);
+  },
+
+  unmounted() {
+    document.removeEventListener("mousedown", this._hselOutside);
+    window.removeEventListener("scroll", this._hselReset, true);
+    window.removeEventListener("resize", this._hselReset);
+  },
+
   methods: {
+    /* ── hybrid select ───────────────────────────────────────
+       只有「滑鼠、桌機寬度、有精確指標」三件同時成立才套自訂清單；
+       其餘一律讓原生 select 自己來（觸控、窄版、鍵盤）。 */
+    hselEnabled() {
+      return window.matchMedia("(min-width: 901px)").matches &&
+             window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    },
+
+    /* pointerdown 先於 mousedown，用來分辨這一次互動是滑鼠還是手指／觸控筆。
+       瀏覽器在觸控後仍會補送 mousedown，只看 mousedown 分不出來。 */
+    hselPointer(e) { this._hselPointerType = e.pointerType || "mouse"; },
+
+    /* 依可用空間決定往下或往上展開。必須在面板畫出來之後量，
+       因為要拿它真正的高度（選項數不同、還有 max-height 320px 的上限）。
+       只在開啟的那一刻決定一次：捲動與 resize 都會直接收起面板，不需要追。 */
+    hselPlace() {
+      var wrap = this.$refs.hsel;
+      var panel = wrap && wrap.querySelector(".p-news-hsel-panel");
+      if (!panel) return;
+      var field = wrap.getBoundingClientRect();
+      var need = panel.getBoundingClientRect().height + 6;   // 6 = 面板與欄位的間距
+      var below = window.innerHeight - field.bottom;
+      var above = field.top;
+      var up = need > below && above > below;
+      this.hselUp = up;
+      /* 選定方向後，若該側仍塞不下就縮高（扣掉 6px 間距與 8px 視窗邊距），
+         面板本來就有 overflow-y: auto，縮完會自己出現捲軸。
+         塞得下就把限制清掉，交還 CSS 的 max-height: 320px。 */
+      var room = (up ? above : below) - 14;
+      this.hselMaxH = need > room ? Math.max(120, room) : 0;
+    },
+
+    hselMouseDown(e) {
+      if (e.button !== 0) return;                    // 只認左鍵
+      if (this._hselPointerType === "touch" || this._hselPointerType === "pen") return;
+      if (!this.hselEnabled()) return;
+      /* preventDefault 是為了擋掉瀏覽器自己的原生彈出清單，否則兩層清單會疊在一起。
+         代價是連聚焦也會被擋掉，所以手動補一次 focus——焦點必須留在原生 select 上，
+         自訂面板全程不接受焦點。 */
+      e.preventDefault();
+      e.currentTarget.focus();
+      this.hselOpen = !this.hselOpen;
+      if (this.hselOpen) {
+        this.hselUp = false;                         // 先歸零，量到再翻
+        var self = this;
+        this.$nextTick(function () { self.hselPlace(); });
+      }
+    },
+
+    /* 任何按鍵都代表使用者改用鍵盤了：收起自訂面板、把控制權交還原生。
+       **這裡不呼叫 preventDefault**，按鍵照常由 <select> 自己處理
+       （↑↓ 換選項、Alt+↓ 開原生清單、輸入文字 typeahead、Tab 離開）。 */
+    hselClose() { this.hselOpen = false; },
+
+    /* 選取結果一律寫回原生 select 並派發 change，
+       頁面既有的 @change="setDraftField(...)" 因此照常運作，查詢邏輯不用改。 */
+    hselPick(id) {
+      var el = this.$refs.hsel && this.$refs.hsel.querySelector("#f-agency");
+      if (!el) return;
+      el.value = id;
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+      this.hselOpen = false;
+      el.focus();
+    },
+
     setDraftField(patch) {
       this.draft = Object.assign({}, this.draft, patch);
     },

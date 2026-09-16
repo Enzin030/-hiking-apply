@@ -41,15 +41,37 @@
     <form class="p-news-filter" @submit.prevent="submitFilter">
       <div class="p-news-filter-grid">
 
-        <!-- 發布單位 -->
+        <!--
+          發布單位：hybrid select 試作（2026-09-16，只有這一支，其餘 17 個 select 不動）
+          ------------------------------------------------------------
+          **原生 <select> 全程是唯一真相**：留在 DOM、可聚焦、可被輔助技術讀取，
+          表單值與 change 都由它發出（頁面的查詢邏輯一行都沒改）。
+          自訂清單只是滑鼠使用者的一層外觀：aria-hidden、tabindex="-1"、焦點不進去。
+          鍵盤按鍵一律不攔截 —— 鍵盤族看到的是**瀏覽器原生的下拉**，不是這個面板。
+        -->
         <div class="p-news-field">
           <label class="p-news-label" for="f-agency">發布單位</label>
-          <select id="f-agency" name="agency" class="th-select"
-                  :value="draft.agency" @change="setDraftField({ agency: $event.target.value })">
-            <option v-for="a in allAgencies" :key="a.id" :value="a.id">
-              {{ a.id === 'all' ? '全部單位' : a.label }}
-            </option>
-          </select>
+          <div class="p-news-hsel" ref="hsel">
+            <select id="f-agency" name="agency" class="th-select"
+                    :value="draft.agency" @change="setDraftField({ agency: $event.target.value })"
+                    @pointerdown="hselPointer" @mousedown="hselMouseDown"
+                    @keydown="hselClose" @blur="hselClose">
+              <option v-for="a in allAgencies" :key="a.id" :value="a.id">
+                {{ a.id === 'all' ? '全部單位' : a.label }}
+              </option>
+            </select>
+            <!-- aria-hidden：報讀器只讀原生 select，兩者不會重複朗讀。
+                 項目用 mousedown.prevent 觸發，焦點才不會離開原生 select。 -->
+            <div v-if="hselOpen" :class="['p-news-hsel-panel', { 'is-up': hselUp }]"
+                   :style="hselMaxH ? { maxHeight: hselMaxH + 'px' } : null" aria-hidden="true">
+              <button v-for="a in allAgencies" :key="a.id" type="button" tabindex="-1"
+                      :class="['p-news-hsel-item', { 'is-selected': draft.agency === a.id }]"
+                      @mousedown.prevent="hselPick(a.id)">
+                <span>{{ a.id === 'all' ? '全部單位' : a.label }}</span>
+                <i v-if="draft.agency === a.id" class="fa-solid fa-check" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- 最新消息：發布日期起訖（兩支 flatpickr，迄日的 min 綁起日） -->
