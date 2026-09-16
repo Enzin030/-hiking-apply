@@ -102,7 +102,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 無 npm、無 build、無測試框架。Vue 3 全域建構（`vue.global.prod.js`，integrity 釘版）
 ＋ in-DOM template：頁面版面留在 `.html`，只有共用元件的 template 是 JS 字串。
 實際引入的函式庫與字體看 `05_Prototype/assets/includes/head.html`（由 head-loader 載入），
-每頁 `<head>` 只靜態保留四行：Tailwind → `tailwind.config.js` → `shared.css` → `index.css`。
+每頁 `<head>` 的靜態載入順序：Tailwind → `tailwind.config.js` → `index.css` → `head-loader.js`。
+樣式表只 link `assets/css/index.css`，不再載入已退場的 `shared.css`。
 
 **`vue.global.prod.js` 不發任何 warning**：樣板編譯失敗與元件解析失敗在 console 上
 完全安靜，只能靠 DOM 元素數或像素比對發現。改元件或樣板後不要只看 console。

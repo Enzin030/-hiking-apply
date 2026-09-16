@@ -30,8 +30,9 @@
 <!--
   head-loader 負責載入 assets/includes/head.html（字體、FontAwesome、Phosphor、
   Vue global build、20 支共用元件、app-boot），最後才載 data-page-init 指定的
-  頁面腳本。**data-page-init 的檔名要與實際檔案一致**——打錯不會 404 到你臉上，
-  只會讓頁面以空資料掛載（app-boot 會在 console 明講，看到就是這件事）。
+  頁面腳本。**data-page-init 的檔名要與實際檔案一致**：路徑錯誤或載入失敗時，
+  head-loader 會在 console 具名回報、發出 includesFailed，並中止後續初始化。
+  腳本成功載入卻沒有呼叫 thPage() 是另一種情況：app-boot 會提示並以空 options 掛載。
 -->
 <script src="assets/includes/head-loader.js" data-page-init="components/PageName.js"></script>
 </head>

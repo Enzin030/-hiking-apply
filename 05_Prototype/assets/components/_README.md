@@ -20,16 +20,13 @@ window.thComponents["th-xxx"] = { props: {...}, template: `...` };
 四層結構是 `assets/css/` 的 `tokens` → `base` → `components` → `pages`，
 由 `index.css` 以 `@import` 串接。共用元件的樣式歸 `components.css`。
 
-過渡期兩份並存：這些元件沿用的部分 class（`.th-chip`、`.th-btn*`、
-`.th-section-title*`、`.th-table-note`、`.fc-*`）**目前仍只在 `styles/shared.css`**，
-`components.css` 一條都沒有。依計畫 §4.2「共用資源以最後一個消費端為退場條件」，
-那些規則要等**最後一個消費端遷移完成**才能搬走 —— 32/32 頁已於 2026-09-09 遷完，
-所以搬移排在**階段 4**，逐條的刪／移分類見 repo 根目錄 `階段4-刪除清單.md` §3、§4。
+階段 4 已完成搬移：`.th-chip`、`.th-btn*`、`.th-section-title*`、
+`.th-table-note` 與兩頁共用的 `.fc-*` 規則由 `components.css` 接手。
+FC1 專用的 `.p-fc1-avail-section .fc-section-title` 則在 `pages.css`，
+保留完整的祖先限定。`styles/shared.css` 已退場，不再編輯或載入。
 
-因此改元件樣式前先確認該 class 現在住哪裡：
-`grep -n "<class>" assets/css/components.css styles/shared.css`。
-在 `shared.css` 的就地改該檔，不要在 `components.css` 另立一份 —— 兩份同選擇器
-會讓後載入的檔勝出，而且 console 完全不會出聲。
+改樣式前先在 `assets/css/components.css` 與 `assets/css/pages.css` 確認現有規則，
+依共用／頁面專用歸屬修改原處，避免另立同選擇器副本。
 
 元件若需要**全新的**外觀（既有 class 提供不了的），寫進 `components.css`，
 不得寫在元件檔內或頁面裡。頁面專用樣式放 `pages.css`，命名 `.p-<頁名>-*`。
