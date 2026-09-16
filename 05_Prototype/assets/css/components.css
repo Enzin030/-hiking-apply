@@ -1429,7 +1429,13 @@
 
   **不加 wrapper、不動任何 markup。** <select> 是 replaced element，
   吃不下 ::before／::after，但吃得下 background —— 所以箭頭用兩道
-  linear-gradient 疊出一個實心三角，顏色直接用 token。
+  linear-gradient 疊出來，顏色直接用 token。
+
+  2026-09-16：形狀由**實心三角**改為**線條式 chevron**，與頁首語言鈕的
+  `fa-angle-down` 一致（使用者要求全站統一）。做法仍是兩道 linear-gradient，
+  只是每道從「半邊填滿」改成「中間一條 1.6px 的斜線」，兩道各轉 ±45° 拼成 ∨。
+  顏色只寫一次，由 --th-select-caret 這個區域變數帶出去，
+  hover／focus／disabled 只要換那一格，不必把整組 gradient 重寫四遍。
 
   為什麼不用 SVG data URI：data URI 裡的顏色只能寫死（SVG 當成圖片載入時
   是獨立文件，`currentColor` 與 CSS 變數都不會解析），那就違反
@@ -1442,11 +1448,15 @@
   appearance: none;
   -webkit-appearance: none;
   padding-right: 32px;
+  /* 箭頭顏色的唯一落點；狀態只換這一格 */
+  --th-select-caret: var(--slate-500);
   background-image:
-    linear-gradient(45deg, transparent 50%, var(--slate-500) 50%),
-    linear-gradient(135deg, var(--slate-500) 50%, transparent 50%);
-  background-position: calc(100% - 18px) calc(50% + 1px), calc(100% - 13px) calc(50% + 1px);
-  background-size: 5px 5px, 5px 5px;
+    linear-gradient(45deg, transparent calc(50% - 0.8px), var(--th-select-caret) calc(50% - 0.8px),
+                    var(--th-select-caret) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
+    linear-gradient(-45deg, transparent calc(50% - 0.8px), var(--th-select-caret) calc(50% - 0.8px),
+                    var(--th-select-caret) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+  background-position: calc(100% - 17px) calc(50% + 1px), calc(100% - 12px) calc(50% + 1px);
+  background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
 }
 .th-field .th-select {
@@ -1458,9 +1468,7 @@
 }
 /* hover 時箭頭跟著加深，與框線同步 */
 .th-select:hover {
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--slate-700) 50%),
-    linear-gradient(135deg, var(--slate-700) 50%, transparent 50%);
+  --th-select-caret: var(--slate-700);
 }
 .th-input:focus,
 .th-select:focus,
@@ -1470,9 +1478,7 @@
 }
 /* focus 時箭頭轉主色，與框線一致 */
 .th-select:focus {
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--national-700) 50%),
-    linear-gradient(135deg, var(--national-700) 50%, transparent 50%);
+  --th-select-caret: var(--national-700);
 }
 /*
   disabled：三種表單欄位一致。原本 .th-select 完全沒有 disabled 樣式，
@@ -1487,9 +1493,7 @@
   cursor: not-allowed;
 }
 .th-select:disabled {
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--slate-400) 50%),
-    linear-gradient(135deg, var(--slate-400) 50%, transparent 50%);
+  --th-select-caret: var(--slate-400);
 }
 .th-input::placeholder,
 .th-textarea::placeholder {
