@@ -118,6 +118,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 6. 用瀏覽器實跑：`th-page-shell` 的標題／導言／麵包屑／slot 都在、`th-header` 的
    語言下拉與手機選單可操作、console 與 4xx 乾淨
 
+**頁面腳本不要在模組層讀 `window.*`，一律在 `data()` 裡取用。**
+資料檔（`components/<X>Data.js`）是 `<body>` 底部的 parser-inserted script，
+頁面腳本則由 head-loader 佇列載入，**兩者沒有保證的先後**。模組層的
+`const D = window.FOO;` 在資料檔還沒跑時就是 `undefined`，`data()` 一取值就炸；
+`data()` 在 app-boot 掛載時才執行，那時 body 的 script 都跑完了。
+正確寫法看 `components/information6.js`、`components/information_4.js`。
+**這一類在正常時序下三件驗收全過**，要插人工延遲才重現（踩坑總表第七類），
+所以靠驗收抓不到，只能在寫的時候就不要這樣寫。
+
 **掛載成功 ≠ 初始化生效。** `app-boot.js` 沒有 page options 時仍會以空 options 掛載，
 畫面會渲染出外殼、資料全空。頁面宣告了 `data-page-init` 卻沒呼叫 `thPage()` 時，
 `app-boot.js` 會在 console 明講——看到那句就是這件事。
@@ -152,12 +161,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 遷移踩坑總表
 
-九類靜默失敗、互動頁遷移通則、驗收方法與其盲點、遷移期的兩條界線：
+十類靜默失敗、對照設計檔的基準、互動頁遷移通則、驗收方法與其盲點、遷移期的兩條界線：
 **`D:\OneDrive - 天眼衛星科技股份有限公司\_knowledge\shared\tech\vue3-global-build-遷移踩坑.md`**
 ——動元件、搬樣式、寫驗收工具前先讀。
 
 其中**第四節「遷移期的兩條界線」只適用任務模式 1**（見上面「任務模式」節）；
-其餘各節（九類靜默失敗、驗收盲點）三種模式都適用。
+其餘各節（十類靜默失敗、對照設計檔以畫面為基準、驗收盲點）三種模式都適用。
 
 ## 三條硬規則（2026-09-09／09-10 由事故與實測訂立）
 
@@ -185,6 +194,22 @@ git checkout -- <單一檔案>            # 針對單一檔案，不給目錄
 ```
 
 執行前先 `git status` 確認沒有他人的未提交內容。
+
+**`index.lock` 的處理是常態程序，不必逐次詢問**（2026-09-16 使用者裁決）。
+遇到 `D:\git-dirs\登山一站式.git\index.lock` 擋住操作時，依序確認兩件事：
+
+1. **沒有任何行程持有該檔**——以獨佔開啟測試，成功才算沒人持有：
+   `$fs=[System.IO.File]::Open($p,'Open','ReadWrite','None'); $fs.Close()`
+2. **沒有寫入型 git 指令在跑**——`Get-CimInstance Win32_Process -Filter "Name='git.exe'"`
+   逐一看 `CommandLine`，`commit`／`add`／`update-index`／`merge`／`rebase`／`stash`／`checkout`
+   一個都沒有。（唯讀指令不算，尤其帶 `--no-optional-locks` 的那些本來就不會建立 lock。）
+
+**兩項都成立＝孤兒檔，可以刪**，但回報中要記下它的**建立時間與大小**。
+**任一項不成立 → 不刪，停下回報。** 本專案實測這個 lock 會反覆出現
+（2026-09-15 00:29、01:11，2026-09-16 09:24 各一次），每次都要重新確認，
+不能因為「上次是孤兒」就直接刪。
+
+R2 的其餘部分不變：**路徑層級的 `git checkout`／`clean`／`reset --hard` 仍一律禁止。**
 
 **工作樹存在未提交內容時，不進行純刪除作業。** 理由不是「怕動到別的目錄」——
 指定明確路徑就不會動到。真正的理由是**回滾成本**：刪除若出了問題要 `git revert`，
