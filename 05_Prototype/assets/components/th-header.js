@@ -394,7 +394,7 @@ window.thComponents["th-header"] = {
         <button type="button" class="th-menubtn" ref="menuBtn"
                 :aria-expanded="menuOpen ? 'true' : 'false'" aria-controls="th-header-nav"
                 :aria-label="menuOpen ? '收合選單' : '展開選單'" @click="toggleMenu">
-          <i class="ph-bold ph-list" aria-hidden="true"></i>
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
         </button>
 
         <div class="th-header-right" id="th-header-nav">
@@ -416,12 +416,12 @@ window.thComponents["th-header"] = {
                       @keydown="onLangBtnKey"
                       :aria-expanded="langOpen ? 'true' : 'false'" aria-haspopup="true"
                       aria-controls="th-lang-list">
-                <i class="ph ph-globe" aria-hidden="true"></i>
+                <i class="fa-solid fa-globe" aria-hidden="true"></i>
                 <!-- 顯示「語言」而非目前語系：目前語系由選單內的勾號與
                      aria-current 表達（設計檔的作法），按鈕本身維持固定寬度。 -->
                 <span>語言</span>
                 <span class="th-sr-only">（目前：{{ currentLangObj.label }}）</span>
-                <i :class="['fa-solid fa-chevron-down th-caret', { 'rotate-180': langOpen }]" aria-hidden="true"></i>
+                <i :class="['fa-solid fa-angle-down th-caret', { 'rotate-180': langOpen }]" aria-hidden="true"></i>
               </button>
               <div v-if="langOpen" class="th-lang-dropdown" id="th-lang-list" ref="langMenu"
                    aria-labelledby="th-lang-btn" @keydown="onLangMenuKey">
@@ -444,7 +444,7 @@ window.thComponents["th-header"] = {
               <input type="search" name="q" class="th-hdrsearch-input" placeholder="搜尋"
                      aria-label="搜尋站內內容" />
               <button type="submit" class="th-hdrsearch-btn" aria-label="搜尋">
-                <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
               </button>
             </form>
           </div>
@@ -461,7 +461,7 @@ window.thComponents["th-header"] = {
                         :aria-expanded="navOpen === n.key ? 'true' : 'false'" aria-haspopup="true"
                         :aria-controls="navMenuId(n.key)">
                   {{ n.label }}
-                  <i :class="['fa-solid fa-chevron-down th-caret', { 'rotate-180': navOpen === n.key }]" aria-hidden="true"></i>
+                  <i :class="['fa-solid fa-angle-down th-caret', { 'rotate-180': navOpen === n.key }]" aria-hidden="true"></i>
                 </button>
                 <div v-if="navOpen === n.key" class="th-navsub-dropdown" :id="navMenuId(n.key)"
                      :aria-labelledby="navBtnId(n.key)" @keydown="onNavMenuKey($event, n.key)">

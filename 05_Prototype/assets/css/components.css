@@ -1840,9 +1840,14 @@ ul.th-doc-list {
 .th-crumb a:hover {
   color: var(--national-700);
 }
+/* 2026-09-16（批次 6）：首頁圖示與分隔符號改為繼承麵包屑本身的字級與顏色
+   （14px／--fg-3），與設計檔的**實際呈現**一致。
+   設計檔雖然寫了 10px／--slate-300，但那條規則在他們站上打不到目標——
+   FA5 的 JS 版會把 <i> 換成 <svg>，`.th-crumb i` 因此從未生效。
+   我方是 FA6 的 CSS 版（維持 <i>），照抄那個值反而會與畫面不符。 */
 .th-crumb i {
-  font-size: var(--fs-3xs);
-  color: var(--slate-300);
+  font-size: inherit;
+  color: inherit;
 }
 .th-crumb-current {
   color: var(--fg-1);
