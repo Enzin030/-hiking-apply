@@ -2520,6 +2520,150 @@ ul.th-doc-list {
   background: var(--bg-selected);
 }
 .th-lang-tick { font-size: var(--fs-xs); color: var(--national-700); }
+/* ------------------------------------------------------------
+   th-hybrid-select — 原生 select 的滑鼠外觀層（2026-09-16）
+   ------------------------------------------------------------
+   由 news 的試作 .p-news-hsel* 提升（二次即提升；第二、三個消費端是
+   apply-1 與 apply-3）。行為與限制寫在 assets/components/th-hybrid-select.js 檔頭。
+
+   收起時的外觀就是 .th-select 本身（含批次 7 的 chevron），這裡只畫展開後的面板。
+   面板的圓角、內距、項目高度與間距**沿用 th-header 語言下拉的既有值**
+   （.th-lang-dropdown／.th-lang-item），不另立一套；唯一差別是陰影改用
+   --sh-lg 這個 token，沿用語言下拉時就是這樣寫的。
+
+   面板寬度與左緣由 JS 依欄位的實際位置給（包裝層是 display: contents，
+   沒有定位基準可用），不像語言下拉那樣靠右對齊——欄位本身有固定寬度，
+   清單與欄位切齊才不會看起來飄移。
+   ------------------------------------------------------------ */
+/* 包裝層不產生方塊：select 仍是原本的 flex／grid 項目，
+   頁面既有的 flex: 1／width: 80px 等規則照常生效（理由見元件檔頭）。 */
+.th-hsel {
+  display: contents;
+}
+
+.th-hsel-panel {
+  /* 座標由 JS 依 select 的實際位置給（包裝層是 display: contents，沒有定位基準） */
+  position: fixed;
+  z-index: 60;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+}
+
+.th-hsel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-1);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* hover 比選中項淺一階 */
+.th-hsel-item:hover {
+  background: var(--bg-mist);
+}
+
+.th-hsel-item.is-selected {
+  background: var(--bg-selected);
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.th-hsel-item.is-selected:hover {
+  background: var(--bg-mist-2);
+}
+
+.th-hsel-item i {
+  flex-shrink: 0;
+  color: var(--national-700);
+  font-size: var(--fs-xs);
+}
+
+/* 向上展開時改由 bottom 定位（JS 一併給座標），縮高之後才不會蓋住欄位。
+   原生 select 的清單也是這樣翻的；不翻的話頁面下半部的欄位會被視窗底部裁掉。 */
+.th-hsel-panel.is-up {
+  top: auto;
+}
+
+/* 窄版完全不套自訂介面：面板不出現，一律走原生 select
+   （JS 那邊也擋了一層，這裡是保險，避免任何殘留狀態畫出面板） */
+@media (max-width: 900px) {
+  .th-hsel-panel {
+    display: none;
+  }
+}
+
+/*
+  強制色彩模式（Windows 高對比）— 2026-09-16 實測補上
+  ------------------------------------------------------------
+  未處理前：系統會把底色與文字色全部換成自己的配色，於是**選中項與其他項
+  長得一模一樣**（底 Canvas、字 CanvasText），hover 也完全沒有回饋——
+  原生 select 在同一情境下是有的（系統自己畫 Highlight）。
+
+  做法是改用系統色關鍵字，不是關掉 forced-color-adjust：
+    hover／鍵盤高亮 → Highlight / HighlightText（跟著使用者的配色走）
+    選中項          → 外框 CanvasText ＋ 保留勾號，與 hover 的反白區分開
+*/
+@media (forced-colors: active) {
+  .th-hsel-panel {
+    border: 1px solid CanvasText;
+  }
+
+  /*
+    hover 用系統的 Highlight／HighlightText，與原生 select 的高亮列一致。
+
+    **forced-color-adjust: none 在這裡是必要的，不是偷懶**：實測 Chromium 在
+    強制色彩模式會在文字後面畫一塊 Canvas 色的 backplate，把 HighlightText
+    的白字整個蓋掉（畫面上只剩一條白方塊）。關掉自動調整之後，
+    Highlight／HighlightText 仍然解析為**使用者自己的系統配色**，
+    不是我們的 token，所以沒有違反強制色彩模式的用意。
+  */
+  .th-hsel-item:hover,
+  .th-hsel-item:hover i {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .th-hsel-item:hover i {
+    background: transparent;
+  }
+
+  /* 選中項改用外框標示（底色在強制色彩下會被系統蓋掉，分不出選中與否），
+     勾號本身也還在，兩個線索並存。 */
+  .th-hsel-item.is-selected {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
+
+.th-hsel-item.is-disabled {
+  color: var(--fg-4);
+  cursor: not-allowed;
+}
+
+.th-hsel-item.is-disabled:hover {
+  background: transparent;
+}
+
 body.th-noscroll {
   overflow: hidden;
 }

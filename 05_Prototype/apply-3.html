@@ -94,9 +94,9 @@
                                   :model-value="startDate"
                                   @update:model-value="startDate = $event"></th-date-picker>
                   <i class="p-apply3-date-arrow fa-solid fa-arrow-right" aria-hidden="true"></i>
-                  <select class="th-select p-apply3-days-select" :value="days" @change="days = Number($event.target.value)">
+                  <th-hybrid-select><select class="th-select p-apply3-days-select" :value="days" @change="days = Number($event.target.value)">
                     <option v-for="n in [1, 2, 3, 4, 5, 6, 7]" :key="n" :value="n">{{ n }} 天</option>
-                  </select>
+                  </select></th-hybrid-select>
                 </div>
                 <div class="p-apply3-date-result">
                   <span>入山 <strong>{{ startDate }}</strong></span>
@@ -106,13 +106,13 @@
               </div>
               <div class="th-field">
                 <label class="th-label"><span class="req">*</span>申請目的</label>
-                <select class="th-select" :value="purpose" @change="purpose = $event.target.value">
+                <th-hybrid-select><select class="th-select" :value="purpose" @change="purpose = $event.target.value">
                   <option value="">請選擇申請目的</option>
                   <option value="hiking">登山活動</option>
                   <option value="research">學術研究</option>
                   <option value="news">新聞採訪</option>
                   <option value="other">其他（請於備註欄說明）</option>
-                </select>
+                </select></th-hybrid-select>
               </div>
               <div class="th-field">
                 <label class="th-label">細部路線圖（選填）</label>
@@ -150,11 +150,11 @@
                 <input type="text" class="th-input" placeholder="姓名"
                   :value="m.name" @input="updateMember(m.id, 'name', $event.target.value)" />
                 <div class="p-apply3-id-cell">
-                  <select class="th-select p-apply3-idtype-select"
+                  <th-hybrid-select><select class="th-select p-apply3-idtype-select"
                     :value="m.idType" @change="updateMember(m.id, 'idType', $event.target.value)">
                     <option value="id">身分證</option>
                     <option value="passport">護照</option>
-                  </select>
+                  </select></th-hybrid-select>
                   <input type="text" class="th-input" :placeholder="m.idType === 'id' ? 'A123456789' : 'Passport No.'"
                     :value="m.idNum" @input="updateMember(m.id, 'idNum', $event.target.value)" />
                 </div>
@@ -162,12 +162,12 @@
                   :value="m.phone" @input="updateMember(m.id, 'phone', $event.target.value)" />
                 <input type="tel" class="th-input" placeholder="緊急聯絡電話"
                   :value="m.emergency" @input="updateMember(m.id, 'emergency', $event.target.value)" />
-                <select class="th-select"
+                <th-hybrid-select><select class="th-select"
                   :value="m.role" @change="updateMember(m.id, 'role', $event.target.value)">
                   <option value="leader">領隊</option>
                   <option value="member">隊員</option>
                   <option value="guide">嚮導</option>
-                </select>
+                </select></th-hybrid-select>
                 <button class="row-del" @click="removeMember(m.id)" :disabled="members.length <= 1">
                   <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                 </button>
@@ -196,12 +196,12 @@
               <div class="th-field">
                 <label class="th-label"><span class="req">*</span>登山相關經歷</label>
                 <!-- 原碼此處沒有綁值，是未受控的下拉 -->
-                <select class="th-select">
+                <th-hybrid-select><select class="th-select">
                   <option>初次參加登山活動</option>
                   <option>曾參加過 1–3 次</option>
                   <option>曾參加過 4–10 次</option>
                   <option>專業／資深登山者</option>
-                </select>
+                </select></th-hybrid-select>
               </div>
               <div class="th-field">
                 <label class="th-label"><span class="req">*</span>是否攜帶 GPS 等通訊裝置</label>
@@ -251,10 +251,10 @@
               </div>
               <div class="th-field">
                 <label class="th-label">關係</label>
-                <select class="th-select" :value="keeperRel" @change="keeperRel = $event.target.value">
+                <th-hybrid-select><select class="th-select" :value="keeperRel" @change="keeperRel = $event.target.value">
                   <option value="">請選擇</option>
                   <option>家人</option><option>朋友</option><option>同事</option><option>其他</option>
-                </select>
+                </select></th-hybrid-select>
               </div>
             </div>
           </div>
@@ -277,7 +277,7 @@
             <div class="p-apply3-grid">
               <div class="th-field">
                 <label class="th-label"><span class="req">*</span>入山事由</label>
-                <select class="th-select"><option>登山活動</option><option>學術研究</option><option>其他</option></select>
+                <th-hybrid-select><select class="th-select"><option>登山活動</option><option>學術研究</option><option>其他</option></select></th-hybrid-select>
               </div>
               <div class="th-field">
                 <label class="th-label"><span class="req">*</span>預定地點</label>

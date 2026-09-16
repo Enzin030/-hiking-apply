@@ -122,12 +122,12 @@
           </div>
           <div class="p-apply1-sort">
             <span>排序：</span>
-            <select class="th-select" v-model="sort">
+            <th-hybrid-select><select class="th-select" v-model="sort">
               <option value="default">預設（依管理機關）</option>
               <option value="diff-asc">難度低→高</option>
               <option value="diff-desc">難度高→低</option>
               <option value="days-asc">天數少→多</option>
-            </select>
+            </select></th-hybrid-select>
           </div>
         </div>
 
