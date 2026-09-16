@@ -28,43 +28,38 @@
 
   <th-page-shell
     :trail="['登山須知']"
-    title="登山須知"
-    lead="本站整合國家公園署、林業及自然保育署、警政署等機關之登山申辦規定。"
-    updated="2026-09-01">
+    title="登山須知">
+
+    <!--
+      安全影片按鈕與頁面標題同列（2026-09-16）。官網 notice.aspx 也是這個結構：
+      `<h2 class="con_title"><span class="pull-right">[按鈕]</span>登山須知</h2>`。
+
+      靠右對齊改由 th-page-shell 的 `.th-page-head` 內層 `justify-between` 負責，
+      不再自帶 `.p-notice-actions` 包裝（窄螢幕由該層的 `flex-wrap` 折行）。
+      → `pages.css` 的 `.p-notice-actions` 兩條（含 @media 640 那條）自此成為死規則，
+        待另一 session 的 pages.css 改動提交後再刪，本次不動該檔以免衝突。
+      按鈕本身的樣式仍在 assets/css/pages.css，未改。
+    -->
+    <template #title-right>
+      <a class="p-notice-video-btn" :href="safetyVideo" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-youtube" aria-hidden="true"></i>觀看登山安全影片
+      </a>
+    </template>
 
     <template #nav>
       <th-page-nav :items="navItems"></th-page-nav>
     </template>
 
     <!--
-      .p-notice-actions／.p-notice-video-btn 是本頁專用樣式，遷移時依 §6.2 由
-      .th-notice-actions／.th-video-btn 改名，規則見 assets/css/pages.css。
+      本頁原有一段我方新增的警示區（跨機關規定、入山許可證）與頁首導言、更新日期，
+      2026-09-16 依使用者指示刪除——正式站 notice.aspx 的頁面本體沒有這三項
+      （官網的「更新日期」與「乃整合…」說明在**頁尾**，我方 th-footer 已有對應內容）。
+      **不要憑「看起來少了說明」把它們加回來。**
+
+      連帶刪除的長註解記載了 Vue 與 JSX 對空白處理的差異（換行只能出現在兩個文字之間）。
+      該規則本身仍然成立，只是本頁已無適用對象；正本見
+      `_knowledge/shared/tech/vue3-global-build-遷移踩坑.md`「三、驗收方法與它的盲點」。
     -->
-    <div class="p-notice-actions">
-      <a class="p-notice-video-btn" :href="safetyVideo" target="_blank" rel="noopener noreferrer">
-        <i class="fa-brands fa-youtube" aria-hidden="true"></i>登山安全影片（HOT）
-      </a>
-    </div>
-
-    <!--
-      **這段的換行位置是刻意的，改動前先讀完這段。**（2026-09-08 實測）
-
-      JSX 與 Vue template 對空白的處理不同：
-      - JSX 會把「行首／行尾的換行＋縮排」整段去掉
-      - Vue 的 whitespace: 'condense' 只刪「純空白且含換行」的節點；
-        「文字＋換行＋縮排」會被折疊成「文字＋一個空白」
-
-      所以要與 React 版逐字相同，換行只能出現在**兩個文字之間**
-      （那裡 JSX 也會折成一個空白），不能出現在文字與標籤之間：
-
-        。↵進入…      ← 要保留：JSX 也會變成「。 進入」的一個空白
-        許可證。↵<span> ← 不可換行：JSX 沒有空白，Vue 會多一個
-
-      實測那一個多出來的空白讓內層 div 由 866.28px 變成 869.64px，
-      全頁 600 個像素不同（文字 justify 重新分配 ＋ 待確認徽章右移約 3px）。
-    -->
-    <th-callout type="warning">各機關申辦規定不同，<strong>同一趟行程若跨越多個管理機關，須分別符合各機關規定</strong>。
-      進入山地管制區者另須申請入山許可證。<span class="th-todo-tag">待確認</span><span class="th-callout-src">本段非正式站原文，為我方新增，來源待業務確認。</span></th-callout>
 
     <!--
       .th-notice-grid 維持原名：applySearch.html 也在用且尚未遷移，改名會弄壞那頁。
