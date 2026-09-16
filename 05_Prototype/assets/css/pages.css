@@ -3112,6 +3112,13 @@
   align-items: start;
 }
 
+/* 2026-09-14（批次 5）：320px 實測整頁溢位 37px。grid 項目的 min-width
+   預設是 auto，欄軌會被「壓不下去的最寬子元素」撐開（這裡是行程區塊內的
+   橫向列）。給 0 之後 320px 無溢位，其他寬度不受影響。 */
+.p-apply3-layout > * {
+  min-width: 0;
+}
+
 .p-apply3-route-card {
   background: var(--bg-1);
   border: 1px solid var(--slate-100);

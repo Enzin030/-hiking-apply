@@ -3085,7 +3085,9 @@ body.th-noscroll {
    ------------------------------------------------------------ */
 .flatpickr-calendar.flatpickr-calendar {
   background: var(--bg-1);
-  border: 1px solid var(--slate-200);
+  /* 2026-09-14（批次 5，逐條核對設計檔）：--slate-200 對白底僅 1.3:1，
+     互動元件邊框需 ≥3:1（WCAG 1.4.11） */
+  border: 1px solid var(--border-ui);
   border-radius: var(--r-lg);
   box-shadow: var(--sh-lg);
   font-family: var(--font-sans);
@@ -3118,7 +3120,9 @@ body.th-noscroll {
 }
 
 .flatpickr-calendar span.flatpickr-weekday {
-  color: var(--fg-3);
+  /* 設計檔為 14px、--fg-2（7.58:1）；原本沿用 flatpickr 的 13.5px 與 --fg-3 */
+  color: var(--fg-2);
+  font-size: var(--fs-xs);
   font-weight: 700;
 }
 
@@ -3132,7 +3136,9 @@ body.th-noscroll {
   border-color: var(--national-50);
 }
 .flatpickr-calendar .flatpickr-day.today {
-  border-color: var(--national-400);
+  border-color: var(--national-700);
+  color: var(--national-700);
+  font-weight: 700;
 }
 .flatpickr-calendar .flatpickr-day.today:hover {
   background: var(--national-50);
@@ -3144,10 +3150,14 @@ body.th-noscroll {
   border-color: var(--national-700);
   color: var(--fg-on-dark);
 }
-.flatpickr-calendar .flatpickr-day.flatpickr-disabled,
-.flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover,
+/* 上／下月的日期是可點的一般文字，需 ≥4.5:1（設計檔同樣修正過這一條）；
+   停用日期維持 --fg-4——WCAG 對停用（inactive）元件不要求對比。 */
 .flatpickr-calendar .flatpickr-day.prevMonthDay,
 .flatpickr-calendar .flatpickr-day.nextMonthDay {
+  color: var(--fg-3);
+}
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover {
   color: var(--fg-4);
 }
 @media (max-width: 768px) {
