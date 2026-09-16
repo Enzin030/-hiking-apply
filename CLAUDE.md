@@ -66,6 +66,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |---|---|
 | 工作規則正本（語言、執行紀律、驗證程序、資料夾慣例） | `C:\Users\enzin.GIS\.agents\institution\core.md`（session 自動載入，不必重讀） |
 | 領域詞彙、角色、業務規則 | `D:\OneDrive - 天眼衛星科技股份有限公司\_knowledge\projects\國家公園入園擴充\index.md`（**正本**） |
+| 從正式站／測試站擷取內容的溯源規則、示意值辨識 | `D:\OneDrive - 天眼衛星科技股份有限公司\_knowledge\shared\tech\擷取內容的溯源與可信度.md`（**抄任何舊站內容前先讀**） |
 | 架構決策紀錄 | 根目錄 `decisions.md`（一行一筆） |
 | 規格文件 | `02_Spec/`（尚無定稿） |
 | 早期規劃草稿（PRD、實作方針、DB 清單、UI/UX 提案、簡報稿） | `.scratch/docs-舊規劃/`——**不進版控**，僅供回查 |
