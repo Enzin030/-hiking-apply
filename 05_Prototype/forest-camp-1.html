@@ -100,11 +100,11 @@
                   <i class="fa-solid fa-minus" aria-hidden="true"></i>
                 </button>
                 <span class="fc-stepper-val">{{ headcount }} 人</span>
-                <button class="fc-stepper-btn" @click="addHeadcount(1)" :disabled="headcount >= 20">
+                <button class="fc-stepper-btn" @click="addHeadcount(1)" :disabled="headcount >= 12">
                   <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
-              <div class="th-field-hint">最多 20 人</div>
+              <div class="th-field-hint">最多 12 人（notice_b3：每隊 1〜12 名）</div>
             </div>
 
             <div v-if="endDate" class="th-field">
@@ -155,10 +155,14 @@
             <i class="ph-bold ph-currency-circle-dollar" aria-hidden="true"></i>
             <span>費用參考</span>
           </div>
+          <!-- 二價（2026-09-16）：官網的山屋費率分假日／平日，原本是單一數值。
+               日期在本頁尚未決定每一夜，所以兩個級距都列出；FC2 才按當夜日期取值。 -->
           <div v-for="f in cabin.facilities" :key="f.id" class="p-fc1-price-row">
             <span>{{ f.label }}</span>
-            <span>NT$ {{ f.pricePerNight }} / {{ f.unit }} / 晚</span>
+            <span>NT$ {{ f.price.weekday }}（平日）／{{ f.price.holiday }}（假日） / {{ f.unit }} / 晚</span>
           </div>
+          <div class="p-fc1-price-note">假日費率以週五、六估算，連假另計〔待確認〕</div>
+          <div v-for="(n, i) in cabin.priceNotes" :key="'pn' + i" class="p-fc1-price-note">{{ n }}</div>
           <div class="p-fc1-price-note">實際費用於確認送出時顯示</div>
         </div>
       </aside>

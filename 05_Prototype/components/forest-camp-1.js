@@ -10,7 +10,7 @@
    |---------------------------------|----------------------|------|
    | useState(todayStr)  startDate   | data.startDate       | 出發日 |
    | useState(cabin.minDays) nights  | data.nights          | 夜數，上下限來自 cabin |
-   | useState(4)        headcount    | data.headcount       | 1～20 |
+   | useState(4)        headcount    | data.headcount       | 1～12（notice_b3） |
    | useState(false)    queried      | data.queried         | 查詢結果區與「下一步」的閘門 |
    | useMemo endDate [startDate,nights] | computed.endDate  | 依賴由 Vue 自動追蹤 |
    | canQuery（每次 render 重算）      | computed.canQuery    | 純函式，包成 computed 等價 |
@@ -97,7 +97,7 @@ const pFc1AvailBar = {
         <div class="p-fc1-avail-bar" :style="barStyle"></div>
       </div>
       <div class="p-fc1-avail-meta">
-        <span>每{{ facility.unit }} NT$ {{ facility.pricePerNight }} / 晚</span>
+        <span>每{{ facility.unit }} NT$ {{ facility.price.weekday }}～{{ facility.price.holiday }} / 晚</span>
         <span>{{ nights }} 晚 × {{ facility.max }} {{ facility.unit }} 上限</span>
       </div>
     </div>
@@ -139,7 +139,8 @@ thPage({
       this.queried = false;
     },
     addHeadcount(d) {
-      this.headcount = d < 0 ? Math.max(1, this.headcount - 1) : Math.min(20, this.headcount + 1);
+      /* 上限 12 依 notice_b3「每隊人數 1〜12 名」（原寫死 20，無依據） */
+      this.headcount = d < 0 ? Math.max(1, this.headcount - 1) : Math.min(12, this.headcount + 1);
       this.queried = false;
     },
 

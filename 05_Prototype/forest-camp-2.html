@@ -109,7 +109,9 @@
                   </span>
                   <div>
                     <div class="p-fc2-facility-name">{{ f.label }}</div>
-                    <div class="p-fc2-facility-price">NT$ {{ f.pricePerNight }} / {{ f.unit }}<span v-if="qtyOf(i, f.id) > 0" class="p-fc2-facility-subtotal">= NT$ {{ qtyOf(i, f.id) * f.pricePerNight }}</span></div>
+                    <!-- 二價（2026-09-16）：單價按**當夜日期**取，走 priceOf() 不直接讀 price.weekday。
+                         假日只認週五六（近似），旁邊的 is-holiday 標記讓使用者看得出這一夜算哪個級距。 -->
+                    <div class="p-fc2-facility-price">NT$ {{ priceOf(f, i) }} / {{ f.unit }}<span v-if="isHoliday(i)" class="p-fc2-facility-holiday">假日</span><span v-if="qtyOf(i, f.id) > 0" class="p-fc2-facility-subtotal">= NT$ {{ qtyOf(i, f.id) * priceOf(f, i) }}</span></div>
                   </div>
                 </div>
                 <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"

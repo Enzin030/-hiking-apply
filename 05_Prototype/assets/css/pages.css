@@ -669,6 +669,20 @@
   font-weight: 700;
 }
 
+/* 假日級距標記（2026-09-16，二價改動）。沿用既有 warning token 組，
+   不新增顏色；只在該夜落在週五六時出現，讓使用者看得出單價為何較高。 */
+.p-fc2-facility-holiday {
+  margin-left: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--warning-border);
+  border-radius: var(--r-sm);
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  font-size: var(--fs-3xs);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
 .p-fc2-payment-icon {
   width: 36px;
   height: 36px;

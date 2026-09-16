@@ -37,3 +37,26 @@ window.thAddDaysToDateValue = function (dateValue, days) {
 window.thTodayValue = function () {
   return window.thFormatDateInputValue(new Date());
 };
+
+/* ------------------------------------------------------------
+   假日判定（**近似**，2026-09-16）
+   ------------------------------------------------------------
+   只認**星期五、星期六**。這不是官網的完整定義：
+
+     天池山莊（notice_b5）：星期五、六、國定假日前一晚及農曆連假
+     嘉明湖・向陽・檜谷（notice_b6／b4）：星期五、六及連續假日前一日至收假前一日
+
+   「國定假日」「農曆連假」「收假日」需要外部行事曆資料，本雛形沒有，
+   **也不自己編一份**（編出來的假行事曆會被當成規則）。所以只做週五六近似，
+   並在畫面上標明「假日費率以週五六估算，連假另計」。
+   [待確認] 假日行事曆的資料來源。
+
+   各家假日定義不同這件事本身也沒有在此實作——近似值對四家都一樣。
+   ------------------------------------------------------------ */
+window.thIsHolidayApprox = function (dateValue) {
+  if (!dateValue) return false;
+  var parts = String(dateValue).split("-").map(Number);
+  if (parts.length !== 3 || !parts[0]) return false;
+  var d = new Date(parts[0], parts[1] - 1, parts[2]).getDay();
+  return d === 5 || d === 6;   // 5=五 6=六
+};

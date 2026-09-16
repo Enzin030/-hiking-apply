@@ -174,11 +174,13 @@ thPage({
     // v-for 用；原 React 是 Array.from({length: nights}, (_, i) => ...)
     nightIndexes() { return Array.from({ length: this.nights }, (_, i) => i); },
 
+    /* 二價（2026-09-16）：逐夜取當夜費率。原本是 `* f.pricePerNight` 單一數值——
+       迴圈本來就逐夜迭代，所以換成 priceOf(f, i) 不必改結構。 */
     subtotals() {
       return this.cabin.facilities.map(f => {
         let total = 0;
         for (let i = 0; i < this.nights; i++) {
-          total += this.qtyOf(i, f.id) * f.pricePerNight;
+          total += this.qtyOf(i, f.id) * this.priceOf(f, i);
         }
         return { ...f, total };
       });
@@ -213,8 +215,14 @@ thPage({
       return this.cabin.facilities.reduce((s, f) => s + this.qtyOf(i, f.id), 0);
     },
     nightCost(i) {
-      return this.cabin.facilities.reduce((s, f) => s + this.qtyOf(i, f.id) * f.pricePerNight, 0);
+      return this.cabin.facilities.reduce((s, f) => s + this.qtyOf(i, f.id) * this.priceOf(f, i), 0);
     },
+
+    /* 第 i 夜的日期是不是假日（只認週五六，近似——見 th-date-utils.js） */
+    isHoliday(i) { return window.thIsHolidayApprox(this.nightDate(i)); },
+
+    /* 第 i 夜、某設施的單價。**所有金額計算都走這支**，不要直接讀 price.weekday */
+    priceOf(f, i) { return window.thFcPriceOf(f, this.nightDate(i)); },
 
     handleNext() {
       const params = new URLSearchParams({
