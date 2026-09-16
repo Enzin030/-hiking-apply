@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>排雲山莊線上繳費 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：線上繳費(排雲)　規格 02_Spec/06b_線上繳費(排雲).md
+  ------------------------------------------------------------
+  舊站頁：apply_4.aspx。檔名不沿用 apply_4，因為既有 apply-2.html 是
+  「申請流程步驟二」，`apply_2`／`apply_4` 這種只差一個字元的檔名容易誤開。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）：
+      Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_pay.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, '排雲山莊線上繳費']"
+    title="排雲山莊線上繳費"
+    lead="列印繳費說明單或線上繳納排雲山莊住宿規費。僅適用玉山國家公園排雲山莊、觀高山屋之案件。"
+    updated="2026-09-15">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!-- 一、查詢檢核 -->
+    <section class="th-card" id="query">
+      <div class="th-card-head">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <h2 class="th-card-title">查詢繳費案件</h2>
+        <span class="th-card-note">舊站頁 apply_4.aspx</span>
+      </div>
+      <div class="th-card-body">
+        <p>請輸入<strong>申請編號</strong>與<strong>隊伍名稱</strong>查詢應繳金額。案件須為待繳費狀態且在繳費期限內，方可進入繳費程序。</p>
+
+        <div class="flex flex-col gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-serial"><span class="req">*</span>登山申請編號</label>
+            <input id="f-serial" name="serial" ref="serial" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入登山申請一站式申請編號"
+                   :value="serial" @input="serial = $event.target.value" />
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-team"><span class="req">*</span>隊伍名稱</label>
+            <input id="f-team" name="team" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入申請時填寫的隊伍名稱"
+                   :value="team" @input="team = $event.target.value" />
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+            <p class="th-field-hint">雛形不做真實查詢，按「查詢」一律帶出示意案件。</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="th-btn th-btn-secondary" @click="reset">清除</button>
+              <button type="button" class="th-btn th-btn-ghost" @click="showExpired = true">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>檢視逾期提示
+              </button>
+              <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <th-callout>案件進度須為待繳費相關狀態（初審完成待繳費、初審完成待補件及繳費、複審完成等）才可進入繳費；
+            其餘狀態不開放。繳費期限為<strong>抽籤日與候補通知日兩者取晚者起算第 3 日</strong>，逾期即失去入園許可資格。<span class="th-callout-src">來源：02_Spec/06b_線上繳費(排雲).md（狀態碼 0/1/4/9/10/11/12/17）</span></th-callout>
+      </div>
+    </section>
+
+    <!-- 二、案件基本資料 -->
+    <section class="th-card" id="basic" v-if="submitted">
+      <div class="th-card-head">
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+        <h2 class="th-card-title">案件基本資料</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="th-table-note">資料為匿名假資料，非真實申請案。</p>
+        <th-data-table :columns="basicColumns" :rows="basicRows" row-key="label" table-class="th-table--zebra">
+          <template #cell="{ row, column, value }">
+            <span v-if="column.key === 'value' && row.flag" :class="['th-flag', row.flag]">{{ value }}</span>
+            <template v-else>{{ value }}</template>
+          </template>
+        </th-data-table>
+      </div>
+    </section>
+
+    <!-- 三、費用明細 -->
+    <section class="th-card" id="fee" v-if="submitted">
+      <div class="th-card-head">
+        <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+        <h2 class="th-card-title">費用明細</h2>
+        <span class="th-card-note">排雲山莊規費每人每宿 480 元</span>
+      </div>
+      <div class="th-card-body">
+        <th-data-table :columns="feeColumns" :rows="feeRows" :head-rows="feeHead"
+                       row-key="date" table-class="th-table--zebra"
+                       caption="費用明細，欄位為住宿日期、宿營地、中華民國人單價／人數／小計、外國人單價／人數／小計、單日合計"></th-data-table>
+        <p class="th-table-note">小計 ＝ 單價 × 人數。總計 {{ feeTotalText }}，另依所選繳費管道加計手續費。</p>
+      </div>
+    </section>
+
+    <!-- 四、繳費管道 -->
+    <section class="th-card" id="channel" v-if="submitted">
+      <div class="th-card-head">
+        <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+        <h2 class="th-card-title">選擇繳費管道</h2>
+      </div>
+      <div class="th-card-body">
+        <p>請擇一繳費管道。手續費依管道不同，選定後於下方確認應繳總額。</p>
+
+        <div class="p-applypay-channels" role="radiogroup" aria-label="繳費管道">
+          <label v-for="c in channels" :key="c.id"
+                 :class="['p-applypay-channel', { 'is-picked': channel === c.id }]">
+            <input type="radio" name="paychannel" class="p-applypay-radio"
+                   :value="c.id" :checked="channel === c.id" @change="channel = c.id" />
+            <span class="p-applypay-channel-icon"><i :class="c.icon" aria-hidden="true"></i></span>
+            <span class="p-applypay-channel-body">
+              <span class="p-applypay-channel-title">{{ c.title }}</span>
+              <span class="p-applypay-channel-desc">{{ c.desc }}</span>
+              <span class="th-chip-row">
+                <span class="th-chip">{{ c.feeText }}</span>
+                <th-todo-link v-if="c.todo" :label="c.todo"></th-todo-link>
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">應繳總額（含手續費）：<strong>{{ payableText }}</strong></p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="submitted = false">回查詢頁</button>
+            <th-todo-link label="前往繳費" extra-class="justify-center"></th-todo-link>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 五、業務規則 -->
+    <section class="th-card" id="rules">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">繳費規定與收據</h2>
+      </div>
+      <div class="th-card-body">
+        <th-callout type="warning">未依限繳交或繳交金額不足者，<strong>取消入園許可資格</strong>。本系統不接受外幣轉帳與跨國匯款。<span class="th-callout-src">來源：02_Spec/06b_線上繳費(排雲).md</span></th-callout>
+        <th-callout>收據預設存放玉管處，收據編號可於「申請進度查詢／許可證下載」查詢。
+            需索取紙本收據者，請檢附 28 元掛號回郵信封寄送玉管處。<span class="th-callout-src">來源：02_Spec/06b_線上繳費(排雲).md</span></th-callout>
+        <h3 class="th-section-title">超商繳費的補件程序<span class="th-todo-tag">待確認</span></h3>
+        <p class="th-table-note">超商繳費後須於期限內上傳蓋章繳費單及熱感應紙收據；上傳介面與期限日數未取得正式站可公開來源。</p>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 逾期提示：舊站為 alert 彈窗，雛形改用共用的 th-modal -->
+  <th-modal v-if="showExpired" title="繳費期限已過" meta="apply_4.aspx 逾期提示" @close="showExpired = false">
+    <p>本案件已逾繳費期限，無法線上繳費。繳費期限為抽籤日與候補通知日取晚者起算第 3 日。</p>
+    <p>如對繳費期限有疑義，請以入園信箱洽玉山國家公園管理處。</p>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>

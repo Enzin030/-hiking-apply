@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山路線圖資查詢 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：登山路線圖資查詢　規格 02_Spec/22_登山路線圖資查詢.md
+  ------------------------------------------------------------
+  舊站頁：web_map2.aspx，圖台用 Easymap（`./GIS/Easymap/easymap.js`）。
+
+  **圖台本身在本雛形是佔位框，不接任何地圖套件。**
+  理由有二：一是本專案刻意維持零 build、零 npm，引入圖台套件與圖磚服務
+  是架構層級的決定，不是一支新頁可以順手帶進來的；二是 22 個圖層背後的
+  圖資服務端點（遊客中心、停機坪、可通訊據點、分區圖、範圍、生態保護區、
+  應申請入山證範圍）尚未取得，接了也沒有東西可畫。
+  **查詢條件、圖層開關、查詢結果清單三者是真的可操作的**，
+  圖層開關的狀態直接顯示在佔位框上，供後續接圖台時對照。
+  圖台套件的選型標記 [待確認]。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/web_map2.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <th-page-shell
+    :trail="['旅遊登山資訊', '登山路線圖資查詢']"
+    title="登山路線圖資查詢"
+    lead="以管理單位與路線，或以關鍵字查詢登山路線，並在圖台上疊加遊客中心、救難停機坪、可通訊據點等圖層。"
+    updated="2026-09-15">
+
+    <!-- 一、查詢條件（雙模式） -->
+    <section class="th-card" id="query">
+      <div class="th-card-head">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <h2 class="th-card-title">查詢條件</h2>
+        <span class="th-card-note">舊站頁 web_map2.aspx</span>
+      </div>
+      <div class="th-card-body">
+        <div class="th-tabs">
+          <nav class="th-tabs-nav" aria-label="查詢方式">
+            <button type="button" v-for="m in modes" :key="m.key"
+                    :class="['th-tab', { 'is-active': mode === m.key }]"
+                    :aria-current="mode === m.key ? 'page' : null"
+                    @click="mode = m.key">
+              <i :class="m.icon" aria-hidden="true"></i><span>{{ m.label }}</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- 模式一：選擇路線查詢 -->
+        <div class="p-map2-form" v-if="mode === 'select'">
+          <div class="th-field">
+            <label class="th-label" for="f-org">管理單位</label>
+            <select id="f-org" class="th-select" :value="org" @change="pickOrg($event.target.value)">
+              <option value="">請選擇</option>
+              <option v-for="o in orgOptions" :key="o.id" :value="o.id">{{ o.name }}</option>
+            </select>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-main">主路線</label>
+            <select id="f-main" class="th-select" :value="mainRoute" @change="pickMain($event.target.value)" :disabled="!org">
+              <option value="">{{ org ? '請選擇' : '請先選擇管理單位' }}</option>
+              <option v-for="m in mainOptions" :key="m" :value="m">{{ m }}</option>
+            </select>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-sub">次路線</label>
+            <select id="f-sub" class="th-select" :value="subRoute" @change="subRoute = $event.target.value" :disabled="!mainRoute">
+              <option value="">{{ mainRoute ? '請選擇' : '請先選擇主路線' }}</option>
+              <option v-for="s in subOptions" :key="s.id" :value="s.id">{{ s.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 模式二：輸入關鍵字查詢 -->
+        <div class="p-map2-form" v-else>
+          <div class="th-field p-map2-form-wide">
+            <label class="th-label" for="f-kw">關鍵字</label>
+            <input id="f-kw" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入路線名稱關鍵字，例如：玉山、奇萊、雪東"
+                   :value="keyword" @input="keyword = $event.target.value"
+                   @keyup.enter="search" />
+            <div class="th-field-hint">以路線名稱模糊比對。</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">查詢結果共 {{ results.length }} 筆，勾選「圖層」欄可將該路線軌跡加入圖台。</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="reset">清除條件</button>
+            <button type="button" class="th-btn th-btn-primary" @click="search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 二、圖台與圖層 -->
+    <section class="th-card" id="map">
+      <div class="th-card-head">
+        <i class="fa-solid fa-map" aria-hidden="true"></i>
+        <h2 class="th-card-title">圖台<span class="th-todo-tag">待確認</span></h2>
+        <span class="th-card-note">舊站使用 Easymap；本雛形圖台套件未選定</span>
+      </div>
+      <div class="th-card-body">
+        <div class="p-map2-stage">
+          <div class="th-shot-placeholder p-map2-canvas">
+            <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+            圖台區。底圖：{{ baseLabel }}。
+            已開啟 {{ activeOverlays.length }} 個疊加圖層、已標繪 {{ plotted.length }} 條路線軌跡。
+          </div>
+
+          <button type="button" class="th-btn th-btn-secondary p-map2-layer-btn" @click="layerOpen = !layerOpen"
+                  :aria-expanded="layerOpen ? 'true' : 'false'" aria-controls="map-layers">
+            <i class="fa-solid fa-layer-group" aria-hidden="true"></i>圖資
+          </button>
+
+          <div class="p-map2-layers" id="map-layers" v-if="layerOpen">
+            <div class="p-map2-layers-head">
+              <h3 class="th-section-title">圖資圖層</h3>
+              <button type="button" class="p-map2-layers-close" aria-label="關閉圖資面板" @click="layerOpen = false">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="p-map2-layers-body">
+              <fieldset class="p-map2-layer-group">
+                <legend>底圖（單選）</legend>
+                <label class="p-map2-layer" v-for="b in baseMaps" :key="b.id">
+                  <input type="radio" name="basemap" :checked="baseMap === b.id" @change="baseMap = b.id" />
+                  <span>{{ b.label }}</span>
+                </label>
+              </fieldset>
+
+              <fieldset class="p-map2-layer-group" v-for="g in overlayGroups" :key="g.title">
+                <legend>{{ g.title }}</legend>
+                <label class="p-map2-layer" v-for="l in g.layers" :key="l.id">
+                  <input type="checkbox" :checked="overlays.includes(l.id)" @change="toggleOverlay(l.id)" />
+                  <span>{{ l.label }}</span>
+                </label>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+
+        <p class="th-table-note">圖層共 {{ layerCount }} 項（底圖 3、疊加 19），與舊站 web_map2.aspx 一致。
+          疊加圖層的圖資服務端點尚未取得，本雛形只呈現開關狀態，不繪製實際圖形。</p>
+      </div>
+    </section>
+
+    <!-- 三、查詢結果 -->
+    <section class="th-card" id="result">
+      <div class="th-card-head">
+        <i class="fa-solid fa-list" aria-hidden="true"></i>
+        <h2 class="th-card-title">查詢結果</h2>
+        <span class="th-card-note">共 {{ results.length }} 筆</span>
+      </div>
+      <div class="th-card-body">
+        <div class="th-table-wrap th-table-card">
+          <table class="th-table th-table--zebra">
+            <caption>登山路線圖資查詢結果，欄位為圖層、路線名稱、難度等級、可否申請、路線狀況、入山證與功能</caption>
+            <thead>
+              <tr>
+                <th scope="col">圖層</th>
+                <th scope="col">路線名稱</th>
+                <th scope="col">難度等級</th>
+                <th scope="col">可否申請</th>
+                <th scope="col">路線狀況</th>
+                <th scope="col">入山證</th>
+                <th scope="col">功能</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-if="results.length > 0">
+                <tr v-for="r in results" :key="r.id">
+                  <td data-label="圖層">
+                    <label class="p-map2-plot">
+                      <input type="checkbox" :checked="plotted.includes(r.id)" @change="togglePlot(r.id)" />
+                      <span class="th-sr-only">在圖台標繪 {{ r.name }}</span>
+                    </label>
+                  </td>
+                  <td data-label="路線名稱">{{ r.label }}</td>
+                  <td data-label="難度等級">
+                    <button type="button" :class="'th-level lv-' + r.diff" @click="levelModal = r">第 {{ r.diff }} 級</button>
+                  </td>
+                  <td data-label="可否申請">
+                    <span :class="['th-flag', r.canApply ? 'is-open' : 'is-closed']"><i :class="r.canApply ? 'fa-solid fa-check' : 'fa-solid fa-xmark'" aria-hidden="true"></i>{{ r.canApply ? '可申請' : '不可申請' }}</span>
+                  </td>
+                  <td data-label="路線狀況">
+                    <span :class="['th-flag', r.status === 'open' ? 'is-open' : 'is-closed']"><i :class="r.status === 'open' ? 'fa-solid fa-circle-check' : 'fa-solid fa-ban'" aria-hidden="true"></i>{{ r.status === 'open' ? '開放通行' : '管制封閉' }}</span>
+                  </td>
+                  <td data-label="入山證">{{ r.requiresNpa ? 'V' : '' }}</td>
+                  <td data-label="功能">
+                    <div class="th-chip-row">
+                      <a class="th-chip" href="apply-1.html" target="_blank" rel="noopener">申請<span class="th-sr-only">（另開新視窗）</span></a>
+                      <a class="th-chip" href="open.html" target="_blank" rel="noopener">查看路線開放狀態<span class="th-sr-only">（另開新視窗）</span></a>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <tr v-else>
+                <td colspan="7">
+                  <div class="th-empty"><i class="fa-regular fa-folder-open" aria-hidden="true"></i>查無符合條件的路線</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="th-table-note">資料來源為 <code>components/RouteData.js</code>（由 <code>01_Raw_Input/raw/*.csv</code> 產生）。
+          「入山證」欄標示 V 者須另向警政署申辦入山許可證。</p>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 舊站的難度等級是 Fancybox iframe 開 linelevel.aspx，雛形改用共用的 th-modal -->
+  <th-modal v-if="levelModal" :title="'登山路線難度等級：第 ' + levelModal.diff + ' 級'"
+            :meta="levelModal.label" @close="levelModal = null">
+    <p>{{ levelText }}</p>
+    <p class="th-table-note">分級定義以「國家公園步道分級」頁為準。<a class="th-inline-link" href="information_6.html">前往國家公園步道分級</a></p>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>，提供 window.ROUTE_DATA／AGENCIES（頁面腳本在 data() 才讀） -->
+<script src="components/RouteData.js"></script>
+</body>
+</html>

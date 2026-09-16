@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>國家公園出園回報 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：國家公園出園回報　規格 02_Spec/08_國家公園出園回報.md
+  ------------------------------------------------------------
+  舊站頁：apply_6.aspx，查詢頁與回報填寫頁是同一支 .aspx 的兩個狀態，
+  本頁照原樣做成一頁兩段，由 `queried` 切換。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_report.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, '國家公園出園回報']"
+    title="國家公園出園回報"
+    lead="全隊下山後，由領隊或任一隊員輸入申請編號與證號，統一辦理出園回報。"
+    updated="2026-09-15">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!-- 一、查詢 -->
+    <section class="th-card" id="query">
+      <div class="th-card-head">
+        <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
+        <h2 class="th-card-title">出園回報查詢</h2>
+        <span class="th-card-note">舊站頁 apply_6.aspx</span>
+      </div>
+      <div class="th-card-body">
+        <p>請於<strong>所有隊員下山後</strong>統一回報，由領隊或任一隊員輸入申請編號及身分證號／護照號碼（居留證）辦理。</p>
+
+        <div class="flex flex-col gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-serial"><span class="req">*</span>（一站式／入園）申請編號</label>
+            <input id="f-serial" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入登山申請一站式申請編號"
+                   :value="serial" @input="serial = $event.target.value" />
+            <div v-if="errors.serial" class="th-field-hint">{{ errors.serial }}</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-sid"><span class="req">*</span>國籍與身分證號／護照號碼（居留證）</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <select id="f-nation" class="th-select basis-full sm:basis-44 grow-0 shrink-0" aria-label="國籍"
+                      :value="nation" @change="nation = $event.target.value">
+                <option value="">請選擇</option>
+                <option value="中華民國">中華民國</option>
+                <option value="國外">國外</option>
+              </select>
+              <input id="f-sid" type="text" class="th-input flex-1" autocomplete="off"
+                     :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+                     :value="sid" @input="sid = $event.target.value" />
+            </div>
+            <div v-if="errors.sid" class="th-field-hint">{{ errors.sid }}</div>
+            <div v-else class="th-field-hint">國籍選「中華民國」時檢核身分證字號或居留證號規則，選「國外」不檢核。</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-vcode"><span class="req">*</span>請輸入驗證碼</label>
+            <div class="flex flex-col sm:flex-row gap-2 items-start">
+              <input id="f-vcode" type="text" class="th-input sm:w-44" autocomplete="off" placeholder="請輸入驗證碼"
+                     :value="vcode" @input="vcode = $event.target.value" />
+              <span class="th-input th-input-readonly sm:w-32 text-center tracking-[0.3em]">3D6H</span>
+              <button type="button" class="th-btn th-btn-ghost" disabled>
+                <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
+              </button>
+            </div>
+            <div class="th-field-hint">雛形不做真實驗證，驗證碼為靜態字樣。</div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+            <p class="th-field-hint">送出前會清除輸入值前後空白。</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="th-btn th-btn-secondary" @click="reset">清除</button>
+              <button type="button" class="th-btn th-btn-primary" @click="query">
+                <i class="fa-solid fa-check" aria-hidden="true"></i>確定
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 二、基本資料 -->
+    <section class="th-card" id="basic" v-if="queried">
+      <div class="th-card-head">
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+        <h2 class="th-card-title">案件基本資料</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="th-table-note">以下欄位唯讀。資料為匿名假資料，非真實申請案。</p>
+        <th-data-table :columns="kvColumns" :rows="basicRows" row-key="label" table-class="th-table--zebra"></th-data-table>
+      </div>
+    </section>
+
+    <!-- 三、出園回報明細 -->
+    <section class="th-card" id="detail" v-if="queried">
+      <div class="th-card-head">
+        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+        <h2 class="th-card-title">出園回報明細</h2>
+      </div>
+      <div class="th-card-body">
+        <th-callout>報到時間為「未報到」且<strong>有入園</strong>者，請勾選出園日期並填寫體溫，另以入園信箱補報到；
+            報到時間為「未報到」且<strong>未成行</strong>者，請勾選「未入園」，另以入園信箱取消入園。<span class="th-callout-src">來源：02_Spec/08_國家公園出園回報.md</span></th-callout>
+
+        <div class="p-applyreport-rows">
+          <article class="p-applyreport-row" v-for="m in members" :key="m.id">
+            <div class="p-applyreport-row-head">
+              <span class="p-applyreport-name">{{ m.role }}／{{ m.name }}</span>
+              <span :class="['th-flag', m.checkin === '未報到' ? 'is-closed' : 'is-open']">報到時間：{{ m.checkin }}</span>
+              <span v-if="m.locked" class="th-chip">已確認離園，不可再改為未離園</span>
+            </div>
+
+            <div class="p-applyreport-row-body">
+              <div class="th-field">
+                <label class="th-label">出園狀態</label>
+                <div class="p-applyreport-choices">
+                  <label class="p-applyreport-choice">
+                    <input type="radio" :name="'st-' + m.id" :checked="m.status === 'out'"
+                           :disabled="m.locked" @change="setStatus(m, 'out')" />
+                    <span>有入園</span>
+                  </label>
+                  <label class="p-applyreport-choice">
+                    <input type="radio" :name="'st-' + m.id" :checked="m.status === 'none'"
+                           :disabled="m.locked" @change="setStatus(m, 'none')" />
+                    <span>未入園</span>
+                  </label>
+                </div>
+              </div>
+
+              <th-date-picker v-if="m.status === 'out'" v-model="m.outDate"
+                              label="出園日期" :required="true"
+                              hint="預設為今日，可自行調整。"></th-date-picker>
+
+              <div class="th-field" v-if="m.status === 'out'">
+                <label class="th-label" :for="'t1-' + m.id">入園體溫</label>
+                <input :id="'t1-' + m.id" type="text" class="th-input" autocomplete="off" placeholder="選填，例如 36.4"
+                       :value="m.tempIn" @input="m.tempIn = $event.target.value" />
+              </div>
+
+              <div class="th-field" v-if="m.status === 'out'">
+                <label class="th-label" :for="'t2-' + m.id">出園體溫</label>
+                <input :id="'t2-' + m.id" type="text" class="th-input" autocomplete="off" placeholder="選填，例如 36.6"
+                       :value="m.tempOut" @input="m.tempOut = $event.target.value" />
+              </div>
+
+              <div class="th-field">
+                <label class="th-label" :for="'nt-' + m.id">備註</label>
+                <input :id="'nt-' + m.id" type="text" class="th-input" autocomplete="off" placeholder="選填"
+                       :value="m.note" @input="m.note = $event.target.value" />
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">已填出園日期 {{ doneCount }} 人，標記未入園 {{ noneCount }} 人。</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="queried = false">返回</button>
+            <button type="button" class="th-btn th-btn-primary" @click="showConfirm = true">
+              <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>確認離園
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 舊站是 confirm('請確認是否送出出園回報?!') ＋ alert('出園回報完成!!')，雛形改用 th-modal -->
+  <th-modal v-if="showConfirm" title="請確認是否送出出園回報" @close="showConfirm = false">
+    <p>送出後，已確認離園之隊員不可再變更為未離園。</p>
+    <template #foot>
+      <div class="p-applyreport-modal-foot">
+        <button type="button" class="th-btn th-btn-secondary" @click="showConfirm = false">再檢查一次</button>
+        <button type="button" class="th-btn th-btn-primary" @click="submitReport">確認送出</button>
+      </div>
+    </template>
+  </th-modal>
+
+  <th-modal v-if="showDone" title="出園回報完成" @close="showDone = false">
+    <p>本雛形不寫入資料。實際系統送出後即完成本隊出園回報。</p>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>

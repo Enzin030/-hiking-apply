@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>申請資料異動及取消 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：申請資料異動及取消　規格 02_Spec/06d_申請資料異動及取消.md
+  ------------------------------------------------------------
+  舊站頁：apply_2.aspx。檔名不沿用 apply_2——既有 apply-2.html 是申請流程
+  步驟二，兩者只差一個字元，容易誤開誤改。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_modify.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '線上資料異動']"
+    title="申請資料異動及取消"
+    lead="核准入園後可辦理人員資料異動或整隊取消；主路線與入園日期不得變更。"
+    updated="2026-09-15">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!-- 一、申請行程資料（唯讀） -->
+    <section class="th-card" id="trip">
+      <div class="th-card-head">
+        <i class="fa-solid fa-route" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請行程資料</h2>
+        <span class="th-card-note">舊站頁 apply_2.aspx</span>
+      </div>
+      <div class="th-card-body">
+        <p class="th-table-note">以下欄位唯讀。資料為匿名假資料，非真實申請案。</p>
+        <th-data-table :columns="kvColumns" :rows="tripRows" row-key="label" table-class="th-table--zebra"></th-data-table>
+        <th-callout type="warning">經核准入園後，<strong>主路線與入園日期不得變更</strong>，僅得辦理人員資料異動或取消。
+            隊員異動人數與可異動期限，依各國家公園管理處自治條例規範。<span class="th-todo-tag">待確認</span><span class="th-callout-src">來源：02_Spec/06d_申請資料異動及取消.md；各處實際日數未取得可公開來源。</span></th-callout>
+      </div>
+    </section>
+
+    <!-- 二、領隊與隊員異動 -->
+    <section class="th-card" id="member">
+      <div class="th-card-head">
+        <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+        <h2 class="th-card-title">領隊與隊員異動</h2>
+      </div>
+      <div class="th-card-body">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p class="th-field-hint">未成年者不得擔任領隊。互換後原領隊成為隊員，原隊員成為領隊。</p>
+          <button type="button" class="th-btn th-btn-secondary" @click="swap">
+            <i class="fa-solid fa-right-left" aria-hidden="true"></i>隊員與領隊互換
+          </button>
+        </div>
+
+        <h3 class="th-section-title">領隊資料</h3>
+        <div class="p-applymodify-grid">
+          <div class="th-field" v-for="f in leaderFields" :key="f.key">
+            <label class="th-label" :for="'f-leader-' + f.key">{{ f.label }}</label>
+            <input :id="'f-leader-' + f.key" type="text" class="th-input" autocomplete="off"
+                   :value="leader[f.key]" @input="leader[f.key] = $event.target.value" />
+          </div>
+        </div>
+
+        <h3 class="th-section-title">隊員資料</h3>
+        <p class="th-table-note">勾選「取消入園」即標記該員取消資格，送出後不可還原為未取消。</p>
+        <div class="p-applymodify-members">
+          <article class="p-applymodify-member" v-for="m in members" :key="m.id"
+                   :class="{ 'is-cancelled': m.cancelled }">
+            <div class="p-applymodify-member-head">
+              <span class="p-applymodify-member-name">{{ m.name }}</span>
+              <span class="th-chip">{{ m.role }}</span>
+              <label class="p-applymodify-member-cancel">
+                <input type="checkbox" :checked="m.cancelled" @change="m.cancelled = !m.cancelled" />
+                <span>取消入園</span>
+              </label>
+            </div>
+            <dl class="p-applymodify-member-body">
+              <div v-for="d in m.detail" :key="d.label">
+                <dt>{{ d.label }}</dt>
+                <dd>{{ d.value }}</dd>
+              </div>
+            </dl>
+            <div class="th-chip-row">
+              <th-todo-link label="修改資料"></th-todo-link>
+              <th-todo-link label="替換人員"></th-todo-link>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 三、留守人資料異動 -->
+    <section class="th-card" id="watcher">
+      <div class="th-card-head">
+        <i class="fa-solid fa-house-user" aria-hidden="true"></i>
+        <h2 class="th-card-title">留守人資料異動</h2>
+      </div>
+      <div class="th-card-body">
+        <label class="p-applymodify-same">
+          <input type="checkbox" :checked="watcherSame" @change="toggleWatcherSame" />
+          <span>同申請人</span>
+        </label>
+        <div class="p-applymodify-grid">
+          <div class="th-field" v-for="f in watcherFields" :key="f.key">
+            <label class="th-label" :for="'f-watcher-' + f.key">{{ f.label }}</label>
+            <input :id="'f-watcher-' + f.key" type="text" class="th-input" autocomplete="off"
+                   :value="watcher[f.key]" :readonly="watcherSame"
+                   @input="watcher[f.key] = $event.target.value" />
+          </div>
+        </div>
+        <p class="th-table-note">留守人為不上山人員，負責於失聯時通報。</p>
+      </div>
+    </section>
+
+    <!-- 四、異動確認與送出 -->
+    <section class="th-card" id="submit">
+      <div class="th-card-head">
+        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+        <h2 class="th-card-title">異動確認與送出</h2>
+      </div>
+      <div class="th-card-body">
+        <div class="th-field">
+          <label class="th-label" for="f-vcode"><span class="req">*</span>送件驗證碼</label>
+          <div class="flex flex-col sm:flex-row gap-2 items-start">
+            <input id="f-vcode" type="text" class="th-input sm:w-44" autocomplete="off" placeholder="請輸入驗證碼"
+                   :value="vcode" @input="vcode = $event.target.value" />
+            <span class="th-input th-input-readonly sm:w-32 text-center tracking-[0.3em]">9B2X</span>
+            <button type="button" class="th-btn th-btn-ghost" disabled>
+              <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
+            </button>
+          </div>
+          <div class="th-field-hint">雛形不做真實驗證，驗證碼為靜態字樣。</div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">目前標記取消 {{ cancelledCount }} 人。</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="showCancelAll = true">
+              <i class="fa-solid fa-ban" aria-hidden="true"></i>整隊取消入園
+            </button>
+            <button type="button" class="th-btn th-btn-primary" @click="confirmModify">
+              <i class="fa-solid fa-check" aria-hidden="true"></i>確認修改
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 舊站的互換提示與整隊取消確認都是 alert／confirm，雛形改用共用的 th-modal -->
+  <th-modal v-if="showSwap" title="已互換領隊與隊員" @close="showSwap = false">
+    <p>現任領隊為 {{ leader.name }}。請確認領隊聯絡方式與緊急聯絡人資料是否需要一併修改。</p>
+  </th-modal>
+
+  <th-modal v-if="showCancelAll" title="確認整隊取消入園" @close="showCancelAll = false">
+    <p>整隊取消後，本申請案全部人員將失去入園資格，且<strong>無法復原</strong>。</p>
+    <p>已繳納之排雲山莊規費，請另於「排雲山莊線上申請退費」提出退費申請。</p>
+    <template #foot>
+      <div class="p-applymodify-modal-foot">
+        <button type="button" class="th-btn th-btn-secondary" @click="showCancelAll = false">再想一下</button>
+        <th-todo-link label="確認取消（待建置）"></th-todo-link>
+      </div>
+    </template>
+  </th-modal>
+
+  <th-modal v-if="showDone" title="異動已送出" @close="showDone = false">
+    <p>本雛形不寫入資料。實際系統送出後會以電子郵件通知審核結果。</p>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>草稿編輯 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：草稿編輯　規格 02_Spec/07_草稿編輯.md
+  ------------------------------------------------------------
+  舊站頁：apply_2_1.aspx。
+
+  **本頁只做規格的第一、二節**（查詢頁與草稿清單頁）。
+  規格第三～六節是「步驟一～申請完成」，那是各項線上申請的共同流程，
+  雛形已有 apply-1／apply-2／apply-3 三頁，clone 一份只會產生兩套要同步維護
+  的申請流程。清單的「編輯」因此導向 apply-1.html。
+  規格檔自己也註明第三～六節與規格 05（各項線上申請，尚未撰寫）範圍重疊。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_draft.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, '草稿編輯']"
+    title="草稿編輯"
+    lead="查詢先前儲存的登山申請草稿，接續編輯或刪除。草稿僅保留 30 日。"
+    updated="2026-09-15">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!-- 一、查詢草稿 -->
+    <section class="th-card" id="query">
+      <div class="th-card-head">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <h2 class="th-card-title">查詢草稿</h2>
+        <span class="th-card-note">舊站頁 apply_2_1.aspx</span>
+      </div>
+      <div class="th-card-body">
+        <th-callout type="warning">如欲修改<strong>登山路線、入園日期、隊伍人數</strong>，請先儲存為草稿，以免資料遺失。<span class="th-callout-src">來源：02_Spec/07_草稿編輯.md 查詢頁紅字提醒</span></th-callout>
+
+        <div class="flex flex-col gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-nation"><span class="req">*</span>申請人國籍</label>
+            <select id="f-nation" class="th-select sm:w-60" :value="nation" @change="nation = $event.target.value">
+              <option value="">請選擇</option>
+              <option value="中華民國">中華民國</option>
+              <option value="國外">國外</option>
+            </select>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-sid"><span class="req">*</span>身分證號／護照號碼（或居留證）</label>
+            <input id="f-sid" type="text" class="th-input" autocomplete="off"
+                   :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+                   :value="sid" @input="sid = $event.target.value" />
+            <div v-if="errors.sid" class="th-field-hint">{{ errors.sid }}</div>
+            <div v-else class="th-field-hint">國籍選「中華民國」時檢核身分證字號或居留證號規則，選「國外」不檢核。</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-email"><span class="req">*</span>申請人 Email</label>
+            <input id="f-email" type="text" class="th-input" autocomplete="off" placeholder="請輸入申請時填寫的 Email"
+                   :value="email" @input="email = $event.target.value" />
+            <div v-if="errors.email" class="th-field-hint">{{ errors.email }}</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-vcode"><span class="req">*</span>請輸入驗證碼</label>
+            <div class="flex flex-col sm:flex-row gap-2 items-start">
+              <input id="f-vcode" type="text" class="th-input sm:w-44" autocomplete="off" placeholder="請輸入驗證碼"
+                     :value="vcode" @input="vcode = $event.target.value" />
+              <span class="th-input th-input-readonly sm:w-32 text-center tracking-[0.3em]">5T8P</span>
+              <button type="button" class="th-btn th-btn-ghost" disabled>
+                <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
+              </button>
+            </div>
+            <div class="th-field-hint">雛形不做真實驗證，驗證碼為靜態字樣。</div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+            <p class="th-field-hint">送出前會清除輸入值前後空白。</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="th-btn th-btn-secondary" @click="reset">清除</button>
+              <button type="button" class="th-btn th-btn-primary" @click="query">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 二、草稿清單 -->
+    <section class="th-card" id="list" v-if="queried">
+      <div class="th-card-head">
+        <i class="fa-solid fa-file-pen" aria-hidden="true"></i>
+        <h2 class="th-card-title">草稿清單</h2>
+        <span class="th-card-note">共 {{ drafts.length }} 筆</span>
+      </div>
+      <div class="th-card-body">
+        <p class="th-table-note">資料為匿名假資料，非真實申請案。</p>
+        <th-data-table :columns="draftColumns" :rows="drafts" row-key="id" table-class="th-table--zebra"
+                       empty="查無草稿紀錄">
+          <template #cell="{ row, column, value }">
+            <span v-if="column.key === 'ops'" class="th-chip-row"><a class="th-chip" href="apply-1.html">編輯</a><button type="button" class="th-chip" @click="removeDraft(row.id)">刪除</button></span>
+            <template v-else>{{ value }}</template>
+          </template>
+        </th-data-table>
+        <p class="th-table-note">「編輯」會載入該草稿並回到申請流程步驟一（雛形導向各項線上申請頁）。</p>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 舊站查詢成功後的 alert，雛形改用共用的 th-modal -->
+  <th-modal v-if="showOpenHours" title="開放申請時間" @close="showOpenHours = false">
+    <p>雪霸、玉山、太魯閣的申請開放時間為 <strong>07:00 – 23:00</strong>。
+      請於 07:00 手動重新整理頁面，輸入驗證碼後執行「確認送出」即可送出申請案。</p>
+    <p>草稿資訊僅保留 30 日，30 日內未異動資料或送出申請，草稿將被移除。</p>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>

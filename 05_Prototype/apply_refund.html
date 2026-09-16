@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>排雲山莊線上申請退費 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：線上申請退費(排雲)　規格 02_Spec/06c_線上申請退費(排雲).md
+  ------------------------------------------------------------
+  舊站頁：apply_5.aspx，共四個畫面（驗證身分／退費資訊／新增退款帳戶／
+  退款明細維護）。四個畫面在舊站是同一支 .aspx 的四種狀態，本頁照原樣做成
+  一頁四段，由 `stage` 切換，不拆四支 HTML。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_refund.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, '排雲山莊線上申請退費']"
+    title="排雲山莊線上申請退費"
+    lead="已於「申請資料異動及取消」完成取消程序者，可於本頁提出排雲山莊住宿規費退費申請。"
+    updated="2026-09-15">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!-- 申請前置與事由規定：四段都看得到，因為使用者可能在任一段才發現不符資格 -->
+    <section class="th-card" id="rules">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請前置與退費規定</h2>
+        <span class="th-card-note">舊站頁 apply_5.aspx</span>
+      </div>
+      <div class="th-card-body">
+        <th-callout type="warning">提出退費申請前，須先於<strong>「申請資料異動及取消」</strong>完成取消入園程序。未完成取消者無法申請退費。<span class="th-callout-src">來源：02_Spec/06c_線上申請退費(排雲).md</span></th-callout>
+
+        <h3 class="th-section-title">可申請退費的事由</h3>
+        <ul class="th-doc-list">
+          <li v-for="r in reasons" :key="r">{{ r }}</li>
+        </ul>
+
+        <h3 class="th-section-title">申請人資格與退費方式</h3>
+        <p>申請人須為原登山申請案之<strong>申請人、領隊或隊員任一員</strong>。退費一律採金融帳戶轉帳，
+          須檢附存摺封面影本；非本人帳戶者另須檢附委託書。</p>
+        <p class="th-table-note">申請資料保留 2 年，逾期須改採紙本退費申請書辦理。實退金額為申請退費總額扣除銀行手續費 30 元。</p>
+      </div>
+    </section>
+
+    <!-- 一、驗證身分 -->
+    <section class="th-card" id="verify" v-if="stage === 'verify'">
+      <div class="th-card-head">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        <h2 class="th-card-title">驗證身分</h2>
+      </div>
+      <div class="th-card-body">
+        <p>請輸入退費申請人的身分證字號與手機號碼，系統將以簡訊發送一次性驗證密碼。</p>
+
+        <div class="flex flex-col gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-sid"><span class="req">*</span>退費申請人身分證字號</label>
+            <input id="f-sid" name="sid" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入身分證字號"
+                   :value="sid" @input="sid = $event.target.value" />
+            <div v-if="errors.sid" class="th-field-hint">{{ errors.sid }}</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-mobile"><span class="req">*</span>手機號碼</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input id="f-mobile" name="mobile" type="text" class="th-input flex-1" autocomplete="off"
+                     placeholder="請輸入手機號碼，例如 0912345678"
+                     :value="mobile" @input="mobile = $event.target.value" />
+              <button type="button" class="th-btn th-btn-secondary" @click="sendPwd">
+                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>寄送驗證密碼
+              </button>
+            </div>
+            <div v-if="errors.mobile" class="th-field-hint">{{ errors.mobile }}</div>
+            <div v-else-if="pwdSent" class="th-field-hint">驗證密碼已寄出（雛形不寄真實簡訊）。</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-pwd"><span class="req">*</span>驗證密碼</label>
+            <input id="f-pwd" name="pwd" type="password" class="th-input sm:w-60" autocomplete="off"
+                   placeholder="請輸入簡訊收到的驗證密碼"
+                   :value="pwd" @input="pwd = $event.target.value" />
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+            <a class="th-inline-link" href="#" @click.prevent>
+              <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>退費申請流程操作說明（PDF）
+            </a>
+            <button type="button" class="th-btn th-btn-primary" @click="verify">
+              <i class="fa-solid fa-check" aria-hidden="true"></i>確定
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 二、退費資訊 -->
+    <section class="th-card" id="info" v-if="stage === 'info'">
+      <div class="th-card-head">
+        <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+        <h2 class="th-card-title">退費申請資訊</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="th-table-note">資料為匿名假資料，非真實申請案。</p>
+        <th-data-table :columns="personColumns" :rows="personRows" row-key="label" table-class="th-table--zebra"></th-data-table>
+
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button type="button" class="th-btn th-btn-primary" @click="stage = 'account'">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>新增退費申請
+          </button>
+          <button type="button" class="th-btn th-btn-secondary" @click="backToVerify">回查詢頁</button>
+        </div>
+
+        <h3 class="th-section-title">歷史退費申請</h3>
+        <th-data-table :columns="historyColumns" :rows="historyRows" row-key="id" table-class="th-table--zebra">
+          <template #cell="{ row, column, value }">
+            <span v-if="column.key === 'copy'" class="th-todo-link">影本附件</span>
+            <span v-else-if="column.key === 'state'" :class="['th-flag', stateFlag[row.state] || '']">{{ row.state }}</span>
+            <span v-else-if="column.key === 'ops'" class="th-chip-row"><span class="th-chip">匯款帳戶維護</span><span class="th-chip" @click="stage = 'detail'">退款明細維護</span></span>
+            <template v-else>{{ value }}</template>
+          </template>
+        </th-data-table>
+        <p class="th-table-note">實退金額 ＝ 申請退費總額 － 銀行手續費 30 元。</p>
+      </div>
+    </section>
+
+    <!-- 三、新增退款帳戶 -->
+    <section class="th-card" id="account" v-if="stage === 'account'">
+      <div class="th-card-head">
+        <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+        <h2 class="th-card-title">退款帳戶</h2>
+      </div>
+      <div class="th-card-body">
+        <div class="flex flex-col gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-bank"><span class="req">*</span>金融機構名稱</label>
+            <select id="f-bank" class="th-select" :value="bank" @change="pickBank($event.target.value)">
+              <option value="">請選擇</option>
+              <option v-for="b in banks" :key="b.code" :value="b.code">（{{ b.code }}）{{ b.name }}</option>
+            </select>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-branch"><span class="req">*</span>分行</label>
+            <select id="f-branch" class="th-select" :value="branch" @change="branch = $event.target.value" :disabled="!bank">
+              <option value="">{{ bank ? '請選擇' : '請先選擇金融機構' }}</option>
+              <option v-for="b in branchList" :key="b" :value="b">{{ b }}</option>
+            </select>
+            <div class="th-field-hint">分行清單依所選金融機構連動。</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-owner"><span class="req">*</span>戶名</label>
+            <input id="f-owner" type="text" class="th-input" autocomplete="off" placeholder="請輸入存摺戶名"
+                   :value="owner" @input="owner = $event.target.value" />
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-acct"><span class="req">*</span>存簿帳號</label>
+            <input id="f-acct" type="text" class="th-input" autocomplete="off" placeholder="請輸入存簿帳號"
+                   :value="acct" @input="acct = $event.target.value" />
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-book"><span class="req">*</span>存摺封面影本</label>
+            <input id="f-book" type="file" class="th-input" accept="image/*" />
+            <div class="th-field-hint">限上傳影像圖檔。非本人帳戶者另須檢附委託書。</div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button type="button" class="th-btn th-btn-primary" @click="stage = 'detail'">
+              <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>儲存
+            </button>
+            <button type="button" class="th-btn th-btn-secondary" @click="stage = 'info'">取消</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 四、退款明細維護 -->
+    <section class="th-card" id="detail" v-if="stage === 'detail'">
+      <div class="th-card-head">
+        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+        <h2 class="th-card-title">退款明細維護</h2>
+      </div>
+      <div class="th-card-body">
+        <th-data-table :columns="personColumns" :rows="accountRows" row-key="label" table-class="th-table--zebra"></th-data-table>
+
+        <h3 class="th-section-title">退費明細</h3>
+        <div class="flex flex-col gap-4">
+          <div class="th-field">
+            <label class="th-label">已取消之申請案</label>
+            <p>TW1150918003／曉風登山隊／2026-10-18 至 2026-10-20（排雲山莊 2026-10-18 住宿）</p>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-reason"><span class="req">*</span>退費原因</label>
+            <select id="f-reason" class="th-select" :value="reason" @change="reason = $event.target.value">
+              <option value="">請選擇</option>
+              <option v-for="r in reasons" :key="r" :value="r">{{ r }}</option>
+            </select>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label">委託書</label>
+            <p>不需檢附委託書（退款帳戶為申請人本人）。</p>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label" for="f-receipt"><span class="req">*</span>收據編號</label>
+            <select id="f-receipt" class="th-select" :value="receipt" @change="receipt = $event.target.value">
+              <option value="">請選擇</option>
+              <option v-for="r in receipts" :key="r.id" :value="r.id">{{ r.id }}（繳納 {{ r.amount }} 元）</option>
+            </select>
+            <div class="th-field-hint">收據預設留存玉管處；如已索取紙本，請一併寄回。</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label">退費人員</label>
+            <label class="p-applyrefund-member">
+              <input type="checkbox" :checked="allPicked" @change="toggleAll" />
+              <span>全選</span>
+            </label>
+            <label class="p-applyrefund-member" v-for="m in members" :key="m.name">
+              <input type="checkbox" :checked="picked.includes(m.name)" @change="toggleMember(m.name)" />
+              <span>{{ m.name }}</span>
+              <span class="th-chip">{{ m.note }}</span>
+            </label>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+            <p class="th-field-hint">已選 {{ picked.length }} 人，申請退費總額 {{ refundText }}，實退 {{ netText }}。</p>
+            <button type="button" class="th-btn th-btn-secondary" @click="stage = 'info'">回上頁</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>
