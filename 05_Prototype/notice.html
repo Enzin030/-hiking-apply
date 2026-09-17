@@ -34,16 +34,19 @@
       安全影片按鈕與頁面標題同列（2026-09-16）。官網 notice.aspx 也是這個結構：
       `<h2 class="con_title"><span class="pull-right">[按鈕]</span>登山須知</h2>`。
 
-      靠右對齊改由 th-page-shell 的 `.th-page-head` 內層 `justify-between` 負責，
-      不再自帶 `.p-notice-actions` 包裝（窄螢幕由該層的 `flex-wrap` 折行）。
+      th-page-shell 的標題列只有 `flex-wrap gap-4`、沒有 `justify-between`，
+      靠右對齊由下方 `ml-auto` 包裝負責（窄螢幕由標題列的 `flex-wrap` 折行）。
       → `pages.css` 的 `.p-notice-actions` 兩條（含 @media 640 那條）自此成為死規則，
         待另一 session 的 pages.css 改動提交後再刪，本次不動該檔以免衝突。
       按鈕本身的樣式仍在 assets/css/pages.css，未改。
     -->
     <template #title-right>
-      <a class="p-notice-video-btn" :href="safetyVideo" target="_blank" rel="noopener noreferrer">
-        <i class="fa-brands fa-youtube" aria-hidden="true"></i>觀看登山安全影片
-      </a>
+      <!-- 靠右：比照 news_0.html 以 ml-auto 包裝（th-page-shell 的標題列沒有 justify-between，2026-09-17） -->
+      <div class="ml-auto flex items-center">
+        <a class="p-notice-video-btn" :href="safetyVideo" target="_blank" rel="noopener noreferrer">
+          <i class="fa-brands fa-youtube" aria-hidden="true"></i>觀看登山安全影片
+        </a>
+      </div>
     </template>
 
 

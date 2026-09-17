@@ -1121,6 +1121,12 @@
   font-weight: 700;
 }
 
+/* 導言第二句獨立成行：避免 .th-page-lead 的 max-width 把「查／看」拆成兩行（2026-09-17）。
+   用 block 不用 inline-block：後者會讓第一句成為被 text-align: justify 拉開的非末行。 */
+.p-illustrate-lead-tail {
+  display: block;
+}
+
 .p-illustrate-faq {
   display: flex;
   flex-direction: column;
