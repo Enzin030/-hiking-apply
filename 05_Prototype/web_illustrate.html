@@ -26,57 +26,35 @@
 
   <th-header active="info"></th-header>
 
+  <!-- class 會落到 th-page-shell 的根 main 上，供 pages.css 取消本頁導言的寬度上限 -->
   <th-page-shell
+    class="p-illustrate"
     :trail="['本站使用說明']"
     title="本站使用說明">
 
     <template #lead>
-      第一次申請入園或第一次進入本站一站式服務網之申請民眾，可參考下方新手常見問題快速獲得登山入園相關資訊。<span class="p-illustrate-lead-tail">也可以點擊<a class="th-inline-link" href="news.html?tab=faq">常見問答</a>，查看本站所有常見問題唷！</span>
+      第一次申請入園或第一次進入本站一站式服務網之申請民眾，可參考下方新手常見問題快速獲得登山入園相關資訊。也可以點擊<a class="th-inline-link" href="news.html?tab=faq" target="_blank" rel="noopener noreferrer">常見問答<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>，查看本站所有常見問題唷！
     </template>
 
     <!--
-      「首次使用本站申請入園入山」——結合原本兩張卡片內容（說明的四段文字 ＋ 兩種許可差別對照表），
+      「首次申請入園／入山」——結合原本兩張卡片內容（2026-09-17 起僅留說明文字與提示框），
       Vue 的 whitespace: 'condense' 會把「文字＋換行＋縮排」折成「文字＋一個空白」，
       換行若落在文字與標籤之間就會多出空白，每段壓成一行；slot 內文第一段文字緊貼標籤。
     -->
     <section class="th-card" id="intro">
       <div class="th-card-head">
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-        <h2 class="th-card-title">首次使用本站申請入園入山</h2>
+        <h2 class="th-card-title">首次申請入園／入山</h2>
       </div>
       <div class="th-card-body">
+        <!--
+          2026-09-17 使用者裁決：保留正式站原句，刪除「許可種類／法源依據／適用情形／核發機關」
+          對照表（與本段重疊）。表格內容見 git 歷史，需要時可取回。
+        -->
         <p>根據國家公園法第十九條，進入玉山、太魯閣、雪霸國家公園生態保護區需先申請【國家公園入園許可】。倘若登山路線進入山地管制區，則除【國家公園入園許可】以外，需額外申請【入山許可證】。</p>
 
         <!-- slot 內文的第一段文字必須緊貼標籤，見 th-callout.js 註解 -->
         <th-callout>您可於本站中選擇國家公園路線進行【國家公園入園許可】申請，本站將會自動依據申請路線協助判斷是否需申請【入山許可證】，並提示您填寫相關資料。</th-callout>
-
-        <div class="th-table-wrap">
-          <table class="th-table">
-            <caption>三種入山入園許可的對照表，欄位為許可種類、法源依據、適用情形、核發機關</caption>
-            <thead>
-              <tr>
-                <th scope="col">許可種類</th>
-                <th scope="col">法源依據</th>
-                <th scope="col">適用情形</th>
-                <th scope="col">核發機關</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>國家公園入園許可</td>
-                <td>國家公園法第十九條</td>
-                <td>進入玉山、太魯閣、雪霸國家公園生態保護區</td>
-                <td>各國家公園管理處</td>
-              </tr>
-              <tr>
-                <td>入山許可證</td>
-                <td>國家安全法第六條</td>
-                <td>登山路線進入山地管制區（分經常管制區與特定管制區）</td>
-                <td>內政部警政署、該管警察機關或保安警察第七總隊派駐國家公園分隊</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
     </section>
 

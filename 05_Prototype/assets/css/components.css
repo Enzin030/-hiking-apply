@@ -908,10 +908,11 @@
   margin-top: 4px;
 }
 
+/* 字重 500 與表格內連結（.th-table a，雙語詞彙頁）一致——2026-09-17 使用者裁決，原為 400 */
 .th-inline-link {
   display: inline;
   color: var(--national-800);
-  font-weight: 400;
+  font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
