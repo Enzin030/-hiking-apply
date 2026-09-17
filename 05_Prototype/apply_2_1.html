@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>草稿編輯 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_2_1.html — 草稿編輯全流程（舊站 apply_2_1 / 1_1 ~ 1_4）
+  ------------------------------------------------------------
+  規格依據：02_Spec/07_草稿編輯.md
+  比照「國家公園出園回報」（apply_6.html）架構規範：
+  1. Vue 3 global build (thPage)
+  2. 統一字級與字體，不手動添加 font-mono 或縮小字級
+  3. 表格欄位寬度自動自適應增長，無鎖死寬度
+  4. 操作按鈕規範：主按鈕 .th-btn-primary、返回按鈕 .th-btn-ghost
+  5. 涵蓋完整 6 個流程階段：
+     - 階段 1：草稿資料查詢
+     - 階段 2：草稿清單
+     - 階段 3：步驟一 行程登記及登山申請
+     - 階段 4：步驟二 基本資料填寫
+     - 階段 5：步驟三 確認資料頁
+     - 階段 6：步驟四 申請完成頁
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_2_1.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="pageTrail" :title="pageTitle">
+
+    <!-- ============================================================
+         步驟條導覽（當進入步驟一～步驟四時顯示）
+         ============================================================ -->
+    <div v-if="currentStep >= 3" class="mb-6">
+      <div class="th-stepper">
+        <div :class="['th-step', currentStep > 3 ? 'is-done' : currentStep === 3 ? 'is-current' : '']">
+          <span class="th-step-num"><span>1</span></span>
+          <div class="th-step-label"><span class="lbl-title">行程登記</span></div>
+        </div>
+        <div :class="['th-step-line', { 'is-done': currentStep > 3 }]"></div>
+
+        <div :class="['th-step', currentStep > 4 ? 'is-done' : currentStep === 4 ? 'is-current' : '']">
+          <span class="th-step-num"><span>2</span></span>
+          <div class="th-step-label"><span class="lbl-title">基本資料</span></div>
+        </div>
+        <div :class="['th-step-line', { 'is-done': currentStep > 4 }]"></div>
+
+        <div :class="['th-step', currentStep > 5 ? 'is-done' : currentStep === 5 ? 'is-current' : '']">
+          <span class="th-step-num"><span>3</span></span>
+          <div class="th-step-label"><span class="lbl-title">確認資料</span></div>
+        </div>
+        <div :class="['th-step-line', { 'is-done': currentStep > 5 }]"></div>
+
+        <div :class="['th-step', currentStep === 6 ? 'is-current' : '']">
+          <span class="th-step-num"><span>4</span></span>
+          <div class="th-step-label"><span class="lbl-title">申請完成</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         第一階段：草稿資料查詢頁（currentStep === 1）
+         ============================================================ -->
+    <div v-if="currentStep === 1" class="flex flex-col gap-6">
+
+      <form @submit.prevent="handleSearch" class="flex flex-col gap-6">
+        <!-- 查詢卡片（2 × 2 格狀配置） -->
+        <section class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">草稿資料查詢</h2>
+          </div>
+          <div class="th-card-body flex flex-col gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 items-start">
+
+              <!-- 1. 申請人國籍 (左上) -->
+              <div class="th-field">
+                <label class="th-label" for="f-nation">
+                  <span class="req">*</span>申請人國籍
+                </label>
+                <select
+                  id="f-nation"
+                  name="nation"
+                  class="th-select w-full"
+                  :value="nation"
+                  @change="nation = $event.target.value">
+                  <option value="">請選擇</option>
+                  <option value="中華民國">中華民國</option>
+                  <option value="國外">國外</option>
+                </select>
+              </div>
+
+              <!-- 2. 身分證號 / 護照號碼 (右上) -->
+              <div class="th-field">
+                <label class="th-label" for="f-sid">
+                  <span class="req">*</span>{{ nation === '國外' ? '護照號碼（居留證）' : '身分證號／護照號碼（居留證）' }}
+                </label>
+                <input
+                  id="f-sid"
+                  name="sid"
+                  type="text"
+                  class="th-input w-full"
+                  autocomplete="off"
+                  :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+                  :value="sid"
+                  @input="sid = $event.target.value" />
+              </div>
+
+              <!-- 3. 申請人 Email (左下) -->
+              <div class="th-field">
+                <label class="th-label" for="f-email">
+                  <span class="req">*</span>申請人 Email
+                </label>
+                <input
+                  id="f-email"
+                  name="email"
+                  type="email"
+                  class="th-input w-full"
+                  autocomplete="off"
+                  placeholder="請輸入申請人電子郵件信箱"
+                  :value="email"
+                  @input="email = $event.target.value" />
+              </div>
+
+              <!-- 4. 驗證碼 (右下，高度 42px 齊平) -->
+              <div class="th-field">
+                <label class="th-label" for="f-vcode">
+                  <span class="req">*</span>請輸入驗證碼
+                </label>
+                <div class="flex items-center gap-2">
+                  <input
+                    id="f-vcode"
+                    name="vcode"
+                    type="text"
+                    class="th-input flex-1 min-w-0"
+                    autocomplete="off"
+                    placeholder="請輸入驗證碼"
+                    :value="vcode"
+                    @input="vcode = $event.target.value" />
+                  <span class="flex items-center justify-center shrink-0 w-28 h-[42px] text-center font-bold tracking-[0.25em] text-blue-900 bg-indigo-50 border border-indigo-200 rounded-md select-none">
+                    {{ vcodeDisplay }}
+                  </span>
+                  <button
+                    type="button"
+                    class="th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity"
+                    @click="refreshVcode"
+                    title="換一組驗證碼">
+                    <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 填寫提醒（統一字體字級，紅字警示） -->
+              <div class="col-span-1 md:col-span-2 pt-1 text-[color:var(--danger-fg-hover)] font-medium">
+                ＊如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。
+              </div>
+
+              <!-- 錯誤訊息提示 (跨兩欄) -->
+              <div v-if="searchError" class="col-span-1 md:col-span-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation text-red-600" aria-hidden="true"></i>
+                <span>{{ searchError }}</span>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- 置中確認按鈕區（比照 apply_6，搬出卡片下方中間） -->
+        <div class="flex items-center justify-center pt-2 pb-6">
+          <button
+            type="submit"
+            class="th-btn th-btn-primary px-12 py-3 min-w-[140px]">
+            查詢
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- ============================================================
+         第二階段：草稿清單頁（currentStep === 2）
+         ============================================================ -->
+    <div v-else-if="currentStep === 2" class="flex flex-col gap-6">
+
+      <!-- 單一卡片：草稿清單（含申請人摘要、分隔線與表格） -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">草稿清單</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-6">
+
+          <!-- 申請人查詢摘要 3 欄網格（統一字型） -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-4 gap-x-6">
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">申請人國籍</div>
+              <div class="text-base text-slate-800 font-medium">{{ currentQueryUser.nation }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">身分證號／護照號碼</div>
+              <div class="text-base text-slate-800 font-medium">{{ currentQueryUser.sid }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">申請人 Email</div>
+              <div class="text-base text-slate-800 font-medium">{{ currentQueryUser.email }}</div>
+            </div>
+          </div>
+
+          <!-- 分隔線（比照 apply_6 上方 hr） -->
+          <hr class="border-t border-slate-200" />
+
+          <!-- 草稿清單表格（字級統一，無特定字體，欄寬自動增長） -->
+          <div>
+            <div class="th-table-wrap">
+              <table class="th-table th-table--zebra">
+                <thead>
+                  <tr>
+                    <th scope="col">草稿紀錄時間</th>
+                    <th scope="col">機關</th>
+                    <th scope="col">登山路線</th>
+                    <th scope="col">入園日期</th>
+                    <th scope="col">隊名</th>
+                    <th scope="col" class="text-center">功能</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="draft in draftList" :key="draft.id">
+                    <!-- 草稿紀錄時間 -->
+                    <td class="text-slate-700 align-middle">
+                      {{ draft.createTime }}
+                    </td>
+
+                    <!-- 機關 -->
+                    <td class="align-middle">
+                      <span
+                        class="bulletin-badge"
+                        :class="draft.agencyBadge">
+                        {{ draft.agency }}
+                      </span>
+                    </td>
+
+                    <!-- 登山路線 -->
+                    <td class="font-medium text-slate-800 align-middle">
+                      {{ draft.route }}
+                    </td>
+
+                    <!-- 入園日期 -->
+                    <td class="text-slate-700 align-middle">
+                      {{ draft.entryDate }}（{{ draft.days }} 天）
+                    </td>
+
+                    <!-- 隊名 -->
+                    <td class="text-slate-800 align-middle">
+                      <span class="font-medium">{{ draft.teamName }}</span>
+                      <span class="text-slate-500 ml-1">（{{ draft.membersCount }} 人）</span>
+                    </td>
+
+                    <!-- 功能按鈕 -->
+                    <td class="text-center align-middle whitespace-nowrap">
+                      <div class="flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          class="th-btn th-btn-primary px-3 py-1 inline-flex items-center gap-1.5"
+                          @click="handleEdit(draft)"
+                          title="載入並編輯草稿">
+                          <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>編輯
+                        </button>
+                        <button
+                          type="button"
+                          class="th-btn th-btn-ghost px-3 py-1 text-[color:var(--danger-fg-hover)] !border-[color:var(--danger-fg-hover)] hover:bg-red-50 inline-flex items-center gap-1.5"
+                          @click="handleDelete(draft)"
+                          title="刪除此筆草稿">
+                          <i class="fa-solid fa-trash-can" aria-hidden="true"></i>刪除
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 查無資料空狀態 -->
+                  <tr v-if="draftList.length === 0">
+                    <td colspan="6" class="text-center py-10 text-slate-500">
+                      <i class="fa-regular fa-folder-open text-3xl mb-2 text-slate-300 block" aria-hidden="true"></i>
+                      目前查無任何儲存之草稿紀錄。
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 操作按鈕區（返回在卡片外部置中，比照 apply_6） -->
+      <div class="flex items-center justify-center pt-2 pb-6">
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-8 py-2.5 min-w-[120px] inline-flex items-center justify-center gap-1.5"
+          @click="handleBackToQuery">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>返回
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         第三階段：步驟一 行程登記及登山申請（currentStep === 3）
+         ============================================================ -->
+    <div v-else-if="currentStep === 3" class="flex flex-col gap-6">
+
+      <!-- 1. 路線基本資訊 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">路線基本資訊</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+            <div class="th-field">
+              <label class="th-label" for="d-team">
+                <span class="req">*</span>隊伍名稱
+              </label>
+              <input
+                id="d-team"
+                type="text"
+                class="th-input w-full"
+                v-model="activeDraft.teamName"
+                placeholder="請輸入隊名" />
+            </div>
+            <div class="th-field">
+              <label class="th-label">管轄機關／登山路線</label>
+              <input
+                type="text"
+                class="th-input w-full bg-slate-50 text-slate-600"
+                :value="activeDraft.agency + ' ／ ' + activeDraft.mainRoute"
+                readonly />
+            </div>
+            <div class="th-field">
+              <label class="th-label">入園日期</label>
+              <input
+                type="text"
+                class="th-input w-full"
+                v-model="activeDraft.entryDate" />
+            </div>
+            <div class="th-field">
+              <label class="th-label">離園日期（共 {{ activeDraft.days }} 天）</label>
+              <input
+                type="text"
+                class="th-input w-full"
+                v-model="activeDraft.exitDate" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 路線行程規劃 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">路線行程規劃</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-4">
+          <div class="th-table-wrap">
+            <table class="th-table th-table--zebra">
+              <thead>
+                <tr>
+                  <th scope="col" class="w-24">天數</th>
+                  <th scope="col" class="w-36">日期</th>
+                  <th scope="col">預定行程路線站點</th>
+                  <th scope="col" class="w-44">預計抵達時間</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in activeDraft.itinerary" :key="item.day">
+                  <td class="font-medium text-slate-800 align-middle">第 {{ item.day }} 天</td>
+                  <td class="text-slate-700 align-middle">{{ item.date }}</td>
+                  <td class="text-slate-800 align-middle">{{ item.plan }}</td>
+                  <td class="align-middle">
+                    <input
+                      type="text"
+                      class="th-input py-1 px-2.5 w-32"
+                      v-model="item.arriveTime"
+                      placeholder="例 16:30" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 登山安全管理檢核與留守計畫 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">登山安全管理與留守計畫</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-5">
+          <!-- 4 項聲明檢核 -->
+          <div class="space-y-3 bg-slate-50 p-4 rounded-md border border-slate-200">
+            <label class="flex items-start gap-2.5 cursor-pointer text-slate-800">
+              <input type="checkbox" class="rounded text-national-700 focus:ring-national-700 mt-1" v-model="activeDraft.safetyCheck1" />
+              <span>本隊領隊及全體隊員已完成自主體能評估，並備妥足夠禦寒衣物、裝備與糧食。</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer text-slate-800">
+              <input type="checkbox" class="rounded text-national-700 focus:ring-national-700 mt-1" v-model="activeDraft.safetyCheck2" />
+              <span>出發前已確實告知親屬完整行程規劃、預計下山時間與留守人聯絡方式。</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer text-slate-800">
+              <input type="checkbox" class="rounded text-national-700 focus:ring-national-700 mt-1" v-model="activeDraft.safetyCheck3" />
+              <span>遵守國家公園生態保護區路線管理規定，絕不擅自變更核准之登山路線。</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer text-slate-800">
+              <input type="checkbox" class="rounded text-national-700 focus:ring-national-700 mt-1" v-model="activeDraft.safetyCheck4" />
+              <span>已詳閱國家賠償法第 3 條關於公有公共設施或開放山域免責之相關規定。</span>
+            </label>
+          </div>
+
+          <!-- 自主安全與留守細部 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 pt-2">
+            <div class="th-field md:col-span-2">
+              <label class="th-label">自主安全管理事項（應變路線）</label>
+              <textarea class="th-input w-full h-20 resize-none" v-model="activeDraft.altRoute"></textarea>
+            </div>
+            <div class="th-field md:col-span-2">
+              <label class="th-label">安全評估（受傷處置及緊急救護經驗）</label>
+              <textarea class="th-input w-full h-20 resize-none" v-model="activeDraft.firstAidExp"></textarea>
+            </div>
+            <div class="th-field">
+              <label class="th-label">失聯通報小時數</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.lostHours" />
+            </div>
+            <div class="th-field">
+              <label class="th-label">最後一天預計抵達登山口時間</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.finishHours" />
+            </div>
+            <div class="th-field md:col-span-2">
+              <label class="th-label">留守人掌握現況說明</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.contactNote" />
+            </div>
+          </div>
+
+          <!-- 錯誤提示 -->
+          <div v-if="stepError" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-red-600" aria-hidden="true"></i>
+            <span>{{ stepError }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 操作按鈕區 -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2 pb-6">
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleBackToQuery">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>返回
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-ghost !border-[color:var(--danger-fg-hover)] text-[color:var(--danger-fg-hover)] hover:bg-red-50 px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleDeleteDraftCurrent">
+          <i class="fa-solid fa-trash-can" aria-hidden="true"></i>刪除草稿
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleSaveDraft">
+          <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>儲存草稿
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-primary px-10 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleStep1Next">
+          下一步：填寫基本資料<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         第四階段：步驟二 基本資料填寫（currentStep === 4）
+         ============================================================ -->
+    <div v-else-if="currentStep === 4" class="flex flex-col gap-6">
+
+      <!-- 1. 行程摘要（唯讀） -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">行程摘要</h2>
+        </div>
+        <div class="th-card-body">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">隊伍名稱</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.teamName }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">登山路線</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.mainRoute }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">入園日期</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.entryDate }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">離園日期</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.exitDate }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 申請人資料 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">申請人資料</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>姓名</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.applicant.name" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>身分證號／居留證</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.applicant.sid" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>行動電話</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.applicant.phone" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>電子郵件</label>
+              <input type="email" class="th-input w-full" v-model="activeDraft.applicant.email" />
+            </div>
+            <div class="th-field">
+              <label class="th-label">性別</label>
+              <select class="th-select w-full" v-model="activeDraft.applicant.gender">
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+            </div>
+            <div class="th-field">
+              <label class="th-label">出生年月日</label>
+              <input type="date" class="th-input w-full" v-model="activeDraft.applicant.birth" />
+            </div>
+            <div class="th-field md:col-span-3">
+              <label class="th-label">通訊地址</label>
+              <div class="flex gap-2">
+                <input type="text" class="th-input w-32" v-model="activeDraft.applicant.city" />
+                <input type="text" class="th-input w-32" v-model="activeDraft.applicant.district" />
+                <input type="text" class="th-input flex-1" v-model="activeDraft.applicant.address" />
+              </div>
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>緊急聯絡人</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.applicant.contactPerson" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>緊急聯絡人電話</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.applicant.contactPhone" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 領隊資料 -->
+      <section class="th-card">
+        <div class="th-card-head justify-between">
+          <h2 class="th-card-title">領隊資料</h2>
+          <label class="inline-flex items-center gap-1.5 cursor-pointer text-sm text-slate-700">
+            <input type="checkbox" class="rounded text-national-700" v-model="activeDraft.leaderSameAsApplicant" @change="toggleLeaderSameAsApplicant" />
+            <span>同申請人資料</span>
+          </label>
+        </div>
+        <div class="th-card-body flex flex-col gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>領隊姓名</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.leader.name" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>身分證號</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.leader.sid" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>行動電話</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.leader.phone" />
+            </div>
+            <div class="th-field">
+              <label class="th-label">電子郵件</label>
+              <input type="email" class="th-input w-full" v-model="activeDraft.leader.email" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>緊急聯絡人（以家人為主）</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.leader.contactPerson" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>緊急聯絡人電話</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.leader.contactPhone" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 隊員資料名冊 -->
+      <section class="th-card">
+        <div class="th-card-head justify-between">
+          <h2 class="th-card-title">隊員名冊（共 {{ activeDraft.members.length }} 人）</h2>
+          <button
+            type="button"
+            class="th-btn th-btn-primary px-3 py-1 inline-flex items-center gap-1.5"
+            @click="handleAddMember">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>新增隊員
+          </button>
+        </div>
+        <div class="th-card-body flex flex-col gap-4">
+          <div v-for="(m, idx) in activeDraft.members" :key="m.id" class="p-4 border border-slate-200 rounded-md bg-slate-50 flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-800">隊員 {{ idx + 1 }}</span>
+              <button
+                type="button"
+                class="text-[color:var(--danger-fg-hover)] hover:underline inline-flex items-center gap-1"
+                @click="handleRemoveMember(idx)">
+                <i class="fa-solid fa-trash-can" aria-hidden="true"></i>刪除隊員
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="th-field">
+                <label class="th-label"><span class="req">*</span>姓名</label>
+                <input type="text" class="th-input w-full" v-model="m.name" placeholder="隊員姓名" />
+              </div>
+              <div class="th-field">
+                <label class="th-label"><span class="req">*</span>身分證號</label>
+                <input type="text" class="th-input w-full" v-model="m.sid" placeholder="身分證號" />
+              </div>
+              <div class="th-field">
+                <label class="th-label">行動電話</label>
+                <input type="text" class="th-input w-full" v-model="m.phone" placeholder="手機號碼" />
+              </div>
+              <div class="th-field">
+                <label class="th-label">緊急聯絡人及電話</label>
+                <input type="text" class="th-input w-full" v-model="m.contactPerson" placeholder="聯絡人與電話" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. 留守人與附件 -->
+      <section class="th-card">
+        <div class="th-card-head justify-between">
+          <h2 class="th-card-title">留守人資料與附件上傳</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>留守人姓名（不上山人員）</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.stayBehind.name" />
+            </div>
+            <div class="th-field">
+              <label class="th-label"><span class="req">*</span>留守人電話</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.stayBehind.phone" />
+            </div>
+            <div class="th-field">
+              <label class="th-label">與隊員關係</label>
+              <input type="text" class="th-input w-full" v-model="activeDraft.stayBehind.relation" />
+            </div>
+          </div>
+
+          <hr class="border-t border-slate-200" />
+
+          <!-- 附件上傳 -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-bold text-slate-800">附件證明文件（單檔上限 5MB）</span>
+              <button
+                type="button"
+                class="th-btn th-btn-ghost px-3 py-1 text-sm inline-flex items-center gap-1.5"
+                @click="handleAddAttachment">
+                <i class="fa-solid fa-paperclip" aria-hidden="true"></i>上傳新附件
+              </button>
+            </div>
+            <ul class="space-y-2">
+              <li v-for="(att, idx) in activeDraft.attachments" :key="att.id" class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded text-slate-700">
+                <span class="inline-flex items-center gap-2">
+                  <i class="fa-regular fa-file-pdf text-red-600" aria-hidden="true"></i>
+                  {{ att.name }}（{{ att.size }}）
+                </span>
+                <button
+                  type="button"
+                  class="text-[color:var(--danger-fg-hover)] text-sm hover:underline"
+                  @click="handleRemoveAttachment(idx)">
+                  移除
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 錯誤提示 -->
+          <div v-if="stepError" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-red-600" aria-hidden="true"></i>
+            <span>{{ stepError }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 操作按鈕區 -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2 pb-6">
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="currentStep = 3">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步：行程登記
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleSaveDraft">
+          <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>儲存草稿
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-primary px-10 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleStep2Next">
+          下一步：確認申請資料<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         第五階段：步驟三 確認資料頁（currentStep === 5）
+         ============================================================ -->
+    <div v-else-if="currentStep === 5" class="flex flex-col gap-6">
+
+      <!-- 提示條 -->
+      <div class="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-md flex items-center gap-2.5">
+        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg" aria-hidden="true"></i>
+        <span class="font-medium">請確認以下申請資料均正確無誤後，輸入驗證碼並確認送出！</span>
+      </div>
+
+      <!-- 1. 行程基本資料 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">行程確認</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">隊伍名稱</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.teamName }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">申請路線</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.mainRoute }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">入園日期</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.entryDate }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">離園日期</div>
+              <div class="text-base text-slate-800 font-medium">{{ activeDraft.exitDate }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 人員名冊確認總表 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">隊伍名冊確認總表</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-4">
+          <div class="th-table-wrap">
+            <table class="th-table th-table--zebra">
+              <thead>
+                <tr>
+                  <th scope="col">身分</th>
+                  <th scope="col">姓名</th>
+                  <th scope="col">身分證號</th>
+                  <th scope="col">行動電話</th>
+                  <th scope="col">緊急聯絡人及電話</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 申請人 / 領隊 -->
+                <tr>
+                  <td class="font-bold text-national-700">領隊（申請人）</td>
+                  <td class="font-medium text-slate-800">{{ activeDraft.leader.name }}</td>
+                  <td class="text-slate-700">{{ activeDraft.leader.sid }}</td>
+                  <td class="text-slate-700">{{ activeDraft.leader.phone }}</td>
+                  <td class="text-slate-700">{{ activeDraft.leader.contactPerson }}（{{ activeDraft.leader.contactPhone }}）</td>
+                </tr>
+                <!-- 隊員 -->
+                <tr v-for="(m, i) in activeDraft.members" :key="m.id">
+                  <td class="text-slate-700">隊員 {{ i + 1 }}</td>
+                  <td class="font-medium text-slate-800">{{ m.name }}</td>
+                  <td class="text-slate-700">{{ m.sid }}</td>
+                  <td class="text-slate-700">{{ m.phone }}</td>
+                  <td class="text-slate-700">{{ m.contactPerson }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 送件驗證碼卡片 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">送件驗證</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-4 max-w-md">
+          <div class="th-field">
+            <label class="th-label" for="s-vcode">
+              <span class="req">*</span>請輸入送件驗證碼
+            </label>
+            <div class="flex items-center gap-2">
+              <input
+                id="s-vcode"
+                type="text"
+                class="th-input flex-1 min-w-0"
+                placeholder="請輸入驗證碼"
+                v-model="submitVcode" />
+              <span class="flex items-center justify-center shrink-0 w-28 h-[42px] text-center font-bold tracking-[0.25em] text-blue-900 bg-indigo-50 border border-indigo-200 rounded-md select-none">
+                {{ submitVcodeDisplay }}
+              </span>
+              <button
+                type="button"
+                class="th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none"
+                @click="refreshSubmitVcode"
+                title="換一組驗證碼">
+                <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div v-if="stepError" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-red-600" aria-hidden="true"></i>
+            <span>{{ stepError }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 操作按鈕區 -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2 pb-6">
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="currentStep = 4">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步：基本資料
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleSaveDraft">
+          <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>儲存草稿
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-primary px-12 py-3 inline-flex items-center gap-2 text-base font-bold"
+          @click="handleStep3Submit">
+          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>確認送出申請案
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         第六階段：步驟四 申請完成頁（currentStep === 6）
+         ============================================================ -->
+    <div v-else-if="currentStep === 6" class="flex flex-col gap-6">
+
+      <!-- 申請完成成功卡片 -->
+      <section class="th-card border-green-200 bg-white">
+        <div class="th-card-head bg-green-50 border-b border-green-200 py-6 text-center flex-col items-center justify-center gap-2">
+          <div class="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-3xl mb-1">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-800">登山入園申請案已成功送出！</h2>
+          <p class="text-slate-600">系統已將申請確認信發送至申請人與領隊電子信箱。</p>
+        </div>
+
+        <div class="th-card-body flex flex-col gap-6 p-6">
+          <!-- 申請編號強調區塊 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-md text-center">
+            <div class="text-sm text-slate-500 mb-1">登山申請編號</div>
+            <div class="text-2xl font-bold text-national-800 tracking-wider font-mono">{{ finishData.serial }}</div>
+            <div class="text-[color:var(--danger-fg-hover)] text-sm mt-2 font-medium">
+              請確實記錄申請編號及保留系統通知電子郵件，管理處及系統不提供查詢申請編號服務。
+            </div>
+          </div>
+
+          <!-- 申請結果資訊 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">隊伍名稱</div>
+              <div class="text-base text-slate-800 font-medium">{{ finishData.teamName }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">申請送件時間</div>
+              <div class="text-base text-slate-800 font-medium">{{ finishData.applyTime }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">申請總人數</div>
+              <div class="text-base text-slate-800 font-medium">{{ finishData.membersCount }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">入園日期區間</div>
+              <div class="text-base text-slate-800 font-medium">{{ finishData.entryDate }}</div>
+            </div>
+            <div class="sm:col-span-2">
+              <div class="text-xs text-slate-500 font-semibold mb-1">申請路線</div>
+              <div class="text-base text-slate-800 font-medium">{{ finishData.route }}</div>
+            </div>
+          </div>
+
+          <hr class="border-t border-slate-200" />
+
+          <!-- 注意事項 -->
+          <div class="space-y-2 text-slate-700 leading-relaxed">
+            <div class="font-bold text-slate-800">注意事項：</div>
+            <ol class="list-decimal pl-6 space-y-1">
+              <li>申請完成不代表已核准入園，各國家公園管理處審核結果將以 Email 通知。</li>
+              <li>請妥善記住您的申請編號，以利利用「申請進度查詢/許可證下載」查詢審核進度與下載入園許可證。</li>
+              <li>若未收到通知信件，請檢查垃圾郵件信箱，或利用入園信箱進行反映。</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- 操作按鈕區 -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2 pb-6">
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handlePrint">
+          <i class="fa-solid fa-print" aria-hidden="true"></i>列印本頁
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-6 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleBackToList">
+          <i class="fa-solid fa-list-check" aria-hidden="true"></i>回草稿清單
+        </button>
+        <button
+          type="button"
+          class="th-btn th-btn-primary px-8 py-2.5 inline-flex items-center gap-1.5"
+          @click="handleBackToQuery">
+          <i class="fa-solid fa-house" aria-hidden="true"></i>返回查詢首頁
+        </button>
+      </div>
+
+    </div>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

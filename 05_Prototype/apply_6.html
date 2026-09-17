@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>國家公園出園回報 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_6 — 國家公園出園回報（舊站 apply_6.aspx）
+  ------------------------------------------------------------
+  規格依據：02_Spec/08_國家公園出園回報.md
+  支援兩大獨立頁面檢視切換：
+  - 第一頁（currentStep === 1）：回報頁（查詢驗證）
+  - 第二頁（currentStep === 2）：回報資料填寫頁（明細填報）
+  這三行必須靜態寫在頁面，順序不可調換：Tailwind → tailwind.config.js → index.css。
+  使用系統共用元件：th-page-shell、th-header、th-footer、th-quick-nav、th-captcha、th-callout。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_6.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="pageTrail"
+    :title="pageTitle">
+
+    <!-- ============================================================
+         第一頁：出園回報查詢驗證頁（currentStep === 1）
+         ============================================================ -->
+    <div v-if="currentStep === 1" class="flex flex-col gap-6">
+
+      <!-- 提示區塊：出園回報說明（icon 與第一列中文嚴格垂直居中） -->
+      <th-callout class="p-apply6-notice">
+        <p class="font-medium text-slate-800 leading-[26px]">請隊伍於所有隊員下山後，統一由領隊或隊員辦理出園回報。</p>
+        <p class="text-[length:var(--fs-xs)] text-slate-500 mt-1 leading-relaxed">
+          輸入您的(一站式/入園)申請編號及領隊或隊員身分證號/護照號碼(居留證)來進行出園回報。
+        </p>
+      </th-callout>
+
+      <!-- 出園回報查詢驗證表單 -->
+      <form @submit.prevent="handleSearch" class="flex flex-col gap-6">
+        <section class="th-card" id="query">
+          <div class="th-card-head">
+            <h2 class="th-card-title">出園回報</h2>
+          </div>
+          <div class="th-card-body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+              
+              <!-- 1. 申請編號 (左上) -->
+              <div class="th-field">
+                <label class="th-label" for="f-serial">
+                  <span class="req">*</span>（一站式／入園）申請編號
+                </label>
+                <input
+                  id="f-serial"
+                  name="serial"
+                  type="text"
+                  class="th-input w-full"
+                  autocomplete="off"
+                  placeholder="請輸入登山申請一站式 12 碼申請編號"
+                  :value="serial"
+                  @input="serial = $event.target.value" />
+              </div>
+
+              <!-- 2. 國籍與國別 (右上) -->
+              <div class="th-field">
+                <label class="th-label" for="f-nation">
+                  <span class="req">*</span>國籍{{ nation === '國外' ? '／國別' : '' }}
+                </label>
+                <div :class="['grid gap-3', nation === '國外' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1']">
+                  <!-- 主選單：國籍 -->
+                  <div>
+                    <th-hybrid-select>
+                      <select
+                        id="f-nation"
+                        name="nation"
+                        class="th-select w-full"
+                        :value="nation"
+                        @change="handleNationChange($event.target.value)">
+                        <option value="">請選擇國籍</option>
+                        <option value="中華民國">中華民國</option>
+                        <option value="國外">國外</option>
+                      </select>
+                    </th-hybrid-select>
+                  </div>
+
+                  <!-- 子選單：國別（外國時同格展開） -->
+                  <div v-if="nation === '國外'">
+                    <th-hybrid-select>
+                      <select
+                        id="f-country"
+                        name="country"
+                        class="th-select w-full"
+                        :value="country"
+                        @change="country = $event.target.value">
+                        <option value="">請選擇國別</option>
+                        <option v-for="c in countryOptions" :key="c" :value="c">{{ c }}</option>
+                      </select>
+                    </th-hybrid-select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. 身分證號 / 護照號碼 (左下) -->
+              <div class="th-field">
+                <label class="th-label" for="f-sid">
+                  <span class="req">*</span>{{ nation === '國外' ? '護照號碼（居留證）' : '身分證號／護照號碼（居留證）' }}
+                </label>
+                <input
+                  id="f-sid"
+                  name="sid"
+                  type="text"
+                  class="th-input w-full"
+                  autocomplete="off"
+                  :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+                  :value="sid"
+                  @input="sid = $event.target.value" />
+              </div>
+
+              <!-- 4. 驗證碼 (右下，高度 42px 齊平) -->
+              <div class="th-field">
+                <label class="th-label" for="f-vcode">
+                  <span class="req">*</span>請輸入驗證碼
+                </label>
+                <div class="flex items-center gap-2">
+                  <input
+                    id="f-vcode"
+                    name="vcode"
+                    type="text"
+                    class="th-input flex-1 min-w-0"
+                    autocomplete="off"
+                    placeholder="請輸入驗證碼"
+                    :value="vcode"
+                    @input="vcode = $event.target.value" />
+                    <span class="flex items-center justify-center shrink-0 w-28 h-[42px] text-center font-mono font-bold tracking-[0.25em] text-blue-900 bg-indigo-50 border border-indigo-200 rounded-md select-none text-base">
+                      {{ vcodeDisplay }}
+                    </span>
+                    <button
+                      type="button"
+                      class="th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity"
+                      @click="refreshVcode"
+                      title="換一組驗證碼">
+                      <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+              </div>
+
+              <!-- 錯誤訊息提示 (跨兩欄) -->
+              <div v-if="searchError" class="col-span-1 md:col-span-2 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-md flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation text-red-600" aria-hidden="true"></i>
+                <span>{{ searchError }}</span>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- 置中確認按鈕區（搬出卡片下方中間，無 icon，無清除按鈕） -->
+        <div class="flex items-center justify-center pt-2 pb-6">
+          <button
+            type="submit"
+            class="th-btn th-btn-primary px-12 py-3 text-[length:var(--fs-md)] min-w-[140px]">
+            確定
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- ============================================================
+         第二頁：出園回報資料填寫頁（currentStep === 2）
+         ============================================================ -->
+    <div v-else-if="currentStep === 2" class="flex flex-col gap-6">
+
+      <!-- 1. 基本資料卡片（內含明細表格與說明區塊） -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">基本資料</h2>
+        </div>
+        <div class="th-card-body flex flex-col gap-6">
+          <!-- 隊伍資訊 6 欄網格 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6">
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">入園日期</div>
+              <div class="text-base text-slate-800 font-medium">{{ teamInfo.entryDate }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">離園日期</div>
+              <div class="text-base text-slate-800 font-medium">{{ teamInfo.exitDate }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">登山申請編號</div>
+              <div class="text-base text-national-800 font-bold">{{ teamInfo.serial }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">隊伍名稱</div>
+              <div class="text-base text-slate-800 font-medium">{{ teamInfo.teamName }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">領隊姓名</div>
+              <div class="text-base text-slate-800 font-medium">{{ teamInfo.leaderName }}</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold mb-1">隊伍人數（含領隊）</div>
+              <div class="text-base text-slate-800 font-medium">{{ teamInfo.memberCount }}</div>
+            </div>
+          </div>
+
+          <hr class="border-t border-slate-200" />
+
+          <!-- 出園回報明細表格 -->
+          <div>
+            <div class="th-table-wrap">
+              <table class="th-table th-table--zebra">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-center">職稱／姓名</th>
+                    <th scope="col">報到時間</th>
+                    <th scope="col">出園日期</th>
+                    <th scope="col">體溫（℃）</th>
+                    <th scope="col">備註</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="m in members" :key="m.id">
+                    <!-- 職稱／姓名（僅領隊陳大明顯示 badge，確保樣式出現） -->
+                    <td class="text-center align-middle">
+                      <div class="flex flex-col items-center justify-center gap-1">
+                        <span
+                          v-if="m.role === '領隊'"
+                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold shadow-xs"
+                          style="background-color: var(--national-700); color: var(--fg-on-dark);">
+                          領隊
+                        </span>
+                        <span class="font-medium text-slate-800">{{ m.name }}</span>
+                      </div>
+                    </td>
+
+                    <!-- 報到時間（未報到改為 --danger-fg-hover） -->
+                    <td>
+                      <span :class="m.checkinTime === '未報到' ? 'text-[color:var(--danger-fg-hover)] font-medium' : 'text-slate-700'">
+                        {{ m.checkinTime }}
+                      </span>
+                    </td>
+
+                    <!-- 出園日期（右側補紅字 *） -->
+                    <td>
+                      <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-4">
+                          <label class="inline-flex items-center gap-1.5 cursor-pointer text-slate-700">
+                            <input
+                              type="checkbox"
+                              class="rounded text-national-700 focus:ring-national-700"
+                              :checked="m.entered"
+                              @change="m.entered = $event.target.checked; toggleEntered(m)"
+                              :disabled="m.isReported" />
+                            <span>有入園</span>
+                          </label>
+                          <label class="inline-flex items-center gap-1.5 cursor-pointer text-slate-700">
+                            <input
+                              type="checkbox"
+                              class="rounded text-national-700 focus:ring-national-700"
+                              :checked="m.notEntered"
+                              @change="m.notEntered = $event.target.checked; toggleNotEntered(m)"
+                              :disabled="m.isReported" />
+                            <span>未入園</span>
+                          </label>
+                        </div>
+
+                        <div v-if="m.entered" class="inline-flex items-center gap-1.5">
+                          <th-date-picker
+                            v-model="m.exitDate"
+                            :bare="true"
+                            input-class="py-1 px-2.5 !w-36"
+                            :disabled="m.isReported">
+                          </th-date-picker>
+                          <span class="text-[color:var(--danger-fg-hover)] font-bold text-base leading-none">*</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- 入園體溫／出園體溫（統一字級大小，高度約 84px） -->
+                    <td>
+                      <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                          <span class="text-slate-700 whitespace-nowrap">入園體溫</span>
+                          <input
+                            type="text"
+                            class="th-input py-1 px-2.5 w-24"
+                            :value="m.tempEntry"
+                            @input="m.tempEntry = $event.target.value"
+                            :disabled="m.isReported" />
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <span class="text-slate-700 whitespace-nowrap">出園體溫</span>
+                          <input
+                            type="text"
+                            class="th-input py-1 px-2.5 w-24"
+                            :value="m.tempExit"
+                            @input="m.tempExit = $event.target.value"
+                            :disabled="m.isReported" />
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- 備註（多行 textarea，無 placeholder，與體溫等高） -->
+                    <td class="align-middle">
+                      <textarea
+                        rows="3"
+                        class="th-input py-1.5 px-2.5 w-full h-[84px] resize-none"
+                        aria-label="備註"
+                        :value="m.notes"
+                        @input="m.notes = $event.target.value"
+                        :disabled="m.isReported"></textarea>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 還原之說明文字區塊（入園信箱比照雙語詞彙外連格式，1. 2. 縮排） -->
+            <div class="mt-6 pt-4 border-t border-slate-200 space-y-2 leading-relaxed text-slate-700">
+              <p>如有入園且平安下山，請勾選出園日期暨填寫入園時體溫及出園時體溫。</p>
+              <div>
+                <p class="font-medium text-slate-800">當 [報到時間] 欄位為未報到：</p>
+                <ol class="list-decimal pl-8 space-y-1.5 mt-1 text-slate-700">
+                  <li>
+                    如有入園且平安下山，請勾選出園日期暨填寫入園時體溫及出園時體溫，再請以
+                    <a href="mail_1.html" target="_blank" rel="noopener noreferrer" class="th-inline-link">入園信箱<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
+                    補報到。
+                  </li>
+                  <li>
+                    如因故無法成行且未能事前於線上取消，請於 [出園日期] 欄位勾選 [未入園]，並請以
+                    <a href="mail_1.html" target="_blank" rel="noopener noreferrer" class="th-inline-link">入園信箱<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
+                    取消入園。
+                  </li>
+                </ol>
+              </div>
+              <p class="text-[color:var(--danger-fg-hover)] font-medium pt-1">已確認離園的隊員將不行再變更為【未離園】</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 操作按鈕區（返回在左側比照清除按鈕樣式 th-btn-ghost，確認在右側） -->
+      <div class="flex items-center justify-center gap-4 pt-2 pb-6">
+        <!-- 返回（左邊，清除按鈕樣式 th-btn-ghost，icon 比照回列表 fa-arrow-left） -->
+        <button
+          type="button"
+          class="th-btn th-btn-ghost px-8 py-2.5 min-w-[120px] inline-flex items-center gap-1.5"
+          @click="handleBackToQuery">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>返回
+        </button>
+
+        <!-- 確認（右邊） -->
+        <button
+          v-if="!isSubmitSuccess"
+          type="button"
+          class="th-btn th-btn-primary px-8 py-2.5 min-w-[120px]"
+          @click="handleConfirmExit">
+          確認
+        </button>
+        <div v-else class="text-sm font-semibold text-national-700 flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>已完成出園回報
+        </div>
+      </div>
+
+    </div>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

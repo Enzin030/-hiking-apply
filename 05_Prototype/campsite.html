@@ -56,7 +56,8 @@
     <div class="bulletin-filter-row p-campsite-kindrow">
       <span class="bulletin-filter-label"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>查詢類別</span>
       <template v-for="k in kindList" :key="k.key">
-        <button v-if="k.built" type="button"
+        <a v-if="k.href" class="th-chip" :href="k.href">{{ k.label }}</a>
+        <button v-else-if="k.built" type="button"
                 :class="['th-chip', { 'is-active': kind === k.key }]"
                 :aria-pressed="kind === k.key"
                 @click="kind = k.key">{{ k.label }}</button>

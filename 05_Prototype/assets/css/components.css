@@ -1119,8 +1119,9 @@
   color: #1f2d26;
 }
 
-.th-home-header a,
-.th-home-header button {
+/* :where() 把權重壓到 (0,1,0)：語言選單的 .th-lang-item 也是 button，
+   寫在本段之後，同權重時由它勝出，才不會被這裡的 padding／background 歸零。 */
+.th-home-header :where(a, button) {
   color: #1f2d26;
   background: none;
   border: none;
@@ -1175,6 +1176,222 @@
   outline: 2px solid var(--national-700);
   outline-offset: 2px;
   border-radius: var(--r-xs);
+}
+
+/* ------------------------------------------------------------
+   首頁版面（2026-09-17 依設計檔 前台web/css/home.css、layout.css）
+   ------------------------------------------------------------
+   原本這些是 index.html 上的 Tailwind utility，改成設計檔的具名 class，
+   數值照設計檔；只有色彩換成我方 token 名（--panel-edu-bg → --home-panel-edu、
+   --panel-edu-ic → --national-700、--panel-apply-ic → --home-panel-apply，
+   同值）。目前唯一消費端是 index.html。 */
+
+/* 容器：.th-container＝1280px（原 max-w-7xl）、.th-container-md＝1152px（原 max-w-6xl） */
+.th-container,
+.th-container-md {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.th-container    { max-width: 1280px; }
+.th-container-md { max-width: 1152px; }
+
+.th-home-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  overflow: hidden;
+}
+.th-home-hero-bg { position: absolute; inset: 0; z-index: 0; }
+.th-home-hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+.th-home-hero-bg .th-hero-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.th-home-body {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 24px;
+}
+
+.th-home-header { position: relative; z-index: 20; }
+.th-home-header-inner {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.th-home-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.th-home-logo { height: 72px; width: auto; }
+.th-home-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 48px;
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--lh-tight);
+  margin: 0;
+}
+.th-home-utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 16px;
+  row-gap: 8px;
+}
+/* 只管功能列本層的項目，語言下拉裡的選項維持 .th-lang-item 的樣子 */
+.th-home-utility > a,
+.th-home-utility > button,
+.th-home-utility .th-lang-btn {
+  font-weight: 500;
+  font-size: 17px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s ease;
+}
+.th-home-utility .th-lang-btn,
+.th-home-utility .th-lang-btn:hover { color: inherit; }
+.th-home-utility > a:hover,
+.th-home-utility > button:hover,
+.th-home-utility .th-lang-btn:hover { opacity: 0.7; }
+/* 置中頁首：語言下拉對齊按鈕中線（設計檔 components.css 同款） */
+.th-home-utility .th-lang-dropdown { right: auto; left: 50%; transform: translateX(-50%); }
+
+.th-home-marquee-slot { margin-top: 24px; }
+.th-home-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  position: relative;   /* 「中間主要內容區」導盲磚的定位基準 */
+}
+.th-home-main > .th-container { padding-top: 40px; padding-bottom: 40px; }
+
+/* 雙面板：桌機 2 欄、900px 以下 1 欄 */
+.th-grid-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+.th-home-panel {
+  border-radius: var(--r-2xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.th-home-panel-head {
+  padding: 24px;
+  text-align: center;
+}
+.th-home-panel-head.is-edu   { background: var(--home-panel-edu); }
+.th-home-panel-head.is-apply { background: var(--home-panel-apply); }
+.th-home-panel-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-h1);
+  letter-spacing: 0.15em;
+  color: var(--fg-on-dark);
+  margin: 0;
+}
+.th-home-panel-body {
+  padding: 40px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* 圓形功能鈕：4 欄，640px 以下 2 欄 */
+.th-grid-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 20px;
+  row-gap: 48px;
+  align-content: center;
+  width: 100%;
+}
+.th-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.th-tile-ic {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  box-shadow: var(--sh-sm);
+}
+.th-tile-green .th-tile-ic { color: var(--national-700); }
+.th-tile-blue  .th-tile-ic { color: var(--home-panel-apply); }
+.th-tile-label {
+  font-size: var(--fs-md);
+  font-weight: 500;
+  color: var(--slate-700);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 900px) {
+  .th-container,
+  .th-container-md { padding-left: 16px; padding-right: 16px; }
+  .th-home-wordmark { font-size: 34px; }
+  .th-home-logo { height: 56px; }
+  .th-home-utility > a,
+  .th-home-utility > button,
+  .th-home-utility .th-lang-btn { font-size: var(--fs-sm); }
+  .th-grid-panels { grid-template-columns: minmax(0, 1fr); }
+  .th-home-panel-title { font-size: 24px; }
+  .th-home-panel-body { padding: 28px 20px; }
+  .th-tile-ic { width: 76px; height: 76px; font-size: 28px; }
+  .th-tile-label { font-size: var(--fs-xs); }
+}
+@media (max-width: 640px) {
+  .th-grid-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 32px;
+  }
+}
+@media (max-width: 600px) {
+  .th-home-wordmark { font-size: 24px; }
+  .th-home-brand { gap: 10px; }
+  .th-home-logo { height: 40px; }
+}
+/* 極窄螢幕：逐階降級，站名維持單行 */
+@media (max-width: 400px) {
+  .th-home-wordmark { font-size: 20px; }
+  .th-home-brand { gap: 8px; }
+  .th-home-logo { height: 34px; }
+}
+@media (max-width: 360px) {
+  .th-home-wordmark { font-size: 18px; letter-spacing: 0; }
+  .th-home-logo { height: 30px; }
 }
 
 @media (max-width: 700px) {
@@ -4290,4 +4507,190 @@ a.th-linkrow:hover .th-linkrow-icon {
 }
 
 
+/* ============================================================
+   th-bed-calendar — 宿營地／床位查詢的月份列＋單一數字月曆
+   ------------------------------------------------------------
+   2026-09-17 由 pages.css 的 .p-bed0-* 提升（bed_0、bed_1 兩頁共用，二次即提升）。
+   配色與排版逐項經使用者定案：白底格、主數字 --green-700、額滿用置頂標記字色、
+   「剩餘」與數字垂直置中、月份列無底色。元件見 assets/components/th-bed-calendar.js。
+   ============================================================ */
+.th-bedcal-monthbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.th-bedcal-ym {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.th-bedcal-ym .th-select {
+  width: auto;
+  min-width: 88px;
+}
 
+.th-bedcal-cal {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-1);
+  box-shadow: var(--sh-sm);
+}
+.th-bedcal-head,
+.th-bedcal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.th-bedcal-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.th-bedcal-week {
+  padding: 10px 8px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-align: center;
+}
+.th-bedcal-week-short {
+  display: none;
+}
+.th-bedcal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 0 0 8px;
+  border-top: 1px solid var(--slate-100);
+  border-left: 1px solid var(--slate-100);
+  background: var(--bg-1);
+}
+.th-bedcal-cell:nth-child(7n + 1) {
+  border-left: none;
+}
+.th-bedcal-cell.is-blank {
+  background: var(--bg-2);
+}
+/* 格內包裝：非按鈕時不產生盒子；可點時撐滿整格 */
+.th-bedcal-body {
+  display: contents;
+}
+.th-bedcal-body.is-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  flex: 1;
+  padding: 0 0 4px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.th-bedcal-body.is-btn:hover {
+  background: var(--bg-2);
+}
+/* 有資料的格子才撐高；整週都沒資料（過去日期）的那一列會自動變矮 */
+.th-bedcal-cell.is-open,
+.th-bedcal-cell.is-full {
+  min-height: 104px;
+}
+
+/* 日期列：靠右一整列。正式站的 `bg-light` 淺底 2026-09-17 依使用者指示不採用 */
+.th-bedcal-day {
+  width: 100%;
+  padding: 6px 8px 0;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  text-align: right;
+}
+/* 沒有資料的日子整格淺底（2026-09-17 使用者指示保留）；日期本身不另加底色 */
+.th-bedcal-cell.is-empty {
+  background: var(--bg-2);
+}
+.th-bedcal-cell.is-empty .th-bedcal-day {
+  color: var(--fg-4);
+}
+/* 「剩餘」與數字垂直置中（2026-09-17 使用者指示，原為 baseline） */
+.th-bedcal-main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+/* 剩餘數字用 --green-700（主色 --national-700 不夠顯眼）；額滿用最新消息「置頂」標記的字色
+   （2026-09-17 使用者指示） */
+.th-bedcal-num {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--green-700);
+  font-variant-numeric: tabular-nums;
+}
+.th-bedcal-num.is-text {
+  font-size: var(--fs-lg);
+  color: var(--danger-fg-hover);
+}
+.th-bedcal-unit {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+.th-bedcal-sub {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+
+@media (max-width: 640px) {
+  .th-bedcal-monthbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .th-bedcal-ym {
+    order: -1;
+    flex: 1 0 100%;
+    justify-content: center;
+  }
+  .th-bedcal-week {
+    padding: 8px 2px;
+    font-size: var(--fs-xs);
+  }
+  .th-bedcal-week-full {
+    display: none;
+  }
+  .th-bedcal-week-short {
+    display: inline;
+  }
+  .th-bedcal-cell {
+    min-height: 40px;
+    padding: 0 0 4px;
+  }
+  .th-bedcal-day {
+    padding: 4px 4px 0;
+  }
+  .th-bedcal-cell.is-open,
+  .th-bedcal-cell.is-full {
+    min-height: 64px;
+  }
+  .th-bedcal-num {
+    font-size: var(--fs-md);
+  }
+  .th-bedcal-num.is-text {
+    font-size: var(--fs-xs);
+  }
+  /* 窄螢幕只留大數字；說明句提到申請數，一併隱藏以免對不上 */
+  .th-bedcal-unit,
+  .th-bedcal-sub {
+    display: none;
+  }
+}

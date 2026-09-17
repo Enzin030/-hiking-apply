@@ -1055,44 +1055,6 @@
 
 
 /* ############################################################
-   index.html（首頁，2026-09-08 遷移）
-   ############################################################
-
-   這幾條是把原 Index.jsx 的 **inline style** 搬出來（§7 禁止 inline style）：
-     PanelHead  style={{ background: color }}                 → .p-home-panelhead--edu／--apply
-     PanelHead  style={{ fontFamily, letterSpacing }}         → .p-home-panelhead-title
-     IconTile   style={{ color: accent }}                     → .p-home-tile-ic--green／--blue
-
-   色值收成 tokens（--home-panel-edu／--home-panel-apply），理由見 tokens.css：
-   §6.1.1 禁止 pages.css 出現 hex 字面值。左側圓鈕的 accent 原本就是
-   #587a68＝--national-700，直接用既有 token。
-
-   都是首頁專用，grep 確認無其他頁面使用，故放 pages.css 並以 .p-home-* 命名（§6.2）。
-   ############################################################ */
-
-.p-home-panelhead--edu {
-  background: var(--home-panel-edu);
-}
-
-.p-home-panelhead--apply {
-  background: var(--home-panel-apply);
-}
-
-.p-home-panelhead-title {
-  font-family: var(--font-sans);
-  letter-spacing: 0.15em;
-}
-
-.p-home-tile-ic--green {
-  color: var(--national-700);
-}
-
-.p-home-tile-ic--blue {
-  color: var(--home-panel-apply);
-}
-
-
-/* ############################################################
    web_illustrate.html（本站使用說明，2026-09-08 遷移）
    ############################################################
 
@@ -5624,5 +5586,620 @@ body:where(.p-indexb-body):before {
   .p-applysearch-entry:hover .p-applysearch-entry-cta i,
   .p-applysearch-entry:focus-visible .p-applysearch-entry-cta i {
     transform: none;
+  }
+}
+
+/* ############################################################
+   information_1.html（登山路線介紹，2026-09-17 新建）
+   ############################################################
+   依 02_Spec/23_登山路線介紹.md，包含玉山、太魯閣、雪霸三大處頁籤、
+   路線選擇 Pills、圖資預覽、路線特色、建議行程及聯外交通指引。
+   樣式前綴 .p-info1-*，全數沿用 tokens.css 變數，無硬編碼 hex、無 !important。
+   ############################################################ */
+
+.p-info1-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.p-info1-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* 附屬文件盒 */
+.p-info1-attachments-box {
+  background: var(--blue-50);
+  border: 1px solid var(--blue-200);
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+}
+
+.p-info1-box-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--blue-700);
+  margin-bottom: 10px;
+}
+
+.p-info1-attach-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.p-info1-attach-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid var(--blue-200);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  color: var(--slate-800);
+  text-decoration: none;
+  transition: background .2s, border-color .2s;
+}
+
+.p-info1-attach-link:hover {
+  background: var(--slate-50);
+  border-color: var(--blue-700);
+  color: var(--blue-700);
+}
+
+/* 章節標題 */
+.p-info1-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.p-info1-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--slate-800);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--national-100);
+  margin: 0;
+}
+
+.p-info1-section-title i {
+  color: var(--national-700);
+  font-size: var(--fs-md);
+}
+
+.p-info1-official-link {
+  margin-left: auto;
+}
+
+/* 圖資網格（照片最大化展示） */
+.p-info1-images-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.p-info1-image-figure {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--slate-50);
+  width: 100%;
+}
+
+.p-info1-image-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-1);
+  padding: 0;
+  width: 100%;
+}
+
+.p-info1-map-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.p-info1-image-caption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--slate-200);
+  font-size: var(--fs-sm);
+  color: var(--slate-800);
+  background: var(--slate-100);
+  text-align: center;
+  min-height: 46px;
+}
+
+.p-info1-caption-text {
+  font-weight: normal;
+  text-align: center;
+  padding: 0 90px;
+}
+
+.p-info1-caption-zoom {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  color: var(--national-700);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  text-decoration: none;
+  background: var(--bg-1);
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--slate-200);
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+
+.p-info1-caption-zoom:hover {
+  text-decoration: none;
+  background: var(--slate-50);
+  border-color: var(--national-700);
+  color: var(--national-800);
+}
+
+@media (max-width: 640px) {
+  .p-info1-image-caption {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .p-info1-caption-text {
+    padding: 0;
+  }
+  .p-info1-caption-zoom {
+    position: static;
+    transform: none;
+  }
+}
+
+/* 路線特色文字（無底色，標題下內容縮排） */
+.p-info1-intro-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  padding: 4px 0 4px 1.25rem;
+}
+
+.p-info1-intro-p {
+  margin: 0;
+  font-size: var(--fs-md);
+  line-height: var(--lh-relaxed);
+  color: var(--slate-800);
+  text-align: justify;
+}
+
+/* 建議行程卡片與時序（無外框，標題下內容縮排） */
+.p-info1-itineraries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 1.25rem;
+}
+
+.p-info1-itinerary-card {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.p-info1-itin-title {
+  margin: 0 0 10px;
+  padding: 0;
+  background: transparent;
+  border-bottom: none;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--slate-800);
+}
+
+.p-info1-timeline {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 0 1rem;
+  gap: 10px;
+}
+
+.p-info1-timeline-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+@media (max-width: 640px) {
+  .p-info1-timeline-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.p-info1-day-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background: var(--national-700);
+  color: #fff;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+
+.p-info1-day-nodes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--slate-800);
+}
+
+.p-info1-node-item {
+  display: inline-block;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+}
+
+.p-info1-node-arrow {
+  color: var(--slate-400);
+  font-size: var(--fs-xs);
+}
+
+/* 對外交通（無外框，標題下內容縮排） */
+.p-info1-traffic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .p-info1-intro-content {
+    padding: 4px 0 4px 0.75rem;
+  }
+  .p-info1-itineraries-list,
+  .p-info1-traffic-grid {
+    padding-left: 0.75rem;
+  }
+  .p-info1-timeline,
+  .p-info1-traffic-items {
+    padding-left: 0.5rem;
+  }
+}
+
+.p-info1-traffic-card {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.p-info1-traffic-title {
+  margin: 0 0 10px;
+  padding: 0;
+  background: transparent;
+  border-bottom: none;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--slate-800);
+}
+
+.p-info1-traffic-items {
+  padding: 0 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.p-info1-traffic-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.p-info1-traffic-type-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.p-info1-traffic-type-badge.is-drive {
+  background: var(--amber-50);
+  color: var(--amber-700);
+  border: 1px solid var(--amber-200);
+}
+
+.p-info1-traffic-type-badge.is-bus {
+  background: var(--blue-50);
+  color: var(--blue-700);
+  border: 1px solid var(--blue-200);
+}
+
+.p-info1-traffic-desc {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--slate-700);
+}
+
+
+
+/* ############################################################
+   bed_0.html（林業及自然保育署宿營地查詢，2026-09-17 自 campsite.html 拆出）
+   ############################################################
+   地點是 .th-tabs 頁籤、設施是 th-chip 按鈕。
+   月份列與月曆 2026-09-17 提升為共用元件 th-bed-calendar（bed_1 也用），
+   樣式改名 .th-bedcal-* 移到 components.css；這裡只剩本頁的設施按鈕列。
+*/
+.p-bed0-pickers {
+  margin: 16px 0 20px;
+}
+.p-bed0-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.p-bed0-picker .th-chip {
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 640px) {
+  .p-bed0-picker {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+
+/* ############################################################
+   bed_1.html（雪霸宿營地查詢，2026-09-17 自 campsite.html 拆出）
+   ############################################################
+   月份列與月曆用共用的 .th-bedcal-*；這裡只放本頁的說明、地點下拉、介紹卡、彈窗內容。
+*/
+.p-bed1-notice {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style: disc;
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+}
+.p-bed1-notice li + li {
+  margin-top: 4px;
+}
+/* 正式站的紅字段落（2026-09-17 使用者指示）：字色比照最新消息「置頂」標記 */
+.p-bed1-red {
+  color: var(--danger-fg-hover);
+  font-weight: 700;
+}
+
+/* 查詢列與月曆之間加分隔線（2026-09-17 使用者指示） */
+.p-bed1-filter {
+  margin: 20px 0 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--slate-200);
+}
+.p-bed1-filter + .th-bedcal {
+  margin-top: 16px;
+}
+.p-bed1-site-field {
+  flex-basis: 320px;
+}
+
+.p-bed1-intro {
+  margin-top: 24px;
+}
+/* 版面比照景點資訊檢視頁 .p-place-detail-grid／-carousel（2026-09-17 使用者指示） */
+.p-bed1-intro-grid {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.p-bed1-intro-grid.is-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+.p-bed1-intro-pic {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--bg-1);
+}
+.p-bed1-intro-pic-head {
+  padding: 8px 12px;
+  background: var(--gray-800);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.p-bed1-intro-pic-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  overflow: hidden;
+  background: var(--slate-900);
+}
+.p-bed1-intro-pic-stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.p-bed1-intro-lines {
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  line-height: 1.8;
+}
+/* 水源／訊號：比照景點資訊檢視頁，是內文段落而非標籤（2026-09-17 使用者指示） */
+.p-bed1-intro-line {
+  margin: 0 0 14px;
+  font-size: var(--fs-md);
+  line-height: 1.8;
+  color: var(--fg-2);
+}
+.p-bed1-sub {
+  margin-left: 4px;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--fg-3);
+}
+.p-bed1-daynote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+.p-bed1-daynote.is-danger {
+  color: var(--danger-fg-hover);
+}
+
+@media (max-width: 768px) {
+  .p-bed1-intro-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── 出園回報（apply_6）── */
+.p-apply6-notice > i {
+  margin-top: 0 !important;
+  height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+
+/* ############################################################
+   bed_1main.html（雪霸宿營地當日申請名單，2026-09-17 補建）
+   ############################################################
+   正式站 bed_1main.aspx：查詢區 → 標題 → 七項統計 → 申請狀態說明 → 名單表格。
+*/
+.p-bed1main-site-field {
+  flex-basis: 320px;
+}
+
+.p-bed1main-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.p-bed1main-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+}
+.p-bed1main-stat-k {
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+.p-bed1main-stat-v {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  font-variant-numeric: tabular-nums;
+}
+.p-bed1main-stat-v small {
+  margin-left: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--fg-3);
+}
+/* 餘額是本頁重點，數字比照月曆用 --green-700 */
+.p-bed1main-stat.is-main .p-bed1main-stat-v {
+  color: var(--green-700);
+}
+.p-bed1main-formula {
+  margin: 0 0 20px;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+
+.p-bed1main-note {
+  margin-bottom: 24px;
+}
+.p-bed1main-note-list {
+  margin: 0;
+  padding-left: 1.4em;
+  list-style: decimal;
+  color: var(--fg-2);
+  line-height: var(--lh-base);
+}
+.p-bed1main-note-list li + li {
+  margin-top: 6px;
+}
+.p-bed1main-note-k {
+  color: var(--danger-fg-hover);
+  font-weight: 700;
+}
+
+.p-bed1main-table th,
+.p-bed1main-table td {
+  white-space: nowrap;
+}
+.p-bed1main-table .p-bed1main-num {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .p-bed1main-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

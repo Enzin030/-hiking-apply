@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山路線介紹 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  登山路線介紹（information_1）— 對應 02_Spec/23_登山路線介紹.md
+  ------------------------------------------------------------
+  依據正式站 https://hike.taiwan.gov.tw/information_1.aspx 萃取
+  收錄玉山（8線）、太魯閣（16線）、雪霸（9線）全部路線圖資、簡介、建議行程與交通。
+  全部圖資與相關表件已下載至本地 05_Prototype/images/。
+  使用系統共用元件：th-page-shell、th-header、th-footer、th-quick-nav、th-callout、th-link-list、.th-tabs 及 .th-chip。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/information_1.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <th-page-shell
+    :trail="['旅遊登山資訊', '登山路線介紹']"
+    title="登山路線介紹"
+    :bare="true">
+
+    <div class="p-info1-main">
+
+      <!-- 一、國家公園管理處頁籤 -->
+      <div class="th-tabs">
+        <nav class="th-tabs-nav" aria-label="國家公園管理處">
+          <button
+            v-for="p in parkList"
+            :key="p.id"
+            type="button"
+            :class="['th-tab', { 'is-active': activeParkKey === p.id }]"
+            :aria-current="activeParkKey === p.id ? 'page' : null"
+            @click="selectPark(p.id)">
+            <span>{{ p.name }}</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- 二、路線選擇 Badge -->
+      <div class="th-chip-row" role="tablist" aria-label="路線選擇">
+        <button
+          v-for="r in currentPark.routes"
+          :key="r.id"
+          type="button"
+          role="tab"
+          :aria-selected="currentRoute && currentRoute.id === r.id"
+          :class="['th-chip', { 'is-active': currentRoute && currentRoute.id === r.id }]"
+          @click="selectRoute(r.id)">
+          {{ r.name }}
+        </button>
+      </div>
+
+      <!-- 三、路線詳細內容卡片 -->
+      <article v-if="currentRoute" class="th-card" id="route-detail">
+
+        <!-- 卡片標頭：路線名稱與官網連結 -->
+        <div class="th-card-head">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-location-dot text-national-700" aria-hidden="true"></i>
+            <h2 class="th-card-title">{{ currentRoute.headerTitle || currentRoute.name }}</h2>
+          </div>
+          <a
+            v-if="currentRoute.officialLink"
+            class="th-btn th-btn-ghost th-btn-sm p-info1-official-link"
+            :href="currentRoute.officialLink"
+            target="_blank"
+            rel="noopener noreferrer">
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            <span>官網連結<span class="sr-only">（另開新視窗）</span></span>
+          </a>
+        </div>
+
+        <div class="th-card-body p-info1-card-body">
+
+          <!-- 1. 特殊附件與外連 -->
+          <th-callout v-if="currentRoute.attachments && currentRoute.attachments.length > 0">
+            <div class="font-semibold text-slate-800 mb-2">相關表件與交通接駁下載：</div>
+            <th-link-list :items="getAttachmentLinks(currentRoute.attachments)"></th-link-list>
+          </th-callout>
+
+          <!-- 2. 路線圖資區塊 -->
+          <section v-if="currentRoute.images && currentRoute.images.length > 0" class="p-info1-section" aria-label="路線圖資">
+            <h3 class="p-info1-section-title">
+              <i class="fa-solid fa-map" aria-hidden="true"></i>
+              <span>路線圖資</span>
+            </h3>
+            <div class="p-info1-images-grid">
+              <figure v-for="(img, imgIdx) in currentRoute.images" :key="imgIdx" class="p-info1-image-figure">
+                <div class="p-info1-image-wrap">
+                  <img :src="img.src" :alt="img.alt" loading="lazy" class="p-info1-map-img" />
+                </div>
+                <figcaption class="p-info1-image-caption">
+                  <span class="p-info1-caption-text">{{ img.caption || img.alt }}</span>
+                  <a
+                    :href="img.src"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="p-info1-caption-zoom"
+                    title="開啟高解析度原圖">
+                    <i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>
+                    <span>查看原圖<span class="sr-only">（另開新視窗）</span></span>
+                  </a>
+                </figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <!-- 3. 路線介紹區塊 -->
+          <section v-if="currentRoute.intros && currentRoute.intros.length > 0" class="p-info1-section" aria-label="路線介紹">
+            <h3 class="p-info1-section-title">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              <span>路線介紹</span>
+            </h3>
+            <div class="p-info1-intro-content">
+              <p v-for="(p, pIdx) in currentRoute.intros" :key="pIdx" class="p-info1-intro-p">
+                {{ p }}
+              </p>
+            </div>
+          </section>
+
+          <!-- 4. 建議行程區塊 -->
+          <section v-if="currentRoute.itineraries && currentRoute.itineraries.length > 0" class="p-info1-section" aria-label="建議行程">
+            <h3 class="p-info1-section-title">
+              <i class="fa-solid fa-route" aria-hidden="true"></i>
+              <span>建議行程</span>
+            </h3>
+            <div class="p-info1-itineraries-list">
+              <div v-for="(itin, itinIdx) in currentRoute.itineraries" :key="itinIdx" class="p-info1-itinerary-card">
+                <h4 v-if="formatItineraryTitle(itin.title)" class="p-info1-itin-title">
+                  <i class="fa-solid fa-flag-checkered mr-2" aria-hidden="true"></i>
+                  {{ formatItineraryTitle(itin.title) }}
+                </h4>
+                <div class="p-info1-timeline">
+                  <div v-for="(d, dIdx) in itin.days" :key="dIdx" class="p-info1-timeline-row">
+                    <div class="p-info1-day-badge">
+                      {{ d.day || ('第' + (dIdx + 1) + '天') }}
+                    </div>
+                    <div class="p-info1-day-nodes">
+                      <template v-for="(node, nIdx) in formatRouteNodes(d.route)" :key="nIdx">
+                        <span class="p-info1-node-item">{{ node }}</span>
+                        <i v-if="nIdx < formatRouteNodes(d.route).length - 1" class="fa-solid fa-arrow-right-long p-info1-node-arrow" aria-hidden="true"></i>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. 對外交通區塊 -->
+          <section v-if="currentRoute.traffic && currentRoute.traffic.length > 0" class="p-info1-section" aria-label="對外交通">
+            <h3 class="p-info1-section-title">
+              <i class="fa-solid fa-compass" aria-hidden="true"></i>
+              <span>對外交通與接駁指引</span>
+            </h3>
+            <div class="p-info1-traffic-grid">
+              <div v-for="(tf, tfIdx) in currentRoute.traffic" :key="tfIdx" class="p-info1-traffic-card">
+                <h4 v-if="formatTrafficTitle(tf.title)" class="p-info1-traffic-title">
+                  <i class="fa-solid fa-location-dot mr-2" aria-hidden="true"></i>
+                  {{ formatTrafficTitle(tf.title) }}
+                </h4>
+                <div class="p-info1-traffic-items">
+                  <div v-for="(item, itemIdx) in tf.items" :key="itemIdx" class="p-info1-traffic-item">
+                    <span v-if="item.type" :class="['p-info1-traffic-type-badge', item.type.includes('開車') ? 'is-drive' : 'is-bus']">
+                      <i :class="item.type.includes('開車') ? 'fa-solid fa-car' : 'fa-solid fa-bus'" aria-hidden="true"></i>
+                      <span>{{ item.type }}</span>
+                    </span>
+                    <p class="p-info1-traffic-desc">{{ item.desc }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </article>
+
+    </div>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：parser-inserted script 掛載於 window.ROUTE_INTRO_DATA -->
+<script src="components/RouteIntroData.js"></script>
+
+</body>
+</html>

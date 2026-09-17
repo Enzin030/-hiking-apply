@@ -33,10 +33,38 @@ window.thComponents["th-captcha"] = {
     /* 靜態示意字樣。要換成別組字時給 code，不要改元件預設值 */
     code: { type: String, default: "7K4M" },
     inputId: { type: String, default: "f-vcode" },
+    hideHint: { type: Boolean, default: false },
+    layout: { type: String, default: "stack" },
   },
   emits: ["update:modelValue"],
   template: `
-    <div class="th-field">
+    <div v-if="layout === 'col12'" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
+      <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" :for="inputId">
+        <span class="text-red-500 mr-1 req">*</span>請輸入驗證碼
+      </label>
+      <div class="sm:col-span-9 lg:col-span-10">
+        <div class="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+          <input
+            :id="inputId"
+            name="vcode"
+            type="text"
+            class="th-input w-full sm:w-44"
+            autocomplete="off"
+            placeholder="請輸入驗證碼"
+            :value="modelValue"
+            @input="$emit('update:modelValue', $event.target.value)" />
+          <span class="th-input th-input-readonly w-full sm:w-32 text-center tracking-[0.3em]">{{ code }}</span>
+          <button type="button" class="th-btn th-btn-ghost shrink-0" disabled>
+            <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
+          </button>
+        </div>
+        <div v-if="!hideHint" class="th-field-hint">
+          雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="th-field">
       <label class="th-label" :for="inputId">
         <span class="req">*</span>請輸入驗證碼
       </label>
@@ -55,7 +83,7 @@ window.thComponents["th-captcha"] = {
           <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
         </button>
       </div>
-      <div class="th-field-hint">
+      <div v-if="!hideHint" class="th-field-hint">
         雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。
       </div>
     </div>

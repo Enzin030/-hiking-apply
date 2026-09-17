@@ -69,16 +69,16 @@ window.TH_HEADER_NAV = [
   { key: "apply", label: "登山申請", children: [
     { key: "apply_online", label: "各項線上申請", url: "apply-1.html" },
     { key: "apply_search", label: "申請進度查詢/繳費/異動/取消", url: "applySearch.html" },
-    { key: "apply_draft",  label: "草稿編輯", url: null },
-    { key: "apply_report", label: "國家公園出園回報", url: null },
+    { key: "apply_draft",  label: "草稿編輯", url: "apply_2_1.html" },
+    { key: "apply_report", label: "國家公園出園回報", url: "apply_6.html" },
   ] },
   { key: "notice", label: "登山須知", url: "notice.html" },
   { key: "status", label: "登山路線開放狀態", url: "open.html" },
   { key: "campsite", label: "宿營地與床位查詢", children: [
-    { key: "forestry_camp",  label: "林業及自然保育署宿營地查詢", url: "campsite.html?org=forestry&kind=camp" },
+    { key: "forestry_camp",  label: "林業及自然保育署宿營地查詢", url: "bed_0.html" },  // 2026-09-17 拆為獨立頁
     { key: "taroko_hut",     label: "太魯閣山屋查詢", url: "campsite.html?org=taroko&kind=hut" },
     { key: "taroko_route",   label: "太魯閣路線查詢", url: "campsite.html?org=taroko&kind=route" },
-    { key: "sheipa_camp",    label: "雪霸宿營地查詢", url: "campsite.html?org=shei-pa&kind=camp" },
+    { key: "sheipa_camp",    label: "雪霸宿營地查詢", url: "bed_1.html" },  // 2026-09-17 拆為獨立頁
     { key: "sheipa_route",   label: "雪霸路線查詢", url: "campsite.html?org=shei-pa&kind=route" },
     { key: "yushan_camp",    label: "玉山宿營地查詢", url: "campsite.html?org=yushan&kind=camp" },
     { key: "yushan_oneday",  label: "玉山單日往返路線查詢", url: "campsite.html?org=yushan&kind=oneday" },
@@ -89,7 +89,7 @@ window.TH_HEADER_NAV = [
   ] },
   { key: "info", label: "旅遊登山資訊", children: [
     { key: "map2",        label: "登山路線圖資查詢", url: null },
-    { key: "info_route",  label: "登山路線介紹", url: null },
+    { key: "info_route",  label: "登山路線介紹", url: "information_1.html" },
     { key: "info_place",  label: "景點資訊", url: "information_place.html" },
     { key: "info_cwa",    label: "各縣市天氣預報", url: "information_2.html" },
     { key: "info_cwa_np", label: "國家公園天氣資訊", url: "information_3.html" },

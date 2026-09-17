@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>雪霸宿營地查詢 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  雪霸宿營地查詢（對應正式站 bed_1.aspx）
+  ------------------------------------------------------------
+  2026-09-17 自 campsite.html 拆出（第二張），版面比照 bed_0.html（使用者指示）：
+  月份列與月曆用共用元件 th-bed-calendar。
+
+  與 bed_0 不同處（依雪霸資料的實際樣子調整）：
+  - 宿營地 34 個，頁籤放不下，改用下拉；選了就切換，不必按查詢。預設七卡山莊。
+  - 格內主數字是「餘額」、副數字是「已通過」（雪霸沒有「申請數」）；
+    其餘 5 項（待處理、補件、待系統排定、宿營地不足候補、外籍提前）點日期看彈窗。
+  - 保留正式站頁首說明（餘額的算法）與月曆下方的宿營地介紹。
+  資料是正式站快照，見 components/Bed1Data.js 檔頭。
+
+  這三行必須靜態寫在頁面，順序不可調換（理由見 assets/includes/head.html 註解）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/bed_1.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <th-header active="campsite"></th-header>
+
+  <th-page-shell
+    :trail="['宿營地與床位查詢', '雪霸宿營地查詢']"
+    title="雪霸宿營地查詢"
+    :bare="true">
+
+    <!--
+      正式站 .alert 原文逐條；紅字段落照正式站標紅。
+      2026-09-17 一度拿掉 th-callout 外框，同日使用者決定用回 callout（比照正式站也是 .alert）。
+      slot 內文第一段文字必須緊貼標籤，見 th-callout.js 註解。
+    -->
+    <th-callout><ul class="p-bed1-notice"><li v-for="(li, i) in notice" :key="i"><template v-for="(p, j) in li" :key="j"><a v-if="p.href" class="th-inline-link" :href="p.href" target="_blank" rel="noopener noreferrer">{{ p.t }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><span v-else-if="p.red" class="p-bed1-red">{{ p.t }}</span><template v-else>{{ p.t }}</template></template></li></ul></th-callout>
+
+    <div class="th-filter p-bed1-filter">
+      <div class="th-filter-grid">
+        <div class="th-filter-field p-bed1-site-field">
+          <label class="th-filter-label" for="f-site">宿營地點</label>
+          <!-- 共用下拉外觀層 th-hybrid-select（2026-09-17 使用者指示套用） -->
+          <th-hybrid-select>
+            <select id="f-site" class="th-select" :value="siteId" @change="pickSite($event.target.value)">
+              <option v-for="s in sites" :key="s.id" :value="s.id">{{ s.name }}</option>
+            </select>
+          </th-hybrid-select>
+        </div>
+      </div>
+    </div>
+
+    <th-bed-calendar v-model:year="year" v-model:month="month" :years="years"
+                     :days="calDays" main-label="餘額" sub-label="已通過" clickable
+                     :aria-label="site.name + ' ' + year + ' 年 ' + month + ' 月'"
+                     :empty-text="year + ' 年 ' + month + ' 月不在雛形快照範圍內（' + rangeText + '）。'"
+                     @pick="pickDay"></th-bed-calendar>
+
+    <!--
+      宿營地介紹：正式站查詢後出現在月曆下方。
+      版面比照景點資訊檢視頁（2026-09-17 使用者指示）：左圖右文兩欄、
+      圖片上方深色標題列。承載量表格同日依使用者指示移除（資料仍在 Bed1Data 的 cap）。
+    -->
+    <section class="th-card p-bed1-intro" aria-labelledby="bed1-intro-title">
+      <div class="th-card-head">
+        <i class="fa-solid fa-tent" aria-hidden="true"></i>
+        <h2 id="bed1-intro-title" class="th-card-title">{{ site.name }}</h2>
+      </div>
+      <div class="th-card-body">
+        <div class="p-bed1-intro-grid" :class="{ 'is-single': !site.intro.image }">
+          <figure v-if="site.intro.image" class="p-bed1-intro-pic">
+            <div class="p-bed1-intro-pic-head">{{ site.name }}</div>
+            <div class="p-bed1-intro-pic-stage">
+              <img :src="site.intro.image" :alt="site.name + '實景'" loading="lazy" />
+            </div>
+          </figure>
+          <div class="p-bed1-intro-body">
+            <ul class="p-bed1-intro-lines">
+              <li v-for="(l, i) in site.intro.lines" :key="i">{{ l }}</li>
+            </ul>
+            <p v-if="site.intro.waters" class="p-bed1-intro-line">水源：{{ site.intro.waters }}</p>
+            <p v-if="site.intro.signals" class="p-bed1-intro-line">訊號：{{ site.intro.signals }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 當日明細：正式站格內全部計數＋前往當日申請名單頁（bed_1main.html） -->
+  <th-modal v-if="day" :meta="site.name" :title="day.date" @close="day = null">
+    <table class="th-table th-table--zebra p-bed1-daytable">
+      <tbody>
+        <tr v-for="(label, i) in labels" :key="label">
+          <th scope="row">{{ label }}<span v-if="label === '外籍提前'" class="p-bed1-sub">（外國人＋本國人）</span></th>
+          <td>{{ day.v[i] === '' ? '—' : day.v[i] }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="day.fs" class="p-bed1-daynote is-danger"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>正式站於當日標示「外籍提前不得申請」。</p>
+    <!-- 2026-09-17：改連本站補建的當日申請名單頁 bed_1main.html（原本連現行網站） -->
+    <p v-if="day.s" class="p-bed1-daynote">當日申請隊伍明細：<a class="th-inline-link" :href="detailUrl">查看當日申請名單</a></p>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>，頁面腳本只在 data() 內讀取 window.BED1_* -->
+<script src="components/Bed1Data.js"></script>
+</body>
+</html>

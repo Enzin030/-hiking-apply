@@ -52,13 +52,18 @@ const CAMPSITE_ORGS = [
 ];
 
 const CAMPSITE_KINDS = {
-  "shei-pa":  [{ key: "camp", label: "宿營地", built: true }, { key: "route", label: "路線", built: true }],
+  /* 雪霸宿營地 2026-09-17 拆為獨立頁 bed_1.html */
+  "shei-pa":  [{ key: "camp", label: "宿營地", built: true, href: "bed_1.html" }, { key: "route", label: "路線", built: true }],
   taroko:     [{ key: "hut", label: "山屋", built: true }, { key: "route", label: "路線", built: true }],
   yushan:     [{ key: "camp", label: "宿營地", built: true }, { key: "oneday", label: "單日往返路線", built: true },
                { key: "lot", label: "抽籤結果", built: true }, { key: "lotdate", label: "抽籤日期", built: true },
                { key: "refund", label: "可申請退費日期", built: true }],
-  forestry:   [{ key: "camp", label: "宿營地", built: true }, { key: "area", label: "區域申請及抽籤", built: true }],
+  /* 宿營地 2026-09-17 拆為獨立頁 bed_0.html：類別鈕改為連過去，舊網址在 created() 轉址 */
+  forestry:   [{ key: "camp", label: "宿營地", built: true, href: "bed_0.html" }, { key: "area", label: "區域申請及抽籤", built: true }],
 };
+
+/* 已拆為獨立頁的 org:kind → 新頁（舊書籤與外部連結用） */
+const CAMPSITE_MOVED = { "forestry:camp": "bed_0.html", "shei-pa:camp": "bed_1.html" };
 
 const remainFlag = (value) => {
   const nums = String(value).match(/\d+/g);
@@ -893,7 +898,7 @@ const CAMPSITE_VIEWS = {
 
 const firstKind = (orgKey) => {
   const kinds = CAMPSITE_KINDS[orgKey] || [];
-  const hit = kinds.find((k) => k.built) || kinds[0];
+  const hit = kinds.find((k) => k.built && !k.href) || kinds[0];
   return hit ? hit.key : "";
 };
 
@@ -946,7 +951,8 @@ thPage({
     "p-campsite-yushan-refund": pCampsiteYushanRefund,
   },
 
-  data() { return { org: "shei-pa", kind: "camp" }; },
+  /* 預設原為雪霸宿營地，已拆出（bed_1.html），改落在雪霸第一個未拆出的類別 */
+  data() { return { org: "shei-pa", kind: firstKind("shei-pa") }; },
 
   created() {
     const p = new URLSearchParams(window.location.search);
@@ -959,13 +965,15 @@ thPage({
       } else {
         this.kind = firstKind(o);
       }
+      const moved = CAMPSITE_MOVED[o + ":" + k];
+      if (moved) window.location.replace(moved);
     }
   },
 
   computed: {
     orgs() { return CAMPSITE_ORGS; },
     kindList() { return CAMPSITE_KINDS[this.org] || []; },
-    current() { return CAMPSITE_VIEWS[this.org + ":" + this.kind] || CAMPSITE_VIEWS["shei-pa:camp"]; },
+    current() { return CAMPSITE_VIEWS[this.org + ":" + this.kind] || CAMPSITE_VIEWS["shei-pa:route"]; },
     /* 切子選時整個重掛，不把前一個子選的下拉／彈窗狀態帶過去（原 React 的 key） */
     viewKey() { return this.org + ":" + this.kind; },
   },

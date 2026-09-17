@@ -61,7 +61,7 @@ window.TH_EXPERIENCE_GROUPS = [
       { label: "各機關登山申辦須知", href: "notice.html", old: "notice.aspx" },
       { label: "可申請路線查詢", href: "open.html", old: "open.aspx" },
       { label: "單日往返可申請數量", href: "campsite.html?org=yushan&kind=oneday", old: "bed_7.aspx" },
-      { label: "宿營地及山屋可申請數量", href: "campsite.html?org=forestry&kind=camp", old: "bed_0.aspx" },
+      { label: "宿營地及山屋可申請數量", href: "bed_0.html", old: "bed_0.aspx" },
     ],
   },
   {
@@ -70,7 +70,7 @@ window.TH_EXPERIENCE_GROUPS = [
     sub: "申請／修改資料",
     items: [
       { label: "線上申請", href: "apply-1.html", old: "apply_1.aspx" },
-      { label: "草稿編輯", old: "apply_2_1.aspx" },
+      { label: "草稿編輯", href: "apply_2_1.html", old: "apply_2_1.aspx" },
       /* 舊站入口是 applySearch.aspx（四選一），apply_3.aspx 是其中的進度查詢頁；
          本雛形把兩者併為 applySearch.html（2026-09-07 裁決）。 */
       { label: "申請進度查詢", href: "applySearch.html", old: "apply_3.aspx" },
@@ -95,7 +95,7 @@ window.TH_EXPERIENCE_GROUPS = [
     icon: "fa-solid fa-person-hiking",
     title: "完成登山者",
     sub: "下山回報",
-    items: [{ label: "出園回報", old: "apply_6.aspx" }],
+    items: [{ label: "出園回報", href: "apply_6.html", old: "apply_6.aspx" }],
   },
 ];
 
