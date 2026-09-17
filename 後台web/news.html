@@ -1,0 +1,2298 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>臺灣登山申請一站式服務網｜最新消息維護</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root {
+      --bg: #f5f7f4;
+      --panel: #ffffff;
+      --panel-soft: #fbfcfb;
+      --line: #dfe7e0;
+      --line-strong: #cfdbd2;
+      --green-950: #173b2d;
+      --green-900: #1e4736;
+      --green-800: #285842;
+      --green-700: #396d53;
+      --green-600: #507e63;
+      --green-100: #e9f3ed;
+      --green-50: #f4faf6;
+      --blue: #426ea8;
+      --text: #273446;
+      --muted: #6b7785;
+      --light: #f8faf8;
+      --warning: #d64747;
+      --shadow: 0 8px 24px rgba(28, 55, 42, 0.09);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      grid-template-rows: 70px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 70px;
+      height: calc(100vh - 70px);
+      align-self: start;
+      padding: 18px 14px 22px;
+      background:
+        radial-gradient(circle at 40px 58px, rgba(255, 255, 255, 0.14), transparent 70px),
+        linear-gradient(160deg, #214f3c 0%, #173c2e 55%, #113127 100%);
+      color: #edf6ef;
+      overflow: hidden;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .brand-title strong {
+      font-family: "Noto Serif TC", Georgia, serif;
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .brand-title>span {
+      color: #333;
+      font-family: "Noto Serif TC", Georgia, serif;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .brand-accent {
+      color: #587a68;
+    }
+
+    .nav {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 8px;
+    }
+
+    .sidebar>.nav {
+      display: none;
+    }
+
+    .sidebar>.nav.content-menu {
+      display: grid;
+    }
+
+    .legacy-menu {
+      display: none;
+      position: relative;
+      z-index: 1;
+      gap: 3px;
+      margin: 2px -4px 0;
+      padding: 12px 10px 16px;
+      border: 1px solid rgba(58, 89, 45, 0.25);
+      border-radius: 2px;
+      background: #b7ca73;
+      color: #213f2e;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    .legacy-menu a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .legacy-node,
+    .legacy-leaf {
+      display: flex;
+      align-items: center;
+      min-height: 22px;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .legacy-node {
+      gap: 6px;
+    }
+
+    .legacy-node.depth-2 {
+      padding-left: 16px;
+    }
+
+    .legacy-leaf {
+      padding-left: 55px;
+    }
+
+    .legacy-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 12px;
+      height: 12px;
+      border: 1px solid #5f7854;
+      background: #dce9bb;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+        0 0 0 1px rgba(42, 64, 36, 0.08);
+      flex: 0 0 auto;
+    }
+
+    .legacy-toggle::before,
+    .legacy-toggle::after {
+      content: "";
+      position: absolute;
+      background: #274a36;
+    }
+
+    .legacy-toggle::before {
+      width: 7px;
+      height: 1px;
+    }
+
+    .legacy-toggle::after {
+      width: 1px;
+      height: 7px;
+    }
+
+    .legacy-toggle.open::after {
+      display: none;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-item,
+    .nav-parent {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 6px;
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .nav-parent {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    button.nav-parent {
+      font: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .nav-parent {
+      justify-content: space-between;
+    }
+
+    .nav-parent[aria-expanded="false"] .caret,
+    .nav-sub-parent[aria-expanded="false"] .caret {
+      transform: rotate(-90deg);
+    }
+
+    .nav-panel[hidden],
+    .nav-sub-children[hidden] {
+      display: none;
+    }
+
+    .caret {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      font-size: 14px;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-item.active,
+    .nav-parent.active {
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-sub {
+      display: grid;
+      gap: 6px;
+      padding-left: 20px;
+    }
+
+    .nav-sub a {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 6px;
+      color: rgba(255, 255, 255, 0.82);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .nav-sub a.current {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .nav-sub-label {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 0 12px;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .nav-sub-parent {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 40px;
+      border: 0;
+      border-radius: 6px;
+      margin-top: 0;
+      padding: 0 12px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      line-height: 1.4;
+    }
+
+    .nav-sub-parent span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 16px;
+    }
+
+    .nav-sub-children {
+      display: grid;
+      gap: 6px;
+      padding-left: 16px;
+      padding-top: 6px;
+    }
+
+    .nav-sub-children a {
+      padding-left: 12px;
+    }
+
+    .icon {
+      display: inline-grid;
+      width: 18px;
+      height: 18px;
+      place-items: center;
+      color: currentColor;
+      flex: 0 0 auto;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      grid-column: 1 / -1;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 24px 0 26px;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 10px rgba(38, 64, 49, 0.06);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-button {
+      display: inline-grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1.5px solid var(--line-strong);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--green-800);
+      cursor: pointer;
+    }
+
+    .current-function {
+      color: var(--green-900);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .system-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--green-900);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .system-name small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #50585f;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .breadcrumb a,
+    .breadcrumb span {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .breadcrumb .current {
+      color: var(--green-900);
+      font-weight: 500;
+    }
+
+    .breadcrumb-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .breadcrumb-home .ph {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .breadcrumb-separator {
+      color: #50585f;
+      line-height: 1;
+    }
+
+    .page-title-line {
+      display: flex;
+      align-items: baseline;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .page-title-line .breadcrumb {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: -8px;
+      right: -11px;
+      display: grid;
+      min-width: 18px;
+      height: 18px;
+      place-items: center;
+      border: 2px solid #ffffff;
+      border-radius: 999px;
+      background: #de3737;
+      color: #ffffff;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #3f4b59;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .logout-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 82px;
+      height: 34px;
+      padding: 0 15px;
+      border: 1px solid #b94949;
+      border-radius: 999px;
+      background: #c84d4d;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1;
+      margin-left: 10px;
+    }
+
+    .logout-button .ph {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .avatar {
+      display: inline-grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 50%;
+      background: #edf3f1;
+      color: var(--green-800);
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+
+    .content {
+      min-width: 0;
+      padding: 28px 26px 30px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #253448;
+      font-size: 25px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #ffffff;
+      color: #485562;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .btn .ph {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .btn.primary {
+      border-color: var(--green-800);
+      background: var(--green-800);
+      color: #ffffff;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      position: relative;
+      min-height: 126px;
+      padding: 22px 22px 16px;
+      overflow: hidden;
+    }
+
+    .stat-card::after,
+    .panel.mountain::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 158px;
+      height: 72px;
+      background:
+        linear-gradient(145deg, transparent 46%, rgba(47, 83, 70, 0.08) 47% 63%, transparent 64%),
+        linear-gradient(35deg, transparent 48%, rgba(47, 83, 70, 0.12) 49% 67%, transparent 68%),
+        linear-gradient(125deg, transparent 52%, rgba(47, 83, 70, 0.06) 53% 68%, transparent 69%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .stat-label {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 10px;
+      color: #53606f;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      color: #1f3550;
+      font-size: 35px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .stat-value span {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .stat-note {
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      color: #6f7c89;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .positive {
+      color: #238156;
+    }
+
+    .negative {
+      color: var(--warning);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.13fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 20px 12px;
+    }
+
+    .panel-title {
+      margin: 0;
+      color: #334155;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #5d6a79;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend i {
+      display: inline-block;
+      width: 22px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--green-600);
+    }
+
+    .legend .blue i {
+      background: var(--blue);
+    }
+
+    .chart-wrap {
+      padding: 0 16px 16px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 224px;
+      display: block;
+    }
+
+    .grid-line {
+      stroke: #e8eee9;
+      stroke-width: 1;
+    }
+
+    .axis-label {
+      fill: #627181;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .bar {
+      fill: #8eb09c;
+    }
+
+    .line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .point {
+      fill: var(--blue);
+      stroke: #ffffff;
+      stroke-width: 2;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-wrap {
+      padding: 0 20px 16px;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e7ece9;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: #334155;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    td {
+      color: #3f4b59;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      height: 24px;
+      padding: 0 10px;
+      border: 1px solid #9ec4ae;
+      border-radius: 999px;
+      background: #edf8f1;
+      color: #2e8053;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .list-panel {
+      padding-bottom: 10px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 0 20px 14px;
+    }
+
+    .search {
+      position: relative;
+      width: min(360px, 100%);
+    }
+
+    .search input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #ffffff;
+      padding: 0 14px 0 38px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search .ph {
+      position: absolute;
+      left: 13px;
+      top: 10px;
+      width: 17px;
+      height: 17px;
+      color: #6d7a86;
+      font-size: 17px;
+    }
+
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    label.filter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #53606f;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    select {
+      height: 38px;
+      min-width: 112px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #ffffff;
+      color: #354153;
+      padding: 0 34px 0 12px;
+      font-weight: 400;
+      outline: none;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 13px;
+      border: 1px solid #cbd9d0;
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--green-800);
+      font-size: 12px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .action-link+.action-link {
+      margin-left: 6px;
+    }
+
+    .action-link.danger {
+      border-color: #e8b4b4;
+      color: #c84d4d;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 30px;
+      padding: 0 11px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .action-btn .ph {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .action-btn.edit {
+      background: #20518a;
+      color: #ffffff;
+    }
+
+    .action-btn.delete {
+      background: #c84d4d;
+      color: #ffffff;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(18, 38, 30, 0.45);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 20px;
+      overflow-y: auto;
+    }
+
+    .modal-overlay[hidden] {
+      display: none;
+    }
+
+    .modal-dialog {
+      position: relative;
+      width: min(760px, 100%);
+      background: var(--panel);
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(18, 38, 30, 0.28);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-radius: 10px 10px 0 0;
+      background: var(--green-900);
+      border-bottom: none;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .modal-close {
+      display: inline-grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.85);
+      cursor: pointer;
+      font-size: 22px;
+    }
+
+    .modal-body {
+      padding: 22px 24px;
+      overflow-y: auto;
+    }
+
+    .modal-note {
+      text-align: right;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .modal-note em {
+      color: var(--warning);
+      font-style: normal;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 0;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      align-items: start;
+      gap: 0 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .form-row:last-child {
+      border-bottom: none;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      color: #344255;
+      font-size: 14px;
+      font-weight: 600;
+      padding-top: 1px;
+    }
+
+    .form-label.required::before {
+      content: "* ";
+      color: var(--warning);
+    }
+
+    .form-control {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 0 12px;
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--green-600);
+      box-shadow: 0 0 0 3px rgba(80, 126, 99, 0.15);
+    }
+
+    textarea.form-control {
+      height: 110px;
+      padding: 8px 12px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      gap: 8px;
+    }
+
+    .form-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--green-700);
+      cursor: pointer;
+    }
+
+    .form-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .form-inline .form-control {
+      width: auto;
+      flex: 1 1 120px;
+    }
+
+    .form-hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .form-note {
+      color: var(--warning);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .form-inline-number {
+      width: 100px;
+    }
+
+    .lang-section {
+      margin-top: 6px;
+      padding-top: 6px;
+    }
+
+    .form-row-2col {
+      grid-template-columns: 120px 1fr auto;
+      align-items: center;
+      gap: 0 12px;
+    }
+
+    .form-row-pin {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-end;
+      padding-left: 16px;
+    }
+
+    .lang-section-title {
+      display: inline-flex;
+      align-items: center;
+      background: var(--green-700);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      margin-top: 6px;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .link-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .link-row-fields {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .upload-file-link {
+      display: inline-block;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: underline;
+      margin-top: 3px;
+      padding-left: 2px;
+      word-break: break-all;
+    }
+
+    .upload-item-label-row {
+      align-items: start;
+    }
+
+    .announce-table th:last-child,
+    .announce-table td:last-child {
+      text-align: center;
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .count {
+      color: #27384f;
+      font-weight: 900;
+    }
+
+    .announce-filter {
+      padding: 22px;
+    }
+
+    .announce-filter-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.2fr 1.8fr;
+      gap: 18px 22px;
+      align-items: end;
+    }
+
+    .announce-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .announce-field label,
+    .announce-sort label {
+      color: #344255;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .announce-field input,
+    .announce-field select,
+    .announce-sort select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .date-range,
+    .keyword-row,
+    .announce-sort {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .announce-sort label {
+      white-space: nowrap;
+    }
+
+    .announce-sort select {
+      min-width: 160px;
+      width: auto;
+    }
+
+    .keyword-row select {
+      width: 88px;
+      flex: 0 0 auto;
+    }
+
+    .announce-filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .announce-filter-actions .btn,
+    .announce-sortbar .btn,
+    .announce-table-head .btn {
+      min-width: 76px;
+      white-space: nowrap;
+    }
+
+    .announce-sortbar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .announce-table-panel {
+      margin-top: 18px;
+    }
+
+    .announce-table-head {
+      display: flex;
+      justify-content: flex-end;
+      padding: 14px 18px 0;
+    }
+
+    .announce-table-wrap {
+      overflow-x: auto;
+      padding: 14px 18px 18px;
+    }
+
+    .announce-table {
+      min-width: 1260px;
+    }
+
+    .announce-table th,
+    .announce-table td {
+      padding: 13px 10px;
+      font-size: 16px;
+      vertical-align: middle;
+      white-space: normal;
+    }
+
+    .announce-table th {
+      white-space: nowrap;
+    }
+
+    .announce-table .title-col {
+      width: 390px;
+      line-height: 1.55;
+    }
+
+    .announce-table .icon-col {
+      width: 54px;
+      text-align: center;
+    }
+
+    .announce-table th.icon-col,
+    .announce-table td.icon-col {
+      text-align: center;
+    }
+
+    .table-icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid #cbd9d0;
+      border-radius: 50%;
+      background: #ffffff;
+      color: var(--green-800);
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .table-icon-button.danger {
+      background: #c84d4d;
+      border-color: #b94949;
+      color: #ffffff;
+    }
+
+    .sidebar-deco {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      display: block;
+      line-height: 0;
+    }
+
+    .list-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+
+    .announce-query-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-light);
+      margin-top: 14px;
+    }
+
+    @media (max-width: 1200px) {
+      .announce-filter-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+
+      .announce-filter-grid,
+      .announce-sortbar {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 250px minmax(0, 1fr);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .system-name small,
+      .user>span {
+        display: none;
+      }
+
+      .content {
+        padding: 20px 14px;
+      }
+
+      .page-head,
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .page-actions,
+      .filters {
+        flex-wrap: wrap;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+    }
+
+    /* ── 上傳 modal ── */
+    .btn-sm {
+      min-height: 30px;
+      padding: 0 11px;
+      font-size: 13px;
+    }
+
+    .upload-lang-tag {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      width: 36px;
+      flex-shrink: 0;
+    }
+
+    .upload-hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 4px 0 0;
+    }
+
+    .upload-file-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .upload-file-link:hover { text-decoration: underline; }
+
+    /* 上傳表單區 */
+    .upload-form-panel {
+      background: var(--green-50);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px 12px;
+      margin-bottom: 16px;
+    }
+
+    .upload-lang-inputs {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .upload-lang-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upload-pick-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .upload-pick-name {
+      flex: 1;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 已上傳清單 */
+    .upload-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0 8px;
+      border-top: 1px solid var(--line);
+      margin-top: 4px;
+    }
+
+    .upload-list-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--green-700);
+    }
+
+    .upload-list {
+      display: grid;
+      gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .upload-list[hidden] { display: none; }
+
+    .upload-badge-item { display: grid; }
+
+    .upload-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      background: var(--green-50);
+      border: 1px solid var(--line);
+      border-radius: 6px 6px 0 0;
+      font-size: 13px;
+    }
+
+    .upload-badge-check {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .upload-badge-name {
+      flex: 1;
+      color: var(--blue);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-badge-labels {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      background: #fff;
+      display: grid;
+      gap: 6px;
+    }
+
+    .upload-badge-lang-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">
+          <img class="brand-logo" src="assets/img/logo.png" alt="臺灣登山申請一站式服務網" />
+          <div class="brand-title">
+            <strong>臺灣<span class="brand-accent">登山申請</span>一站式服務網</strong>
+            <span>後台管理系統</span>
+          </div>
+        </div>
+        <button class="menu-button" aria-label="切換選單">
+          <i class="ph-bold ph-list"></i>
+        </button>
+      </div>
+      <div class="topbar-actions">
+        <div class="user">
+          <span class="avatar">
+            <i class="ph ph-user"></i>
+          </span>
+          <span>系統管理員</span>
+          <a class="logout-button" href="login.html">
+            <i class="ph-bold ph-sign-out"></i>
+            <span>登出</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+
+      <nav class="nav content-menu" aria-label="內容管理與訊息發布">
+        <div class="nav-group">
+          <button class="nav-parent active" type="button" aria-expanded="true" data-toggle-menu="content-admin">
+            <span class="nav-left">
+              <span class="icon">
+                <i class="ph ph-clipboard-text"></i>
+              </span>
+              內容管理與訊息發布
+            </span>
+            <i class="ph-bold ph-caret-down caret"></i>
+          </button>
+          <div class="nav-sub nav-panel" id="content-admin">
+            <button class="nav-sub-parent" type="button" aria-expanded="true" data-toggle-menu="homepage-board">
+              <span>公佈欄及首頁功能</span>
+              <i class="ph-bold ph-caret-down caret"></i>
+            </button>
+            <div class="nav-sub-children" id="homepage-board">
+              <a class="current" href="national_backend.html">最新消息維護</a>
+              <a href="national_backend.html">常見問題維護</a>
+              <a href="national_backend.html">常見問題類別維護</a>
+              <a href="national_backend.html">檔案下載維護</a>
+              <a href="national_backend.html">檔案下載維護(新)</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <nav class="nav" aria-label="後台主選單">
+        <a class="nav-item" href="national_backend.html">
+          <span class="icon">
+            <i class="ph ph-house"></i>
+          </span>
+          首頁總覽
+        </a>
+        <div class="nav-group">
+          <a class="nav-parent" href="national_backend.html">
+            <span class="nav-left">
+              <span class="icon">
+                <i class="ph ph-clipboard-text"></i>
+              </span>
+              登山申請管理
+            </span>
+            <i class="ph-bold ph-caret-down caret"></i>
+          </a>
+          <div class="nav-sub">
+            <a href="national_backend.html">陸路申請訊息</a>
+            <a href="national_backend.html">公告訊息</a>
+          </div>
+        </div>
+        <div class="nav-group">
+          <a class="nav-parent active" href="national_backend.html">
+            <span class="nav-left">
+              <span class="icon">
+                <i class="ph ph-bed"></i>
+              </span>
+              路線與床位管理
+            </span>
+            <i class="ph-bold ph-caret-down caret"></i>
+          </a>
+          <div class="nav-sub">
+            <a class="current" href="national_backend.html">路線總覽</a>
+            <a href="national_backend.html">床位設定</a>
+            <a href="national_backend.html">名額設定</a>
+            <a href="national_backend.html">床位使用統計</a>
+          </div>
+        </div>
+      </nav>
+
+      <svg class="sidebar-deco" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="0,260 90,100 180,260" fill="rgba(255,255,255,0.06)" />
+        <polygon points="100,260 220,60 340,260" fill="rgba(255,255,255,0.08)" />
+        <polygon points="260,260 360,90 460,260" fill="rgba(255,255,255,0.06)" />
+        <polygon points="60,260 190,30 320,260" fill="rgba(255,255,255,0.11)" />
+        <polygon points="160,80 190,30 220,80 205,72 190,52 175,72" fill="rgba(255,255,255,0.55)" />
+        <rect x="70" y="220" width="8" height="40" rx="2" fill="rgba(255,255,255,0.15)" />
+        <rect x="90" y="215" width="10" height="45" rx="2" fill="rgba(255,255,255,0.13)" />
+        <rect x="350" y="218" width="8" height="42" rx="2" fill="rgba(255,255,255,0.15)" />
+        <rect x="370" y="212" width="10" height="48" rx="2" fill="rgba(255,255,255,0.13)" />
+        <ellipse cx="80" cy="140" rx="48" ry="18" fill="rgba(255,255,255,0.09)" />
+        <ellipse cx="380" cy="120" rx="40" ry="14" fill="rgba(255,255,255,0.08)" />
+        <ellipse cx="230" cy="160" rx="60" ry="20" fill="rgba(255,255,255,0.07)" />
+        <path d="M190 260 Q210 220 225 190 Q245 160 240 130" stroke="rgba(255,255,255,0.25)" stroke-width="2"
+          stroke-dasharray="6 5" stroke-linecap="round" fill="none" />
+        <circle cx="224" cy="127" r="5" fill="rgba(255,255,255,0.6)" />
+        <line x1="224" y1="132" x2="224" y2="144" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" />
+        <line x1="224" y1="135" x2="219" y2="140" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" />
+        <line x1="224" y1="135" x2="229" y2="140" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" />
+      </svg>
+    </aside>
+
+    <main class="main">
+      <section class="content">
+        <div class="page-head">
+          <div class="page-title-line">
+            <h1>最新消息維護</h1>
+            <nav class="breadcrumb" aria-label="麵包屑">
+              <a class="breadcrumb-home" href="national_backend.html">
+                <i class="ph-fill ph-house"></i>
+                <span>首頁</span>
+              </a>
+              <span class="breadcrumb-separator">/</span>
+              <span>內容管理與訊息發布</span>
+              <span class="breadcrumb-separator">/</span>
+              <span>公佈欄及首頁功能</span>
+              <span class="breadcrumb-separator">/</span>
+              <span class="current">最新消息維護</span>
+            </nav>
+          </div>
+        </div>
+
+        <section class="panel announce-filter" aria-label="條件查詢">
+          <div class="announce-filter-grid">
+            <div class="announce-field">
+              <label for="publish-unit">發布單位</label>
+              <select id="publish-unit">
+                <option value="">請選擇</option>
+                <option value="6b2c354c-98e1-4fe6-a065-cbb039e588c4">內政部國家公園署</option>
+                <option value="105e956f-d8da-49f7-a9b7-3aefdda88a12">太魯閣國家公園管理處</option>
+                <option value="c951cdcd-b75a-46b9-8002-8ef952ec95fd">玉山國家公園管理處</option>
+                <option value="e6dd4652-2d37-4346-8f5d-6e538353e0c2">雪霸國家公園管理處</option>
+                <option value="84bc7d2b-ad3e-4f39-b568-a96681087f74">國家步道(山屋/營地)</option>
+                <option value="8f7c09dc-afeb-4708-a7bb-b20da2a24648">警政署入山</option>
+                <option value="7d0ed03d-e3ff-4482-8254-96f6434f5a85">自然保留區</option>
+                <option value="7d0ed03d-e3ff-4482-8254-96f6434f5a86">自然保護區</option>
+                <option value="7d0ed03d-e3ff-4482-8254-96f6434f5a87">野生動物保護區</option>
+              </select>
+            </div>
+            <div class="announce-field">
+              <label>發布日期</label>
+              <div class="date-range">
+                <input type="date" value="2024-11-01" aria-label="發布起日" />
+                <span>~</span>
+                <input type="date" value="2026-01-31" aria-label="發布迄日" />
+              </div>
+            </div>
+            <div class="announce-field">
+              <label>關鍵字</label>
+              <div class="keyword-row">
+                <input type="search" placeholder="請輸入標題或內容" />
+              </div>
+            </div>
+          </div>
+          <div class="announce-query-actions">
+            <button class="btn" type="button"><i class="ph ph-x"></i> 清除</button>
+            <button class="btn primary" type="button"><i class="ph ph-magnifying-glass"></i> 查詢</button>
+          </div>
+          <div class="announce-sortbar">
+            <div class="announce-sort">
+              <label for="sort-field">排序欄位</label>
+              <select id="sort-field">
+                <option value="">請選擇</option>
+                <option value="ord">排序</option>
+                <option value="SDATE">發布日期</option>
+                <option value="titles">標題</option>
+                <option value="OrgID">發布單位</option>
+                <option value="chktop">置頂</option>
+                <option value="chk">審核</option>
+              </select>
+              <label for="sort-rule">排序條件</label>
+              <select id="sort-rule">
+                <option value="">請選擇</option>
+                <option value="asc">遞增排序</option>
+                <option value="desc">遞減排序</option>
+              </select>
+              <button class="btn primary" type="button">排序</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="list-actions">
+          <button class="btn" type="button"><i class="ph ph-printer"></i> 預覽列印</button>
+          <button class="btn primary" type="button" data-modal-open="modal-add"><i class="ph-bold ph-plus"></i>
+            新增資料</button>
+        </div>
+
+        <section class="panel announce-table-panel">
+          <div class="announce-table-wrap">
+            <table class="announce-table">
+              <thead>
+                <tr>
+                  <th>排序</th>
+                  <th>標題</th>
+                  <th>發布單位</th>
+                  <th>發布日期</th>
+                  <th>發布者</th>
+                  <th>建立日期</th>
+                  <th>異動人員</th>
+                  <th>異動日期</th>
+                  <th class="icon-col">圖片上傳</th>
+                  <th class="icon-col">附件上傳</th>
+                  <th>置頂</th>
+                  <th>審核</th>
+                  <th>功能</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>13260</td>
+                  <td class="title-col">【天池山莊】低溫特報，前往高山步道應備妥禦寒物品，並注意登山安全！</td>
+                  <td>國家步道(山屋/營地)</td>
+                  <td>2024/12/19～2025/01/31</td>
+                  <td>天池山莊管理員</td>
+                  <td>2022/12/14</td>
+                  <td>天池山莊管理員</td>
+                  <td>2024/12/20</td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="圖片上傳"
+                      data-modal-open="modal-file" data-file-type="image"><i class="ph ph-image"></i></button></td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="附件上傳"
+                      data-modal-open="modal-file" data-file-type="attachment"><i class="ph ph-paperclip"></i></button></td>
+                  <td>是</td>
+                  <td>是</td>
+                  <td style="white-space:nowrap"><button class="action-btn edit" type="button"
+                      data-modal-open="modal-add"><i class="ph ph-pencil-simple"></i>編輯</button> <a
+                      class="action-btn delete" href="#"><i class="ph ph-trash"></i>刪除</a></td>
+                </tr>
+                <tr>
+                  <td>13230</td>
+                  <td class="title-col">【天池山莊】能高越嶺西段步道西段抬明年元旦搶通開放至 4.5K，天池山莊開放僅提供基本服務。</td>
+                  <td>國家步道(山屋/營地)</td>
+                  <td>2024/12/03～2025/01/31</td>
+                  <td>天池山莊管理員</td>
+                  <td>2024/12/02</td>
+                  <td>天池山莊管理員</td>
+                  <td>2024/12/20</td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="圖片上傳"
+                      data-modal-open="modal-file" data-file-type="image"><i class="ph ph-image"></i></button></td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="附件上傳"
+                      data-modal-open="modal-file" data-file-type="attachment"><i class="ph ph-paperclip"></i></button></td>
+                  <td>是</td>
+                  <td>是</td>
+                  <td style="white-space:nowrap"><button class="action-btn edit" type="button"
+                      data-modal-open="modal-add"><i class="ph ph-pencil-simple"></i>編輯</button> <a
+                      class="action-btn delete" href="#"><i class="ph ph-trash"></i>刪除</a></td>
+                </tr>
+                <tr>
+                  <td>13010</td>
+                  <td class="title-col">【嘉明湖國家步道】天兔颱風遠離，步道及其山屋相關設施經安全巡檢完畢，將於 11/18 恢復開放。</td>
+                  <td>國家步道(山屋/營地)</td>
+                  <td>2024/11/17～2024/11/20</td>
+                  <td>嘉明湖國家步道管理員</td>
+                  <td>2024/11/20</td>
+                  <td>嘉明湖國家步道管理員</td>
+                  <td>2024/11/20</td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="圖片上傳"
+                      data-modal-open="modal-file" data-file-type="image"><i class="ph ph-image"></i></button></td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="附件上傳"
+                      data-modal-open="modal-file" data-file-type="attachment"><i class="ph ph-paperclip"></i></button></td>
+                  <td>否</td>
+                  <td>否</td>
+                  <td style="white-space:nowrap"><button class="action-btn edit" type="button"
+                      data-modal-open="modal-add"><i class="ph ph-pencil-simple"></i>編輯</button> <a
+                      class="action-btn delete" href="#"><i class="ph ph-trash"></i>刪除</a></td>
+                </tr>
+                <tr>
+                  <td>12610</td>
+                  <td class="title-col">【區域公告】因應天兔颱風海上警報發布，廢止大武山自然保留區、台東紅葉村台東蘇鐵自然保留區入山許可證。</td>
+                  <td>自然保留區</td>
+                  <td>2024/11/14～</td>
+                  <td>林業署臺東分署</td>
+                  <td>2024/11/14</td>
+                  <td>林業署臺東分署</td>
+                  <td>2024/11/14</td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="圖片上傳"
+                      data-modal-open="modal-file" data-file-type="image"><i class="ph ph-image"></i></button></td>
+                  <td class="icon-col"><button class="table-icon-button" type="button" aria-label="附件上傳"
+                      data-modal-open="modal-file" data-file-type="attachment"><i class="ph ph-paperclip"></i></button></td>
+                  <td>否</td>
+                  <td>是</td>
+                  <td style="white-space:nowrap"><button class="action-btn edit" type="button"
+                      data-modal-open="modal-add"><i class="ph ph-pencil-simple"></i>編輯</button> <a
+                      class="action-btn delete" href="#"><i class="ph ph-trash"></i>刪除</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <!-- 新增資料 Modal -->
+  <div class="modal-overlay" id="modal-add" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+      <div class="modal-header">
+        <h2 id="modal-add-title">新增資料</h2>
+        <button class="modal-close" type="button" data-modal-close="modal-add" aria-label="關閉">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-row form-row-2col">
+            <label class="form-label required" for="m-org">發布單位</label>
+            <select class="form-control" id="m-org">
+              <option value=""></option>
+              <option value="6b2c354c-98e1-4fe6-a065-cbb039e588c4">內政部國家公園署</option>
+              <option value="105e956f-d8da-49f7-a9b7-3aefdda88a12">太魯閣國家公園管理處</option>
+              <option value="c951cdcd-b75a-46b9-8002-8ef952ec95fd">玉山國家公園管理處</option>
+              <option value="e6dd4652-2d37-4346-8f5d-6e538353e0c2">雪霸國家公園管理處</option>
+              <option value="84bc7d2b-ad3e-4f39-b568-a96681087f74" selected>國家步道(山屋/營地)</option>
+              <option value="8f7c09dc-afeb-4708-a7bb-b20da2a24648">警政署入山</option>
+              <option value="7d0ed03d-e3ff-4482-8254-96f6434f5a85">自然保留區</option>
+              <option value="7d0ed03d-e3ff-4482-8254-96f6434f5a86">自然保護區</option>
+              <option value="7d0ed03d-e3ff-4482-8254-96f6434f5a87">野生動物保護區</option>
+            </select>
+            <div class="form-row-pin" style="align-self:center">
+              <input type="checkbox" id="m-pin" checked
+                style="width:16px;height:16px;accent-color:var(--green-700);cursor:pointer;flex-shrink:0" />
+              <label for="m-pin" style="font-size:14px;font-weight:600;color:#344255;cursor:pointer">置頂</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label required" for="m-title">標題</label>
+            <input class="form-control" id="m-title" type="text" value="【天池山莊】低溫特報，前往高山步道應備妥禦寒物品，並注意登山安全！" />
+          </div>
+
+          <div class="form-row" style="align-items:start">
+            <div style="display:grid;gap:8px;padding-top:10px;justify-items:start">
+              <label class="form-label" style="min-height:auto">內容</label>
+              <button class="action-btn edit" type="button" style="font-size:13px"><i class="ph ph-book-open-text"></i>
+                片語詞庫</button>
+            </div>
+            <textarea class="form-control" rows="5">{此處為文字編輯器}
+天氣預報顯示近期高山地區將出現低溫特報，提醒登山民眾務必攜帶足夠禦寒衣物，並隨時注意氣象變化，確保登山安全。</textarea>
+          </div>
+
+          <div class="lang-section form-row" style="grid-column:1/-1;display:block;border-bottom:none;padding:0">
+            <div class="lang-section-title">英文版</div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="m-title-en">標題(英)</label>
+            <input class="form-control" id="m-title-en" type="text"
+              value="[Tianchi Mountain Hut] Cold Weather Advisory" />
+          </div>
+
+          <div class="form-row" style="align-items:start">
+            <div style="display:grid;gap:8px;padding-top:10px;justify-items:start">
+              <label class="form-label" style="min-height:auto">內容(英)</label>
+              <button class="action-btn edit" type="button" style="font-size:13px"><i class="ph ph-book-open-text"></i>
+                片語詞庫</button>
+            </div>
+            <textarea class="form-control" rows="4">{此處為文字編輯器}
+A cold weather advisory has been issued for high-altitude areas. Hikers are strongly advised to bring sufficient warm clothing and monitor weather conditions closely.</textarea>
+          </div>
+
+          <div class="lang-section form-row" style="grid-column:1/-1;display:block;border-bottom:none;padding:0">
+            <div class="lang-section-title">日文版</div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="m-title-ja">標題(日)</label>
+            <input class="form-control" id="m-title-ja" type="text" value="【天池山荘】低温注意報" />
+          </div>
+
+          <div class="form-row" style="align-items:start">
+            <div style="display:grid;gap:8px;padding-top:10px;justify-items:start">
+              <label class="form-label" style="min-height:auto">內容(日)</label>
+              <button class="action-btn edit" type="button" style="font-size:13px"><i class="ph ph-book-open-text"></i>
+                片語詞庫</button>
+            </div>
+            <textarea class="form-control" rows="4">{此處為文字編輯器}
+高山地帯で低温注意報が発令されています。登山者は十分な防寒具を持参し、天候の変化に注意してください。</textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label required">發布日期</label>
+            <div class="form-inline">
+              <input class="form-control" type="date" value="2026-06-26" aria-label="發布起日" />
+              <span>～</span>
+              <input class="form-control" type="date" value="2026-07-26" aria-label="發布迄日" />
+              <span class="form-note">（迄日留空為永久上架）</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="m-youtube">youtube影音網址</label>
+            <input class="form-control" id="m-youtube" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="m-order">排序</label>
+            <div class="form-inline">
+              <input class="form-control form-inline-number" id="m-order" type="number" value="13270"
+                style="width:120px" />
+              <span class="form-note">（由小到大）</span>
+            </div>
+          </div>
+
+          <div class="form-row" style="align-items:start">
+            <label class="form-label" style="padding-top:10px">相關連結</label>
+            <div class="link-list" id="links-zh">
+              <div class="link-row">
+                <div class="link-row-fields">
+                  <input class="form-control" type="text" placeholder="連結名稱" value="林務署天池山莊公告" />
+                  <input class="form-control" type="url" placeholder="連結網址 https://..."
+                    value="https://example.gov.tw/tianchi" />
+                </div>
+                <button class="table-icon-button danger" type="button" onclick="this.parentElement.remove()"
+                  aria-label="刪除連結"><i class="ph ph-x"></i></button>
+              </div>
+              <button class="btn" type="button" onclick="addLink('links-zh')"><i class="ph-bold ph-plus"></i>
+                新增</button>
+            </div>
+          </div>
+
+          <div class="form-row" style="align-items:start">
+            <label class="form-label" style="padding-top:10px">相關連結(英)</label>
+            <div class="link-list" id="links-en">
+              <button class="btn" type="button" onclick="addLink('links-en')"><i class="ph-bold ph-plus"></i>
+                新增</button>
+            </div>
+          </div>
+
+          <div class="form-row" style="align-items:start">
+            <label class="form-label" style="padding-top:10px">相關連結(日)</label>
+            <div class="link-list" id="links-ja">
+              <button class="btn" type="button" onclick="addLink('links-ja')"><i class="ph-bold ph-plus"></i>
+                新增</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" type="button" data-modal-close="modal-add" style="min-width:90px">取消</button>
+        <button class="btn primary" type="button" style="min-width:90px">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 附件/圖片上傳 Modal (共用) -->
+  <div class="modal-overlay" id="modal-file" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-file-title" style="max-width:600px">
+      <div class="modal-header">
+        <h2 id="modal-file-title">上傳</h2>
+        <button class="modal-close" type="button" data-modal-close="modal-file" aria-label="關閉">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="upload-form-panel">
+          <div class="upload-lang-inputs">
+            <div class="upload-lang-row">
+              <span class="upload-lang-tag">(中)</span>
+              <input class="form-control" id="upload-desc-zh" type="text" style="height:34px;font-size:14px" />
+            </div>
+            <div class="upload-lang-row">
+              <span class="upload-lang-tag">(英)</span>
+              <input class="form-control" id="upload-desc-en" type="text" style="height:34px;font-size:14px" />
+            </div>
+            <div class="upload-lang-row">
+              <span class="upload-lang-tag">(日)</span>
+              <input class="form-control" id="upload-desc-ja" type="text" style="height:34px;font-size:14px" />
+            </div>
+          </div>
+          <div class="upload-pick-row">
+            <label class="btn btn-sm" style="cursor:pointer;gap:6px;flex-shrink:0">
+              <i id="modal-file-pick-icon" class="ph ph-paperclip"></i>
+              <span id="modal-file-pick-label">選擇檔案</span>
+              <input type="file" id="modal-file-input" style="display:none" onchange="showFilePickName(this)" />
+            </label>
+            <span id="modal-file-pick-name" style="flex:1;min-width:0;font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">未選擇任何檔案</span>
+            <button class="btn btn-sm primary" type="button" style="flex-shrink:0" onclick="addFileItem()">
+              <i class="ph ph-upload-simple"></i> 上傳
+            </button>
+          </div>
+        </div>
+
+        <div class="upload-list-header">
+          <span id="modal-file-list-title" class="upload-list-title">已上傳</span>
+          <button class="action-btn delete" type="button" style="font-size:13px" onclick="deleteCheckedFileItems()">
+            <i class="ph ph-trash"></i> 多筆刪除
+          </button>
+        </div>
+        <div id="attachment-list" class="upload-list">
+          <div class="upload-badge-item">
+            <div class="upload-badge">
+              <label class="upload-badge-check"><input type="checkbox" /></label>
+              <i class="ph ph-file-pdf" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+              <span class="upload-badge-name">low-temperature-advisory.pdf</span>
+              <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="upload-badge-labels">
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" value="低溫特報說明文件" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" value="Cold Weather Advisory" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" value="低温注意報資料" style="height:30px;font-size:13px" /></div>
+            </div>
+          </div>
+          <div class="upload-badge-item">
+            <div class="upload-badge">
+              <label class="upload-badge-check"><input type="checkbox" /></label>
+              <i class="ph ph-file-doc" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+              <span class="upload-badge-name">route-safety-checklist.docx</span>
+              <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="upload-badge-labels">
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" value="路線安全檢核表" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" value="Route Safety Checklist" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" value="ルート安全チェックリスト" style="height:30px;font-size:13px" /></div>
+            </div>
+          </div>
+          <div class="upload-badge-item">
+            <div class="upload-badge">
+              <label class="upload-badge-check"><input type="checkbox" /></label>
+              <i class="ph ph-file" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+              <span class="upload-badge-name">emergency-contact-list.pdf</span>
+              <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="upload-badge-labels">
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" value="緊急聯絡名單" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" value="Emergency Contact List" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" value="緊急連絡先リスト" style="height:30px;font-size:13px" /></div>
+            </div>
+          </div>
+        </div>
+        <div id="image-list" class="upload-list" hidden>
+          <div class="upload-badge-item">
+            <div class="upload-badge">
+              <label class="upload-badge-check"><input type="checkbox" /></label>
+              <i class="ph ph-image" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+              <span class="upload-badge-name">tianchi-cover-zh.jpg</span>
+              <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="upload-badge-labels">
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" value="天池山莊低溫特報封面圖" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" value="Tianchi Cold Advisory Cover" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" value="天池山荘カバー画像" style="height:30px;font-size:13px" /></div>
+            </div>
+          </div>
+          <div class="upload-badge-item">
+            <div class="upload-badge">
+              <label class="upload-badge-check"><input type="checkbox" /></label>
+              <i class="ph ph-image" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+              <span class="upload-badge-name">trail-map-overview.png</span>
+              <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="upload-badge-labels">
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" value="步道總覽地圖" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" value="Trail Map Overview" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" value="トレイルマップ全体図" style="height:30px;font-size:13px" /></div>
+            </div>
+          </div>
+          <div class="upload-badge-item">
+            <div class="upload-badge">
+              <label class="upload-badge-check"><input type="checkbox" /></label>
+              <i class="ph ph-image" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+              <span class="upload-badge-name">shelter-interior-photo.jpg</span>
+              <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="upload-badge-labels">
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" value="山屋內部照片" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" value="Shelter Interior Photo" style="height:30px;font-size:13px" /></div>
+              <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" value="山小屋内部写真" style="height:30px;font-size:13px" /></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn" type="button" data-modal-close="modal-file" style="min-width:90px">取消</button>
+        <button class="btn primary" type="button" style="min-width:90px">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentFileType = "attachment";
+
+    const FILE_CFG = {
+      attachment: { title: "附件上傳", listTitle: "已上傳附件", icon: "ph-paperclip", label: "選擇檔案", accept: "", fileIcon: "ph-file", phZh: "描述（中文）", phEn: "Description (EN)", phJa: "説明（日本語）" },
+      image:      { title: "圖片上傳", listTitle: "已上傳圖片", icon: "ph-image",     label: "選擇圖片", accept: "image/*", fileIcon: "ph-image", phZh: "圖片說明（中文）", phEn: "Image description (EN)", phJa: "画像の説明（日本語）" }
+    };
+
+    function openFileModal(type) {
+      currentFileType = type;
+      const cfg = FILE_CFG[type];
+      document.getElementById("modal-file-title").textContent = cfg.title;
+      document.getElementById("modal-file-list-title").textContent = cfg.listTitle;
+      document.getElementById("modal-file-pick-icon").className = "ph " + cfg.icon;
+      document.getElementById("modal-file-pick-label").textContent = cfg.label;
+      document.getElementById("modal-file-input").accept = cfg.accept;
+      document.getElementById("modal-file-pick-name").textContent = "未選擇任何檔案";
+      document.getElementById("upload-desc-zh").placeholder = cfg.phZh;
+      document.getElementById("upload-desc-en").placeholder = cfg.phEn;
+      document.getElementById("upload-desc-ja").placeholder = cfg.phJa;
+      document.getElementById("attachment-list").hidden = type !== "attachment";
+      document.getElementById("image-list").hidden = type !== "image";
+      document.getElementById("modal-file").hidden = false;
+    }
+
+    function showFilePickName(input) {
+      document.getElementById("modal-file-pick-name").textContent = input.files[0]?.name || "未選擇任何檔案";
+    }
+
+    const badgeTpl = (icon) => `
+      <div class="upload-badge">
+        <label class="upload-badge-check"><input type="checkbox" /></label>
+        <i class="ph ${icon}" style="color:var(--muted);font-size:15px;flex-shrink:0"></i>
+        <span class="upload-badge-name">尚未命名</span>
+        <button class="table-icon-button danger" style="width:26px;height:26px;font-size:14px;flex-shrink:0" onclick="this.closest('.upload-badge-item').remove()"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="upload-badge-labels">
+        <div class="upload-badge-lang-row"><span class="upload-lang-tag">(中)</span><input class="form-control" type="text" placeholder="描述（中文）" style="height:30px;font-size:13px" /></div>
+        <div class="upload-badge-lang-row"><span class="upload-lang-tag">(英)</span><input class="form-control" type="text" placeholder="Description (EN)" style="height:30px;font-size:13px" /></div>
+        <div class="upload-badge-lang-row"><span class="upload-lang-tag">(日)</span><input class="form-control" type="text" placeholder="説明（日本語）" style="height:30px;font-size:13px" /></div>
+      </div>`;
+
+    function addFileItem() {
+      const listId = currentFileType === "image" ? "image-list" : "attachment-list";
+      const cfg = FILE_CFG[currentFileType];
+      const item = document.createElement("div");
+      item.className = "upload-badge-item";
+      item.innerHTML = badgeTpl(cfg.fileIcon);
+      const fname = document.getElementById("modal-file-pick-name").textContent;
+      if (fname !== "未選擇任何檔案") item.querySelector(".upload-badge-name").textContent = fname;
+      document.getElementById(listId).appendChild(item);
+    }
+
+    function deleteCheckedFileItems() {
+      const listId = currentFileType === "image" ? "image-list" : "attachment-list";
+      document.querySelectorAll(`#${listId} .upload-badge-item input[type='checkbox']:checked`)
+        .forEach(cb => cb.closest(".upload-badge-item").remove());
+    }
+
+    function addLink(containerId) {
+      const container = document.getElementById(containerId);
+      const addBtn = container.querySelector("button");
+      const row = document.createElement("div");
+      row.className = "link-row";
+      row.innerHTML = '<div class="link-row-fields"><input class="form-control" type="text" placeholder="連結名稱" /><input class="form-control" type="url" placeholder="連結網址 https://..." /></div><button class="table-icon-button danger" type="button" onclick="this.parentElement.remove()" aria-label="刪除連結"><i class="ph ph-x"></i></button>';
+      container.insertBefore(row, addBtn);
+    }
+
+    document.querySelectorAll("[data-modal-open]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.modalOpen === "modal-file") {
+          openFileModal(btn.dataset.fileType || "attachment");
+        } else {
+          const modal = document.getElementById(btn.dataset.modalOpen);
+          if (modal) modal.hidden = false;
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-modal-close]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const modal = document.getElementById(btn.dataset.modalClose);
+        if (modal) modal.hidden = true;
+      });
+    });
+
+    document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.hidden = true;
+      });
+    });
+
+    document.querySelectorAll("[data-toggle-menu]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = document.getElementById(button.dataset.toggleMenu);
+        if (!target) return;
+
+        const willOpen = button.getAttribute("aria-expanded") !== "true";
+        button.setAttribute("aria-expanded", String(willOpen));
+        target.hidden = !willOpen;
+      });
+    });
+  </script>
+</body>
+
+</html>
