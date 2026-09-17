@@ -2082,22 +2082,39 @@ button.p-open-filter-badge.is-active {
   justify-content: center;
   line-height: 1.4;
   white-space: nowrap;
+}
+/*
+  白字強制規則排除 .th-btn-ghost（2026-09-17）：「介紹」改為白底次要按鈕，
+  原本這幾條無差別的 `color: #fff !important` 會讓它的字消失。
+  text-decoration 仍套用全部按鈕，只有 color 加了 :not()。
+*/
+.p-open-btn-compact:not(.th-btn-ghost),
+.p-open-btn-compact:not(.th-btn-ghost):visited,
+.p-open-btn-compact:not(.th-btn-ghost):hover,
+.p-open-btn-compact:not(.th-btn-ghost):focus,
+.p-open-btn-compact:not(.th-btn-ghost):active,
+.p-open-actions a.th-btn:not(.th-btn-ghost),
+.p-open-actions .th-btn:not(.th-btn-ghost),
+.p-open-table a.p-open-btn-compact:not(.th-btn-ghost),
+.th-table a.p-open-btn-compact:not(.th-btn-ghost),
+.p-open-actions a.th-btn:not(.th-btn-ghost):visited,
+.p-open-actions a.th-btn:not(.th-btn-ghost):hover,
+.p-open-actions a.th-btn:not(.th-btn-ghost):focus,
+.p-open-actions a.th-btn:not(.th-btn-ghost):active,
+.p-open-table a.p-open-btn-compact:not(.th-btn-ghost):visited,
+.p-open-table a.p-open-btn-compact:not(.th-btn-ghost):hover,
+.p-open-table a.p-open-btn-compact:not(.th-btn-ghost):focus,
+.p-open-table a.p-open-btn-compact:not(.th-btn-ghost):active {
   color: #fff !important;
 }
 .p-open-btn-compact:visited,
 .p-open-btn-compact:hover,
 .p-open-btn-compact:focus,
-.p-open-btn-compact:active {
-  color: #fff !important;
-  text-decoration: none !important;
-}
+.p-open-btn-compact:active,
 .p-open-actions a.th-btn,
 .p-open-actions .th-btn,
 .p-open-table a.p-open-btn-compact,
-.th-table a.p-open-btn-compact {
-  text-decoration: none !important;
-  color: #fff !important;
-}
+.th-table a.p-open-btn-compact,
 .p-open-actions a.th-btn:visited,
 .p-open-actions a.th-btn:hover,
 .p-open-actions a.th-btn:focus,
@@ -2107,7 +2124,28 @@ button.p-open-filter-badge.is-active {
 .p-open-table a.p-open-btn-compact:focus,
 .p-open-table a.p-open-btn-compact:active {
   text-decoration: none !important;
-  color: #fff !important;
+}
+
+/*
+  「介紹」「申請」分主次（2026-09-17 使用者裁決）：
+  介紹＝白底次要按鈕（.th-btn-ghost），申請＝較深的主色實心。
+  `.th-table a` 會把連結字色設成 --national-800，這裡以 0-2-0 蓋回 ghost 原本的字色。
+*/
+.p-open-actions .th-btn-ghost {
+  color: var(--slate-700);
+}
+.p-open-actions .th-btn-ghost:hover {
+  color: var(--national-700);
+}
+.th-btn.p-open-btn-apply {
+  background: var(--national-800);
+  border-color: var(--national-800);
+}
+.th-btn.p-open-btn-apply:hover,
+.th-btn.p-open-btn-apply:focus,
+.th-btn.p-open-btn-apply:active {
+  background: var(--national-900);
+  border-color: var(--national-900);
 }
 
 /* 步道難度等級可點擊 badge */

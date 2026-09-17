@@ -194,8 +194,8 @@
               </td>
               <td class="col-fn" data-label="功能">
                 <div class="p-open-actions">
-                  <a v-if="r.hasIntro" class="th-btn th-btn-primary p-open-btn-compact" href="information_1.html">介紹</a>
-                  <a v-if="r.canApply === 'yes'" class="th-btn th-btn-primary p-open-btn-compact" href="apply-1.html">申請</a>
+                  <a v-if="r.hasIntro" class="th-btn th-btn-ghost p-open-btn-compact" href="information_1.html">介紹</a>
+                  <a v-if="r.canApply === 'yes'" class="th-btn th-btn-primary p-open-btn-compact p-open-btn-apply" href="apply-1.html">申請</a>
                   <button v-if="r.note" type="button" class="th-btn th-btn-secondary p-open-btn-compact" @click="noteModal = r">備註</button>
                 </div>
               </td>
