@@ -1100,10 +1100,10 @@
    依 §6.2 與 markup 同一次提交改名為 .p-illustrate-*。
 
    對照表（長的先換，否則 .th-faq 會先吃掉 .th-faq-link）：
-     .th-faq            → .p-illustrate-faq
-     .th-faq-body       → .p-illustrate-faq-body
-     .th-faq-links      → .p-illustrate-faq-links
-     .th-faq-link       → .p-illustrate-faq-link
+     .th-faq            → .p-illustrate-faq        （2026-09-17 改版後改為 -faq-grid／-item，舊規則已刪）
+     .th-faq-body       → .p-illustrate-faq-body   （同上，已刪）
+     .th-faq-links      → .p-illustrate-faq-links  （同上，已刪）
+     .th-faq-link       → .p-illustrate-faq-link   （僅留 .is-todo）
      .th-page-cta       → .p-illustrate-cta
      .th-page-cta-text  → .p-illustrate-cta-text
 
@@ -1127,88 +1127,58 @@
   display: block;
 }
 
-.p-illustrate-faq {
+/* 首次使用常見問題：卡片格狀、全部展開、連結嵌在解答句中（2026-09-17 改版，取代 <details> 摺疊） */
+.p-illustrate-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.p-illustrate-faq-item {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  background: var(--bg-1);
 }
-.p-illustrate-faq details {
-  border-top: 1px solid var(--slate-100);
-}
-.p-illustrate-faq details:first-child {
-  border-top: none;
-}
-.p-illustrate-faq summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 16px 24px;
+.p-illustrate-faq-q {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 12px;
+}
+.p-illustrate-faq-no {
+  flex: none;
+  min-width: 36px;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  background: var(--national-50);
+  color: var(--national-700);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: var(--lh-base);
+  text-align: center;
+}
+.p-illustrate-faq-title {
+  margin: 0;
   font-size: var(--fs-md);
   font-weight: 700;
+  line-height: var(--lh-snug);
   color: var(--fg-1);
-  transition: color 0.15s ease;
 }
-.p-illustrate-faq summary::-webkit-details-marker {
-  display: none;
-}
-.p-illustrate-faq summary:hover {
-  color: var(--national-700);
-}
-.p-illustrate-faq details[open] summary {
-  color: var(--national-700);
-}
-.p-illustrate-faq summary i {
-  font-size: var(--fs-xs);
-  color: var(--fg-4);
-  transition: transform 0.25s ease;
-}
-.p-illustrate-faq details[open] summary i {
-  transform: rotate(180deg);
-  color: var(--national-700);
-}
-.p-illustrate-faq-body {
-  padding: 0 24px 18px;
+.p-illustrate-faq-a {
+  margin: 0;
+  padding-left: 48px;
   color: var(--fg-2);
   line-height: var(--lh-base);
   text-align: justify;
 }
-.p-illustrate-faq-body p {
-  margin: 0 0 8px;
-}
-.p-illustrate-faq-body p:last-child {
-  margin-bottom: 0;
-}
-.p-illustrate-faq-body a {
-  color: var(--national-700);
-  font-weight: 500;
-}
-.p-illustrate-faq-body a i {
-  font-size: var(--fs-2xs);
-  margin-left: 5px;
-}
-.p-illustrate-faq-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 20px;
-  margin: 12px 0 0;
-}
-.p-illustrate-faq-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 500;
-  color: var(--national-700);
-}
 .p-illustrate-faq-link.is-todo {
   color: var(--fg-3);
-  font-weight: 400;
   cursor: default;
-}
-.p-illustrate-faq-link i {
-  font-size: var(--fs-2xs);
 }
 .p-illustrate-cta {
   display: flex;
@@ -1218,11 +1188,15 @@
 }
 
 @media (max-width: 640px) {
-  .p-illustrate-faq summary {
-    padding: 14px 16px;
+  .p-illustrate-faq-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
-  .p-illustrate-faq-body {
-    padding: 0 16px 16px;
+  .p-illustrate-faq-item {
+    padding: 16px;
+  }
+  .p-illustrate-faq-a {
+    padding-left: 0;
   }
   .p-illustrate-cta {
     padding: 8px 0 16px;

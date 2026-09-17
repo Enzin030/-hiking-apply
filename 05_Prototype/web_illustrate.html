@@ -86,27 +86,24 @@
         <h2 class="th-card-title">首次使用常見問題</h2>
         <span class="th-card-note">{{ faqs.length }} 則</span>
       </div>
-      <div class="th-card-body is-flush">
+      <div class="th-card-body">
         <!--
-          .p-illustrate-* 是本頁專用樣式，遷移時依 §6.2 由 .th-faq*／.th-page-cta*
-          改名，規則見 assets/css/pages.css。
-          FAQ 用原生 <details>，無 JS互動——這也是本頁被歸在「輕」組的原因。
+          .p-illustrate-* 是本頁專用樣式，規則見 assets/css/pages.css。
+          2026-09-17 改為卡片格狀、全部展開，連結嵌在解答句中（片段由
+          components/web-illustrate.js 的 splitAnswer 切好）。
+          模板裡片段之間不留換行：Vue 的 whitespace: 'condense' 會把換行折成空白，
+          句中就會多出空格。
         -->
-        <div class="p-illustrate-faq">
-          <details v-for="(f, i) in faqs" :key="f.q" :open="i === 0 ? true : null">
-            <summary>{{ f.q }}<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
-            <div class="p-illustrate-faq-body">
-              <p>{{ f.a }}</p>
-              <!-- 原 FaqLinks 是 WebIllustrate.jsx 內的區域元件，屬本頁版面，故寫在這裡 -->
-              <p v-if="f.links && f.links.length" class="p-illustrate-faq-links">
-                <template v-for="l in f.links" :key="l.label">
-                  <span v-if="l.todo" class="p-illustrate-faq-link is-todo">{{ l.label }}<span class="th-todo-tag">待建置</span></span>
-                  <a v-else class="p-illustrate-faq-link" :href="l.href" target="_blank" rel="noopener noreferrer">{{ l.label }}<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-                </template>
-              </p>
+        <ol class="p-illustrate-faq-grid">
+          <li v-for="(f, i) in faqs" :key="f.q" class="p-illustrate-faq-item">
+            <div class="p-illustrate-faq-q">
+              <span class="p-illustrate-faq-no" aria-hidden="true">Q{{ i + 1 }}</span>
+              <h3 class="p-illustrate-faq-title">{{ f.q }}</h3>
             </div>
-          </details>
-        </div>
+            <p class="p-illustrate-faq-a"><template v-for="(p, j) in f.parts" :key="j"><template v-if="!p.link">{{ p.text }}</template><span v-else-if="p.link.todo" class="p-illustrate-faq-link is-todo">{{ p.text }}<span class="th-todo-tag">待建置</span></span><a v-else class="th-inline-link" :href="p.link.href" :title="p.link.label" target="_blank" rel="noopener noreferrer">{{ p.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></template></p>
+            <p v-if="f.tail.length" class="p-illustrate-faq-a"><template v-for="t in f.tail" :key="t.text"><a class="th-inline-link" :href="t.link.href" target="_blank" rel="noopener noreferrer">{{ t.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a> </template></p>
+          </li>
+        </ol>
       </div>
     </section>
 

@@ -15,14 +15,18 @@
    中文一律從原始碼程式化切出，切完加斷言）。要改內容請重跑該腳本，不要手改。
 
    與正式站的兩點刻意差異（其餘逐字相同）：
-     1. 正式站七則是 `#collapse_01`～`07` 常態展開（容器雖名為 accordion 但未套
-        collapse）；本雛形維持 <details> 摺疊、首則預設展開
-        —— 2026-09-16 使用者裁決。
+     1. 正式站在解答下方另列「點我另開…」按鈕；本雛形改為句中連結
+        —— 2026-09-17 使用者裁決（取代 09-16 的 <details> 摺疊裁決）。
      2. href 由 .aspx 對照到本雛形頁（對照表在產生器的 HREF_MAP）。
 
    [待確認] 舊站本頁附有操作截圖，新版 UI 已改版，截圖待雛形定版後補。
 
-   FAQ 的 links：[{ label, href, todo }]
+   2026-09-17 使用者裁決：改為卡片格狀、全部展開（與正式站一致），並把連結
+   **嵌進解答句中**，不再另列「點我另開…」按鈕。match 是解答中要變成連結的
+   原文片段，不含【】括號（括號留在連結外，底線才不會延伸到全形括號的留白；手加，產生器未產出；重跑產生器後要補回）；label 保留為連結的 title。
+   同一 links 陣列須依 match 在句中出現的先後排列。
+
+   FAQ 的 links：[{ label, href, match, todo }]
      href 有值 → 實際導頁（正式站一律 target="_blank"，本頁比照）；
      todo: true → 目標頁本雛形尚未建置，標「待建置」且不導頁，不給假路徑（不用 `#`）。
      一題可有多個入口。**目前七則皆有實際目標，todo 分支無資料走到**，
@@ -34,35 +38,35 @@ const GUIDE_FAQS = [
     q: "我想爬的山可以在【臺灣登山申請一站式服務網】申請嗎？",
     a: "可以利用本站路線查詢功能查看您想爬的山是否有在本站受理的範圍內，也可以利用路線內的【展開地圖】功能詳細確認路線範圍唷！",
     links: [
-      { label: "點我另開路線查詢視窗", href: "apply-1.html" },  // 正式站 apply_1.aspx
+      { label: "點我另開路線查詢視窗", href: "apply-1.html", match: "路線查詢" },  // 正式站 apply_1.aspx
     ],
   },
   {
     q: "我想爬的山目前有開放進入嗎？",
     a: "可以利用本站【登山路線開放狀態】查詢申請的登山路線目前是否開放唷！",
     links: [
-      { label: "點我另開路線查詢視窗", href: "open.html" },  // 正式站 open.aspx
+      { label: "點我另開路線查詢視窗", href: "open.html", match: "登山路線開放狀態" },  // 正式站 open.aspx
     ],
   },
   {
     q: "我想爬的山目前可以進行申請嗎？",
     a: "本案首頁公告訊息右方提供可申請日期試算功能，請至首頁選擇國家公園、路線與預計入園時間即可查詢該登山路線的開放申請期間唷！",
     links: [
-      { label: "點我另開路線查詢視窗", href: "index.html" },  // 正式站 web_index.aspx
+      { label: "點我另開路線查詢視窗", href: "index.html", match: "首頁" },  // 正式站 web_index.aspx
     ],
   },
   {
     q: "我想申請入園該怎麼做？",
     a: "點擊本頁畫面下方【進入登山申請】按鈕即可依據操作步驟完成申請唷！",
     links: [
-      { label: "點我另開登山申請視窗", href: "apply-1.html" },  // 正式站 apply_1.aspx
+      { label: "點我另開登山申請視窗", href: "apply-1.html", match: "進入登山申請" },  // 正式站 apply_1.aspx
     ],
   },
   {
     q: "我想知道更多入園相關規定要去哪裡查詢呢？",
     a: "由本站【登山入園須知】中可獲得更多入園規定說明唷！",
     links: [
-      { label: "點我另開路線查詢視窗", href: "notice.html" },  // 正式站 notice.aspx
+      { label: "點我另開路線查詢視窗", href: "notice.html", match: "登山入園須知" },  // 正式站 notice.aspx
     ],
   },
   {
@@ -74,14 +78,31 @@ const GUIDE_FAQS = [
     q: "我想知道更多有關登山與住宿申請的資訊，可以到哪裡查看呢？",
     a: "由本站【登山入園須知】和【常見問題】中可獲得更多登山與住宿申請相關資訊唷！",
     links: [
-      { label: "點我另開登山入園須知視窗", href: "notice.html" },  // 正式站 notice.aspx
-      { label: "點我另開常見問題視窗", href: "news.html?tab=faq" },  // 正式站 news_7.aspx
+      { label: "點我另開登山入園須知視窗", href: "notice.html", match: "登山入園須知" },  // 正式站 notice.aspx
+      { label: "點我另開常見問題視窗", href: "news.html?tab=faq", match: "常見問題" },  // 正式站 news_7.aspx
     ],
   },
 ];
 
+/* 把解答切成 [{ text }] 與 [{ text, link }] 交錯的片段，連結嵌在句中。
+   match 在解答中找不到就退回句尾另列，避免連結靜默消失。 */
+function splitAnswer(f) {
+  const parts = [];
+  let rest = f.a;
+  const tail = [];
+  for (const l of f.links) {
+    const i = rest.indexOf(l.match);
+    if (!l.match || i < 0) { tail.push({ text: l.label, link: l }); continue; }
+    if (i > 0) parts.push({ text: rest.slice(0, i) });
+    parts.push({ text: l.match, link: l });
+    rest = rest.slice(i + l.match.length);
+  }
+  if (rest) parts.push({ text: rest });
+  return { q: f.q, parts, tail };
+}
+
 thPage({
   data() {
-    return { faqs: GUIDE_FAQS };
+    return { faqs: GUIDE_FAQS.map(splitAnswer) };
   },
 });
