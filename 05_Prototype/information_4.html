@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>即時影像觀看 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  即時影像觀看（information_4）— 對應 02_Spec/27_即時影像觀看.md
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/information_4.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <!-- 正式站無更新日期與導言，這裡不捏造 -->
+  <th-page-shell :trail="['旅遊登山資訊', '即時影像觀看']" title="即時影像觀看">
+
+    <!--
+      景點頁籤。`.th-tabs／.th-tab` 是 2026-09-14 由 campsite 的 .p-campsite-tab*
+      提升上來的共用層 class（二次即提升），外觀與 campsite 的機關頁籤相同。
+    -->
+    <div class="th-tabs">
+      <nav class="th-tabs-nav" aria-label="景點">
+        <button v-for="s in spots" :key="s.key" type="button"
+                :class="['th-tab', { 'is-active': current === s.key }]"
+                :aria-current="current === s.key ? 'page' : null"
+                @click="current = s.key">
+          <i class="fa-solid fa-video"></i><span>{{ s.label }}</span>
+        </button>
+      </nav>
+    </div>
+
+    <section class="th-card p-cctv-card">
+      <div class="th-card-body">
+        <div class="p-cctv-grid">
+
+          <!--
+            影像。觀霧、雪見為 YouTube 直播 iframe；南安、排雲為網路攝影機的
+            MJPEG 串流，以 <img> 直連（與正式站相同）。:key 綁 spot.key 是刻意的
+            ——切頁籤時重建元素，讓上一個景點的串流連線確實中斷。
+          -->
+          <div class="p-cctv-media">
+            <!-- sticky 掛在這層，讓影像與其下的圖說一起黏住 -->
+            <div class="p-cctv-stick">
+              <div class="p-cctv-frame">
+                <iframe v-if="spot.type === 'youtube'" :key="spot.key" :src="spot.src"
+                        :title="spot.label + '即時影像'" loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                <img v-else-if="!failed[spot.key]" :key="spot.key" :src="spot.src"
+                     :alt="spot.label + '即時影像'" @error="markFailed(spot.key)" />
+                <p v-else class="p-cctv-offline">
+                  <i class="fa-solid fa-video-slash" aria-hidden="true"></i>
+                  <span>目前無法取得即時影像</span>
+                  <span class="p-cctv-offline-note">攝影機串流連線失敗，請稍後再試。</span>
+                </p>
+              </div>
+              <!--
+                影像位置＝影片的圖說，放影像正下方。不掛 <h2>：一行
+                「影像位置：<地點>」當標題語意上不成立，本節唯一的 h2 是「景點介紹」。
+                標籤與地點之間不可換行縮排（Vue condense 會折成一個空白，「：」後會多空格）。
+              -->
+              <p class="p-cctv-meta"><span class="p-cctv-meta-label"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>影像位置</span><span class="p-cctv-meta-value">{{ spot.location }}</span></p>
+            </div>
+          </div>
+
+          <div class="p-cctv-info">
+            <h2 class="th-section-title">景點介紹</h2>
+            <p v-for="(t, i) in spot.intro" :key="i" class="p-cctv-para">{{ t }}</p>
+
+            <p class="p-cctv-source">{{ spot.source }}</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>（window.CCTV_SPOTS） -->
+<script src="components/CctvData.js"></script>
+
+</body>
+</html>

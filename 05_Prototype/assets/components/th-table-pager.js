@@ -17,6 +17,7 @@ window.thComponents["th-table-pager"] = {
   props: {
     page: { type: Number, required: true },
     totalPages: { type: Number, required: true },
+    total: { type: [Number, String], default: null },
   },
   emits: ["change"],
   computed: {
@@ -38,22 +39,27 @@ window.thComponents["th-table-pager"] = {
     },
   },
   template: `
-    <nav v-if="totalPages > 1" class="bulletin-pager" aria-label="分頁">
-      <button type="button" class="bulletin-page-btn" :disabled="page === 1"
-              aria-label="上一頁" @click="$emit('change', page - 1)">
-        <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
-      </button>
-      <template v-for="it in items" :key="it.key">
-        <span v-if="it.gap" class="bulletin-page-gap">…</span>
-        <button v-else type="button"
-                :class="['bulletin-page-btn', { 'is-active': it.n === page }]"
-                :aria-current="it.n === page ? 'page' : null"
-                @click="$emit('change', it.n)">{{ it.n }}</button>
-      </template>
-      <button type="button" class="bulletin-page-btn" :disabled="page === totalPages"
-              aria-label="下一頁" @click="$emit('change', page + 1)">
-        <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
-      </button>
-    </nav>
+    <div v-if="totalPages >= 1" class="th-table-pager-wrap">
+      <nav class="bulletin-pager" aria-label="分頁">
+        <button type="button" class="bulletin-page-btn" :disabled="page <= 1"
+                aria-label="上一頁" @click="$emit('change', page - 1)">
+          <i class="fa-solid fa-angle-left" aria-hidden="true"></i>
+        </button>
+        <template v-for="it in items" :key="it.key">
+          <span v-if="it.gap" class="bulletin-page-gap">…</span>
+          <button v-else type="button"
+                  :class="['bulletin-page-btn', { 'is-active': it.n === page }]"
+                  :aria-current="it.n === page ? 'page' : null"
+                  @click="$emit('change', it.n)">{{ it.n }}</button>
+        </template>
+        <button type="button" class="bulletin-page-btn" :disabled="page === totalPages"
+                aria-label="下一頁" @click="$emit('change', page + 1)">
+          <i class="fa-solid fa-angle-right" aria-hidden="true"></i>
+        </button>
+      </nav>
+      <div v-if="total !== null && total !== undefined" class="th-listbar-count" role="status" aria-live="polite" aria-atomic="true">
+        共 <strong>{{ total }}</strong> 筆
+      </div>
+    </div>
   `,
 };

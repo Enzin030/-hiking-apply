@@ -93,13 +93,7 @@
   }
   .news-file-icon {
     font-size: 24px;
-    color: var(--national-600);
-  }
-  .news-file-icon.pdf {
-    color: #dc2626;
-  }
-  .news-file-icon.word {
-    color: #2563eb;
+    color: var(--red-700, #b91c1c) !important;
   }
   /* 卡片外的操作列 */
   .news-outer-actions {
@@ -119,20 +113,14 @@
 
   <th-page-shell :trail="trail" :title="article.title" :bare="true">
 
+    <!-- Meta 資訊列：比照 FAQ Modal 放在標題下方、卡片外面 -->
+    <div class="bulletin-modal-meta" style="margin-top: -8px; margin-bottom: 16px;">
+      <span>發布單位：{{ article.org }}</span>
+      <span class="bulletin-modal-sep">|</span>
+      <span>發布日期：{{ dateSlash(article.date) }}</span>
+    </div>
+
     <article class="news-detail-card">
-      
-      <!-- Meta 資訊列 -->
-      <div class="news-meta-bar">
-        <div class="news-meta-info">
-          <span :class="['bulletin-badge', 'agency-' + article.agencyId]">
-            {{ article.org }}
-          </span>
-          <span class="inline-flex items-center gap-1.5 text-slate-800">
-            <i class="fa-regular fa-calendar-check text-slate-700" aria-hidden="true"></i>
-            發布日期：{{ dateSlash(article.date) }}
-          </span>
-        </div>
-      </div>
 
       <!-- 富文本新聞內文 -->
       <div v-if="article.bodyHtml" class="news-rich-content" v-html="article.bodyHtml"></div>
@@ -147,7 +135,7 @@
           <a v-for="(f, i) in article.files" :key="i"
              :href="f.href" target="_blank" rel="noopener noreferrer"
              class="news-file-card group">
-            <i :class="['news-file-icon', (f.format || '').toLowerCase(), fileIcons[f.format] || 'fa-regular fa-file-lines']" aria-hidden="true"></i>
+            <i class="news-file-icon fa-regular fa-file" aria-hidden="true"></i>
             <span class="font-medium text-slate-800 group-hover:text-emerald-800 text-sm">
               {{ f.name }}
             </span>
@@ -160,8 +148,8 @@
 
     <!-- 回列表頁按鈕（位於卡片外面下方） -->
     <div class="news-outer-actions">
-      <a href="news.html?tab=news" class="th-btn th-btn-primary px-6 py-2.5">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回列表頁
+      <a href="news_0.html" class="th-btn th-btn-primary px-6 py-2.5">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回列表
       </a>
     </div>
 

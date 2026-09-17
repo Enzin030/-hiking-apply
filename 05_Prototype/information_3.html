@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>國家公園天氣資訊 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  國家公園天氣資訊（information_3）— 對應 02_Spec/26_國家公園天氣資訊.md
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="components/WeatherData.js"></script>
+<script src="assets/includes/head-loader.js" data-page-init="components/information_3.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <th-page-shell
+    :trail="['旅遊登山資訊', '國家公園天氣資訊']"
+    title="國家公園天氣資訊">
+
+    <!-- 預報更新時間（與大標題垂直置中對齊） -->
+    <template #title-right>
+      <div class="text-[length:var(--fs-sm)] text-slate-500 flex items-center gap-1.5 leading-none">
+        <i class="fa-regular fa-clock" aria-hidden="true"></i>
+        <span>更新時間：{{ updateTime }}</span>
+      </div>
+    </template>
+
+    <!-- 國家公園天氣清單（參考 web_illustrate.html 頂層加蓋 th-card-head 方式） -->
+    <div class="space-y-8">
+      <section v-for="park in parks" :key="park.parkId" class="th-card">
+
+        <!-- 卡片標題（頂層加蓋：同 web_illustrate.html 之 th-card-head） -->
+        <div class="th-card-head">
+          <h2 class="th-card-title">{{ park.parkName }}</h2>
+        </div>
+
+        <div class="th-card-body">
+          <div class="th-table-wrap">
+            <table class="th-table th-table--zebra">
+              <thead>
+                <!-- 欄位標題列（同 news.html 之 .th-table thead th 霧綠底樣式） -->
+                <tr>
+                  <th scope="col" class="w-1/4">地點名稱</th>
+                  <th scope="col" class="w-1/4 is-center">溫度(℃)</th>
+                  <th scope="col" class="w-1/4 is-center">降雨機率(%)</th>
+                  <th scope="col" class="w-1/4 is-center">天氣狀況</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="spot in park.spots"
+                  :key="spot.name">
+                  <td class="font-medium text-slate-900">
+                    {{ spot.name }}
+                  </td>
+                  <td class="is-center text-slate-800 whitespace-nowrap">
+                    {{ spot.tempText }}
+                  </td>
+                  <td class="is-center text-slate-800 whitespace-nowrap">
+                    {{ spot.rainProb }}
+                  </td>
+                  <td class="is-center whitespace-nowrap">
+                    <span class="inline-flex items-center justify-center gap-1.5">
+                      <i :class="[spot.weatherIcon, spot.weatherColor]" aria-hidden="true"></i>
+                      <span>{{ spot.weatherText }}</span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- 資料來源（純文字超連結，非按鈕） -->
+    <div class="mt-4 text-[length:var(--fs-sm)] text-slate-600">
+      資料來源：<a
+        href="https://www.cwa.gov.tw/V8/C/L/NatPark/NatPark.html?PID=E012"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--national-700)] font-medium hover:underline inline-flex items-center gap-1">
+        中央氣象署
+        <i class="fa-solid fa-arrow-up-right-from-square text-xs" aria-hidden="true"></i>
+      </a>
+      <span>（本資料僅供參考，實際資料以中央氣象署為準。）</span>
+    </div>
+
+  </th-page-shell>
+
+  <th-footer></th-footer>
+
+  <th-quick-nav></th-quick-nav>
+
+</div>
+
+</body>
+</html>

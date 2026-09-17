@@ -9,7 +9,7 @@
   ------------------------------------------------------------
   開新頁：把整個 template/ 複製成 <頁名>.html ＋ components/<頁名>.js，
   改掉 <title>、data-page-init、th-header 的 active、th-page-shell 的
-  trail／title／lead／updated，然後開始寫內容。
+  trail／title／lead（updated 依需求選用），然後開始寫內容。
 
   **下面這三行必須靜態寫在頁面，順序不可調換**，不要試著收斂進 head-loader
   （已驗證會壞，理由見 assets/includes/head.html 註解）：
@@ -63,8 +63,7 @@
   <th-page-shell
     :trail="['上層分類', '本頁標題']"
     title="本頁標題"
-    lead="一句話說明本頁提供什麼。"
-    updated="2026-09-10">
+    lead="一句話說明本頁提供什麼。">
 
     <!-- 給了 #nav 才會變兩欄；不需要頁內目錄就整段刪掉 -->
     <template #nav>

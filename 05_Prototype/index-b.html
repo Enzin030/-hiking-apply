@@ -54,7 +54,7 @@
     <div class="p-indexb-announcement-inner"><b><i class="fa-solid fa-bullhorn p-indexb-icon" aria-hidden="true"></i>最新消息</b><span class="p-indexb-divider"></span><button
         type="button"
         class="text-white hover:underline text-left flex-1 truncate bg-transparent border-0 p-0 font-normal flex items-center min-w-0"
-        @click="newsOpen = true"><span :class="'bulletin-badge agency-' + notice.agencyId + ' mr-2 shrink-0'">{{ notice.org }}</span><span class="truncate">{{ notice.title }}</span></button>
+        @click="newsOpen = true"><span class="mr-2 shrink-0">{{ notice.org }}</span><span class="truncate">{{ notice.title }}</span></button>
       <div class="p-indexb-announcement-controls"><button type="button" aria-label="上一則公告" @click="showNotice(-1)"><i
             class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><button type="button" aria-label="下一則公告" @click="showNotice(1)"><i
             class="fa-solid fa-chevron-right" aria-hidden="true"></i></button><a href="news.html" class="p-indexb-all-news hover:underline">全部公告 →</a></div>
@@ -132,7 +132,7 @@
   <th-modal v-if="newsOpen" :title="notice.title" @close="newsOpen = false">
     <template #head>
       <div>
-        <span :class="'bulletin-badge agency-' + notice.agencyId">{{ notice.org }}</span>
+        <span>{{ notice.org }}</span>
         <h3 class="bulletin-modal-title">{{ notice.title }}</h3>
         <div class="bulletin-modal-meta">發布日期：{{ notice.date }}</div>
       </div>

@@ -5,19 +5,24 @@
 <title>申請進度查詢/繳費/異動/取消 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  階段 3 逐頁遷移（applySearch，重組第一頁）
+  applySearch — 申請進度查詢/繳費/異動/取消（舊站 applySearch.aspx）
   ------------------------------------------------------------
+  **本頁只有四張入口卡，不放任何表單。** 正式站的 applySearch.aspx 就是這樣：
+  一個「請選擇操作方式」區塊、四顆按鈕，各自連到 apply_2／apply_3／apply_4／apply_5。
+
+  2026-09-16 修正：原本這裡還塞著「申請進度查詢」表單與「列印與退費規定」兩個區塊，
+  那是 apply_3.aspx 的內容，已搬到 `apply_3.html`。當時的「前往查詢」是捲到同頁下方，
+  四個功能裡只有這一個沒有自己的頁，與正式站行為不符。**不要再把下游頁的內容搬回來。**
+
   這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
   （已驗證過會壞，理由見 assets/includes/head.html 註解）。
   `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
   components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
   它之前，該檔已於階段 4 退場，**不要再加回來**。
 
-  本頁沒有任何頁面專用 CSS：版面全部由 components.css 的 .th-card／.th-field／
-  .th-chip-row／.th-notice-grid 與 Tailwind utility 組成，所以 pages.css 沒有
-  新增 .p-applysearch-*，也沒有 §4.2 的複製案例。
-
-  .th-notice-grid 沿用原名（§6.6 白名單）：notice.html 也在用，改名會弄壞那頁。
+  本頁有一段頁面專用 CSS：`pages.css` 末尾的 `.p-applysearch-grid`／`.p-applysearch-entry*`
+  （2026-09-16 加，理由寫在該段註解）。配色仍全部沿用 `.th-btn-primary`，
+  沒有新的 hex、沒有 !important。除此之外沿用共用層，無 §4.2 的複製案例。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -34,176 +39,49 @@
 
   <th-page-shell
     :trail="[applyCrumb, '申請進度查詢/繳費/異動/取消']"
-    title="申請進度查詢/繳費/異動/取消"
-    lead="查詢已送出的登山申請進度、下載入園許可證，或前往異動、繳費、退費。"
-    updated="2026-09-07">
+    title="申請進度查詢/繳費/異動/取消">
 
-    <template #nav>
-      <th-page-nav :items="navItems"></th-page-nav>
-    </template>
+    <!-- 不給 #nav slot：全頁只有四顆按鈕，頁內目錄沒有作用；正式站也沒有。 -->
 
-    <div>
-      <h2 class="th-section-title" id="actions">請選擇操作方式</h2>
-      <!-- items-stretch 覆蓋 .th-notice-grid 的 align-items: start，
-           讓四張卡等高、按鈕齊底（各卡說明與山屋數量不同，不等高會參差） -->
-      <div class="th-notice-grid items-stretch">
-        <!-- 卡片骨架與 notice.html 的機關卡同構，但標題降一級為 h3
-             （上方已有 h2），故不套用共用的區塊卡片。 -->
-        <section class="th-card flex flex-col" v-for="a in actions" :key="a.id">
-          <div class="th-card-head">
-            <i :class="a.icon" aria-hidden="true"></i>
-            <h3 class="th-card-title">{{ a.title }}</h3>
-          </div>
-          <div class="th-card-body flex flex-col gap-3 flex-1">
-            <p class="th-field-hint">{{ a.desc }}</p>
-            <div v-if="a.cabins.length > 0" class="th-chip-row">
-              <span class="th-chip" v-for="c in a.cabins" :key="c">{{ c }}</span>
-            </div>
-            <button v-if="a.built" type="button" class="th-btn th-btn-primary th-btn-block mt-auto" @click="gotoForm">
-              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>前往查詢
-            </button>
-            <th-todo-link v-else label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
-          </div>
-        </section>
-      </div>
+    <!--
+      版型依設計參考圖 `01_Raw_Input/操作畫面截圖/2026-09-16_11-23-48.png`：
+      2×2 卡片，左側淡綠圓形圖示，右側由上而下為標題／說明／適用山屋 badge／
+      「前往…→」文字連結。樣式在 pages.css 的 .p-applysearch-*。
+
+      正式站原本是四顆不同顏色的 Bootstrap 大按鈕（primary／info／success／main），
+      本雛形不照抄——四種顏色會讀成有優先序，但四個功能是平行的。
+
+      **整張卡是一個 <a>**，下方「前往…」只是外觀上的連結（span），
+      不要改成真的 <a>：巢狀 <a> 是非法 HTML，瀏覽器會拆成兩個兄弟節點，
+      點擊範圍會裂開。頁面上也沒有「請選擇操作方式」之類的區塊標題。
+    -->
+    <div class="p-applysearch-grid">
+      <a
+        v-for="a in actions"
+        :key="a.id"
+        :href="a.href"
+        class="th-focusable p-applysearch-entry">
+        <span class="p-applysearch-entry-ic">
+          <i :class="a.icon" aria-hidden="true"></i>
+        </span>
+        <span class="p-applysearch-entry-body">
+          <span class="p-applysearch-entry-title">{{ a.title }}</span>
+          <span class="p-applysearch-entry-desc">{{ a.desc }}</span>
+          <!-- 山屋用 badge 逐項標，不要串成一行文字：這是「適用範圍清單」，
+               一項一顆才數得出來。不用 .th-chip——那支是可點的篩選籤
+               （帶 cursor: pointer 與自己的 hover），包在 <a> 裡會跟父層連結打架。 -->
+          <span v-if="a.cabins.length > 0" class="p-applysearch-entry-badges">
+            <span class="p-applysearch-badge" v-for="c in a.cabins" :key="c">{{ c }}</span>
+          </span>
+          <!-- CTA 是文字連結的樣子，但整塊 <a> 才是點擊區，所以這裡不能再放一個 <a>
+               （巢狀 <a> 是非法 HTML，瀏覽器會把它拆開）。用 span 畫成連結外觀。 -->
+          <span class="p-applysearch-entry-cta">
+            {{ a.cta }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </span>
+        </span>
+      </a>
     </div>
 
-    <!-- 原 Shared.jsx 的 SectionCard：三層固定 markup，屬該頁版面，搬回 HTML -->
-    <section class="th-card" id="progress">
-      <div class="th-card-head">
-        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-        <h2 class="th-card-title">申請進度查詢</h2>
-        <span class="th-card-note">舊站標題為「申請進度查詢/許可證下載」</span>
-      </div>
-      <div class="th-card-body ">
-        <p>請輸入您的<strong>登山申請編號</strong>及<strong>身分證號／護照號碼（居留證）</strong>來進行資料查詢。</p>
-
-        <div class="flex flex-col gap-4">
-        <div class="th-field">
-          <label class="th-label" for="f-serial">
-            <span class="req">*</span>（一站式／入園）申請編號
-          </label>
-          <input
-            id="f-serial"
-            name="serial"
-            ref="serial"
-            type="text"
-            class="th-input"
-            autocomplete="off"
-            placeholder="請輸入登山申請一站式 12 碼申請編號（不是警政署、不是林保署編號）"
-            :value="serial"
-            @input="serial = $event.target.value" />
-        </div>
-
-        <div class="th-field">
-          <label class="th-label" for="f-sid">
-            <span class="req">*</span>身分證號／護照號碼（居留證）
-          </label>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <select
-              id="f-nation"
-              name="nation"
-              class="th-select basis-full sm:basis-44 grow-0 shrink-0"
-              aria-label="國籍"
-              :value="nation"
-              @change="nation = $event.target.value">
-              <option value="">請選擇</option>
-              <option value="中華民國">中華民國</option>
-              <option value="國外">國外</option>
-            </select>
-            <input
-              id="f-sid"
-              name="sid"
-              type="text"
-              class="th-input flex-1"
-              autocomplete="off"
-              :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
-              :value="sid"
-              @input="sid = $event.target.value" />
-          </div>
-          <div class="th-field-hint">選「中華民國」填身分證字號，選「國外」填護照號碼或居留證號碼。</div>
-        </div>
-
-        <div class="th-field">
-          <label class="th-label" for="f-vcode">
-            <span class="req">*</span>請輸入驗證碼
-          </label>
-          <div class="flex flex-col sm:flex-row gap-2 items-start">
-            <input
-              id="f-vcode"
-              name="vcode"
-              type="text"
-              class="th-input sm:w-44"
-              autocomplete="off"
-              placeholder="請輸入驗證碼"
-              :value="vcode"
-              @input="vcode = $event.target.value" />
-            <span class="th-input th-input-readonly sm:w-32 text-center tracking-[0.3em]">7K4M</span>
-            <button type="button" class="th-btn th-btn-ghost" disabled>
-              <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
-            </button>
-          </div>
-          <div class="th-field-hint">
-            雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
-          <p class="th-field-hint">查詢結果僅顯示與輸入身分相符的申請案。</p>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" class="th-btn th-btn-secondary" @click="reset">
-              清除
-            </button>
-            <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
-              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
-            </button>
-          </div>
-        </div>
-
-        <template v-if="submitted">
-          <!-- 標題與待確認標記之間不可換行：JSX 會把標籤相鄰的換行整段刪掉，
-               Vue 卻會折成一個空白，那一個空白會讓後面整行重排
-               （見 notice.html 檔內的實測紀錄） -->
-          <h3 class="th-section-title mt-6">查詢結果<span class="th-todo-tag">待確認</span></h3>
-          <p class="th-table-note">以下欄位、狀態值與許可證下載規則皆未取得正式站可公開來源，為示意版面；
-                資料為匿名假資料，非真實申請案。</p>
-          <!-- React 版三個欄位的 render 回傳 JSX；th-data-table 的 render 只收字串，
-               要回元素改走 cell slot（見 assets/components/th-data-table.js 檔頭） -->
-          <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra">
-            <template #cell="{ row, column, value }">
-              <template v-if="column.key === 'team'">{{ row.team }}<br />{{ row.leader }}（共 {{ row.members }} 人）</template>
-              <span v-else-if="column.key === 'state'" :class="['th-flag', stateFlag[row.state] || '']">{{ row.state }}</span>
-              <template v-else-if="column.key === 'permit'"><span v-if="row.permit" class="th-todo-link">下載許可證</span><span v-else class="th-table-note">尚未核准，無法下載</span></template>
-              <template v-else>{{ value }}</template>
-            </template>
-          </th-data-table>
-          <th-callout>林保署山屋（天池、檜谷、嘉明湖／向陽）的案件可於本區進行繳費與資料異動；
-                入園申請僅提供查詢與許可證下載。相關操作入口在本雛形尚未建置。<span class="th-todo-tag">待確認</span><span class="th-callout-src">操作範圍取自舊站 applySearch.aspx 的按鈕說明文字，實際可用功能待業務確認。</span></th-callout>
-        </template>
-        </div>
-      </div>
-    </section>
-
-    <section class="th-card" id="rules">
-      <div class="th-card-head">
-        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-        <h2 class="th-card-title">列印與退費規定</h2>
-      </div>
-      <div class="th-card-body ">
-        <th-callout type="warning"><strong>國家公園入園許可證</strong>：請領隊於入園日（含）前 5 日內始可列印；
-            入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份。<span class="th-callout-src">來源：正式站 apply_3.aspx（2026-09-07 實抓）</span></th-callout>
-
-        <th-callout>登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前 1 日天氣預報不佳或身體有不適狀況，
-            考量不成行請儘速線上取消申請，避免入園當日無法取消。線上取消登山申請請至
-            「申請資料異動及取消」（舊站 apply_2.aspx，本雛形尚未建置）。<span class="th-callout-src">來源：正式站 apply_3.aspx（2026-09-07 實抓）</span></th-callout>
-
-        <h3 class="th-section-title">林保署山屋取消住宿申請之退費規定</h3>
-        <p class="th-table-note">適用檜谷山莊、天池山莊、嘉明湖／向陽。</p>
-        <th-data-table :columns="refundColumns" :rows="refundRows" row-key="when" table-class="th-table--zebra"></th-data-table>
-        <p class="th-table-note">起算日計算標準：單日住宿者，以住宿日為起算日；多日住宿者，以第一天住宿日為起算日。
-            來源：正式站 apply_3.aspx（2026-09-07 實抓）。</p>
-      </div>
-    </section>
   </th-page-shell>
 
   <th-quick-nav></th-quick-nav>

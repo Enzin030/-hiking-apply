@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>山域事故統計儀表板 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  山域事故統計儀表板（對應正式站 MountainDashboard.aspx，2026-09-14 由 template/page.html 起手）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/accident-dashboard.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <!-- 正式站放在首頁與快捷選單，不屬主導覽任何一項，故不傳 active -->
+  <th-header></th-header>
+
+  <th-page-shell
+    :trail="['山域事故統計儀表板']"
+    title="山域事故統計儀表板">
+
+    <!-- 查詢條件：變更即更新（正式站為 AutoPostBack，無查詢鈕） -->
+    <form class="bulletin-card" @submit.prevent aria-label="查詢條件">
+      <div class="p-dashboard-filters">
+        <div class="th-field">
+          <label class="th-label" for="dash-category">分類</label>
+          <select id="dash-category" class="th-select" :value="category" @change="onCategory($event.target.value)">
+            <option v-for="c in categories" :key="c.key" :value="c.key">{{ c.label }}</option>
+          </select>
+        </div>
+        <div v-if="category === 'reason'" class="th-field">
+          <label class="th-label" for="dash-reason">事故原因</label>
+          <select id="dash-reason" class="th-select" v-model="reason">
+            <option value="">全部</option>
+            <option v-for="r in reasons" :key="r" :value="r">{{ r }}</option>
+          </select>
+        </div>
+        <div v-if="category === 'climbline'" class="th-field">
+          <label class="th-label" for="dash-org">管理處</label>
+          <select id="dash-org" class="th-select" v-model="org">
+            <option v-for="p in parks" :key="p" :value="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="th-field">
+          <label class="th-label" for="dash-year">年度</label>
+          <select id="dash-year" class="th-select" v-model="year">
+            <option value="">全部</option>
+            <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <section class="th-card">
+      <!-- 卡片標題列（「分類｜次層｜年度」）依 2026-09-14 使用者要求拿掉；
+           該字串仍用於圖表的 aria 描述（components/accident-dashboard.js 的 chartTitle） -->
+      <div class="th-card-body">
+        <div v-if="isEmpty" class="th-empty">
+          <i class="fa-regular fa-folder-open" aria-hidden="true"></i>查無資料
+        </div>
+        <!-- ECharts 容器：用 v-show 而非 v-if，保留同一個 DOM 供圖表實例重用 -->
+        <div v-show="!isEmpty" ref="chart" :class="['p-dashboard-chart', { 'is-route': category === 'climbline' }]"></div>
+
+        <details class="p-dashboard-table">
+          <summary>檢視資料表</summary>
+          <th-data-table :columns="tableColumns" :rows="tableRows" row-key="label"></th-data-table>
+        </details>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!--
+  ECharts 5.6.0：只有本頁使用，故不進 head.html。CDN 載入、integrity 釘版
+  （cdnjs 與 jsDelivr 同版本檔案雜湊一致，2026-09-14 實測）。
+  body 內一般 <script> 依序執行，早於 page-init（head-loader 讓 page-init 等 DOMContentLoaded）。
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js" integrity="sha384-pPi0zxBAoDu6+JXW/C68UZLvBUUtU+7zonhif43rqj7pxsGyqyqzcian2Rj37Rss" crossorigin="anonymous"></script>
+<!-- 資料檔（快照）：一般 <script>，於 page-init 之前執行 -->
+<script src="components/AccidentDashboardData.js"></script>
+
+</body>
+</html>

@@ -69,172 +69,14 @@
    讓 components.css 的同名規則勝出，modal 列高差 8px、166,104 個像素差。
    ############################################################ */
 
-.p-campsite-tabs {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.p-campsite-tabs-nav {
-  min-width: max-content;
-  display: inline-flex;
-  gap: 32px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid var(--slate-200);
-  border-radius: 0;
-  width: 100%;
-}
 
 /* ------------------------------------------------------------
-   查詢卡（2026-09-14 C 批，依設計師前台web）
+   查詢卡與列表工具列（.th-filter、.th-listbar）
    ------------------------------------------------------------
-   取代原本的扁平工具列 .p-news-toolbar（含 .bulletin-filter-row 的橫排），
-   那組規則已隨 news.html 的樣板一起移除；.bulletin-filter-* 本身留著，
-   campsite 與 open 還在用。
-
-   命名不沿用設計檔的 .th-search：我方 .th-search 已經是「帶放大鏡的
-   關鍵字輸入框」，同名會撞。等第二個列表頁要用時再依「二次即提升」
-   升到 components.css 並改名 .th-*。
+   原 .p-news-filter 與 .p-news-listbar 已於 2026-09-16 依「二次即提升」
+   （第二個消費端 information_place.html）提升至 components.css，
+   並保留原 class 為相容別名。
    ------------------------------------------------------------ */
-/* 2026-09-14 使用者裁決：**不要設計檔的霧綠底卡片**（主觀，不是實作錯誤），
-   查詢區維持我方的扁平工具列；標籤位置、欄位高度（--field-h）與按鈕排列
-   仍照設計檔。詳見 decisions.md 同日紀錄，不要「修正」回卡片。 */
-.p-news-filter {
-  margin-bottom: 16px;
-}
-
-.p-news-filter-grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 16px;
-}
-
-.p-news-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 0 1 240px;
-  min-width: 0;
-}
-
-/* 關鍵字欄位吃掉剩餘寬度 */
-.p-news-field--grow {
-  flex: 1 1 260px;
-}
-
-.p-news-label {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--fg-2);
-}
-
-/* .th-search 本身是 flex: 1 1 260px（給橫向工具列用的）。放進直向的
-   .p-news-field 之後，那個 260px 會變成**高度**的 flex-basis，欄位被撐成 260px 高
-   （實測：關鍵字欄整塊浮在卡片上方）。這裡把它改回由內容決定高度、寬度滿版。 */
-.p-news-filter .th-search {
-  flex: 0 0 auto;
-  width: 100%;
-  min-width: 0;
-}
-
-/* 同一排的欄位與按鈕等高，才對得齊（設計檔的 --field-h） */
-.p-news-filter .th-select,
-.p-news-filter .th-input,
-.p-news-filter .th-btn {
-  min-height: var(--field-h);
-  height: var(--field-h);
-}
-
-.p-news-filter-actions {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.p-news-daterange {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.p-news-daterange .th-fp-wrap {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.p-news-daterange .th-input--date {
-  width: 100%;
-}
-
-.p-news-sep {
-  color: var(--fg-2);
-  font-size: var(--fs-md);
-  line-height: 1;
-  user-select: none;
-}
-
-/* 欄位堆疊後按鈕改為整列等分（設計檔 ≤991px 的行為） */
-@media (max-width: 991px) {
-  .p-news-filter-actions {
-    flex: 1 1 100%;
-  }
-  .p-news-filter-actions .th-btn {
-    flex: 1;
-  }
-}
-
-/* ------------------------------------------------------------
-   列表工具列：左筆數、右次要連結（設計檔的 .th-listbar）
-   ------------------------------------------------------------ */
-.p-news-listbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.p-news-count {
-  font-size: var(--fs-sm);
-  color: var(--fg-3);
-}
-
-.p-news-count strong {
-  color: var(--national-700);
-  font-weight: 700;
-}
-
-.p-news-listbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.p-news-listbar-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 24px;
-  padding: 6px 12px;
-  border: 1px solid var(--border-ui);
-  border-radius: var(--r-pill);
-  font-size: var(--fs-sm);
-  color: var(--fg-2);
-  text-decoration: none;
-  transition: background-color .15s, border-color .15s, color .15s;
-}
-
-.p-news-listbar-link:hover {
-  color: var(--national-700);
-  border-color: var(--national-300);
-  background: var(--national-50);
-}
 
 .p-news-link {
   border: none;
@@ -242,8 +84,8 @@
   padding: 0;
   text-align: left;
   color: var(--fg-1);
-  font-size: var(--fs-sm);
-  font-weight: 400;
+  font-size: var(--fs-md);
+  font-weight: 500;
   line-height: var(--lh-snug);
   text-decoration: none;
   transition: color 0.15s ease;
@@ -345,6 +187,228 @@
 .p-news-file.jpg:hover,
 .p-news-file.jpeg:hover {
   background: #f3e8ff;
+}
+
+/* ── 公布欄四功能：自訂下拉選單（平鋪展開，寬度自適應）── */
+.p-news-combobox {
+  position: relative;
+  width: 100%;
+}
+.p-news-combo-trigger {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background-color: var(--bg-1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+.p-news-combo-val {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-news-combo-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(90vw, 420px);
+  background: var(--bg-1);
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+  overflow-y: auto;
+  max-height: 320px;
+}
+.p-news-combo-list {
+  padding: 4px 0;
+}
+.p-news-combo-item {
+  padding: 9px 14px;
+  min-height: 38px;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  transition: background .12s;
+}
+.p-news-combo-item:hover {
+  background: var(--national-50);
+  color: var(--national-700);
+}
+.p-news-combo-item.is-selected {
+  background: var(--national-100);
+  color: var(--national-800);
+  font-weight: 600;
+}
+
+/* ── 公布欄／查詢區：日期區間選擇器（完全比照 Ariel 參考檔 input-group 樣式）── */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+.input-group > .form-control {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  font-size: var(--fs-sm, 14px);
+  color: var(--slate-800, #1e293b);
+  background-color: #fff;
+  border: 1px solid var(--border-ui, #cbd5e1);
+  border-top-left-radius: var(--r-md, 8px);
+  border-bottom-left-radius: var(--r-md, 8px);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.input-group > .form-control::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+.input-group > .input-group-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  background-color: #fff;
+  border: 1px solid var(--border-ui, #cbd5e1);
+  border-left: 0;
+  border-top-right-radius: var(--r-md, 8px);
+  border-bottom-right-radius: var(--r-md, 8px);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  color: var(--fg-3, #64748b);
+  font-size: var(--fs-sm, 14px);
+  transition: border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+.input-group:hover > .form-control,
+.input-group:hover > .input-group-text {
+  border-color: var(--slate-400, #94a3b8);
+}
+.input-group:focus-within > .form-control {
+  border-color: var(--national-700, #2d5a43);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+  z-index: 2;
+}
+.input-group:focus-within > .input-group-text {
+  border-color: var(--national-700, #2d5a43);
+  color: var(--national-700, #2d5a43);
+}
+
+/* ── FAQ Modal Meta（Badge 放在異動日期前面、分隔線緊湊）── */
+.bulletin-modal-meta {
+  margin-top: 8px;
+  font-size: var(--fs-xs);
+  color: var(--slate-600);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bulletin-modal-meta .bulletin-modal-sep {
+  color: var(--slate-300);
+  margin: 0 4px;
+}
+
+/* ── 標題旁的 歷史消息 按鈕（灰色中性膠囊，放 RSS 左側）── */
+.p-news-history-btn {
+  background: #fff;
+  color: var(--slate-600, #475569) !important;
+  border: 1px solid var(--slate-300, #cbd5e1);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: var(--fs-sm);
+  border-radius: 9999px;
+  box-shadow: var(--sh-xs);
+  text-decoration: none !important;
+  transition: all .15s ease;
+}
+.p-news-history-btn:hover {
+  background: var(--slate-50);
+  border-color: var(--national-600);
+  color: var(--national-800) !important;
+}
+.p-news-history-btn i {
+  color: var(--slate-400);
+  font-size: 1.05em;
+}
+.p-news-history-btn:hover i {
+  color: var(--national-700);
+}
+
+/* ── 標題旁的回最新消息按鈕（非填滿線框膠囊，hover 比照清除按鈕轉深線框與淡底，非實心填滿）── */
+.p-news-back-btn {
+  background: #fff;
+  color: var(--btn-blue, #3b5f8f) !important;
+  border: 1.5px solid var(--btn-blue, #3b5f8f) !important;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  font-size: var(--fs-sm);
+  border-radius: 9999px;
+  box-shadow: var(--sh-xs);
+  text-decoration: none !important;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+.p-news-back-btn:hover {
+  background: var(--bg-2, #f8fafc);
+  border-color: #243447 !important;
+  color: #1e3a5f !important;
+  box-shadow: var(--sh-sm);
+}
+.p-news-back-btn i {
+  color: var(--btn-blue, #3b5f8f);
+  font-size: 1.05em;
+  transition: transform .15s ease, color .15s ease;
+}
+.p-news-back-btn:hover i {
+  color: #1e3a5f;
+  transform: translateX(-2px);
+}
+
+/* ── 標題旁的 RSS 訂閱按鈕（邊框加深、圓角膠囊型）── */
+.p-news-rss-btn {
+  background: var(--amber-50, #fffbeb);
+  color: var(--amber-700, #b45309) !important;
+  border: 1.5px solid var(--amber-400, #fbbf24);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: var(--fs-sm);
+  border-radius: 9999px;
+  box-shadow: var(--sh-xs);
+  text-decoration: none !important;
+  transition: all .15s ease;
+}
+.p-news-rss-btn i {
+  color: var(--rss-icon, var(--amber-600));
+  font-size: 1.1em;
+}
+.p-news-rss-btn:hover {
+  background: var(--amber-100, #fef3c7);
+  border-color: var(--amber-400, #fbbf24);
+  color: var(--amber-800, #92400e) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--sh-sm);
 }
 
 .p-fc1-cabin-card {
@@ -802,12 +866,6 @@
   margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
-    .p-campsite-tabs {
-      overflow-x: auto;
-    }
-}
-
 @media (max-width: 560px) {
     .p-fc1-form-grid {
       grid-template-columns: 1fr;
@@ -819,68 +877,6 @@
 }
 
 
-.p-campsite-tab {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 4px;
-  margin: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: var(--fg-2);
-  font-size: var(--fs-md);
-  font-weight: 500;
-  white-space: nowrap;
-  transition: color 0.2s ease;
-  cursor: pointer;
-}
-
-.p-campsite-tab i {
-  font-size: var(--fs-nav);
-  color: var(--fg-4);
-  transition: color 0.2s ease;
-}
-
-.p-campsite-tab::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: transparent;
-  transition: background-color 0.2s ease;
-}
-
-.p-campsite-tab:hover {
-  color: var(--national-700);
-}
-
-.p-campsite-tab:hover::after {
-  background: var(--slate-300);
-}
-
-.p-campsite-tab:hover i {
-  color: var(--national-700);
-}
-
-.p-campsite-tab.is-active {
-  background: transparent;
-  color: var(--national-700);
-  font-weight: 700;
-  box-shadow: none;
-}
-
-.p-campsite-tab.is-active::after {
-  background: var(--national-700);
-}
-
-.p-campsite-tab.is-active i {
-  color: var(--national-700);
-}
 .th-notice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
@@ -1019,19 +1015,6 @@
   }
 }
 
-.p-campsite-tab.is-todo {
-  cursor: default;
-  background: transparent;
-  border-bottom-color: transparent;
-  color: var(--fg-4);
-  opacity: 0.6;
-}
-
-.p-campsite-tab.is-todo:hover {
-  background: transparent;
-  border-bottom-color: transparent;
-  color: var(--fg-4);
-}
 .p-notice-actions {
   display: flex;
   justify-content: flex-end;
@@ -1131,6 +1114,13 @@
    Rss／WebIllustrate），其中 ApplySearch 尚未遷移 → 依 §4.2 維持原名、原處保留。
    ############################################################ */
 
+/* 正式站四段說明裡的 <span class="text-danger"> 強調。
+   只用既有 token，不新增 hex（§6.1.1）。 */
+.p-illustrate-em {
+  color: var(--danger-fg);
+  font-weight: 700;
+}
+
 .p-illustrate-faq {
   display: flex;
   flex-direction: column;
@@ -1216,18 +1206,9 @@
 }
 .p-illustrate-cta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 12px 24px;
-  padding: 28px 24px;
-  background: var(--bg-mist);
-  border: 1px solid var(--national-200);
-  border-radius: var(--r-xl);
-}
-.p-illustrate-cta-text {
-  margin: 0;
-  color: var(--fg-2);
+  padding: 12px 0 24px;
 }
 
 @media (max-width: 640px) {
@@ -1238,7 +1219,7 @@
     padding: 0 16px 16px;
   }
   .p-illustrate-cta {
-    padding: 20px 16px;
+    padding: 8px 0 16px;
   }
 }
 
@@ -1257,113 +1238,19 @@
    shared.css 原規則未刪（該檔有使用者未提交的修改），成死規則待階段 4 清。
    ############################################################ */
 
-/* §6.6 白名單：.th-table 是多選擇器規則帶入的（§6.4.2b），不是本頁自造 */
-.th-table.p-rss-table th:nth-child(1) {
-  width: 156px;
+/* 2026-09-14 依正式站改版：拿掉「訂閱網址」卡，頻道清單與複製網址的 .p-rss-* 規則全數移除。
+   本頁只剩步驟文字內的 RSS 圖示（回頂端按鈕因與快捷選單衝突，使用者裁決先不做）。 */
+.p-rss-icon {
+  margin: 0 3px;
+  font-size: 1.2em;
+  vertical-align: -0.12em;
+  color: var(--rss-icon);
 }
-.th-table.p-rss-table th:nth-child(2) {
-  width: 24%;
-}
-.th-table.p-rss-table th:nth-child(4) {
-  width: 96px;
-}
-.p-rss-channel {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  color: var(--fg-1);
-}
-.p-rss-channel i {
-  color: var(--national-700);
-  font-size: var(--fs-sm);
-}
-.p-rss-url {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.p-rss-url-text {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: var(--fs-sm);
-  color: var(--national-800);
-  word-break: break-all;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.p-rss-url-text:hover {
-  color: var(--national-900);
-}
-.p-rss-copy {
-  flex-shrink: 0;
-}
-.p-rss-url.is-todo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--fg-3);
-}
-.p-rss-url-note {
-  margin: 8px 0 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: var(--fs-xs);
-  color: var(--warning-fg);
-  line-height: var(--lh-base);
-}
-.p-rss-url-note i {
-  margin-top: 2px;
-}
-.p-rss-offscreen {
-  position: fixed;
-  top: -1000px;
-  left: -1000px;
-  opacity: 0;
-}
-
-@media (max-width: 640px) {
-  .th-table.p-rss-table {
-    display: block;
-  }
-  .th-table.p-rss-table thead {
-    display: none;
-  }
-  .th-table.p-rss-table tbody,
-  .th-table.p-rss-table tbody tr {
-    display: block;
-  }
-  .th-table.p-rss-table th:nth-child(1),
-  .th-table.p-rss-table th:nth-child(2),
-  .th-table.p-rss-table th:nth-child(4) {
-    width: auto;
-  }
-  .th-table.p-rss-table tbody tr {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--slate-100);
-  }
-  .th-table.p-rss-table tbody tr:last-child {
-    border-bottom: none;
-  }
-  .th-table.p-rss-table tbody td {
-    display: block;
-    padding: 0;
-    border-bottom: none;
-    text-align: left;
-  }
-  .th-table.p-rss-table tbody td+td {
-    margin-top: 10px;
-  }
-  .th-table.p-rss-table tbody td:not(:first-child)::before {
-    content: attr(data-label);
-    display: block;
-    margin-bottom: 2px;
-    font-size: var(--fs-xs);
-    font-weight: 700;
-    color: var(--fg-3);
-    letter-spacing: var(--tracking-wide);
-  }
+/* 步驟清單後的提示：共用規則 .th-card-body>.th-callout 是為「callout 在內文最前面」寫的
+   （只有 margin-bottom 16px），放在最後會貼齊上方步驟、下方再疊 body 的 24px padding。
+   本頁微調為上方留與步驟間距相同的 20px、下方歸零。 */
+.th-card-body>.th-callout.p-rss-howto-note {
+  margin: 20px 0 0;
 }
 
 
@@ -1429,6 +1316,7 @@
   color: var(--national-700);
   font-size: var(--fs-nav);
 }
+/* 2026-09-14（批次 3）可點區至少 24×24（WCAG 2.5.8） */
 /* 2026-09-14（批次 3）可點區至少 24×24（WCAG 2.5.8） */
 .p-apply1-filter-reset {
   min-height: 24px;
@@ -1999,27 +1887,255 @@
    shared.css 原規則未刪（該檔有使用者未提交的修改），成死規則待階段 4 清。
    ############################################################ */
 
-.p-open-legend {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding: 14px 18px;
-  background: var(--bg-mist);
-  border: 1px solid var(--national-200);
-  border-radius: var(--r-lg);
+.p-open-card {
+  margin-bottom: 24px;
 }
-.p-open-legend-row {
+.p-open-form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.p-open-form-label {
+  flex: 0 0 100px;
+  font-weight: 700;
+  color: var(--fg-2);
+  padding-top: 8px;
+  font-size: var(--fs-sm);
+}
+.p-open-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+.p-open-form-footer {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--slate-100);
+}
+.p-open-section-head {
+  margin-bottom: 14px;
+}
+.p-open-legend-box {
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+}
+.p-open-legend-line {
+  margin: 6px 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
-.p-open-legend-label {
-  flex: 0 0 76px;
-  font-size: var(--fs-xs);
+.p-open-legend-title {
   font-weight: 700;
-  color: var(--fg-2);
+  margin-right: 2px;
+}
+button.p-open-filter-badge {
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease, outline .12s ease;
+  user-select: none;
+}
+button.p-open-filter-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--sh-sm);
+  filter: brightness(0.95);
+}
+button.p-open-filter-badge.is-active {
+  outline: 2px solid var(--national-700);
+  outline-offset: 1px;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px var(--national-200);
+}
+.p-open-legend-line.has-active button.p-open-filter-badge:not(.is-active) {
+  opacity: 0.5;
+}
+.p-open-legend-line.has-active button.p-open-filter-badge:not(.is-active):hover {
+  opacity: 0.85;
+}
+
+/* 登山主路線 / 機關可搜尋下拉選單 */
+.p-open-route-field {
+  position: relative;
+}
+.p-open-combobox {
+  position: relative;
+  width: 100%;
+}
+.p-open-combo-trigger {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  padding-right: 36px;
+  font-family: inherit;
+}
+.p-open-combo-val {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.p-open-combo-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(90vw, 480px);
+  z-index: 50;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+  display: flex;
+  flex-direction: column;
+  max-height: 340px;
+}
+.p-open-combo-search {
+  position: relative;
+  padding: 8px;
+  border-bottom: 1px solid var(--slate-200);
+  background: var(--bg-2);
+}
+.p-open-combo-search i {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg-3);
+  font-size: var(--fs-xs);
+  pointer-events: none;
+}
+.p-open-combo-input {
+  width: 100%;
+  min-height: 36px;
+  padding: 4px 28px 4px 30px;
+  font-size: var(--fs-sm);
+  background: var(--bg-1);
+}
+.p-open-combo-clear {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--fg-3);
+  cursor: pointer;
+  padding: 4px;
+}
+.p-open-combo-clear:hover {
+  color: var(--fg-1);
+}
+.p-open-combo-list {
+  overflow-y: auto;
+  padding: 4px 0;
+  max-height: 280px;
+}
+.p-open-combo-group-label {
+  padding: 8px 12px 4px;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  color: var(--fg-3);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  background: var(--bg-2);
+}
+.p-open-combo-item {
+  padding: 10px 14px;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  cursor: pointer;
+  transition: background .12s;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.p-open-combo-item:hover {
+  background: var(--national-50);
+  color: var(--national-700);
+}
+.p-open-combo-item.is-selected {
+  background: var(--national-100);
+  color: var(--national-800);
+  font-weight: 600;
+}
+.p-open-combo-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--fg-3);
+  font-size: var(--fs-xs);
+}
+
+.p-open-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+/* 縮小按鈕：比照查詢按鈕 (.th-btn-primary)，尺寸適配表格列 */
+.p-open-btn-compact {
+  min-height: 28px;
+  padding: 3px 12px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-xs);
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: #fff !important;
+}
+.p-open-btn-compact:visited,
+.p-open-btn-compact:hover,
+.p-open-btn-compact:focus,
+.p-open-btn-compact:active {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+.p-open-actions a.th-btn,
+.p-open-actions .th-btn,
+.p-open-table a.p-open-btn-compact,
+.th-table a.p-open-btn-compact {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+.p-open-actions a.th-btn:visited,
+.p-open-actions a.th-btn:hover,
+.p-open-actions a.th-btn:focus,
+.p-open-actions a.th-btn:active,
+.p-open-table a.p-open-btn-compact:visited,
+.p-open-table a.p-open-btn-compact:hover,
+.p-open-table a.p-open-btn-compact:focus,
+.p-open-table a.p-open-btn-compact:active {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+
+/* 步道難度等級可點擊 badge */
+.p-open-level-badge {
+  cursor: pointer;
+  border: 1px solid var(--national-200);
+  transition: transform .12s, box-shadow .12s, filter .12s;
+}
+.p-open-level-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--sh-xs);
+  filter: brightness(0.96);
 }
 .p-open-table-wrap {
   overflow-x: auto;
@@ -2048,12 +2164,34 @@
   white-space: normal;
 }
 .p-open-table .col-can {
-  width: 88px;
+  width: 76px;
   text-align: center;
 }
 .p-open-table .col-status {
-  width: 100px;
+  width: 76px;
   text-align: center;
+}
+/* 路線開放狀態：純 icon 呈現（無膠囊背景與文字） */
+.p-open-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.p-open-status-icon.is-yes,
+.p-open-status-icon.is-open {
+  color: #16a34a;
+}
+.p-open-status-icon.is-no,
+.p-open-status-icon.is-closed {
+  color: #dc2626;
+}
+.p-open-status-icon.is-proof {
+  color: #d97706;
+}
+.p-open-status-icon.is-snow {
+  color: #0284c7;
 }
 .p-open-table .col-needs {
   text-align: center;
@@ -2065,10 +2203,10 @@
   width: 76px;
 }
 .p-open-table thead tr+tr th:nth-child(2) {
-  width: 94px;
+  width: 98px;
 }
 .p-open-table thead tr+tr th:nth-child(3) {
-  width: 86px;
+  width: 90px;
 }
 .p-open-table thead tr+tr th:nth-child(4) {
   width: 76px;
@@ -2082,8 +2220,9 @@
 }
 .p-open-table thead tr+tr th {
   white-space: normal;
-  font-size: var(--fs-xxs);
-  line-height: 1.4;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.35;
 }
 .p-open-need-yes {
   color: var(--success-fg);
@@ -4862,6 +5001,190 @@ body:where(.p-indexb-body):before {
   color: var(--national-700);
 }
 
+/* ############################################################
+   accident-dashboard（山域事故統計儀表板，2026-09-14 新增）
+   ------------------------------------------------------------
+   圖表由 ECharts 繪製（色值見 tokens.css --chart-cat-*），本段只管容器尺寸。
+   ECharts 容器必須有明確高度，否則畫布高 0。
+   路線分類的橫軸標籤斜 45° 且路線名稱長，給較高的容器。
+   ############################################################ */
+.p-dashboard-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.p-dashboard-chart {
+  width: 100%;
+  height: 460px;
+}
+.p-dashboard-chart.is-route {
+  height: 560px;
+}
+.p-dashboard-table {
+  margin-top: 28px;
+}
+.p-dashboard-table > summary {
+  cursor: pointer;
+  margin-bottom: 12px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--national-700);
+}
+
+/* ############################################################
+   information_4（即時影像觀看）
+   ############################################################
+   左影像、右文字的兩欄；窄螢幕堆疊成一欄（正式站同樣是 col-lg 斷點）。
+   影像框以 aspect-ratio 固定 16:9，YouTube iframe 與 MJPEG <img> 共用同一個框，
+   切換景點時不會跳版。
+   ############################################################ */
+
+.p-cctv-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+/* 圖說徽章（inline-flex）靠 text-align 置中於影片下方；影像框是 block、寬度 100%，
+   不受影響。 */
+.p-cctv-stick {
+  text-align: center;
+}
+
+.p-cctv-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  background: var(--slate-900);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.p-cctv-frame iframe,
+.p-cctv-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+}
+
+/* 串流連不上時的替代訊息，佔滿同一個 16:9 的框 */
+.p-cctv-offline {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  text-align: center;
+  padding: 16px;
+}
+
+.p-cctv-offline i {
+  font-size: var(--fs-h2);
+  color: var(--slate-400);
+}
+
+.p-cctv-offline-note {
+  font-size: var(--fs-xs);
+  color: var(--slate-300);
+}
+
+/* 影像位置：影片正下方的圖說，做成兩段式徽章——左段主色填滿＋白字的標籤，
+   右段地點。兩段的色塊邊界即分隔，不另加分隔線；外框同樣走主色。
+   白字於 #587a68 上對比 4.78:1，達 AA。
+   窄螢幕文字過長時整顆徽章換行，兩段各自成行（flex-wrap）。 */
+.p-cctv-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  margin: 12px 0 0;
+  border: 1px solid var(--national-700);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  line-height: var(--lh-base);
+}
+
+.p-cctv-meta-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+}
+
+.p-cctv-meta-label i {
+  color: inherit;
+}
+
+.p-cctv-meta-value {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.p-cctv-para {
+  margin: 0 0 16px;
+  color: var(--fg-2);
+  line-height: var(--lh-loose);
+}
+
+.p-cctv-source {
+  margin: 20px 0 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+
+@media (max-width: 1023px) {
+  .p-cctv-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* 長文景點（觀霧四段）時，固定 16:9 的影像只佔左欄頂端一小塊，下方會空一大片。
+   讓影像欄 sticky：捲動時影像停在頁首下方跟著走，空白變成「影像持續可見」。
+   top 取 108px ＝ 桌機頁首 93px ＋ 15px 間距（同族的 .th-sidebar 是 96、
+   .th-pagenav 是 132，各自依上方元素高度決定）。窄螢幕已收成單欄，不 sticky。 */
+/* `.th-card` 本身是 overflow: hidden（給圓角裁切用），而 **overflow 非 visible 的
+   祖先會讓內部的 position: sticky 失效**——實測 sticky 掛在 .p-cctv-frame 上仍隨頁面
+   捲走（捲 900px 後 top 為 -383）。本頁卡片內沒有需要被裁切的東西（影像框自己有圓角
+   與 overflow），所以只在這一頁放開。 */
+.p-cctv-card {
+  overflow: visible;
+}
+
+@media (min-width: 1024px) {
+  /* sticky 要有「可黏的範圍」：黏的元素必須比它的容器矮。
+     `.p-cctv-media` 是 grid item，`.p-cctv-grid` 的 align-items: start 讓它高度
+     等於內容（＝影像框本身），黏了也無處可黏（實測捲 900px 後影像 top 為 -407）。
+     所以 item 改回 stretch 撐滿整列高度，sticky 下放到裡面的 .p-cctv-frame。 */
+  .p-cctv-media {
+    align-self: stretch;
+  }
+
+  /* 黏的是「影像＋圖說」整包，不是影像框本身 */
+  .p-cctv-stick {
+    position: sticky;
+    top: 108px;
+  }
+}
+
 
 /* ############################################################
    information_place — 景點資訊（規格 24）
@@ -4879,20 +5202,405 @@ body:where(.p-indexb-body):before {
   }
 }
 
-.p-place-gallery {
+/* 景點詳細資訊彈窗 */
+.bulletin-modal:has(.p-place-modal-body) {
+  max-width: 860px;
+}
+.bulletin-modal:has(.p-place-modal-body) .bulletin-modal-head {
+  align-items: center;
+}
+.bulletin-modal:has(.p-place-modal-body) .bulletin-modal-title {
+  margin: 0;
+  line-height: 1.2;
+}
+.bulletin-modal:has(.p-place-modal-body) .bulletin-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+.p-place-modal-body {
+  white-space: normal;
+  padding: 24px;
+}
+
+/* 彈窗內容網格（左圖右文；無照片時單欄滿版） */
+.p-place-detail-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.p-place-detail-grid--single {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 768px) {
+  .p-place-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* 輪播區塊（sticky 讓長內文捲動時圖片固定在視野內） */
+.p-place-carousel {
+  width: 100%;
+  position: sticky;
+  top: 0;
+}
+.p-place-carousel-inner {
+  border-radius: var(--r-md);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  border: 1px solid var(--slate-200);
 }
 
-.p-place-shot {
-  position: relative;
-}
-
-.p-place-shot-ctrl {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
+/* 上方標題列（位於照片上方獨立列，完全不遮擋圖片） */
+.p-place-carousel-header {
+  background: var(--gray-800);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  padding: 8px 12px;
   display: flex;
-  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-place-carousel-stage {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--slate-900);
+}
+.p-place-carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.p-place-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--scrim);
+  color: var(--fg-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  z-index: 3;
+  transition: background-color 0.15s ease;
+}
+.p-place-carousel-btn:hover {
+  background: var(--scrim-strong);
+}
+.p-place-carousel-btn--prev {
+  left: 8px;
+}
+.p-place-carousel-btn--next {
+  right: 8px;
+}
+.p-place-carousel-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  z-index: 2;
+}
+.p-place-carousel-dot {
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.15s ease;
+}
+.p-place-carousel-dot.is-active {
+  background: var(--fg-on-dark);
+}
+
+/* 彈窗標題與查看預約情形按鈕並排 */
+.p-place-modal-head-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.p-place-queue-btn {
+  background: var(--national-700);
+  border: 1px solid var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  padding: 4px 12px;
+  min-height: 28px;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.p-place-queue-btn i {
+  font-size: var(--fs-xs);
+  color: inherit;
+}
+.p-place-queue-btn:hover {
+  background: var(--national-800);
+  border-color: var(--national-800);
+  color: var(--fg-on-dark);
+}
+
+/* 介紹文字區塊 */
+.p-place-intro-wrap {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.p-place-intro {
+  font-size: var(--fs-md);
+  line-height: 1.8;
+  color: var(--fg-2);
+}
+.p-place-intro p {
+  margin-bottom: 14px;
+}
+.p-place-intro p:last-child {
+  margin-bottom: 0;
+}
+
+/* 景點分類樣式（統一文字色為 --fg-2，僅圖示保留色彩；「一般」無圖示） */
+.p-place-kind-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+.p-place-kind-tag i {
+  font-size: var(--fs-xs);
+  flex-shrink: 0;
+}
+/* 登山口 icon 顏色對齊排隊預約按鈕的 --btn-blue */
+.p-place-kind-icon--trailhead {
+  color: var(--btn-blue);
+}
+.p-place-kind-icon--camp {
+  color: var(--warning-fg);
+}
+
+/* 列表分頁列 */
+.p-place-pager-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.p-place-pager-wrap .bulletin-pager {
+  margin-top: 0;
+}
+.p-place-pager-wrap .th-listbar-count strong {
+  color: var(--national-800);
+}
+
+
+
+/* ============================================================
+   applySearch — 四個功能入口（2026-09-16，依設計參考圖重做）
+   ------------------------------------------------------------
+   參考圖：`01_Raw_Input/操作畫面截圖/2026-09-16_11-23-48.png`
+
+   結構：2x2 卡片，左側一顆淡綠圓形圖示，右側由上而下為
+   標題（深綠粗體）／說明（灰）／適用山屋 badge／「前往…→」文字連結。
+
+   **整張卡是一個 <a>**，下方的「前往…」只是外觀上的連結，不是真的 <a>——
+   巢狀 <a> 是非法 HTML，瀏覽器會把它拆成兩個兄弟節點，點擊範圍會裂開。
+
+   正式站原本是四顆不同顏色的 Bootstrap 大按鈕，這裡不照抄：四種顏色會讀成
+   有優先序，但四個功能是平行的。改成同一種卡，靠 hover 做強調。
+
+   **沒有新增任何代幣**，顏色全部取自 tokens.css 的
+   --national-*／--mist-*／--fg-*／--sh-*／--r-*。無新 hex，無 !important。
+   ============================================================ */
+/* 固定 2x2，不用 auto-fit：auto-fit 在寬螢幕會自己長成 3～4 欄，
+   四個功能就不再是參考圖的兩兩對照關係。768px 以下才收成單欄。 */
+.p-applysearch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .p-applysearch-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.p-applysearch-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--mist-200);
+  border-radius: var(--r-xl);
+  background: var(--bg-1);
+  text-decoration: none;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+
+/* 靜止時沒有陰影（參考圖是平的），hover 才浮起來。
+   -3px 與首頁 .th-tile 一致，維持全站手感。 */
+.p-applysearch-entry:hover {
+  border-color: var(--national-400);
+  box-shadow: var(--sh-lg);
+  transform: translateY(-3px);
+}
+
+/* 圖示：淡綠實心圓，無框無陰影（參考圖如此）。
+   不要改成白底加框——那是另一種視覺語言，與參考圖不符。 */
+.p-applysearch-entry-ic {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--r-pill);
+  background: var(--national-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-h3);
+  color: var(--national-800);
+  transition: background .25s, transform .25s;
+}
+
+.p-applysearch-entry:hover .p-applysearch-entry-ic {
+  background: var(--national-200);
+  transform: scale(1.06);
+}
+
+.p-applysearch-entry-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* 標題是深綠不是深灰：參考圖用顏色把標題和說明分層，不只靠字重 */
+.p-applysearch-entry-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--national-800);
+  line-height: 1.5;
+}
+
+.p-applysearch-entry-desc {
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  line-height: 1.7;
+}
+
+/* 適用山屋：一項一顆 badge。
+   不重用 .th-chip——那支是**可點的篩選籤**（cursor: pointer 加自己的 :hover），
+   這裡是純標示且整塊已經是連結，借過來會出現兩層互動。
+   也不重用 .th-flag——那支的變體是狀態語彙（is-open／is-closed／is-yes），
+   拿來標山屋名稱是誤用。形狀沿用 .th-flag 的 pill 尺寸，維持全站一致。 */
+.p-applysearch-entry-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.p-applysearch-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid var(--mist-200);
+  border-radius: var(--r-pill);
+  background: var(--bg-mist);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--fg-3);
+  white-space: nowrap;
+  transition: background .25s, border-color .25s, color .25s;
+}
+
+/* badge 隨父層一起反應，但比圖示淡一階——它是輔助資訊，不該搶走焦點 */
+.p-applysearch-entry:hover .p-applysearch-badge,
+.p-applysearch-entry:focus-visible .p-applysearch-badge {
+  background: var(--national-50);
+  border-color: var(--national-200);
+  color: var(--national-800);
+}
+
+/* 「前往…→」：畫成文字連結的樣子（綠色、底線），但它是 span，
+   整張卡才是點擊區。margin-top 讓它與上方內容拉開，四張卡的 CTA 位置一致。 */
+.p-applysearch-entry-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  margin-top: 10px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--national-700);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color .25s;
+}
+
+.p-applysearch-entry-cta i {
+  font-size: var(--fs-xs);
+  transition: transform .25s;
+}
+
+.p-applysearch-entry:hover .p-applysearch-entry-cta,
+.p-applysearch-entry:focus-visible .p-applysearch-entry-cta {
+  color: var(--national-800);
+}
+
+/* 箭頭右移，指出「會離開本頁」。鍵盤沒有 hover，所以 focus 也要給同樣的提示。 */
+.p-applysearch-entry:hover .p-applysearch-entry-cta i,
+.p-applysearch-entry:focus-visible .p-applysearch-entry-cta i {
+  transform: translateX(4px);
+}
+
+/* 使用者若在系統層關掉動態效果，只保留顏色變化，不做位移與縮放 */
+@media (prefers-reduced-motion: reduce) {
+  .p-applysearch-entry,
+  .p-applysearch-entry-ic,
+  .p-applysearch-entry-cta i {
+    transition: background .25s, border-color .25s, color .25s;
+  }
+  .p-applysearch-entry:hover,
+  .p-applysearch-entry:hover .p-applysearch-entry-ic,
+  .p-applysearch-entry:hover .p-applysearch-entry-cta i,
+  .p-applysearch-entry:focus-visible .p-applysearch-entry-cta i {
+    transform: none;
+  }
 }

@@ -131,9 +131,6 @@ thPage({
     return { sections: NOTICE_SECTIONS, safetyVideo: SAFETY_VIDEO };
   },
   computed: {
-    navItems() {
-      return this.sections.map(function (s) { return { id: s.id, label: s.title }; });
-    },
     primary() {
       return this.sections.filter(function (s) { return s.group === 'primary'; });
     },

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>景點資訊 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  新頁：景點資訊　規格 02_Spec/24_景點資訊.md
+  ------------------------------------------------------------
+  舊站頁：information_place.aspx（列表）＋ information_node.aspx?id=（檢視）。
+  兩個畫面共用同一組查詢條件，且檢視頁上方也要有查詢區，
+  因此本頁做成一頁兩段（列表／檢視）由 `current` 切換，不拆兩支 HTML。
+
+  下面三行必須靜態寫在頁面且順序不可調換（理由見 template/page.html）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/information_place.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <th-page-shell
+    :trail="trail"
+    title="景點資訊"
+    :bare="true">
+
+    <!-- 查詢條件：列表頁與檢視頁共用（依二次即提升改用 .th-filter） -->
+    <form class="th-filter" @submit.prevent="search">
+      <div class="th-filter-grid">
+
+        <div class="th-filter-field">
+          <label class="th-filter-label" for="f-org">發布單位</label>
+          <select id="f-org" class="th-select" :value="draft.org" @change="draft.org = $event.target.value">
+            <option v-for="o in orgOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
+          </select>
+        </div>
+
+        <div class="th-filter-field">
+          <label class="th-filter-label" for="f-kind">景點分類</label>
+          <select id="f-kind" class="th-select" :value="draft.kind" @change="draft.kind = $event.target.value">
+            <option v-for="k in kindOptions" :key="k.value" :value="k.value">{{ k.label }}</option>
+          </select>
+        </div>
+
+        <div class="th-filter-field th-filter-field--grow">
+          <label class="th-filter-label" for="f-kw">關鍵字</label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input id="f-kw" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入景點名稱關鍵字"
+                   :value="draft.keyword" @input="draft.keyword = $event.target.value" />
+          </div>
+        </div>
+
+        <div class="th-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="reset">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- 一、景點清單列表（常態顯示，點擊景點名稱彈出詳細資訊） -->
+    <div id="list">
+      <div class="th-table-wrap th-table-card">
+        <table class="th-table th-table--zebra">
+          <caption>景點清單，欄位為發布單位、景點分類與景點名稱</caption>
+          <thead>
+            <tr>
+              <th scope="col">發布單位</th>
+              <th scope="col">景點分類</th>
+              <th scope="col">景點名稱</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-if="pagedResults.length > 0">
+              <tr v-for="p in pagedResults" :key="p.id">
+                <td data-label="發布單位">{{ p.orgName }}</td>
+                <td data-label="景點分類">
+                  <span class="p-place-kind-tag">
+                    <i v-if="kindIcon(p.kind)" :class="[kindIcon(p.kind), kindIconClass(p.kind)]" aria-hidden="true"></i>
+                    <span>{{ kindName(p.kind) }}</span>
+                  </span>
+                </td>
+                <td data-label="景點名稱">
+                  <a :href="'?id=' + p.id" class="th-inline-link" @click.prevent="open(p)">{{ p.name }}</a>
+                </td>
+              </tr>
+            </template>
+            <tr v-else>
+              <td colspan="3">
+                <div class="th-empty"><i class="fa-regular fa-folder-open" aria-hidden="true"></i>查無符合條件的景點</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <th-table-pager :page="safePage" :total-pages="totalPages" :total="results.length" @change="page = $event"></th-table-pager>
+    </div>
+
+    <!-- 二、景點詳細資訊彈窗（對齊舊站 information_node.aspx 與規格書 02_Spec/24） -->
+    <th-modal v-if="current"
+              body-class="p-place-modal-body"
+              @close="closeModal">
+      <template #head>
+        <div class="p-place-modal-head-title">
+          <h2 class="bulletin-modal-title">{{ current.name }}</h2>
+          <a v-if="current.hasQueue"
+             :href="current.queueUrl"
+             class="th-btn p-place-queue-btn"
+             target="_blank"
+             rel="noopener noreferrer">
+            <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>查看預約情形
+          </a>
+        </div>
+      </template>
+
+      <div class="p-place-detail-grid" :class="{ 'p-place-detail-grid--single': !current.photos || current.photos.length === 0 }">
+        
+        <!-- 左側：照片輪播（可左右多張輪播；sticky 固定於視窗；無照片時整段隱藏） -->
+        <figure class="p-place-carousel" v-if="current.photos && current.photos.length > 0">
+          <div class="p-place-carousel-inner">
+            <!-- 上方標題列（位於照片上方獨立列，完全不遮擋照片） -->
+            <div class="p-place-carousel-header" v-if="current.photos[photo].title">
+              <span>{{ current.photos[photo].title }}</span>
+            </div>
+
+            <div class="p-place-carousel-stage">
+              <img :src="current.photos[photo].url" :alt="current.photos[photo].title || current.name" class="p-place-carousel-img" @error="onImgError" />
+              
+              <!-- 左右切換按鈕（多於 1 張時顯示） -->
+              <template v-if="current.photos.length > 1">
+                <button type="button" class="p-place-carousel-btn p-place-carousel-btn--prev" @click="prevPhoto" aria-label="上一張照片">
+                  <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="p-place-carousel-btn p-place-carousel-btn--next" @click="nextPhoto" aria-label="下一張照片">
+                  <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+                
+                <!-- 下方指示點 -->
+                <div class="p-place-carousel-dots">
+                  <button v-for="(p, idx) in current.photos" :key="idx"
+                          type="button" class="p-place-carousel-dot"
+                          :class="{ 'is-active': idx === photo }"
+                          :aria-label="'切換至第 ' + (idx + 1) + ' 張照片'"
+                          @click="photo = idx"></button>
+                </div>
+              </template>
+            </div>
+          </div>
+        </figure>
+
+        <!-- 右側：景點介紹富文字 -->
+        <div class="p-place-intro-wrap">
+          <div class="p-place-intro" v-html="current.intro"></div>
+        </div>
+
+      </div>
+    </th-modal>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>（window.PLACE_*，頁面腳本在 data() 才讀） -->
+<script src="components/PlaceData.js"></script>
+</body>
+</html>

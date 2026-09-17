@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>列印繳費說明單/線上繳費（玉山國家公園） — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_4 — 列印繳費說明單/線上繳費（玉山國家公園）（舊站 apply_4.aspx）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：Tailwind → tailwind.config.js → index.css。
+
+  **標題逐字保留「(玉山國家公園)」**，不得改寫成全站通用說法——這是玉管處專屬功能，
+  不是所有機關共用的繳費頁。林保署山屋（天池、檜谷、嘉明湖／向陽）的繳費走
+  applySearch.html 的「申請進度查詢」，不走這裡。
+
+  **正式站有兩支同欄位的繳費頁**（2026-09-16 curl 實抓）：
+    apply_4.aspx  → 列印繳費說明單/線上繳費(玉山國家公園)
+    apply_4t.aspx → 列印繳費說明單/線上繳費(排雲)
+  兩支的查詢欄位完全相同（申請編號＋隊伍名稱＋驗證碼）。
+  `排雲山莊`／`觀高山屋` 各自對應哪一支、使用者要從哪裡分流，**查無公開來源**，
+  故本頁不做山屋選擇器，改在「適用範圍」區塊標 [待確認]。不編造分流規則。
+
+  本頁沒有頁面專用 CSS，未新增 .p-apply4-*。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply4-pay.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '列印繳費說明單/線上繳費']"
+    title="列印繳費說明單/線上繳費（玉山國家公園）"
+    lead="查詢玉山國家公園宿營地的應繳規費，列印繳費說明單或進行線上繳費。"
+    updated="2026-09-16">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="scope">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">適用範圍</h2>
+      </div>
+      <div class="th-card-body">
+        <p>本功能適用玉山國家公園需繳納規費的宿營地：</p>
+        <div class="th-chip-row">
+          <span class="th-chip" v-for="c in camps" :key="c">{{ c }}</span>
+        </div>
+        <th-callout>正式站另有 <code>apply_4t.aspx</code>「列印繳費說明單/線上繳費<strong>(排雲)</strong>」，
+            查詢欄位與本頁完全相同。兩支頁面與上列兩處宿營地的對應關係、以及使用者從何處分流，
+            查無公開來源，雛形暫以單一入口呈現。<span class="th-todo-tag">待確認</span><span class="th-callout-src">來源：正式站 apply_4.aspx／apply_4t.aspx（2026-09-16 實抓原始 HTML）</span></th-callout>
+        <th-callout type="warning">未依限繳交或金額不足者，將取消入園許可資格。
+            繳費期限為抽籤日與候補通知日之較晚者加 3 日。<span class="th-callout-src">來源：規格 02_Spec/06b_線上繳費(排雲).md</span></th-callout>
+      </div>
+    </section>
+
+    <section class="th-card" id="query">
+      <div class="th-card-head">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <h2 class="th-card-title">查詢繳費資料</h2>
+      </div>
+      <div class="th-card-body">
+        <p>請輸入您的<strong>（一站式／入園）申請編號</strong>及<strong>隊伍名稱</strong>來查詢繳費資料。</p>
+
+        <div class="flex flex-col gap-4">
+        <div class="th-field">
+          <label class="th-label" for="f-serial">
+            <span class="req">*</span>（一站式／入園）申請編號
+          </label>
+          <input
+            id="f-serial"
+            name="serial"
+            ref="serial"
+            type="text"
+            class="th-input"
+            autocomplete="off"
+            placeholder="請輸入登山申請一站式 12 碼申請編號"
+            :value="serial"
+            @input="serial = $event.target.value" />
+        </div>
+
+        <!-- 本頁的第二個查詢鍵是隊伍名稱，不是身分證號。
+             繳費是對整案而非對個人，任一隊員都可持隊名查詢與繳費。 -->
+        <div class="th-field">
+          <label class="th-label" for="f-team">
+            <span class="req">*</span>隊伍名稱
+          </label>
+          <input
+            id="f-team"
+            name="teams_name"
+            type="text"
+            class="th-input"
+            autocomplete="off"
+            placeholder="請輸入申請時填寫的隊伍名稱"
+            :value="teamName"
+            @input="teamName = $event.target.value" />
+        </div>
+
+        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">查詢結果僅顯示與輸入申請編號及隊名相符的案件。</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="reset">
+              清除
+            </button>
+            <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+            </button>
+          </div>
+        </div>
+
+        <template v-if="submitted">
+          <h3 class="th-section-title mt-6">繳費基本資料<span class="th-todo-tag">待確認</span></h3>
+          <p class="th-table-note">欄位取自規格 06b「基本資料展示」段；資料為匿名假資料，非真實案件。</p>
+          <th-data-table :columns="baseColumns" :rows="demoBase" row-key="serial" table-class="th-table--zebra">
+            <template #cell="{ row, column, value }">
+              <span v-if="column.key === 'payState'" :class="['th-flag', row.payState === '未繳費' ? 'is-closed' : 'is-open']">{{ row.payState }}</span>
+              <template v-else>{{ value }}</template>
+            </template>
+          </th-data-table>
+
+          <h3 class="th-section-title mt-6">費用明細</h3>
+          <p class="th-table-note">欄位與單價取自規格圖 <code>02_Spec/assets/線上繳費(排雲)-繳費頁.png</code>：
+                排雲山莊規費每人每宿新臺幣 480 元，本國人與外國人同價，小計＝單價 × 人數。
+                資料為匿名假資料，非真實案件。</p>
+          <th-data-table :columns="feeColumns" :rows="demoFees" row-key="date" table-class="th-table--zebra"></th-data-table>
+          <p class="th-table-note">總計 {{ feeTotal }} 元。本處不接受外幣轉帳與跨國匯款。</p>
+
+          <h3 class="th-section-title mt-6">繳費管道</h3>
+          <p class="th-table-note">六種管道的手續費規則取自規格 06b 與規格圖；實際付款流程不實作進雛形。</p>
+          <th-data-table :columns="methodColumns" :rows="payMethods" row-key="no" table-class="th-table--zebra"></th-data-table>
+
+          <h3 class="th-section-title mt-6">可辦理的動作</h3>
+          <div class="th-notice-grid items-stretch">
+            <section class="th-card flex flex-col" v-for="act in resultActions" :key="act.id">
+              <div class="th-card-head">
+                <i :class="act.icon" aria-hidden="true"></i>
+                <h4 class="th-card-title">{{ act.title }}</h4>
+              </div>
+              <div class="th-card-body flex flex-col gap-3 flex-1">
+                <p class="th-field-hint">{{ act.desc }}</p>
+                <th-todo-link label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
+              </div>
+            </section>
+          </div>
+        </template>
+        </div>
+      </div>
+    </section>
+
+    <section class="th-card" id="links">
+      <div class="th-card-head">
+        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+        <h2 class="th-card-title">相關功能</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- kind 未給且無 href 者，th-link-list 自動視為 todo 並標記，不給假路徑 -->
+        <th-link-list :items="relatedLinks"></th-link-list>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

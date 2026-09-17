@@ -55,6 +55,7 @@
   --slate-700: #334155;
   --slate-800: #1e293b;
   --slate-900: #0f172a;
+  --gray-800:  #343a40;      /* 2026-09-16 使用者指定：景點照片上方標題底色 */
 
   /* --------------------------------------------------------
      狀態色的原色階梯（2026-09-11 A2 新增）
@@ -79,6 +80,7 @@
 
   --amber-50:  #fffbeb;  /* Tailwind amber-50 */
   --amber-200: #fde68a;  /* Tailwind amber-200 */
+  --amber-600: #d97706;  /* Tailwind amber-600；RSS 圖示用，白底對比約 3.2:1（WCAG 1.4.11 需 3:1） */
   --amber-700: #b45309;  /* Tailwind amber-700 */
 
   --green-50:  #f0fdf4;  /* Tailwind green-50。與品牌綠 --national-* 是兩套，
@@ -128,6 +130,7 @@
   --info-border: var(--blue-200);  /* 2026-09-14 C：補完 info 的 bg／fg／border 三件組 */
   --warning-bg: var(--amber-50);
   --warning-fg: var(--amber-700);
+  --rss-icon: var(--amber-600);     /* RSS 圖示；正式站原色 #ffc107 白底對比僅 1.6:1，2026-09-14 使用者裁決改暗 */
   --danger-fg: var(--red-600);      /* asterisk warnings */
   --danger-soft: var(--red-500);    /* pinned-pin red */
   /* 2026-09-08（遷移 notice）新增：紅色按鈕的 hover 深色。
@@ -217,6 +220,33 @@
   -------------------------------------------------------- */
   --home-panel-edu:   #2d4b3e;
   --home-panel-apply: #35484d;
+
+  /* --------------------------------------------------------
+     2026-09-14（山域事故統計儀表板）新增：圖表類別色，15 格。
+     值逐一取自正式站 MountainDashboard.aspx 圖表 JSON 的 colors（原順序）：
+     原因分類用前 13 格、路線分類依序循環 15 格、申請隊伍數用第 1 與第 9 格。
+     ECharts 需要實際色值，由 components/accident-dashboard.js 以
+     getComputedStyle 讀取本組變數，不在 JS 寫 hex。
+     **已知無障礙債**：dataviz 色票驗證器判定 FAILED（相鄰色 CVD／正常視覺
+     分辨度不足、第 13–15 格對白底對比 < 1.3），照正式站原色保留，
+     以圖例文字＋資料表補償。見 decisions.md 同日紀錄。
+  -------------------------------------------------------- */
+  --chart-cat-1:  #1F3A5F;
+  --chart-cat-2:  #274A73;
+  --chart-cat-3:  #2F5D8C;
+  --chart-cat-4:  #3A6EA5;
+  --chart-cat-5:  #4A7FB5;
+  --chart-cat-6:  #6B8A5D;
+  --chart-cat-7:  #7FA174;
+  --chart-cat-8:  #95B88E;
+  --chart-cat-9:  #D36B4A;
+  --chart-cat-10: #E08A6C;
+  --chart-cat-11: #C4A484;
+  --chart-cat-12: #B0B7C3;
+  --chart-cat-13: #E5E7EB;
+  --chart-cat-14: #CCFF33;
+  --chart-cat-15: #FFFF00;
+  --chart-grid:   #e0e0e0;   /* 正式站 y 軸格線色 */
 
   /* --------------------------------------------------------
      TYPE — Noto family, the de-facto Traditional-Chinese

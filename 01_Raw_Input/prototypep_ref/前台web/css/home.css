@@ -1,0 +1,297 @@
+@charset "UTF-8";
+/* ============================================================
+   home.css — 首頁（index.html）專用樣式
+   ------------------------------------------------------------
+   置中頁首 / 膠囊跑馬燈 / 薄霧 Hero / 左右雙面板 / 圓形功能鈕
+   ※ 僅 index.html 載入；其他頁面沿用 components.css 的 .th-header。
+   ============================================================ */
+
+/* ============ 首頁 HERO — 背景照片（放置參考 code.html）============ */
+.th-home-hero { background: var(--bg-3); }
+.th-hero-overlay {
+  background: linear-gradient(180deg, rgba(247, 250, 248, 0.4) 0%, rgba(247, 250, 248, 0.1) 100%);
+  pointer-events: none;
+}
+
+/* ============ MARQUEE — 首頁膠囊式跑馬燈（寬度由 Tailwind max-w-6xl 對齊卡片）============ */
+.th-marquee-wrap { padding-top: 4px; }
+.th-marquee {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 9999px;
+  box-shadow: var(--sh-sm);
+  padding: 4px 8px;
+}
+.th-marquee-tag {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--national-700);
+  font-size: 20px;
+}
+.th-marquee-viewport { flex: 1; overflow: hidden; display: flex; align-items: center; }
+.th-marquee-gap { display: inline-block; flex-shrink: 0; width: 40vw; }
+.th-marquee-track {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  will-change: transform;
+  animation: th-marquee-scroll 32s linear infinite;
+}
+.th-marquee-track a {
+  display: inline-flex; align-items: center;
+  color: var(--fg-1); text-decoration: none;
+  font-size: var(--fs-md); font-weight: 500; line-height: 1;
+  padding: 0 32px 0 0;
+  /* 2.5.8 目標尺寸：可點擊區高度至少 24 CSS px */
+  min-height: 24px;
+}
+.th-marquee-track a:hover { color: var(--national-700); text-decoration: underline; }
+@keyframes th-marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+/* 滑鼠移入或鍵盤聚焦時暫停，方便閱讀 */
+.th-marquee:hover .th-marquee-track,
+.th-marquee:focus-within .th-marquee-track { animation-play-state: paused; }
+.th-marquee-more {
+  transition: background-color .15s, box-shadow .15s;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--national-700); color: #fff;
+  padding: 7px 16px; border-radius: 9999px;
+  font-size: var(--fs-sm); font-weight: 700; text-decoration: none;
+  white-space: nowrap;
+}
+/* 注意：Font Awesome 5 的 JS 版會把 <i> 換成 <svg>，選擇器必須同時涵蓋兩者 */
+.th-marquee-more i,
+.th-marquee-more svg { transition: transform .15s; }
+/* hover／focus：--national-700-hover 只比底色暗 1.39 倍，在照片背景上幾乎看不出來，
+   改用 --panel-edu-bg（暗 2.01 倍、白字 9.6:1），並加陰影與箭頭位移，
+   顏色以外另有形狀提示（對色覺障礙使用者友善）。*/
+.th-marquee-more:hover,
+.th-marquee-more:focus-visible {
+  background: var(--panel-edu-bg);
+  /* color 必寫：tokens.css 的 a:hover{color:var(--national-700)} 權重 (0,1,1)
+     會蓋掉本元件的白字，導致 hover 時變成深綠底配綠字（僅 2.01:1）。
+     實心按鈕只要是用 <a> 做的，hover 狀態都必須自己重新指定文字色。 */
+  color: #fff;                       /* on --panel-edu-bg → 9.6:1 */
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.3);
+}
+.th-marquee-more:hover i,
+.th-marquee-more:hover svg,
+.th-marquee-more:focus-visible i,
+.th-marquee-more:focus-visible svg { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .th-marquee-track { animation: none; }
+}
+@media (max-width: 600px) {
+  .th-marquee-wrap { padding: 4px 12px 0; }
+  .th-marquee { gap: 8px; }
+}
+
+/* ============ 首頁專用置中頁首（僅 index.html；申請頁沿用 .th-header）============ */
+.th-home-header { color: #1f2d26; }
+.th-home-header a, .th-home-header button {
+  color: #1f2d26; background: none; border: none; padding: 0;
+  text-decoration: none; font-family: inherit; cursor: pointer;
+}
+.th-home-wordmark { color: var(--fg-1); }
+.th-home-wordmark .th-accent { color: var(--national-700); }
+.th-home-sep { display: inline-block; width: 1px; height: 16px; background: rgba(31,45,38,0.3); }
+.th-home-nav-active { color: var(--national-700) !important; position: relative; }
+.th-home-nav-active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -6px;
+  height: 3px; background: var(--national-700); border-radius: 2px;
+}
+
+/* ============ 首頁面板 + 圓形功能鈕 ============ */
+.th-home-panel {
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: var(--sh-lg);
+}
+.th-tile .th-tile-ic { transition: transform .25s cubic-bezier(0.34,1.56,0.64,1), box-shadow .25s, background .25s, border-color .25s; }
+.th-tile:hover .th-tile-ic { transform: translateY(-3px) scale(1.06); box-shadow: var(--sh-md); }
+.th-tile-green:hover .th-tile-ic { background: var(--national-100); border-color: var(--national-200); }
+.th-tile-blue:hover .th-tile-ic { background: #dbe7ed; border-color: #b6cbd3; }
+
+/* ============ 首頁 — 通用 focus 可見（無障礙 AA）============ */
+.th-focusable:focus-visible {
+  outline: 2px solid var(--national-700);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+
+/* ============ HERO 背景照片 ============ */
+.th-home-hero-bg { position: absolute; inset: 0; z-index: 0; }
+.th-home-hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+.th-home-hero-bg .th-hero-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* ============ 首頁頁首：品牌 + 功能列 ============ */
+.th-home-header-inner {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.th-home-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.th-home-logo { height: 72px; width: auto; }
+.th-home-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 48px;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1.2;
+  margin: 0;
+}
+.th-home-utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 16px;
+  row-gap: 8px;
+}
+.th-home-utility a,
+.th-home-utility button {
+  font-weight: 500;
+  font-size: 17px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity .15s ease;
+}
+.th-home-utility a:hover,
+.th-home-utility button:hover { opacity: .7; }
+
+@media (max-width: 900px) {
+  .th-home-wordmark { font-size: 34px; }
+  .th-home-logo { height: 56px; }
+  .th-home-utility a,
+  .th-home-utility button { font-size: 15px; }
+}
+@media (max-width: 600px) {
+  .th-home-wordmark { font-size: 24px; }
+  .th-home-brand { gap: 10px; }
+  .th-home-logo { height: 40px; }
+}
+/* 極窄螢幕：逐階降級，確保品牌字樣維持單行不斷行 */
+@media (max-width: 400px) {
+  .th-home-wordmark { font-size: 20px; }
+  .th-home-brand { gap: 8px; }
+  .th-home-logo { height: 34px; }
+}
+@media (max-width: 360px) {
+  .th-home-wordmark { font-size: 18px; letter-spacing: 0; }
+  .th-home-logo { height: 30px; }
+}
+
+/* ============ 雙面板 ============ */
+.th-home-panel {
+  border-radius: var(--r-2xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.th-home-panel-head {
+  padding: 24px;
+  text-align: center;
+}
+.th-home-panel-head.is-edu   { background: var(--panel-edu-bg); }
+.th-home-panel-head.is-apply { background: var(--panel-apply-bg); }
+.th-home-panel-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 0.15em;
+  color: var(--fg-on-dark);
+  margin: 0;
+}
+.th-home-panel-body {
+  padding: 40px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .th-home-panel-title { font-size: 24px; }
+  .th-home-panel-body { padding: 28px 20px; }
+}
+
+/* ============ 圓形功能鈕 ============ */
+.th-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.th-tile-ic {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--r-pill);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  box-shadow: var(--sh-sm);
+}
+.th-tile-green .th-tile-ic { color: var(--panel-edu-ic); }
+.th-tile-blue  .th-tile-ic { color: var(--panel-apply-ic); }
+.th-tile-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--slate-700);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+}
+@media (max-width: 900px) {
+  .th-tile-ic { width: 76px; height: 76px; font-size: 28px; }
+  .th-tile-label { font-size: 14px; }
+}
+
+/* ============ 首頁版面節奏 ============ */
+.th-home-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  overflow: hidden;
+}
+.th-home-body {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 24px;
+}
+.th-home-marquee-slot { margin-top: 24px; }
+.th-home-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  /* 作為「中間主要內容區」導盲磚的定位基準，避免與上方導盲磚重疊 */
+  position: relative;
+}
+.th-home-main > .th-container { padding-top: 40px; padding-bottom: 40px; }

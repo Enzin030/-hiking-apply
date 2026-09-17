@@ -61,10 +61,10 @@
    由 components/news.js 的 getInitialTab() 讀 ?tab= 決定初始頁籤，news.html 不必改。 */
 window.TH_HEADER_NAV = [
   { key: "bulletin", label: "公布欄", children: [
-    { key: "news",      label: "最新消息", url: "news.html?tab=news" },
-    { key: "violation", label: "違規名單", url: "news.html?tab=violation" },
-    { key: "download",  label: "檔案下載", url: "news.html?tab=download" },
-    { key: "faq",       label: "常見問答", url: "news.html?tab=faq" },
+    { key: "news",      label: "最新消息", url: "news_0.html" },
+    { key: "violation", label: "違規名單", url: "news_5.html" },
+    { key: "download",  label: "檔案下載", url: "news_6.html" },
+    { key: "faq",       label: "常見問答", url: "news_7.html" },
   ] },
   { key: "apply", label: "登山申請", children: [
     { key: "apply_online", label: "各項線上申請", url: "apply-1.html" },
@@ -90,18 +90,19 @@ window.TH_HEADER_NAV = [
   { key: "info", label: "旅遊登山資訊", children: [
     { key: "map2",        label: "登山路線圖資查詢", url: null },
     { key: "info_route",  label: "登山路線介紹", url: null },
-    { key: "info_place",  label: "景點資訊", url: null },
-    { key: "info_cwa",    label: "各縣市天氣預報", url: null },
-    { key: "info_cwa_np", label: "國家公園天氣資訊", url: null },
-    { key: "info_cctv",   label: "即時影像觀看", url: null },
+    { key: "info_place",  label: "景點資訊", url: "information_place.html" },
+    { key: "info_cwa",    label: "各縣市天氣預報", url: "information_2.html" },
+    { key: "info_cwa_np", label: "國家公園天氣資訊", url: "information_3.html" },
+    { key: "info_cctv",   label: "即時影像觀看", url: "information_4.html" },
     { key: "info_level",  label: "國家公園步道分級", url: "information_6.html" },
-    { key: "info_terms",  label: "雙語詞彙", url: null },
+    { key: "info_terms",  label: "雙語詞彙", url: "information_8.html" },
   ] },
 ];
 
-/* 工具列項目（網站導覽／警特報／RSS） */
+/* 工具列項目（網站導覽／本站使用說明／警特報／RSS） */
 window.TH_HEADER_UTILITY = [
   { label: "網站導覽", url: "sitemap.html" },
+  { label: "本站使用說明", url: "web_illustrate.html" },
   { label: "警特報",   url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true },
   { label: "RSS",     url: "rss.html" },
 ];

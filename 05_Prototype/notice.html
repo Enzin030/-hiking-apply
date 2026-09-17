@@ -46,9 +46,6 @@
       </a>
     </template>
 
-    <template #nav>
-      <th-page-nav :items="navItems"></th-page-nav>
-    </template>
 
     <!--
       本頁原有一段我方新增的警示區（跨機關規定、入山許可證）與頁首導言、更新日期，
@@ -70,7 +67,6 @@
         <div class="th-card-head">
           <i :class="s.icon" aria-hidden="true"></i>
           <h2 class="th-card-title">{{ s.title }}</h2>
-          <span class="th-card-note">{{ s.items.length }} 項</span>
         </div>
         <div class="th-card-body is-flush">
           <th-link-list :items="s.items" :numbered="true"></th-link-list>
@@ -83,7 +79,6 @@
         <div class="th-card-head">
           <i :class="s.icon" aria-hidden="true"></i>
           <h2 class="th-card-title">{{ s.title }}</h2>
-          <span class="th-card-note">{{ s.items.length }} 項</span>
         </div>
         <div class="th-card-body is-flush">
           <th-link-list :items="s.items" :numbered="true"></th-link-list>

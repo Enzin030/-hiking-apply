@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>常見問答 — 臺灣登山申請一站式服務網</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/news_7.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak class="bg-white min-h-screen text-slate-800 antialiased">
+
+  <th-header active="bulletin"></th-header>
+
+  <th-page-shell :trail="['公布欄', '常見問答']" title="常見問答" :bare="true">
+
+    <!-- 查詢卡 -->
+    <form class="p-news-filter" @submit.prevent="submitFilter">
+      <div class="p-news-filter-grid">
+
+        <!-- 發布單位：自訂 Combobox -->
+        <div class="p-news-field">
+          <label class="p-news-label" id="lbl-agency" for="f-agency-btn">發布單位</label>
+          <div class="p-news-combobox" ref="agencyCombo">
+            <button id="f-agency-btn" type="button" class="th-select p-news-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="agencyOpen"
+                    @click.stop="agencyOpen = !agencyOpen">
+              <span class="p-news-combo-val">{{ currentAgencyLabel }}</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400" aria-hidden="true"></i>
+            </button>
+            <div v-if="agencyOpen" class="p-news-combo-panel" role="listbox" aria-labelledby="lbl-agency" @click.stop>
+              <div class="p-news-combo-list">
+                <div v-for="a in allAgencies" :key="a.id"
+                     class="p-news-combo-item" :class="{ 'is-selected': draft.agency === a.id }"
+                     role="option" :aria-selected="draft.agency === a.id"
+                     @click="selectAgency(a.id)">
+                  {{ a.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 發布類別：自訂 Combobox -->
+        <div class="p-news-field">
+          <label class="p-news-label" id="lbl-cat" for="f-cat-btn">發布類別</label>
+          <div class="p-news-combobox" ref="catCombo">
+            <button id="f-cat-btn" type="button" class="th-select p-news-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="catOpen"
+                    @click.stop="catOpen = !catOpen">
+              <span class="p-news-combo-val">{{ currentCatLabel }}</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400" aria-hidden="true"></i>
+            </button>
+            <div v-if="catOpen" class="p-news-combo-panel" role="listbox" aria-labelledby="lbl-cat" @click.stop>
+              <div class="p-news-combo-list">
+                <div v-for="c in faqCategories" :key="c"
+                     class="p-news-combo-item" :class="{ 'is-selected': draft.cat === c }"
+                     role="option" :aria-selected="draft.cat === c"
+                     @click="selectCat(c)">
+                  {{ c === 'all' ? '全部類別' : c }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 標題／內容關鍵字 -->
+        <div class="p-news-field p-news-field--grow">
+          <label class="p-news-label" for="f-keyword">標題／內容關鍵字</label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="f-keyword" class="th-input" name="keyword"
+                   placeholder="請輸入標題或內容關鍵字"
+                   v-model="draft.q" />
+          </div>
+        </div>
+
+        <div class="p-news-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="resetFilter">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- 表格區 -->
+    <div class="th-table-wrap th-table-card">
+      <table class="th-table th-table--zebra">
+        <caption>常見問答列表，欄位為發布單位、異動日期、發布類別、標題</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="col-narrow">發布單位</th>
+            <th scope="col" class="col-date">異動日期</th>
+            <th scope="col" class="col-cat">發布類別</th>
+            <th scope="col">標題</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-if="pageRows.length > 0">
+            <tr v-for="row in pageRows" :key="row.id">
+              <td class="col-narrow" data-label="發布單位">
+                <p-news-agency-badge :agency-id="row.agencyId" :org="row.org"></p-news-agency-badge>
+              </td>
+              <td class="col-date" data-label="異動日期">{{ row.date }}</td>
+              <td class="col-cat" data-label="發布類別">
+                <span class="p-news-tag">{{ row.cat }}</span>
+              </td>
+              <td data-label="標題">
+                <button type="button" class="p-news-link text-left font-medium" @click="openModal(row)">
+                  {{ row.q }}
+                </button>
+              </td>
+            </tr>
+          </template>
+          <tr v-else>
+            <td colspan="4">
+              <div class="th-empty">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>尚無符合條件的常見問答資料
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 分頁：筆數自帶於分頁右側（th-table-pager :total） -->
+    <th-table-pager :page="safePage" :total-pages="totalPages" :total="filtered.length" @change="page = $event"></th-table-pager>
+
+  </th-page-shell>
+
+  <!-- FAQ 明細彈窗：機關Badge放在異動日期前面、分隔線緊湊不鬆散 -->
+  <div v-if="modalItem" class="bulletin-modal-overlay" @click="modalItem = null">
+    <div class="bulletin-modal" role="dialog" aria-modal="true" @click.stop>
+      <div class="bulletin-modal-head">
+        <div>
+          <h3 class="bulletin-modal-title">{{ modalItem.title }}</h3>
+          <div class="bulletin-modal-meta">
+            <span>發布單位：{{ modalItem.org }}</span>
+            <span class="bulletin-modal-sep">|</span>
+            <span>異動日期：{{ modalItem.date }}</span>
+            <span class="bulletin-modal-sep">|</span>
+            <span>發布類別：{{ modalItem.cat }}</span>
+          </div>
+        </div>
+        <button type="button" class="bulletin-modal-close" aria-label="關閉" @click="modalItem = null">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="bulletin-modal-body whitespace-pre-line leading-relaxed">{{ modalItem.body }}</div>
+    </div>
+  </div>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<script src="components/NewsData.js"></script>
+</body>
+</html>

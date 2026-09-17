@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>歷史消息 — 臺灣登山申請一站式服務網</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/news_0.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak class="bg-white min-h-screen text-slate-800 antialiased">
+
+  <th-header active="bulletin"></th-header>
+
+  <th-page-shell :trail="['公布欄', '歷史消息']" title="歷史消息" :bare="true">
+    <template #title-right>
+      <div class="ml-auto flex items-center gap-3">
+        <a href="news_0.html" class="p-news-back-btn">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回最新消息
+        </a>
+      </div>
+    </template>
+
+    <!-- 查詢卡 -->
+    <form class="p-news-filter" @submit.prevent="submitFilter">
+      <div class="p-news-filter-grid">
+
+        <!-- 發布單位：自訂 Combobox（全名帶括號簡稱） -->
+        <div class="p-news-field">
+          <label class="p-news-label" id="lbl-agency" for="f-agency-btn">發布單位</label>
+          <div class="p-news-combobox" ref="agencyCombo">
+            <button id="f-agency-btn" type="button" class="th-select p-news-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="agencyOpen"
+                    @click.stop="agencyOpen = !agencyOpen">
+              <span class="p-news-combo-val">{{ currentAgencyLabel }}</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400" aria-hidden="true"></i>
+            </button>
+            <div v-if="agencyOpen" class="p-news-combo-panel" role="listbox" aria-labelledby="lbl-agency" @click.stop>
+              <div class="p-news-combo-list">
+                <div v-for="a in allAgencies" :key="a.id"
+                     class="p-news-combo-item" :class="{ 'is-selected': draft.agency === a.id }"
+                     role="option" :aria-selected="draft.agency === a.id"
+                     @click="selectAgency(a.id)">
+                  {{ a.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 發布日期：Flatpickr 日期區間（完全比照 Ariel 參考檔樣式） -->
+        <div class="p-news-field">
+          <label class="p-news-label" for="f-date">發布日期</label>
+          <div class="input-group">
+            <input type="text" id="f-date" class="form-control js-range"
+                   placeholder="請選擇日期區間"
+                   v-model="draft.dateRange" />
+            <span class="input-group-text" @click="openDatePicker" style="cursor: pointer;">
+              <i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- 標題／內容關鍵字 -->
+        <div class="p-news-field p-news-field--grow">
+          <label class="p-news-label" for="f-keyword">標題／內容關鍵字</label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="f-keyword" class="th-input" name="keyword"
+                   placeholder="請輸入標題或內容關鍵字"
+                   v-model="draft.q" />
+          </div>
+        </div>
+
+        <div class="p-news-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="resetFilter">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- 表格區 -->
+    <div class="th-table-wrap th-table-card">
+      <table class="th-table th-table--zebra">
+        <caption>歷史消息列表，欄位為發布單位、發布日期、標題</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="col-narrow">發布單位</th>
+            <th scope="col" class="col-narrow">發布日期</th>
+            <th scope="col">標題</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-if="pageRows.length > 0">
+            <tr v-for="row in pageRows" :key="row.id">
+              <td class="col-narrow" data-label="發布單位">
+                <p-news-agency-badge :agency-id="row.agencyId" :org="row.org"></p-news-agency-badge>
+              </td>
+              <td class="col-narrow" data-label="發布日期">{{ dateSlash(row.date) }}</td>
+              <td data-label="標題">
+                <a :href="'news_0_1.html?id=' + row.id" class="p-news-link font-medium">{{ row.title }}</a>
+              </td>
+            </tr>
+          </template>
+          <tr v-else>
+            <td colspan="3">
+              <div class="th-empty">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>尚無符合條件的歷史消息資料
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 分頁：筆數自帶於分頁右側（th-table-pager :total） -->
+    <th-table-pager :page="safePage" :total-pages="totalPages" :total="filtered.length" @change="page = $event"></th-table-pager>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<script src="components/NewsData.js"></script>
+</body>
+</html>

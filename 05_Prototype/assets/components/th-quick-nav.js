@@ -14,7 +14,7 @@
 
    2026-09-14（對照規格 02_Spec/快捷選單.md）：五群名稱與副標改回舊站的**身分命名**
    （學習／規劃／申請／前往學習／完成登山者），09-07 那組「認識登山／規劃行程…」是
-   階段命名，與舊站不符。另補「山域事故儀表板」（舊站在首頁，本雛形未建置）；
+   階段命名，與舊站不符。另補「山域事故儀表板」（舊站在首頁；同日建置 accident-dashboard.html 後改為連結）；
    原「繳費／退費（含退費日期）查詢」一項拆成國家公園繳費、退費兩個入口並標明適用山屋——
    舊站該頁實為四個入口，林保署山屋的繳費走「申請進度查詢」，不在這兩項內。
 
@@ -47,9 +47,9 @@ window.TH_EXPERIENCE_GROUPS = [
       },
     ],
     items: [
-      { label: "路線及景點介紹", old: "information_place.aspx" },
+      { label: "路線及景點介紹", href: "information_place.html", old: "information_place.aspx" },
       { label: "如何申請入山／入園許可證", href: "web_illustrate.html", old: "web_illustrate.aspx" },
-      { label: "山域事故儀表板" },
+      { label: "山域事故儀表板", href: "accident-dashboard.html", old: "MountainDashboard.aspx" },
     ],
   },
   {
@@ -87,7 +87,7 @@ window.TH_EXPERIENCE_GROUPS = [
     sub: "必要整備",
     items: [
       { label: "路線開放狀態查詢", href: "open.html", old: "open.aspx" },
-      { label: "天候狀況查詢", old: "information_3.aspx" },
+      { label: "天候狀況查詢", href: "information_3.html", old: "information_3.aspx" },
       { label: "登山教育影片", href: "https://www.youtube.com/playlist?list=PL8CdSPNjegIZKIN75OXLB9uk_4eQmgsAm", kind: "external" },
     ],
   },
@@ -162,13 +162,13 @@ window.thComponents["th-quick-nav"] = {
                 <ul class="th-expcard-nested">
                   <li v-for="(it, i) in sub.items" :key="i">
                     <span v-if="!it.href" :class="['is-todo', { 'is-external': isExternal(it) }]">
-                      <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
+                      {{ it.label }}<i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
                     </span>
                     <a v-else :href="it.href"
                        :class="isExternal(it) ? 'is-external' : null"
                        :target="isExternal(it) ? '_blank' : null"
                        :rel="isExternal(it) ? 'noopener noreferrer' : null">
-                      <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
+                      {{ it.label }}<i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
                     </a>
                   </li>
                 </ul>
@@ -176,13 +176,13 @@ window.thComponents["th-quick-nav"] = {
               <ul v-if="g.items">
                 <li v-for="(it, i) in g.items" :key="i">
                   <span v-if="!it.href" :class="['is-todo', { 'is-external': isExternal(it) }]">
-                    <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
+                    {{ it.label }}<i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
                   </span>
                   <a v-else :href="it.href"
                      :class="isExternal(it) ? 'is-external' : null"
                      :target="isExternal(it) ? '_blank' : null"
                      :rel="isExternal(it) ? 'noopener noreferrer' : null">
-                    <i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ it.label }}
+                    {{ it.label }}<i v-if="isExternal(it)" class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
                   </a>
                 </li>
               </ul>

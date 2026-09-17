@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>檔案下載 — 臺灣登山申請一站式服務網</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/news_6.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak class="bg-white min-h-screen text-slate-800 antialiased">
+
+  <th-header active="bulletin"></th-header>
+
+  <th-page-shell :trail="['公布欄', '檔案下載']" title="檔案下載" :bare="true">
+
+    <!-- 查詢卡 -->
+    <form class="p-news-filter" @submit.prevent="submitFilter">
+      <div class="p-news-filter-grid">
+
+        <!-- 發布單位：自訂 Combobox -->
+        <div class="p-news-field">
+          <label class="p-news-label" id="lbl-agency" for="f-agency-btn">發布單位</label>
+          <div class="p-news-combobox" ref="agencyCombo">
+            <button id="f-agency-btn" type="button" class="th-select p-news-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="agencyOpen"
+                    @click.stop="agencyOpen = !agencyOpen">
+              <span class="p-news-combo-val">{{ currentAgencyLabel }}</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400" aria-hidden="true"></i>
+            </button>
+            <div v-if="agencyOpen" class="p-news-combo-panel" role="listbox" aria-labelledby="lbl-agency" @click.stop>
+              <div class="p-news-combo-list">
+                <div v-for="a in allAgencies" :key="a.id"
+                     class="p-news-combo-item" :class="{ 'is-selected': draft.agency === a.id }"
+                     role="option" :aria-selected="draft.agency === a.id"
+                     @click="selectAgency(a.id)">
+                  {{ a.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 檔案名稱關鍵字 -->
+        <div class="p-news-field p-news-field--grow">
+          <label class="p-news-label" for="f-keyword">檔案名稱</label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="f-keyword" class="th-input" name="keyword"
+                   placeholder="請輸入檔案名稱關鍵字"
+                   v-model="draft.q" />
+          </div>
+        </div>
+
+        <div class="p-news-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="resetFilter">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- 表格區 -->
+    <div class="th-table-wrap th-table-card">
+      <table class="th-table th-table--zebra">
+        <caption>檔案下載列表，欄位為發布單位、檔案名稱、檔案下載</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="col-narrow">發布單位</th>
+            <th scope="col">檔案名稱</th>
+            <th scope="col" class="col-narrow">檔案下載</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-if="pageRows.length > 0">
+            <tr v-for="row in pageRows" :key="row.id">
+              <td class="col-narrow" data-label="發布單位">
+                <p-news-agency-badge :agency-id="row.agencyId" :org="row.org"></p-news-agency-badge>
+              </td>
+              <td data-label="檔案名稱" class="font-medium text-base">{{ row.title }}</td>
+              <td class="col-narrow" data-label="檔案下載">
+                <div class="inline-flex items-center gap-2">
+                  <a v-for="(f, i) in row.files" :key="i" :href="f.href"
+                     target="_blank" rel="noopener noreferrer"
+                     :class="'p-news-file ' + f.format.toLowerCase()">
+                    <i :class="fileIcons[f.format] || 'fa-regular fa-file'" aria-hidden="true"></i>{{ f.format }}
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <tr v-else>
+            <td colspan="3">
+              <div class="th-empty">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>尚無符合條件的檔案下載資料
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 分頁：筆數自帶於分頁右側（th-table-pager :total） -->
+    <th-table-pager :page="safePage" :total-pages="totalPages" :total="filtered.length" @change="page = $event"></th-table-pager>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<script src="components/NewsData.js"></script>
+</body>
+</html>

@@ -32,85 +32,116 @@
   <!-- bare：版面自帶結構，不要 th-page-main 的 flex 包裝 -->
   <th-page-shell :trail="['登山路線開放狀態']" title="登山路線開放狀態" :bare="true">
 
-    <form class="bulletin-card" @submit.prevent="submit">
-      <div class="bulletin-filter-row">
-        <span class="bulletin-filter-label">
-          <i class="fa-solid fa-building" aria-hidden="true"></i>機關
-        </span>
-        <button v-for="o in orgButtons" :key="o.key" type="button"
-                :class="['th-chip', { 'is-active': draft.org === o.key }]"
-                :aria-pressed="draft.org === o.key"
-                @click="changeOrg(o.key)">{{ o.label }}</button>
-      </div>
+    <!-- 查詢條件：比照景點資訊改用 .th-filter 系列 -->
+    <form class="th-filter" @submit.prevent="submit">
+      <div class="th-filter-grid">
 
-      <div class="bulletin-filter-row">
-        <span class="bulletin-filter-label">
-          <i class="fa-solid fa-route" aria-hidden="true"></i>登山主路線
-        </span>
-        <select class="th-select p-open-select" :value="draft.mainRoute"
-                @change="setField({ mainRoute: $event.target.value })"
-                aria-label="登山主路線">
-          <option value="all">全部路線（{{ mainRoutes.length }} 條主路線）</option>
-          <!--
-            選「全部」時（6 組）用 <optgroup> 依機關分組；
-            選了特定機關時只會有一組，組標題與已選的頁籤重複，所以維持平的清單。
-            分組邏輯在 components/open.js 的 mainRouteGroups，
-            changeOrg 與 mainRoutes 都沒有動。
-          -->
-          <template v-if="mainRouteGroups.length > 1">
-            <optgroup v-for="g in mainRouteGroups" :key="g.key" :label="g.label">
-              <option v-for="m in g.routes" :key="g.key + '/' + m" :value="m">{{ m }}</option>
-            </optgroup>
-          </template>
-          <template v-else>
-            <option v-for="m in mainRoutes" :key="m" :value="m">{{ m }}</option>
-          </template>
-        </select>
-      </div>
-
-      <div class="bulletin-filter-row">
-        <span class="bulletin-filter-label">
-          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>關鍵字查詢
-        </span>
-        <div class="th-search">
-          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-          <input type="text" class="th-input"
-                 placeholder="請輸入路線名稱、主路線或備註關鍵字"
-                 :value="draft.q" @input="setField({ q: $event.target.value })" />
+        <div class="th-filter-field p-open-route-field">
+          <label class="th-filter-label" id="lbl-org" for="f-org-btn">機關</label>
+          <div class="p-open-combobox" ref="orgCombo">
+            <button id="f-org-btn" type="button" class="th-select p-open-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="orgOpen"
+                    @click.stop="toggleOrgDropdown">
+              <span class="p-open-combo-val">{{ currentOrgLabel }}</span>
+            </button>
+            <div v-if="orgOpen" class="p-open-combo-panel" role="listbox" aria-labelledby="lbl-org" @click.stop>
+              <div class="p-open-combo-list">
+                <div v-for="o in orgButtons" :key="o.key"
+                     class="p-open-combo-item" :class="{ 'is-selected': draft.org === o.key }"
+                     role="option" :aria-selected="draft.org === o.key"
+                     @click="selectOrg(o.key)">
+                  {{ o.label }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <button type="submit" class="th-btn th-btn-primary">
-          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
-        </button>
-        <button type="button" class="th-btn th-btn-ghost" @click="reset">
-          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>清除條件
-        </button>
+
+        <div class="th-filter-field p-open-route-field">
+          <label class="th-filter-label" id="lbl-route" for="f-route-btn">路線</label>
+          <div class="p-open-combobox" ref="routeCombo">
+            <button id="f-route-btn" type="button" class="th-select p-open-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="routeOpen"
+                    @click.stop="toggleRouteDropdown">
+              <span class="p-open-combo-val">{{ draft.route === 'all' ? '全部路線' : draft.route }}</span>
+            </button>
+            <div v-if="routeOpen" class="p-open-combo-panel" role="listbox" aria-labelledby="lbl-route" @click.stop>
+              <div class="p-open-combo-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input ref="routeSearchInput" type="text" class="th-input p-open-combo-input"
+                       placeholder="搜尋路線名稱..."
+                       v-model="routeSearchQuery"
+                       @keydown.esc="routeOpen = false" />
+                <button v-if="routeSearchQuery" type="button" class="p-open-combo-clear"
+                        @click="routeSearchQuery = ''" aria-label="清空搜尋">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="p-open-combo-list">
+                <div class="p-open-combo-item" :class="{ 'is-selected': draft.route === 'all' }"
+                     role="option" :aria-selected="draft.route === 'all'"
+                     @click="selectRoute('all')">
+                  全部路線
+                </div>
+                <template v-if="filteredRoutes.length > 0">
+                  <div v-for="m in filteredRoutes" :key="m"
+                       class="p-open-combo-item" :class="{ 'is-selected': draft.route === m }"
+                       role="option" :aria-selected="draft.route === m"
+                       @click="selectRoute(m)">
+                    {{ m }}
+                  </div>
+                </template>
+                <div v-else class="p-open-combo-empty">尚無資料</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-filter-field th-filter-field--grow">
+          <label class="th-filter-label" for="f-kw">關鍵字</label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input id="f-kw" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入路線名稱、主路線或備註關鍵字"
+                   :value="draft.q" @input="setField({ q: $event.target.value })" />
+          </div>
+        </div>
+
+        <div class="th-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="reset">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+
       </div>
     </form>
 
-    <div class="bulletin-section-head">
-      <h2 class="th-section-title">路線申請對照資訊</h2>
-      <span class="bulletin-count">
-        共 <strong>{{ rows.length }}</strong> 筆<span v-if="rows.length > 0">／第 {{ page }} 頁（共 {{ totalPages }} 頁）</span>
-      </span>
-    </div>
-
-    <!-- 圖例：原 Legend 是無狀態的區域元件，屬本頁版面，直接寫在這裡 -->
-    <div class="p-open-legend">
-      <div class="p-open-legend-row">
-        <span class="p-open-legend-label">可否申請</span>
-        <span v-for="k in ['yes', 'no']" :key="k" :class="['th-flag', canApplyMeta[k].cls]">
+    <!-- 圖例區：可點擊即時篩選 Badge -->
+    <div class="p-open-legend-box">
+      <p class="p-open-legend-line" :class="{ 'has-active': activeCanApply }">
+        <span class="p-open-legend-title">可否申請：</span>
+        <button v-for="k in ['yes', 'no']" :key="k" type="button"
+                :class="['th-flag', 'p-open-filter-badge', canApplyMeta[k].cls, { 'is-active': activeCanApply === k }]"
+                :aria-pressed="activeCanApply === k"
+                @click="toggleCanApply(k)">
           <i :class="canApplyMeta[k].icon" aria-hidden="true"></i>{{ canApplyMeta[k].label }}
-        </span>
-      </div>
-      <div class="p-open-legend-row">
-        <span class="p-open-legend-label">路線現況</span>
-        <span v-for="k in ['open', 'closed', 'proof', 'snow']" :key="k" :class="['th-flag', statusMeta[k].cls]">
+        </button>
+      </p>
+      <p class="p-open-legend-line" :class="{ 'has-active': activeStatus }">
+        <span class="p-open-legend-title">路線現況：</span>
+        <button v-for="k in ['open', 'closed', 'proof', 'snow']" :key="k" type="button"
+                :class="['th-flag', 'p-open-filter-badge', statusMeta[k].cls, { 'is-active': activeStatus === k }]"
+                :aria-pressed="activeStatus === k"
+                @click="toggleStatus(k)">
           <i :class="statusMeta[k].icon" aria-hidden="true"></i>{{ statusMeta[k].label }}
-        </span>
-      </div>
+        </button>
+      </p>
     </div>
 
-    <!-- 兩層表頭：上排 rowSpan/colSpan 與下排四個「是否須要申請」子欄，照原樣手寫 -->
+    <!-- 表格區：兩層表頭，欄位呈現對齊正式站 -->
     <div class="th-table-wrap th-table-card p-open-table-wrap">
       <table class="th-table th-table--zebra p-open-table">
         <caption>登山路線開放狀態列表，欄位為機關、登山主路線、路線名稱、可否申請、路線現況、是否須要申請（入園證、林業及自然保育署自然保護留區、林業及自然保育署住宿、警政署入山證）、登山路線難度等級與功能</caption>
@@ -136,37 +167,36 @@
           <template v-if="pageRows.length > 0">
             <tr v-for="(r, i) in pageRows" :key="r.fId + '-' + r.cId + '-' + i">
               <td class="col-org" data-label="機關">
-                <span :class="'bulletin-badge agency-' + (orgBadge[r.orgLabel] || 'nps')">{{ r.orgLabel }}</span>
+                <span>{{ r.orgLabel }}</span>
               </td>
               <td class="col-main" data-label="登山主路線">{{ r.mainRoute }}</td>
               <td class="col-name2" data-label="路線名稱">{{ r.name }}</td>
-              <td class="col-can" data-label="可否申請">
-                <span v-if="canApplyMeta[r.canApply]" :class="['th-flag', canApplyMeta[r.canApply].cls]"><i :class="canApplyMeta[r.canApply].icon" aria-hidden="true"></i>{{ canApplyMeta[r.canApply].label }}</span>
+              <td class="col-can text-center" data-label="可否申請">
+                <span v-if="canApplyMeta[r.canApply]" :class="['p-open-status-icon', canApplyMeta[r.canApply].cls]" :title="canApplyMeta[r.canApply].label">
+                  <i :class="canApplyMeta[r.canApply].icon" aria-hidden="true"></i>
+                  <span class="sr-only">{{ canApplyMeta[r.canApply].label }}</span>
+                </span>
               </td>
-              <td class="col-status" data-label="路線現況">
-                <span v-if="statusMeta[r.status]" :class="['th-flag', statusMeta[r.status].cls]"><i :class="statusMeta[r.status].icon" aria-hidden="true"></i>{{ statusMeta[r.status].label }}</span>
+              <td class="col-status text-center" data-label="路線現況">
+                <span v-if="statusMeta[r.status]" :class="['p-open-status-icon', statusMeta[r.status].cls]" :title="statusMeta[r.status].label">
+                  <i :class="statusMeta[r.status].icon" aria-hidden="true"></i>
+                  <span class="sr-only">{{ statusMeta[r.status].label }}</span>
+                </span>
               </td>
-              <td v-for="c in needColumns" :key="c.key" class="col-need" :data-label="c.label">
-                <i v-if="r[c.key]" class="fa-solid fa-check p-open-need-yes" aria-label="須申請"></i>
-                <span v-else class="p-open-need-no" aria-label="免申請">—</span>
+              <td v-for="c in needColumns" :key="c.key" class="col-need text-center" :data-label="c.label">
+                <span v-if="r[c.key]" class="font-bold text-slate-700">V</span>
               </td>
-              <td class="col-level" data-label="難度等級">
-                <span v-if="r.level === null" class="p-open-need-no">—</span>
-                <button v-else type="button" :class="'p-open-level-btn th-level lv-' + r.level"
+              <td class="col-level text-center" data-label="難度等級">
+                <button v-if="r.level !== null" type="button"
+                        :class="['th-level', 'lv-' + r.level, 'p-open-level-badge']"
                         @click="levelModal = r.level">第 {{ r.level }} 級</button>
+                <span v-else>—</span>
               </td>
               <td class="col-fn" data-label="功能">
                 <div class="p-open-actions">
-                  <a class="p-open-act is-primary" href="apply-1.html">
-                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>申請
-                  </a>
-                  <!-- 路線介紹頁尚未建置，不給假連結 -->
-                  <span v-if="r.hasIntro" class="p-open-act th-todo-link">
-                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>介紹
-                  </span>
-                  <button v-if="r.note" type="button" class="p-open-act" @click="noteModal = r">
-                    <i class="fa-regular fa-note-sticky" aria-hidden="true"></i>備註
-                  </button>
+                  <a v-if="r.hasIntro" class="th-btn th-btn-primary p-open-btn-compact" href="information_1.html">介紹</a>
+                  <a v-if="r.canApply === 'yes'" class="th-btn th-btn-primary p-open-btn-compact" href="apply-1.html">申請</a>
+                  <button v-if="r.note" type="button" class="th-btn th-btn-secondary p-open-btn-compact" @click="noteModal = r">備註</button>
                 </div>
               </td>
             </tr>
@@ -174,7 +204,7 @@
           <tr v-else>
             <td colspan="11">
               <div class="th-empty">
-                <i class="fa-solid fa-inbox" aria-hidden="true"></i>查無符合條件的路線，請調整查詢條件。
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>尚無資料
               </div>
             </td>
           </tr>
@@ -182,9 +212,7 @@
       </table>
     </div>
 
-    <th-table-pager :page="page" :total-pages="totalPages" @change="page = $event"></th-table-pager>
-
-    <th-callout>表格內容為各機關提供之路線申請對照資訊，實際可申請日期與承載量仍以線上申請流程之查驗結果為準。</th-callout>
+    <th-table-pager :page="page" :total-pages="totalPages" :total="rows.length" @change="page = $event"></th-table-pager>
   </th-page-shell>
 
   <th-quick-nav></th-quick-nav>
@@ -194,8 +222,8 @@
     難度等級彈窗。判空必須用 !== null：難度有第 0 級，用真假值會讓它點不開
     （原 React 寫的也是 levelModal !== null）。
   -->
-  <th-modal v-if="levelModal !== null && levelRow" meta="登山路線難度等級"
-            :title="'第 ' + levelRow.level + ' 級'" body-class="p-open-modal-def"
+  <th-modal v-if="levelModal !== null && levelRow"
+            :title="'難度等級 － 第' + levelRow.level + '級'" body-class="p-open-modal-def"
             @close="levelModal = null">
     <dl>
       <dt>說明</dt>
@@ -209,14 +237,14 @@
       <dd>{{ levelRow.who }}</dd>
       <dt>建議裝備</dt>
       <dd>
-        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i>個人及團體裝備檢查表</a>{{ levelRow.kitRef }}</span>
+        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（PDF，另開新視窗）</span></a>{{ levelRow.kitRef }}</span>
         <template v-else>{{ levelRow.kit }}</template>
       </dd>
     </dl>
   </th-modal>
 
-  <!-- 備註彈窗 -->
-  <th-modal v-if="noteModal" meta="登山路線備註" :title="noteModal.name" @close="noteModal = null">
+  <!-- 備註彈窗：標題改為 備註 － {名稱} -->
+  <th-modal v-if="noteModal" :title="'備註 － ' + noteModal.name" @close="noteModal = null">
     {{ noteModal.note }}<div v-if="noteModal.closures.length > 0" class="p-open-closures">
       <p class="p-open-closures-title">部分關閉日期、原因</p>
       <ul><li v-for="c in noteModal.closures" :key="c">{{ c }}</li></ul>

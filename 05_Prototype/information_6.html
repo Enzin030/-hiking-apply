@@ -31,7 +31,6 @@
 
     <section class="th-card" id="level-table">
       <div class="th-card-head">
-        <i class="fa-solid fa-signs-post" aria-hidden="true"></i>
         <h2 class="th-card-title">步道難度分級表</h2>
         <span class="th-card-note">共 7 級</span>
       </div>
@@ -42,7 +41,7 @@
           th-data-table 的 render prop 只收字串，所以走它的 cell scoped slot，
           在這裡依 column.key 分派。版面因此留在 HTML，符合 §5 階段 3 第 1 項。
         -->
-        <th-data-table :columns="columns" :rows="rows" row-key="level" table-class="tbl-level">
+        <th-data-table :columns="columns" :rows="rows" row-key="level" table-class="tbl-level th-table--zebra">
           <template #cell="{ row, column, value }">
 
             <span v-if="column.key === 'level'" :class="'th-level lv-' + row.level">第 {{ row.level }} 級</span>
@@ -56,7 +55,7 @@
               JSX 會把行首行尾的換行縮排去掉，Vue 的 condense 會折成一個空白，
               多出來的空白會讓表格欄寬與換行位置跑掉（見 th-callout.js 註解）。
             -->
-            <p v-else-if="column.key === 'kit' && row.kitRef" class="th-kit">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i>個人及團體裝備檢查表</a>{{ row.kitRef }}</p>
+            <p v-else-if="column.key === 'kit' && row.kitRef" class="th-kit">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（PDF，另開新視窗）</span></a>{{ row.kitRef }}</p>
 
             <p v-else-if="column.key === 'kit'" class="th-kit">{{ row.kit }}</p>
 

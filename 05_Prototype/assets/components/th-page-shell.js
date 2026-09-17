@@ -70,8 +70,11 @@ window.thComponents["th-page-shell"] = {
       <th-breadcrumb :trail="trail"></th-breadcrumb>
       <div class="th-page-inner">
         <div class="th-page-head">
-          <h1 class="th-page-title">{{ title }}</h1>
-          <p v-if="lead" class="th-page-lead">{{ lead }}</p>
+          <div class="flex flex-wrap items-center gap-4">
+            <h1 class="th-page-title">{{ title }}</h1>
+            <slot name="title-right"></slot>
+          </div>
+          <p v-if="lead || $slots.lead" class="th-page-lead"><slot name="lead">{{ lead }}</slot></p>
           <div v-if="updated" class="th-page-meta">更新日期：{{ updated }}</div>
         </div>
         <slot name="stepper"></slot>

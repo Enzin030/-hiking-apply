@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+<title>最新消息｜臺灣登山申請一站式服務網</title>
+<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+
+<!-- ══ 字型 ══ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- ══ 外掛樣式（vendor）══ -->
+<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="vendor/flatpicker/flatpickr.min.css" rel="stylesheet">
+<link href="vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+<!-- ══ 專案樣式（載入順序固定，勿調換）══ -->
+<link href="css/tokens.css" rel="stylesheet">
+<link href="css/base.css" rel="stylesheet">
+<link href="css/layout.css" rel="stylesheet">
+<link href="css/components.css" rel="stylesheet">
+</head>
+<body>
+
+<a class="th-skip-link" href="#main">跳至主要內容</a>
+
+<div class="th-shell">
+
+<!-- ══════════════════════════════════════════════════════════════
+     HEADER — 全站共用（與 index.html／_template.html 保持一致）
+     ══════════════════════════════════════════════════════════════ -->
+<header class="th-header">
+  <!-- 導盲磚：上方選單連結區 -->
+  <a class="th-accesskey" id="AU" href="#AU" accesskey="U"
+   title="快速鍵 Alt+U：上方選單連結區" aria-label="上方選單連結區（快速鍵 Alt+U）"><span aria-hidden="true">:::</span></a>
+
+  <div class="th-header-inner">
+
+    <a href="index.html" class="th-brand th-focusable">
+      <img src="img/favicon.png" alt="內政部國家公園署" class="th-logo">
+      <span class="th-wordmark">臺灣<span class="th-accent">登山申請</span>一站式服務網</span>
+    </a>
+
+    <button type="button" class="th-nav-toggle" data-nav-toggle
+            aria-expanded="false" aria-controls="header-nav" aria-label="展開／收合選單">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    <div class="th-header-right" id="header-nav">
+      <div class="th-utility">
+        <a href="#">網站導覽</a>
+        <span class="th-divider" aria-hidden="true"></span>
+        <a href="#">警特報</a>
+        <span class="th-divider" aria-hidden="true"></span>
+        <a href="#">RSS</a>
+        <span class="th-divider" aria-hidden="true"></span>
+        <!-- 語言選單：Disclosure Pattern，行為由 js/scripts.js 處理 -->
+        <div class="th-lang" data-lang-menu>
+          <button type="button" class="th-utility-btn" id="lang-btn"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="lang-list">
+            <i class="fas fa-globe" aria-hidden="true"></i> 語言
+            <i class="fas fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <ul class="th-lang-menu" id="lang-list" aria-labelledby="lang-btn" hidden>
+            <li><a href="#" lang="zh-Hant-TW" aria-current="true"><span class="tick" aria-hidden="true"></span>繁體中文</a></li>
+            <li><a href="#" lang="en"><span class="tick" aria-hidden="true"></span>English</a></li>
+            <li><a href="#" lang="ja"><span class="tick" aria-hidden="true"></span>日本語</a></li>
+          </ul>
+        </div>
+        <span class="th-divider" aria-hidden="true"></span>
+        <!-- 全站搜尋（輸入框模式）-->
+        <form class="th-utility-search" role="search" action="#" method="get">
+          <label class="th-sr-only" for="site-search">全站搜尋</label>
+          <input type="search" id="site-search" name="q" placeholder="搜尋">
+          <button type="submit" aria-label="執行搜尋">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- 主選單：有子項目者為下拉（js/scripts.js 的 initNavMenus 處理）
+           目前所在區塊在 .th-navitem 加 is-active；目前頁面在子項目加 aria-current="page" -->
+      <nav class="th-nav" aria-label="主選單">
+        <div class="th-navitem is-active" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-bulletin"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-bulletin-menu">
+            公布欄 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-bulletin-menu" aria-labelledby="nav-bulletin" hidden>
+            <li><a href="news.html" aria-current="page">最新消息</a></li>
+            <li><a href="#">違規名單</a></li>
+            <li><a href="#">檔案下載</a></li>
+            <li><a href="#">常見問答</a></li>
+          </ul>
+        </div>
+        <div class="th-navitem" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-apply"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-apply-menu">
+            登山申請 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-apply-menu" aria-labelledby="nav-apply" hidden>
+            <li><a href="apply-1.html">各項線上申請</a></li>
+            <li><a href="#">申請進度查詢／繳費／異動／取消</a></li>
+            <li><a href="#">草稿編輯</a></li>
+            <li><a href="#">國家公園出園回報</a></li>
+          </ul>
+        </div>
+        <a href="#">登山須知</a>
+        <a href="#">登山路線開放狀態</a>
+        <div class="th-navitem" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-bed"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-bed-menu">
+            宿營地與床位查詢 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-bed-menu" aria-labelledby="nav-bed" hidden>
+            <li><a href="forest-camp-1.html">林業及自然保育署宿營地查詢</a></li>
+            <li><a href="#">林業及自然保育署區域申請及抽籤查詢</a></li>
+            <li><a href="#">太魯閣山屋查詢</a></li>
+            <li><a href="#">太魯閣路線查詢</a></li>
+            <li><a href="#">雪霸宿營地查詢</a></li>
+            <li><a href="#">雪霸路線查詢</a></li>
+            <li><a href="#">玉山宿營地查詢</a></li>
+            <li><a href="#">玉山單日往返路線查詢</a></li>
+            <li><a href="#">玉山抽籤結果查詢</a></li>
+            <li><a href="#">玉山抽籤日期查詢</a></li>
+            <li><a href="#">玉山可申請退費日期查詢</a></li>
+          </ul>
+        </div>
+        <div class="th-navitem" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-travel"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-travel-menu">
+            旅遊登山資訊 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-travel-menu" aria-labelledby="nav-travel" hidden>
+            <li><a href="#">登山路線圖資查詢</a></li>
+            <li><a href="route.html">登山路線介紹</a></li>
+            <li><a href="#">景點資訊</a></li>
+            <li><a href="#">各縣市天氣預報</a></li>
+            <li><a href="#">國家公園天氣資訊</a></li>
+            <li><a href="#">即時影像觀看</a></li>
+            <li><a href="#">國家公園步道分級</a></li>
+            <li><a href="#">雙語詞彙</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MAIN
+     ══════════════════════════════════════════════════════════════ -->
+<main id="main" class="th-main th-page">
+
+  <!-- 導盲磚：中間主要內容區 -->
+  <a class="th-accesskey" id="AC" href="#AC" accesskey="C"
+   title="快速鍵 Alt+C：中間主要內容區" aria-label="中間主要內容區（快速鍵 Alt+C）"><span aria-hidden="true">:::</span></a>
+
+  <nav class="th-crumb" aria-label="麵包屑">
+    <a href="index.html" aria-label="首頁"><i class="fas fa-home" aria-hidden="true"></i></a>
+    <i class="fas fa-angle-right" aria-hidden="true"></i>
+    <a href="#">公布欄</a>
+    <i class="fas fa-angle-right" aria-hidden="true"></i>
+    <span class="th-crumb-current">最新消息</span>
+  </nav>
+
+  <div class="th-page-inner">
+
+    <h1 class="th-page-title">最新消息</h1>
+
+    <!-- ══ 查詢區 ═══════════════════════════════════════════════ -->
+    <form class="th-search" role="search" aria-label="最新消息查詢">
+      <div class="row g-3 align-items-end">
+
+        <div class="col-lg-3 col-md-6">
+          <label class="label" for="q-unit">發布單位</label>
+          <select class="form-select" id="q-unit" name="unit">
+            <option value="">全部單位</option>
+            <option>林業及自然保育署</option>
+            <option>內政部國家公園署</option>
+            <option>太魯閣國家公園管理處</option>
+            <option>玉山國家公園管理處</option>
+            <option>雪霸國家公園管理處</option>
+            <option>警政署入山</option>
+          </select>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <label class="label" for="q-date">發布日期</label>
+          <div class="input-group">
+            <input type="text" class="form-control js-range" id="q-date" name="date"
+                   placeholder="請選擇日期區間">
+            <span class="input-group-text"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-12">
+          <label class="label" for="q-keyword">標題／內容關鍵字</label>
+          <input type="text" class="form-control" id="q-keyword" name="keyword"
+                 placeholder="請輸入標題或內容關鍵字">
+        </div>
+
+        <!-- 按鈕與查詢欄位同一排；高度由 --field-h 統一 -->
+        <div class="col-lg-auto col-12">
+          <div class="th-search-actions">
+            <button type="reset" class="th-btn th-btn-ghost">
+              <i class="fas fa-times" aria-hidden="true"></i> 清除
+            </button>
+            <button type="submit" class="th-btn th-btn-primary">
+              <i class="fas fa-search" aria-hidden="true"></i> 查詢
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- ══ 列表工具列 ═══════════════════════════════════════════ -->
+    <div class="th-listbar">
+      <!-- 4.1.3 狀態訊息：查詢後筆數變動，螢幕報讀器需自動朗讀 -->
+      <div class="th-listbar-count" role="status" aria-live="polite" aria-atomic="true">
+        共 <strong>48</strong> 筆，第 1 / 5 頁
+      </div>
+      <div class="th-listbar-actions">
+        <a href="#" class="th-listbar-link">
+          <i class="fas fa-history" aria-hidden="true"></i> 歷史消息
+        </a>
+        <a href="#" class="th-listbar-link">
+          <i class="fas fa-rss" aria-hidden="true"></i> RSS 訂閱
+        </a>
+      </div>
+    </div>
+
+    <!-- ══ 資料表格 ═════════════════════════════════════════════
+         窄版（≤700px）會自動堆疊成卡片，欄名取自 td 的 data-label
+         ═══════════════════════════════════════════════════════ -->
+    <div class="th-table-wrap">
+      <div class="th-table-scroll">
+        <table class="th-table">
+          <caption class="th-sr-only">最新消息列表，欄位為發布單位、發布日期、標題</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="col-narrow">發布單位</th>
+              <th scope="col" class="col-narrow">發布日期</th>
+              <th scope="col">標題</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ↓↓↓ 後端迴圈輸出區（最新消息）↓↓↓
+                 ※ 置頂公告請排在最前面，該列加 class="is-pinned"，
+                   並於標題前輸出 <span class="th-pin">…置頂</span>
+                 ※ 置頂與一般公告各自依發布日期由新到舊排序 -->
+            <tr class="is-pinned">
+              <td data-label="發布單位"><span class="th-badge th-badge-yushan">玉管處</span></td>
+              <td data-label="發布日期" class="td-date">2026-09-08</td>
+              <td data-label="標題" class="td-title">
+                <span class="th-pin"><i class="fas fa-thumbtack" aria-hidden="true"></i>置頂</span>
+                <a href="#">公告自115年9月9日起恢復玉山國家公園八通關線、南二段線、秀姑巒線及馬博拉斯橫斷線生態保護區登山路線之入園活動。</a>
+              </td>
+            </tr>
+            <tr class="is-pinned">
+              <td data-label="發布單位"><span class="th-badge th-badge-forestry">林業及自然保育署</span></td>
+              <td data-label="發布日期" class="td-date">2026-09-07</td>
+              <td data-label="標題" class="td-title">
+                <span class="th-pin"><i class="fas fa-thumbtack" aria-hidden="true"></i>置頂</span>
+                <a href="#">【嘉明湖國家步道】2026嘉明湖手作步道工作假期熱烈報名中</a>
+              </td>
+            </tr>
+            <tr class="is-pinned">
+              <td data-label="發布單位"><span class="th-badge th-badge-yushan">玉管處</span></td>
+              <td data-label="發布日期" class="td-date">2026-09-03</td>
+              <td data-label="標題" class="td-title">
+                <span class="th-pin"><i class="fas fa-thumbtack" aria-hidden="true"></i>置頂</span>
+                <a href="#">大水窟山屋於115年10月1日至11月30日進行整修，施工期間住宿人數將調整為10人。</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-forestry">林業及自然保育署</span></td>
+              <td data-label="發布日期" class="td-date">2026-09-01</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">【檜谷山莊】如從登山一站式網提出申請，需在登山一站式網登入退費，登入時請用一站式案件編號查詢</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-sheipa">雪管處</span></td>
+              <td data-label="發布日期" class="td-date">2026-09-01</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">115年雪霸國家公園中秋連假期間入園申請注意事項</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-taroko">太管處</span></td>
+              <td data-label="發布日期" class="td-date">2026-08-28</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">公告本處屏風避難山屋及其周邊區域進行松材線蟲防治作業，自115年9月21日至11月30日暫停開放暨禁止進入。</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-taroko">太管處</span></td>
+              <td data-label="發布日期" class="td-date">2026-08-28</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">公告自115年8月29日(星期六)起開放本處生態保護區之入園活動。</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-sheipa">雪管處</span></td>
+              <td data-label="發布日期" class="td-date">2026-08-28</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">【雪霸國家公園各登山路線自115年8月29日起全面恢復開放！】</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-npa">國家公園署</span></td>
+              <td data-label="發布日期" class="td-date">2026-08-27</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">沙德爾颱風接近又逢大潮，國家公園署提醒山海遊憩提高警覺</a>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="發布單位"><span class="th-badge th-badge-forestry">林業及自然保育署</span></td>
+              <td data-label="發布日期" class="td-date">2026-08-26</td>
+              <td data-label="標題" class="td-title">
+                <a href="#">【天池山莊】【轉知】115年全國登山日推廣計畫登場！</a>
+              </td>
+            </tr>
+            <!-- ↑↑↑ 後端迴圈輸出區 ↑↑↑ -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 查無資料時改輸出這一段（並移除上方 table）
+      <div class="th-table-empty">
+        <i class="fas fa-inbox" aria-hidden="true"></i>
+        查無符合條件的消息，請調整查詢條件後再試一次。
+      </div>
+      -->
+    </div>
+
+    <!-- ══ 分頁 ═════════════════════════════════════════════════ -->
+    <nav class="th-pager" aria-label="分頁導覽">
+      <span class="is-disabled" aria-hidden="true"><i class="fas fa-angle-left"></i></span>
+      <span class="is-current" aria-current="page">1</span>
+      <a href="#">2</a>
+      <a href="#">3</a>
+      <a href="#">4</a>
+      <a href="#">5</a>
+      <a href="#" aria-label="下一頁"><i class="fas fa-angle-right" aria-hidden="true"></i></a>
+    </nav>
+
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FOOTER — 全站共用（請與 index.html 保持一致）
+     ══════════════════════════════════════════════════════════════ -->
+<footer class="th-footer">
+  <!-- 導盲磚：下方選單連結區 -->
+  <a class="th-accesskey th-accesskey-dark" id="AZ" href="#AZ" accesskey="Z"
+   title="快速鍵 Alt+Z：下方選單連結區" aria-label="下方選單連結區（快速鍵 Alt+Z）"><span aria-hidden="true">:::</span></a>
+
+  <div class="th-container">
+    <div class="th-footer-top">
+
+      <div class="th-footer-about">
+        <div class="th-footer-logo">
+          <img src="img/favicon.png" alt="內政部國家公園署">
+        </div>
+        <div class="th-footer-about-body">
+          <div class="th-footer-title-row">
+            <h2 class="th-footer-title">臺灣登山申請一站式服務網</h2>
+            <span class="th-footer-updated">最後更新日期：2026-09-11</span>
+          </div>
+          <p class="th-footer-desc">
+            本網站乃整合國家公園署之玉山、雪霸、太魯閣國家公園登山申請，林業及自然保育署之天池、嘉明湖、向陽、檜谷山屋營地及自然保護(留)區、野生動物保護區，以及警政署入山申請等服務。本站提供統一之申請入口，後續再由各機關個別審核。如有申請相關問題，歡迎透過聯絡我們向指定機關聯繫，謝謝。
+          </p>
+        </div>
+      </div>
+
+      <div class="th-footer-links">
+        <div>
+          <h3>服務專區</h3>
+          <ul>
+            <li><a href="#">常見問答</a></li>
+            <li><a href="#">聯絡我們</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>政策宣告</h3>
+          <ul>
+            <li><a href="#">隱私權宣告</a></li>
+            <li><a href="#">資訊安全政策</a></li>
+            <li><a href="#">資料開放宣告</a></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="th-footer-band">
+    <div class="th-container th-footer-band-inner">
+      <div class="th-footer-copy">Copyright © 內政部國家公園署 著作權所有</div>
+      <div class="th-footer-env">
+        <span>建議使用 Chrome、Edge 或 Safari 瀏覽器</span>
+        <span class="sep" aria-hidden="true">|</span>
+        <span>建議螢幕解析度 1440 x 960 以上</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /.th-shell -->
+
+<!-- ══ 外掛程式（vendor）══ -->
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="vendor/flatpicker/flatpickr.js"></script>
+<script src="vendor/flatpicker/zh-tw.js"></script>
+<script src="vendor/swiper/swiper-bundle.min.js"></script>
+<script src="js/all.min.js"></script>
+<!-- ══ 專案程式 ══ -->
+<script src="js/scripts.js"></script>
+</body>
+</html>

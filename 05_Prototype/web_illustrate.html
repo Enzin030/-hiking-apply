@@ -28,40 +28,28 @@
 
   <th-page-shell
     :trail="['本站使用說明']"
-    title="本站使用說明"
-    lead="本站提供國家公園入園與入山申請服務。依國家公園法第十九條，進入玉山、太魯閣、雪霸國家公園生態保護區須申請「國家公園入園許可」；若登山路線同時進入國家安全法第六條公告之山地管制區，另須申請「入山許可證」。本站會自動判斷申請者需要哪幾份許可。"
-    updated="2026-09-01">
+    title="本站使用說明">
 
-    <template #nav>
-      <th-page-nav :items="[
-        { id: 'permit', label: '兩種許可的差別' },
-        { id: 'faq', label: '首次使用常見問題' }
-      ]"></th-page-nav>
+    <template #lead>
+      第一次申請入園或第一次進入本站一站式服務網之申請民眾，可參考下方新手常見問題快速獲得登山入園相關資訊。也可以點擊<a class="th-inline-link" href="news.html?tab=faq">常見問答</a>，查看本站所有常見問題唷！
     </template>
 
     <!--
-      法源與核發機關已於 2026-09-02 查證全國法規資料庫確認，不再是推得內容：
-        國家公園法（D0070105）第 19 條：「進入生態保護區者，應經國家公園管理處之許可。」
-          → 核發機關即各國家公園管理處，條文明文。
-        國家安全法（A0030028，111-06-08 修正）第 6 條：管制區之劃定與
-          「人民入出前項管制區，應向該管機關申請許可」。
-          注意：山地管制區在 111 年修正前是第 5 條，修正後移到第 6 條，
-          現行第 5 條是入出境檢查職權，與入山許可無關。網路資料多半還停在舊條號。
-        國家安全法施行細則（A0030029）第 31 條：入出山地經常／特定管制區應向
-          「內政部警政署或該管警察局、警察分局、分駐所、派出所（特定管制區另含檢查所）
-           或保安警察第七總隊派駐國家公園分隊、小隊」申請許可
-          → 核發機關不只警政署一個層級，故不寫「警政署」。
+      「首次使用本站申請入園入山」——結合原本兩張卡片內容（說明的四段文字 ＋ 兩種許可差別對照表），
+      Vue 的 whitespace: 'condense' 會把「文字＋換行＋縮排」折成「文字＋一個空白」，
+      換行若落在文字與標籤之間就會多出空白，每段壓成一行；slot 內文第一段文字緊貼標籤。
     -->
-    <section class="th-card" id="permit">
+    <section class="th-card" id="intro">
       <div class="th-card-head">
-        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
-        <h2 class="th-card-title">兩種許可的差別</h2>
-        <span class="th-card-note">法源依全國法規資料庫</span>
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">首次使用本站申請入園入山</h2>
       </div>
       <div class="th-card-body">
+        <p>根據國家公園法第十九條，進入玉山、太魯閣、雪霸國家公園生態保護區需先申請【國家公園入園許可】。倘若登山路線進入山地管制區，則除【國家公園入園許可】以外，需額外申請【入山許可證】。</p>
+
         <!-- slot 內文的第一段文字必須緊貼標籤，見 th-callout.js 註解 -->
-        <th-callout>一次申請即可，<strong>本站會依所選路線自動判斷需要哪幾份許可</strong>，
-          不需分別到各機關網站送件。</th-callout>
+        <th-callout>您可於本站中選擇國家公園路線進行【國家公園入園許可】申請，本站將會自動依據申請路線協助判斷是否需申請【入山許可證】，並提示您填寫相關資料。</th-callout>
+
         <div class="th-table-wrap">
           <table class="th-table">
             <caption>三種入山入園許可的對照表，欄位為許可種類、法源依據、適用情形、核發機關</caption>
@@ -89,10 +77,6 @@
             </tbody>
           </table>
         </div>
-        <p class="th-table-note">
-          法源出處：國家公園法第 19 條、國家安全法第 6 條、國家安全法施行細則第 30、31 條
-          （全國法規資料庫，2026-09-02 查證）。
-        </p>
       </div>
     </section>
 
@@ -106,7 +90,7 @@
         <!--
           .p-illustrate-* 是本頁專用樣式，遷移時依 §6.2 由 .th-faq*／.th-page-cta*
           改名，規則見 assets/css/pages.css。
-          FAQ 用原生 <details>，無 JS 互動——這也是本頁被歸在「輕」組的原因。
+          FAQ 用原生 <details>，無 JS互動——這也是本頁被歸在「輕」組的原因。
         -->
         <div class="p-illustrate-faq">
           <details v-for="(f, i) in faqs" :key="f.q" :open="i === 0 ? true : null">
@@ -117,7 +101,7 @@
               <p v-if="f.links && f.links.length" class="p-illustrate-faq-links">
                 <template v-for="l in f.links" :key="l.label">
                   <span v-if="l.todo" class="p-illustrate-faq-link is-todo">{{ l.label }}<span class="th-todo-tag">待建置</span></span>
-                  <a v-else class="p-illustrate-faq-link" :href="l.href">{{ l.label }}<i class="fa-solid fa-angle-right" aria-hidden="true"></i></a>
+                  <a v-else class="p-illustrate-faq-link" :href="l.href" target="_blank" rel="noopener noreferrer">{{ l.label }}<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                 </template>
               </p>
             </div>
@@ -126,9 +110,8 @@
       </div>
     </section>
 
-    <!-- 頁尾主要 CTA：比照正式站 web_illustrate.aspx 的「進入登山申請」按鈕 -->
+    <!-- 頁尾主要 CTA：只保留按鈕，移除說明文字與外框底色 -->
     <div class="p-illustrate-cta">
-      <p class="p-illustrate-cta-text">看完說明後，即可開始申請入園／入山許可。</p>
       <a class="th-btn th-btn-primary th-btn-lg" href="apply-1.html">
         <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>進入登山申請
       </a>

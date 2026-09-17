@@ -65,17 +65,17 @@ const SITEMAP_GROUPS = (function () {
     { key: "status",   label: "登山路線開放狀態", children: single({ key: "status", label: "登山路線開放狀態", url: leaf("status") }) },
     { key: "campsite", label: "宿營地與床位查詢", children: children("campsite") },
     { key: "info",     label: "旅遊登山資訊", children: children("info") },
-    /* 頁首沒有此項；雛形已有頁面 */
+    /* 2026-09-14 起頁首工具列也有此項（TH_HEADER_UTILITY），但工具列不進 children()，故仍手寫 */
     { key: "illustrate", label: "本站使用說明", children: single({ key: "illustrate", label: "本站使用說明", url: "web_illustrate.html" }) },
     { key: "warning",  label: "警特報", children: single({ key: "warning", label: "警特報", url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true }) },
     { key: "rss",      label: "RSS訂閱", children: single({ key: "rss", label: "RSS訂閱", url: "rss.html" }) },
-    /* 與 th-footer 同步：常見問答＝公布欄第四頁籤，其餘四項 footer 亦為待建置 */
+    /* 與 th-footer 同步：常見問答＝公布欄第四頁籤，聯絡我們與各項政策宣告均已完成實體頁面 */
     { key: "siteinfo", label: "網站資訊", children: [
-      { key: "faq",      label: "常見問答", url: "news.html?tab=faq" },
-      { key: "contact",  label: "聯絡我們", url: null },
-      { key: "privacy",  label: "隱私權宣告", url: null },
-      { key: "security", label: "資訊安全政策", url: null },
-      { key: "opendata", label: "資料開放宣告", url: null },
+      { key: "faq",      label: "常見問答", url: "news_7.html" },
+      { key: "contact",  label: "聯絡我們", url: "mail.html" },
+      { key: "privacy",  label: "隱私權宣告", url: "privacy.html" },
+      { key: "security", label: "資訊安全政策", url: "security.html" },
+      { key: "opendata", label: "資料開放宣告", url: "opendata.html" },
     ] },
   ];
 })();

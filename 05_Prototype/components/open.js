@@ -85,7 +85,7 @@ const NEED_COLUMNS = [
   { key: "needMountainPermit", label: "警政署入山證" },
 ];
 
-const EMPTY_FILTER = { org: "all", mainRoute: "all", q: "" };
+const EMPTY_FILTER = { org: "all", route: "all", q: "" };
 
 /* ── 圖例 ── */
 
@@ -97,7 +97,32 @@ thPage({
       page: 1,
       levelModal: null,
       noteModal: null,
+      orgOpen: false,
+      orgSearchQuery: "",
+      routeOpen: false,
+      routeSearchQuery: "",
+      activeCanApply: "",
+      activeStatus: "",
     };
+  },
+
+  mounted() {
+    var self = this;
+    this._onDocClick = function (e) {
+      if (self.orgOpen && self.$refs.orgCombo && !self.$refs.orgCombo.contains(e.target)) {
+        self.orgOpen = false;
+      }
+      if (self.routeOpen && self.$refs.routeCombo && !self.$refs.routeCombo.contains(e.target)) {
+        self.routeOpen = false;
+      }
+    };
+    document.addEventListener("click", this._onDocClick);
+  },
+
+  unmounted() {
+    if (this._onDocClick) {
+      document.removeEventListener("click", this._onDocClick);
+    }
   },
 
   computed: {
@@ -108,69 +133,51 @@ thPage({
     orgBadge() { return ORG_BADGE; },
     kitPdf() { return KIT_PDF; },
 
-    /* 主路線下拉隨機關連動（正式站也是選機關後才重整路線下拉） */
-    mainRoutes() {
-      var org = this.draft.org;
-      var pool = org === "all"
-        ? OPEN_STATUS_ROWS
-        : OPEN_STATUS_ROWS.filter(function (r) { return r.filterKey === org; });
-      var seen = {};
-      var out = [];
-      pool.forEach(function (r) {
-        if (!seen[r.mainRoute]) { seen[r.mainRoute] = true; out.push(r.mainRoute); }
-      });
-      return out.sort(function (a, b) { return a.localeCompare(b, "zh-Hant"); });
+    currentOrgLabel() {
+      var key = this.draft.org;
+      var found = OPEN_ORG_BUTTONS.find(function (o) { return o.key === key; });
+      return found ? found.label : "全部";
     },
 
-    /*
-      主路線下拉的 <optgroup> 分組（2026-09-10，模式 2）
-      ------------------------------------------------------------
-      432 條主路線攤成一張平的清單，捲起來找不到東西。改用原生 <optgroup>
-      依每列的 filterKey 分組。
+    /* 支援即時關鍵字搜尋的機關清單 */
+    filteredOrgs() {
+      var q = this.orgSearchQuery.trim().toLowerCase();
+      if (!q) return OPEN_ORG_BUTTONS;
+      return OPEN_ORG_BUTTONS.filter(function (o) {
+        return o.label.toLowerCase().indexOf(q) >= 0;
+      });
+    },
 
-      **這是新增的 computed，mainRoutes 與 changeOrg 一行都沒動。**
-      mainRoutes 仍負責「全部路線（N 條）」那個計數，兩者取的是同一個 pool。
-
-      組的順序照 OPEN_ORG_BUTTONS，與上面那排機關頁籤一致——
-      不用 Object.keys 的偶然順序。
-
-      **只有選「全部」時才有多組**；選了特定機關時 pool 已被篩成單一 filterKey，
-      這時 optgroup 只會有一組、標題與已選的頁籤重複，所以那種情況維持平的清單
-      （樣板用 groups.length > 1 判斷）。
-
-      注意「其他路線」同時出現在 shei-pa 與 yushan 兩組（資料就是這樣），
-      所以分組後的總數 433 比去重後的 432 多一條。這是刻意保留的：
-      兩組各自列出自己的「其他路線」才對得上該機關的資料，
-      而 value 相同，選哪一個結果都一樣。
-    */
-    mainRouteGroups() {
+    /* 路線下拉隨機關連動（對齊正式站選項清單與原始順序） */
+    mainRoutes() {
       var org = this.draft.org;
-      var pool = org === "all"
-        ? OPEN_STATUS_ROWS
-        : OPEN_STATUS_ROWS.filter(function (r) { return r.filterKey === org; });
-      var byKey = {};
-      pool.forEach(function (r) {
-        (byKey[r.filterKey] || (byKey[r.filterKey] = {}))[r.mainRoute] = true;
+      var dict = window.OFFICIAL_ORG_ROUTES || {};
+      var list = dict[org];
+      if (list && list.length > 0) return list;
+      return dict["all"] || [];
+    },
+
+    /* 支援即時關鍵字過濾的平鋪路線清單 */
+    filteredRoutes() {
+      var q = this.routeSearchQuery.trim().toLowerCase();
+      var routes = this.mainRoutes;
+      if (!q) return routes;
+      return routes.filter(function (r) {
+        return r.toLowerCase().indexOf(q) >= 0;
       });
-      var out = [];
-      OPEN_ORG_BUTTONS.forEach(function (b) {
-        if (b.key === "all" || !byKey[b.key]) return;
-        out.push({
-          key: b.key,
-          label: b.label,
-          routes: Object.keys(byKey[b.key])
-            .sort(function (a, c) { return a.localeCompare(c, "zh-Hant"); }),
-        });
-      });
-      return out;
     },
 
     rows() {
       var f = this.filter;
       var q = f.q.trim();
+      var canApply = this.activeCanApply;
+      var status = this.activeStatus;
+      var selRoute = f.route;
       return OPEN_STATUS_ROWS.filter(function (r) {
         if (f.org !== "all" && r.filterKey !== f.org) return false;
-        if (f.mainRoute !== "all" && r.mainRoute !== f.mainRoute) return false;
+        if (selRoute !== "all" && r.name !== selRoute && r.mainRoute !== selRoute) return false;
+        if (canApply && r.canApply !== canApply) return false;
+        if (status && r.status !== status) return false;
         if (q && !(r.name.indexOf(q) >= 0 || r.mainRoute.indexOf(q) >= 0 ||
                    r.orgLabel.indexOf(q) >= 0 || r.note.indexOf(q) >= 0)) return false;
         return true;
@@ -197,10 +204,60 @@ thPage({
     reset() {
       this.draft = Object.assign({}, EMPTY_FILTER);
       this.filter = Object.assign({}, EMPTY_FILTER);
+      this.activeCanApply = "";
+      this.activeStatus = "";
+      this.page = 1;
+      this.orgOpen = false;
+      this.orgSearchQuery = "";
+      this.routeOpen = false;
+      this.routeSearchQuery = "";
+    },
+    toggleCanApply(k) {
+      this.activeCanApply = this.activeCanApply === k ? "" : k;
       this.page = 1;
     },
-    /* 切換機關時，原本選定的主路線可能已不在新清單內 */
-    changeOrg(org) { this.setField({ org: org, mainRoute: "all" }); },
+    toggleStatus(k) {
+      this.activeStatus = this.activeStatus === k ? "" : k;
+      this.page = 1;
+    },
+    toggleOrgDropdown() {
+      this.orgOpen = !this.orgOpen;
+      if (this.orgOpen) {
+        this.orgSearchQuery = "";
+        this.routeOpen = false;
+        var self = this;
+        this.$nextTick(function () {
+          if (self.$refs.orgSearchInput) self.$refs.orgSearchInput.focus();
+        });
+      }
+    },
+    selectOrg(key) {
+      this.changeOrg(key);
+      this.orgOpen = false;
+      this.orgSearchQuery = "";
+    },
+    /* 切換機關時，原本選定的路線重設為 all */
+    changeOrg(org) {
+      this.setField({ org: org, route: "all" });
+      this.routeOpen = false;
+      this.routeSearchQuery = "";
+    },
+    toggleRouteDropdown() {
+      this.routeOpen = !this.routeOpen;
+      if (this.routeOpen) {
+        this.routeSearchQuery = "";
+        this.orgOpen = false;
+        var self = this;
+        this.$nextTick(function () {
+          if (self.$refs.routeSearchInput) self.$refs.routeSearchInput.focus();
+        });
+      }
+    },
+    selectRoute(r) {
+      this.setField({ route: r });
+      this.routeOpen = false;
+      this.routeSearchQuery = "";
+    },
     isArray(v) { return Array.isArray(v); },
   },
 });

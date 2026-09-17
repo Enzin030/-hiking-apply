@@ -1,0 +1,132 @@
+@charset "UTF-8";
+/* ============================================================
+   layout.css — 版面容器與版面工具類
+   ------------------------------------------------------------
+   取代原單檔版所使用的 Tailwind utility class。
+   命名規則：一律 th- 前綴，避免與 Bootstrap 衝突。
+   ※ Bootstrap 的 .row / .col-* / .g-* 仍可正常使用，
+     本檔僅補足 Bootstrap 沒有、而版型需要的工具類。
+   ============================================================ */
+
+/* ============ 容器 ============ */
+/* .th-container    ：一般內頁容器（對應原 max-w-7xl，1280px）*/
+/* .th-container-md ：首頁雙卡片容器（對應原 max-w-6xl，1152px）*/
+.th-container,
+.th-container-md {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.th-container    { max-width: 1280px; }
+.th-container-md { max-width: 1152px; }
+
+@media (max-width: 900px) {
+  .th-container,
+  .th-container-md { padding-left: 16px; padding-right: 16px; }
+}
+
+/* ============ 頁面骨架（sticky footer）============ */
+.th-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.th-shell > .th-main { flex: 1 0 auto; }
+.th-shell > .th-footer { flex-shrink: 0; }
+
+/* ============ Flex 工具 ============ */
+.th-flex        { display: flex; }
+.th-inline-flex { display: inline-flex; }
+.th-col         { flex-direction: column; }
+.th-wrap        { flex-wrap: wrap; }
+.th-grow        { flex: 1 1 auto; }
+.th-shrink-0    { flex-shrink: 0; }
+
+.th-items-start   { align-items: flex-start; }
+.th-items-center  { align-items: center; }
+.th-items-end     { align-items: flex-end; }
+.th-items-stretch { align-items: stretch; }
+
+.th-justify-start   { justify-content: flex-start; }
+.th-justify-center  { justify-content: center; }
+.th-justify-end     { justify-content: flex-end; }
+.th-justify-between { justify-content: space-between; }
+
+/* ============ 間距（gap）============ */
+.th-gap-1  { gap: 4px; }
+.th-gap-2  { gap: 8px; }
+.th-gap-3  { gap: 12px; }
+.th-gap-4  { gap: 16px; }
+.th-gap-5  { gap: 20px; }
+.th-gap-6  { gap: 24px; }
+.th-gap-8  { gap: 32px; }
+.th-gap-10 { gap: 40px; }
+.th-gap-12 { gap: 48px; }
+
+/* ============ 格線（首頁功能鈕用）============ */
+.th-grid { display: grid; }
+
+/* 雙欄主面板：桌機 2 欄、平板以下 1 欄 */
+.th-grid-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .th-grid-panels { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* 功能鈕格線：桌機 4 欄、平板 4 欄、手機 2 欄 */
+.th-grid-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 20px;
+  row-gap: 48px;
+  align-content: center;
+  width: 100%;
+}
+@media (max-width: 640px) {
+  .th-grid-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 32px;
+  }
+}
+
+/* 內頁：主內容 + 右側摘要卡 */
+.th-grid-aside {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .th-grid-aside { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============ 位移 / 定位 ============ */
+.th-relative { position: relative; }
+.th-absolute { position: absolute; }
+.th-inset-0  { inset: 0; }
+.th-z-10     { z-index: 10; }
+.th-z-20     { z-index: 20; }
+.th-overflow-hidden { overflow: hidden; }
+
+/* ============ 常用間距（垂直節奏）============ */
+.th-mt-0  { margin-top: 0; }
+.th-mt-2  { margin-top: 8px; }
+.th-mt-4  { margin-top: 16px; }
+.th-mt-6  { margin-top: 24px; }
+.th-mt-8  { margin-top: 32px; }
+.th-mb-4  { margin-bottom: 16px; }
+.th-mb-6  { margin-bottom: 24px; }
+.th-mb-8  { margin-bottom: 32px; }
+.th-py-6  { padding-top: 24px; padding-bottom: 24px; }
+.th-py-10 { padding-top: 40px; padding-bottom: 40px; }
+
+/* ============ 顯示控制 ============ */
+.th-hide          { display: none !important; }
+@media (max-width: 900px)  { .th-hide-md-down { display: none !important; } }
+@media (min-width: 901px)  { .th-hide-md-up   { display: none !important; } }

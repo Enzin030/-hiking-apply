@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>聯絡我們 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  聯絡我們（對應舊站 mail.aspx；規格 34_聯絡我們.md 第一節）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/mail.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header></th-header>
+
+  <th-page-shell
+    :trail="['聯絡我們']"
+    title="聯絡我們"
+    lead="本頁提供登山申請相關諮詢服務，客服信箱於工作日由各管轄機關指派專人回覆。如您有立即回覆之需求，敬請使用客服專線。">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <!-- 客服信箱（個人資料使用同意） -->
+    <section class="th-card" id="email-intro">
+      <div class="th-card-head">
+        <h2 class="th-card-title">客服信箱</h2>
+      </div>
+      <div class="th-card-body flex flex-col gap-6">
+        <div>
+          <h3 class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug">個人資料使用同意</h3>
+          <p class="text-[length:var(--fs-md)] text-slate-700 leading-relaxed">
+            依據「個人資料保護法」第 15 條，蒐集您的姓名及電話等個人資料，<strong class="font-bold text-slate-900">僅利用於入園民眾信箱網頁、回復您的 e-mail 使用及統計分析使用，將於不損害您的個人權益原則下進行您個人資料之處理及利用</strong>。每年定期銷毀個資 1 次，僅保留統計分析及諮詢相關資料。
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <a href="index.html" class="th-btn th-btn-ghost min-w-[120px] hover:opacity-85 transition-opacity">
+            我不同意
+          </a>
+          <a href="mail_1.html" class="th-btn th-btn-primary min-w-[120px] !shadow-none hover:opacity-85 transition-opacity" style="box-shadow: none;">
+            我同意
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 客服專線清單 -->
+    <section class="th-card" id="hotline">
+      <div class="th-card-head">
+        <h2 class="th-card-title">客服專線</h2>
+      </div>
+      <div class="th-card-body flex flex-col gap-4">
+        <div class="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md text-[length:var(--fs-sm)] text-amber-900 font-medium">
+          <i class="fa-solid fa-clock text-amber-700"></i>
+          <span>服務時間：週一至週五（國定例假日休息）上午 8:30~12:30 │ 下午 1:30~5:30</span>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+          <table class="w-full text-left border-collapse text-[length:var(--fs-sm)]">
+            <thead class="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+              <tr>
+                <th scope="col" class="py-3 px-4 w-1/4">申請管理單位</th>
+                <th scope="col" class="py-3 px-4 w-1/4">聯絡電話</th>
+                <th scope="col" class="py-3 px-4 w-1/2">所轄服務地區</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr v-for="(h, idx) in hotlines" :key="idx" class="hover:bg-slate-50 transition-colors">
+                <td class="py-3 px-4 font-medium text-slate-900 align-top">{{ h.unit }}</td>
+                <td class="py-3 px-4 text-slate-900 align-top whitespace-nowrap font-medium">
+                  {{ h.tel }}
+                </td>
+                <td class="py-3 px-4 text-slate-600 align-top leading-relaxed">{{ h.area }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-footer></th-footer>
+
+  <th-quick-nav></th-quick-nav>
+
+</div>
+
+</body>
+</html>

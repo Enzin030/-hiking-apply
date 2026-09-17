@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+<title>登山路線介紹｜臺灣登山申請一站式服務網</title>
+<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+
+<!-- ══ 字型 ══ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- ══ 外掛樣式（vendor）══ -->
+<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="vendor/flatpicker/flatpickr.min.css" rel="stylesheet">
+<link href="vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+<!-- ══ 專案樣式（載入順序固定，勿調換）══ -->
+<link href="css/tokens.css" rel="stylesheet">
+<link href="css/base.css" rel="stylesheet">
+<link href="css/layout.css" rel="stylesheet">
+<link href="css/components.css" rel="stylesheet">
+</head>
+<body>
+
+<a class="th-skip-link" href="#main">跳至主要內容</a>
+
+<div class="th-shell">
+
+<!-- ══════════════════════════════════════════════════════════════
+     HEADER — 全站共用（與 index.html／_template.html 保持一致）
+     ══════════════════════════════════════════════════════════════ -->
+<header class="th-header">
+  <!-- 導盲磚：上方選單連結區 -->
+  <a class="th-accesskey" id="AU" href="#AU" accesskey="U"
+   title="快速鍵 Alt+U：上方選單連結區" aria-label="上方選單連結區（快速鍵 Alt+U）"><span aria-hidden="true">:::</span></a>
+
+  <div class="th-header-inner">
+
+    <a href="index.html" class="th-brand th-focusable">
+      <img src="img/favicon.png" alt="內政部國家公園署" class="th-logo">
+      <span class="th-wordmark">臺灣<span class="th-accent">登山申請</span>一站式服務網</span>
+    </a>
+
+    <button type="button" class="th-nav-toggle" data-nav-toggle
+            aria-expanded="false" aria-controls="header-nav" aria-label="展開／收合選單">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    <div class="th-header-right" id="header-nav">
+      <div class="th-utility">
+        <a href="#">網站導覽</a>
+        <span class="th-divider" aria-hidden="true"></span>
+        <a href="#">警特報</a>
+        <span class="th-divider" aria-hidden="true"></span>
+        <a href="#">RSS</a>
+        <span class="th-divider" aria-hidden="true"></span>
+        <!-- 語言選單：Disclosure Pattern，行為由 js/scripts.js 處理 -->
+        <div class="th-lang" data-lang-menu>
+          <button type="button" class="th-utility-btn" id="lang-btn"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="lang-list">
+            <i class="fas fa-globe" aria-hidden="true"></i> 語言
+            <i class="fas fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <ul class="th-lang-menu" id="lang-list" aria-labelledby="lang-btn" hidden>
+            <li><a href="#" lang="zh-Hant-TW" aria-current="true"><span class="tick" aria-hidden="true"></span>繁體中文</a></li>
+            <li><a href="#" lang="en"><span class="tick" aria-hidden="true"></span>English</a></li>
+            <li><a href="#" lang="ja"><span class="tick" aria-hidden="true"></span>日本語</a></li>
+          </ul>
+        </div>
+        <span class="th-divider" aria-hidden="true"></span>
+        <!-- 全站搜尋（輸入框模式）-->
+        <form class="th-utility-search" role="search" action="#" method="get">
+          <label class="th-sr-only" for="site-search">全站搜尋</label>
+          <input type="search" id="site-search" name="q" placeholder="搜尋">
+          <button type="submit" aria-label="執行搜尋">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- 主選單：有子項目者為下拉（js/scripts.js 的 initNavMenus 處理）
+           目前所在區塊在 .th-navitem 加 is-active；目前頁面在子項目加 aria-current="page" -->
+      <nav class="th-nav" aria-label="主選單">
+        <div class="th-navitem" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-bulletin"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-bulletin-menu">
+            公布欄 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-bulletin-menu" aria-labelledby="nav-bulletin" hidden>
+            <li><a href="news.html">最新消息</a></li>
+            <li><a href="#">違規名單</a></li>
+            <li><a href="#">檔案下載</a></li>
+            <li><a href="#">常見問答</a></li>
+          </ul>
+        </div>
+        <div class="th-navitem" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-apply"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-apply-menu">
+            登山申請 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-apply-menu" aria-labelledby="nav-apply" hidden>
+            <li><a href="apply-1.html">各項線上申請</a></li>
+            <li><a href="#">申請進度查詢／繳費／異動／取消</a></li>
+            <li><a href="#">草稿編輯</a></li>
+            <li><a href="#">國家公園出園回報</a></li>
+          </ul>
+        </div>
+        <a href="#">登山須知</a>
+        <a href="#">登山路線開放狀態</a>
+        <div class="th-navitem" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-bed"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-bed-menu">
+            宿營地與床位查詢 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-bed-menu" aria-labelledby="nav-bed" hidden>
+            <li><a href="forest-camp-1.html">林業及自然保育署宿營地查詢</a></li>
+            <li><a href="#">林業及自然保育署區域申請及抽籤查詢</a></li>
+            <li><a href="#">太魯閣山屋查詢</a></li>
+            <li><a href="#">太魯閣路線查詢</a></li>
+            <li><a href="#">雪霸宿營地查詢</a></li>
+            <li><a href="#">雪霸路線查詢</a></li>
+            <li><a href="#">玉山宿營地查詢</a></li>
+            <li><a href="#">玉山單日往返路線查詢</a></li>
+            <li><a href="#">玉山抽籤結果查詢</a></li>
+            <li><a href="#">玉山抽籤日期查詢</a></li>
+            <li><a href="#">玉山可申請退費日期查詢</a></li>
+          </ul>
+        </div>
+        <div class="th-navitem is-active" data-nav-menu>
+          <button type="button" class="th-navbtn" id="nav-travel"
+                  aria-expanded="false" aria-haspopup="true" aria-controls="nav-travel-menu">
+            旅遊登山資訊 <i class="fas fa-angle-down caret" aria-hidden="true"></i>
+          </button>
+          <ul class="th-navmenu" id="nav-travel-menu" aria-labelledby="nav-travel" hidden>
+            <li><a href="#">登山路線圖資查詢</a></li>
+            <li><a href="route.html">登山路線介紹</a></li>
+            <li><a href="#">景點資訊</a></li>
+            <li><a href="#">各縣市天氣預報</a></li>
+            <li><a href="#">國家公園天氣資訊</a></li>
+            <li><a href="#">即時影像觀看</a></li>
+            <li><a href="#">國家公園步道分級</a></li>
+            <li><a href="#">雙語詞彙</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MAIN
+     ══════════════════════════════════════════════════════════════ -->
+<main id="main" class="th-main th-page">
+
+  <!-- 導盲磚：中間主要內容區 -->
+  <a class="th-accesskey" id="AC" href="#AC" accesskey="C"
+   title="快速鍵 Alt+C：中間主要內容區" aria-label="中間主要內容區（快速鍵 Alt+C）"><span aria-hidden="true">:::</span></a>
+
+  <nav class="th-crumb" aria-label="麵包屑">
+    <a href="index.html" aria-label="首頁"><i class="fas fa-home" aria-hidden="true"></i></a>
+    <i class="fas fa-angle-right" aria-hidden="true"></i>
+    <a href="#">旅遊登山資訊</a>
+    <i class="fas fa-angle-right" aria-hidden="true"></i>
+    <span class="th-crumb-current">登山路線介紹</span>
+  </nav>
+
+  <div class="th-page-inner">
+
+    <h1 class="th-page-title">登山路線介紹</h1>
+
+    <!-- ══ 第一層頁籤：管理機關 ═════════════════════════════════
+         頁籤行為由 js/tabs.js 統一處理（支援 ← → Home End 鍵盤操作）
+         第二層路線頁籤在各機關面板內，用法完全相同。
+         ═══════════════════════════════════════════════════════ -->
+    <div class="th-tabs" role="tablist" data-tabs aria-label="管理機關">
+        <button type="button" class="th-tab" role="tab" id="tab-yu"
+                aria-controls="panel-yu" aria-selected="true">玉山國家公園管理處</button>
+        <button type="button" class="th-tab" role="tab" id="tab-tk"
+                aria-controls="panel-tk" aria-selected="false">太魯閣國家公園管理處</button>
+        <button type="button" class="th-tab" role="tab" id="tab-sp"
+                aria-controls="panel-sp" aria-selected="false">雪霸國家公園管理處</button>
+    </div>
+
+      <div class="th-tabpanel" role="tabpanel" id="panel-yu" aria-labelledby="tab-yu" hidden>
+        <div class="th-subtabs" role="tablist" data-tabs aria-label="玉山國家公園管理處 路線">
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-0"
+                  aria-controls="spanel-yu-0" aria-selected="true">玉山全區圖</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-1"
+                  aria-controls="spanel-yu-1" aria-selected="false">玉山群峰線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-2"
+                  aria-controls="spanel-yu-2" aria-selected="false">馬博拉斯橫斷線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-3"
+                  aria-controls="spanel-yu-3" aria-selected="false">八通關線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-4"
+                  aria-controls="spanel-yu-4" aria-selected="false">南二段線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-5"
+                  aria-controls="spanel-yu-5" aria-selected="false">新康山線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-6"
+                  aria-controls="spanel-yu-6" aria-selected="false">南橫三山/關山線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-yu-7"
+                  aria-controls="spanel-yu-7" aria-selected="false">玉山步道</button>
+        </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-0" aria-labelledby="stab-yu-0" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+            <div class="th-listbar">
+              <h2 class="th-section-title" style="margin:0">玉山全區圖
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-listbar-actions">
+                <span class="th-badge th-badge-yushan">玉山</span>
+                <a href="https://www.ysnp.gov.tw/Folder/Mountaineering" class="th-listbar-link" target="_blank" rel="noopener"><i class="fas fa-external-link-alt" aria-hidden="true"></i> 官網連結<span class="th-sr-only">（另開新視窗）</span></a>
+              </div>
+            </div>
+
+            <figure class="th-figure">
+              <img src="img/yushan-overview.jpg" alt="玉山全區圖：全區步道路網、山屋位置與百岳一覽" loading="lazy">
+              <figcaption>玉山全區圖</figcaption>
+            </figure>
+
+          </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-1" aria-labelledby="stab-yu-1" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <div class="th-listbar">
+                <h2 class="th-section-title" style="margin:0">玉山群峰線
+                  <span class="th-section-title-sub">玉山國家公園管理處</span>
+                </h2>
+                <div class="th-listbar-actions">
+                  <span class="th-badge th-badge-yushan">玉山</span>
+                  <a href="#" class="th-listbar-link"><i class="fas fa-external-link-alt" aria-hidden="true"></i> 官網路線頁</a>
+                </div>
+              </div>
+			<div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-2" aria-labelledby="stab-yu-2" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">馬博拉斯橫斷線
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-3" aria-labelledby="stab-yu-3" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">八通關線
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-4" aria-labelledby="stab-yu-4" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">南二段線
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-5" aria-labelledby="stab-yu-5" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">新康山線
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-6" aria-labelledby="stab-yu-6" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">南橫三山/關山線
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-yu-7" aria-labelledby="stab-yu-7" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">玉山步道
+                <span class="th-section-title-sub">玉山國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="th-tabpanel" role="tabpanel" id="panel-tk" aria-labelledby="tab-tk" hidden>
+        <div class="th-subtabs" role="tablist" data-tabs aria-label="太魯閣國家公園管理處 路線">
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-0"
+                  aria-controls="spanel-tk-0" aria-selected="true">奇萊主北峰</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-1"
+                  aria-controls="spanel-tk-1" aria-selected="false">奇萊東稜</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-2"
+                  aria-controls="spanel-tk-2" aria-selected="false">南湖中央尖線(北一段)</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-3"
+                  aria-controls="spanel-tk-3" aria-selected="false">南湖大山線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-4"
+                  aria-controls="spanel-tk-4" aria-selected="false">北二段</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-5"
+                  aria-controls="spanel-tk-5" aria-selected="false">畢祿縱走羊頭</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-6"
+                  aria-controls="spanel-tk-6" aria-selected="false">畢祿山單攻</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-7"
+                  aria-controls="spanel-tk-7" aria-selected="false">羊頭山單攻</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-8"
+                  aria-controls="spanel-tk-8" aria-selected="false">清水山</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-9"
+                  aria-controls="spanel-tk-9" aria-selected="false">錐麓古道</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-10"
+                  aria-controls="spanel-tk-10" aria-selected="false">北一縱走北二</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-11"
+                  aria-controls="spanel-tk-11" aria-selected="false">閂山鈴鳴山</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-12"
+                  aria-controls="spanel-tk-12" aria-selected="false">閂山單攻</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-13"
+                  aria-controls="spanel-tk-13" aria-selected="false">奇萊南峰</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-14"
+                  aria-controls="spanel-tk-14" aria-selected="false">奇萊連峰</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-tk-15"
+                  aria-controls="spanel-tk-15" aria-selected="false">太魯閣步道</button>
+        </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-0" aria-labelledby="stab-tk-0" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <div class="th-listbar">
+                <h2 class="th-section-title" style="margin:0">奇萊主北峰
+                  <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+                </h2>
+                <div class="th-listbar-actions">
+                  <span class="th-badge th-badge-taroko">太魯閣</span>
+                  <a href="#" class="th-listbar-link"><i class="fas fa-external-link-alt" aria-hidden="true"></i> 官網路線頁</a>
+                </div>
+              </div>				
+			<div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-1" aria-labelledby="stab-tk-1" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">奇萊東稜
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-2" aria-labelledby="stab-tk-2" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">南湖中央尖線(北一段)
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-3" aria-labelledby="stab-tk-3" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">南湖大山線
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-4" aria-labelledby="stab-tk-4" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">北二段
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-5" aria-labelledby="stab-tk-5" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">畢祿縱走羊頭
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-6" aria-labelledby="stab-tk-6" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">畢祿山單攻
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-7" aria-labelledby="stab-tk-7" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">羊頭山單攻
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-8" aria-labelledby="stab-tk-8" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">清水山
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-9" aria-labelledby="stab-tk-9" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">錐麓古道
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-10" aria-labelledby="stab-tk-10" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">北一縱走北二
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-11" aria-labelledby="stab-tk-11" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">閂山鈴鳴山
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-12" aria-labelledby="stab-tk-12" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">閂山單攻
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-13" aria-labelledby="stab-tk-13" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">奇萊南峰
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-14" aria-labelledby="stab-tk-14" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">奇萊連峰
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-tk-15" aria-labelledby="stab-tk-15" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">太魯閣步道
+                <span class="th-section-title-sub">太魯閣國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="th-tabpanel" role="tabpanel" id="panel-sp" aria-labelledby="tab-sp" hidden>
+        <div class="th-subtabs" role="tablist" data-tabs aria-label="雪霸國家公園管理處 路線">
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-0"
+                  aria-controls="spanel-sp-0" aria-selected="false">雪山西稜線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-1"
+                  aria-controls="spanel-sp-1" aria-selected="true">雪東線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-2"
+                  aria-controls="spanel-sp-2" aria-selected="false">聖稜線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-3"
+                  aria-controls="spanel-sp-3" aria-selected="false">武陵四秀</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-4"
+                  aria-controls="spanel-sp-4" aria-selected="false">大霸線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-5"
+                  aria-controls="spanel-sp-5" aria-selected="false">志佳陽線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-6"
+                  aria-controls="spanel-sp-6" aria-selected="false">雪劍線(大小劍線)</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-7"
+                  aria-controls="spanel-sp-7" aria-selected="false">大霸北稜線</button>
+          <button type="button" class="th-subtab" role="tab" id="stab-sp-8"
+                  aria-controls="spanel-sp-8" aria-selected="false">雪霸步道</button>
+        </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-0" aria-labelledby="stab-sp-0" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">雪山西稜線
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-1" aria-labelledby="stab-sp-1" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <div class="th-listbar">
+                <h2 class="th-section-title" style="margin:0">雪東線
+                  <span class="th-section-title-sub">雪霸國家公園管理處</span>
+                </h2>
+                <div class="th-listbar-actions">
+                  <span class="th-badge th-badge-sheipa">雪霸</span>
+                  <a href="#" class="th-listbar-link"><i class="fas fa-external-link-alt" aria-hidden="true"></i> 官網路線頁</a>
+                </div>
+              </div>				
+			<div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-2" aria-labelledby="stab-sp-2" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">聖稜線
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-3" aria-labelledby="stab-sp-3" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">武陵四秀
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-4" aria-labelledby="stab-sp-4" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">大霸線
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-5" aria-labelledby="stab-sp-5" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">志佳陽線
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-6" aria-labelledby="stab-sp-6" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">雪劍線(大小劍線)
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-7" aria-labelledby="stab-sp-7" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">大霸北稜線
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+
+          <div class="th-tabpanel" role="tabpanel" id="spanel-sp-8" aria-labelledby="stab-sp-8" tabindex="0" hidden>
+            <div class="th-card th-card-pad">
+              <h2 class="th-section-title" style="margin:0 0 16px">雪霸步道
+                <span class="th-section-title-sub">雪霸國家公園管理處</span>
+              </h2>
+              <div class="th-table-empty">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                本路線內容由後端帶入；版型請完全比照同機關的示範路線面板。
+              </div>
+            </div>
+          </div>
+      </div>
+
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FOOTER — 全站共用（請與 index.html 保持一致）
+     ══════════════════════════════════════════════════════════════ -->
+<footer class="th-footer">
+  <!-- 導盲磚：下方選單連結區 -->
+  <a class="th-accesskey th-accesskey-dark" id="AZ" href="#AZ" accesskey="Z"
+   title="快速鍵 Alt+Z：下方選單連結區" aria-label="下方選單連結區（快速鍵 Alt+Z）"><span aria-hidden="true">:::</span></a>
+
+  <div class="th-container">
+    <div class="th-footer-top">
+
+      <div class="th-footer-about">
+        <div class="th-footer-logo">
+          <img src="img/favicon.png" alt="內政部國家公園署">
+        </div>
+        <div class="th-footer-about-body">
+          <div class="th-footer-title-row">
+            <h2 class="th-footer-title">臺灣登山申請一站式服務網</h2>
+            <span class="th-footer-updated">最後更新日期：2026-09-11</span>
+          </div>
+          <p class="th-footer-desc">
+            本網站乃整合國家公園署之玉山、雪霸、太魯閣國家公園登山申請，林業及自然保育署之天池、嘉明湖、向陽、檜谷山屋營地及自然保護(留)區、野生動物保護區，以及警政署入山申請等服務。本站提供統一之申請入口，後續再由各機關個別審核。如有申請相關問題，歡迎透過聯絡我們向指定機關聯繫，謝謝。
+          </p>
+        </div>
+      </div>
+
+      <div class="th-footer-links">
+        <div>
+          <h3>服務專區</h3>
+          <ul>
+            <li><a href="#">常見問答</a></li>
+            <li><a href="#">聯絡我們</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>政策宣告</h3>
+          <ul>
+            <li><a href="#">隱私權宣告</a></li>
+            <li><a href="#">資訊安全政策</a></li>
+            <li><a href="#">資料開放宣告</a></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="th-footer-band">
+    <div class="th-container th-footer-band-inner">
+      <div class="th-footer-copy">Copyright © 內政部國家公園署 著作權所有</div>
+      <div class="th-footer-env">
+        <span>建議使用 Chrome、Edge 或 Safari 瀏覽器</span>
+        <span class="sep" aria-hidden="true">|</span>
+        <span>建議螢幕解析度 1440 x 960 以上</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /.th-shell -->
+
+<!-- ══ 外掛程式（vendor）══ -->
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="vendor/flatpicker/flatpickr.js"></script>
+<script src="vendor/flatpicker/zh-tw.js"></script>
+<script src="vendor/swiper/swiper-bundle.min.js"></script>
+<script src="js/all.min.js"></script>
+<!-- ══ 專案程式 ══ -->
+<script src="js/scripts.js"></script>
+<script src="js/tabs.js"></script>
+</body>
+</html>

@@ -344,7 +344,7 @@ const FILE_ICONS = {
 /* 區域元件：發布單位徽章（原 AgencyBadge） */
 var pNewsAgencyBadge = {
   props: { agencyId: { type: String, required: true }, org: { type: String, required: true } },
-  template: `<span :class="'bulletin-badge agency-' + agencyId">{{ org }}</span>`,
+  template: `<span>{{ org }}</span>`,
 };
 
 /* 區域元件：統一表格（原 BulletinTable）

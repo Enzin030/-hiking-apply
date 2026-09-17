@@ -33,7 +33,11 @@ window.thComponents["th-footer"] = {
   data() {
     return {
       siteUpdated: "2026-03-23",
-      policyLinks: ["隱私權宣告", "資訊安全政策", "資料開放宣告"],
+      policyLinks: [
+        { label: "隱私權宣告", url: "privacy.html" },
+        { label: "資訊安全政策", url: "security.html" },
+        { label: "資料開放宣告", url: "opendata.html" },
+      ],
     };
   },
   template: `
@@ -71,14 +75,18 @@ window.thComponents["th-footer"] = {
                 服務專區
               </h3>
               <!-- 常見問答＝公布欄第四個頁籤（帶 ?tab=faq 直接落在該頁籤）；
-                   聯絡我們（舊站 contact.aspx）尚未建置，不給 \`#\` 假連結 -->
+                   聯絡我們（對應舊站 mail.aspx、mail_1.aspx）連往 mail.html -->
               <ul class="space-y-3 text-[length:var(--fs-sm)]">
                 <li>
-                  <a href="news.html?tab=faq" class="th-footer-link text-slate-400 hover:text-white transition-colors">
+                  <a href="news_7.html" class="th-footer-link text-slate-400 hover:text-white transition-colors">
                     常見問答
                   </a>
                 </li>
-                <li><th-todo-link label="聯絡我們" :on-dark="true"></th-todo-link></li>
+                <li>
+                  <a href="mail.html" class="th-footer-link text-slate-400 hover:text-white transition-colors">
+                    聯絡我們
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
@@ -86,8 +94,11 @@ window.thComponents["th-footer"] = {
                 政策宣告
               </h3>
               <ul class="space-y-3 text-[length:var(--fs-sm)]">
-                <li v-for="p in policyLinks" :key="p">
-                  <th-todo-link :label="p" :on-dark="true"></th-todo-link>
+                <li v-for="p in policyLinks" :key="p.label">
+                  <a v-if="p.url" :href="p.url" class="th-footer-link text-slate-400 hover:text-white transition-colors">
+                    {{ p.label }}
+                  </a>
+                  <th-todo-link v-else :label="p.label" :on-dark="true"></th-todo-link>
                 </li>
               </ul>
             </div>

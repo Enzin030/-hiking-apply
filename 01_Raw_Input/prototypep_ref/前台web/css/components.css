@@ -1,0 +1,1423 @@
+@charset "UTF-8";
+/* ============================================================
+   components.css — 全站共用元件
+   ------------------------------------------------------------
+   HEADER / BREADCRUMB / STEPPER / SECTION TITLE / BUTTON /
+   PAGE WRAP / FOOTBAR / SIDEBAR / CARD / FOOTER
+   ------------------------------------------------------------
+   ※ 所有元件一律 .th- 前綴；新增元件請沿用同樣命名慣例。
+   ※ 首頁專屬樣式請寫在 home.css，勿汙染本檔。
+   ============================================================ */
+
+/* ============ HEADER ============ */
+.th-header {
+  position: sticky; top: 0; z-index: 50;
+  background: #fff;
+  box-shadow: var(--sh-header);
+  border-bottom: 1px solid var(--slate-100);
+  padding: var(--header-pad-y) 0;
+}
+.th-header-inner {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 32px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 24px;
+}
+.th-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.th-logo { height: 56px; width: auto; }
+.th-wordmark {
+  font-family: var(--font-serif); font-weight: 700;
+  font-size: var(--fs-h3); color: var(--fg-1);
+  letter-spacing: var(--tracking-wide); margin: 0;
+  line-height: 1.2;
+}
+.th-wordmark-sub {
+  font-family: var(--font-sans); font-weight: 500;
+  font-size: var(--fs-xxs); color: var(--fg-3); margin: 2px 0 0;
+  letter-spacing: var(--tracking-wide);
+}
+.th-accent { color: var(--national-700); }
+
+.th-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.th-utility {
+  display: flex; align-items: center; gap: 12px;
+  font-size: var(--fs-xs); color: var(--fg-3);
+  /* 窄版必須可換行，且各項不得被壓縮，否則中文會變成一字一行 */
+  flex-wrap: wrap;
+}
+.th-utility > * { flex-shrink: 0; }
+.th-utility a, .th-utility-btn {
+  color: var(--fg-3); text-decoration: none;
+  background: none; border: none;
+  font-size: var(--fs-xs);
+  display: inline-flex; align-items: center; gap: 6px;
+  /* 2.5.8 目標尺寸：可點擊區至少 24×24 CSS px */
+  min-height: 24px; padding: 2px;
+}
+.th-utility-btn:hover, .th-utility a:hover { color: var(--national-700); }
+.th-divider { width: 1px; height: 12px; background: var(--slate-300); }
+
+/* 頁首輔助列 — 全站搜尋輸入框（取代原本的放大鏡按鈕）*/
+.th-utility-search {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  height: 30px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.th-utility-search:focus-within {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+.th-utility-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--fs-xs);
+  color: var(--fg-1);
+  padding: 0 4px 0 14px;
+  width: 140px;
+  height: 100%;
+}
+.th-utility-search input::placeholder { color: var(--slate-500); }
+/* 移除瀏覽器預設的清除叉叉，維持版型一致 */
+.th-utility-search input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.th-utility-search button {
+  border: none;
+  background: var(--national-700);
+  color: #fff;
+  width: 34px;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.th-utility-search button:hover { background: var(--national-700-hover); }
+@media (max-width: 600px) {
+  /* 搜尋框於窄版獨佔一列，其餘輔助連結維持同一列並可換行 */
+  .th-utility-search {
+    height: 32px;
+    flex: 1 1 100%;
+    order: 1;              /* 排到輔助連結之後 */
+  }
+  .th-utility-search input { width: 100%; }
+  .th-utility .th-divider:last-of-type { display: none; }
+}
+.th-nav {
+  display: flex; align-items: center; gap: 24px;
+  font-size: var(--fs-md); font-weight: 500;
+}
+.th-nav a {
+  color: var(--slate-700); text-decoration: none;
+  padding: 4px 0; position: relative;
+}
+.th-nav a:hover { color: var(--national-700); }
+.th-nav a.active { color: var(--national-700); }
+/* 作用中項目的裝飾性底線：底邊對齊 .th-header 的下緣
+   位移 = 頁首下內距 + 下框線寬度（1px），改 --header-pad-y 會自動跟著走 */
+.th-nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(-1 * var(--header-pad-y) - 1px);
+  height: 3px;
+  background: var(--national-700);
+}
+
+/* ============ BREADCRUMB ============ */
+.th-crumb {
+  max-width: 1280px; margin: 0 auto; padding: 10px 32px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--fs-xs); color: var(--fg-3);
+}
+.th-crumb a {
+  color: var(--fg-3); text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 24px; min-width: 24px; padding: 0 2px;
+}
+.th-crumb a:hover { color: var(--national-700); }
+.th-crumb i { font-size: 10px; color: var(--slate-300); }
+.th-crumb-current { color: var(--fg-1); font-weight: 500; }
+
+/* ============ STEPPER — dot + line 統一樣式 ============ */
+.th-stepper {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.th-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 72px;
+  flex-shrink: 0;
+}
+.th-step-num {
+  width: 32px; height: 32px; border-radius: 9999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--bg-2);
+  border: 2px solid var(--border-ui);
+  color: var(--slate-600);
+  font-weight: 700; font-size: var(--fs-sm); flex-shrink: 0;
+  transition: all 0.2s;
+}
+.th-step-label {
+  display: flex; flex-direction: column; align-items: center;
+  line-height: 1.3; gap: 2px;
+}
+.th-step-label .lbl-title {
+  font-size: var(--fs-xxs); font-weight: 700; color: var(--slate-600);
+  white-space: nowrap;
+}
+.th-step-label .lbl-sub {
+  font-size: var(--fs-xxs); color: var(--fg-3);
+  display: none; /* 副標在窄版隱藏，保留結構供大螢幕 */
+}
+/* 步驟間連線 */
+.th-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--slate-200);
+  margin-bottom: 26px;
+  min-width: 16px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.th-step-line.is-done { background: var(--national-700); }
+/* 進行中 */
+.th-step.is-current .th-step-num {
+  background: var(--national-700); color: #fff;
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 4px rgba(88,122,104,0.15);
+}
+.th-step.is-current .lbl-title { color: var(--national-700); }
+/* 已完成 */
+.th-step.is-done .th-step-num {
+  background: var(--bg-mist-2);
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+.th-step.is-done .th-step-num::before {
+  /* 本地 all.min.js 為 Font Awesome 5 JS 版（將 <i> 換成 <svg>），
+     不提供 icon webfont，故 ::before 的勾勾改用 bootstrap-icons 字型 */
+  content: "\f26e";                 /* bi-check */
+  font-family: "bootstrap-icons";
+  font-size: var(--fs-md);
+  line-height: 1;
+}
+.th-step.is-done .th-step-num span { display: none; }
+.th-step.is-done .lbl-title { color: var(--slate-600); }
+
+/* ============ SECTION TITLE ============ */
+.th-section-title {
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: var(--fs-h2); line-height: 1.2;
+  color: var(--fg-1);
+  border-left: 4px solid var(--filter-active);
+  padding-left: 16px;
+  margin: 0 0 14px;
+}
+.th-section-title-sub {
+  display: block; font-family: var(--font-sans); font-weight: 500;
+  font-size: var(--fs-xs); color: var(--fg-3); margin-top: 6px;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ============ BUTTONS ============ */
+.th-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border: none; border-radius: 8px;
+  font-weight: 500; font-size: var(--fs-md);
+  /* 不可用 transition: all，否則焦點外框會被一併動畫化而延遲出現 */
+  transition: background-color .15s, border-color .15s, color .15s;
+  cursor: pointer; text-decoration: none;
+  font-family: inherit;
+}
+.th-btn i { position: relative; top: 1px; }
+.th-btn-primary { background: var(--national-700); color: #fff; box-shadow: var(--sh-md); }
+/* hover 一定要連 color 一起寫，否則以 <a> 實作時會被 tokens.css 的
+   a:hover{color:var(--national-700)} 蓋掉，變成綠底綠字（見 ACCESSIBILITY.md）*/
+.th-btn-primary:hover { background: var(--national-700-hover); color: #fff; }
+.th-btn-primary:disabled {
+  background: var(--slate-300); color: var(--slate-500);
+  cursor: not-allowed; box-shadow: none;
+}
+.th-btn-secondary { background: var(--btn-blue); color: #fff; }
+.th-btn-secondary:hover { background: #2f4a72; color: #fff; }
+.th-btn-ghost {
+  background: #fff; color: var(--slate-700);
+  border: 1px solid var(--border-ui);
+}
+.th-btn-ghost:hover { background: var(--slate-50); border-color: var(--slate-600); color: var(--national-700); }
+.th-btn-lg { padding: 13px 26px; font-size: var(--fs-lg); }
+.th-btn-sm { padding: 7px 14px; font-size: var(--fs-sm); }
+.th-btn-block { width: 100%; }
+
+/* ============ PAGE WRAP ============ */
+.th-page {
+  background: #fff;
+  padding-bottom: 40px;
+}
+/* 註：頁面最小高度已由 layout.css 的 .th-shell（flex sticky footer）負責，
+   故此處不再設 min-height: 100vh，以免內容短時頁尾被推出畫面。 */
+.th-page-inner {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 32px;
+}
+.th-page-title {
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: var(--fs-h1); line-height: 1.2;
+  color: var(--fg-1); margin: 0 0 16px;
+  letter-spacing: var(--tracking-wide);
+}
+
+
+/* ============ CARD ============ */
+/* ============ FOOTBAR — 底部操作列（所有申請流程共用）============ */
+.th-footbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  margin: 20px -32px 0;
+  padding: 12px 32px;
+  background: #fff;
+  border-top: 1px solid var(--slate-200);
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+/* 斷點須與 .th-page-inner 的左右內距一致（900px 起變成 16px），
+   否則負邊距會超出容器造成水平捲動（違反 WCAG 1.4.10 Reflow）*/
+@media (max-width: 900px) {
+  .th-footbar {
+    margin: 20px -16px 0;
+    padding: 12px 16px;
+  }
+}
+.th-footbar-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-sm);
+  color: var(--slate-700);
+}
+.th-footbar-info i {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+}
+.th-footbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============ SIDEBAR — 右欄摘要卡（所有申請流程共用）============ */
+.th-sidebar {
+  position: sticky;
+  top: 96px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-md);
+  overflow: hidden;
+}
+.th-sidebar-head {
+  padding: 14px 18px;
+  background: var(--bg-mist);
+  border-bottom: 1px solid var(--bg-mist-3);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.th-sidebar-head i { color: var(--national-700); font-size: 16px; }
+.th-sidebar-body { padding: 16px 18px; }
+.th-sidebar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  font-size: var(--fs-xs);
+  border-bottom: 1px dashed var(--slate-100);
+  gap: 10px;
+}
+.th-sidebar-row:last-child { border-bottom: none; }
+.th-sidebar-row .lbl { color: var(--fg-3); flex-shrink: 0; }
+.th-sidebar-row .val { color: var(--fg-1); font-weight: 500; text-align: right; }
+.th-sidebar-row .val strong { color: var(--national-700); font-weight: 700; }
+.th-sidebar-checklist {
+  list-style: none;
+  margin: 12px 0 0; padding: 12px 0 0;
+  border-top: 1px solid var(--slate-100);
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: var(--fs-xxs);
+}
+.th-sidebar-checklist li {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--slate-500);
+}
+.th-sidebar-checklist li i { width: 14px; flex-shrink: 0; font-size: 12px; color: var(--slate-300); }
+.th-sidebar-checklist li.is-ok i { color: var(--success-fg); }
+.th-sidebar-checklist li.is-ok { color: var(--slate-700); }
+@media (max-width: 1100px) {
+  .th-sidebar { position: static; }
+}
+
+/* ============ CARD ============ */
+.th-card {
+  background: #fff;
+  border: 1px solid var(--slate-100);
+  border-radius: 16px;
+  box-shadow: var(--sh-card);
+}
+.th-card-pad { padding: 22px 24px; }
+
+
+/* ============ FOOTER — 全站頁尾 ============ */
+.th-footer {
+  background: var(--footer);
+  padding-top: 36px;
+  margin-top: auto;
+}
+.th-footer-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 28px;
+}
+/* 左：機關識別 + 網站說明 */
+.th-footer-about {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 65%;
+}
+.th-footer-logo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sh-sm);
+}
+.th-footer-logo img { height: 64px; width: auto; }
+.th-footer-about-body { width: 100%; }
+.th-footer-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.th-footer-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  color: var(--fg-on-dark);
+  letter-spacing: var(--tracking-wide);
+  line-height: 1;
+  margin: 0;
+}
+.th-footer-updated {
+  font-size: var(--fs-xs);
+  color: var(--slate-400);
+  line-height: 1;
+}
+.th-footer-desc {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-loose);
+  color: var(--slate-400);
+  text-align: justify;
+  margin: 0;
+}
+/* 右：連結欄 */
+.th-footer-links {
+  display: flex;
+  gap: 96px;
+  flex-shrink: 0;
+  margin-right: 64px;
+}
+.th-footer-links h3 {
+  color: var(--fg-on-dark);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  line-height: 1;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(203, 213, 225, 0.3);
+}
+.th-footer-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: var(--fs-sm);
+}
+.th-footer-links a {
+  color: var(--slate-400); transition: color .15s ease;
+  display: inline-flex; align-items: center; min-height: 24px;
+}
+.th-footer-links a:hover { color: var(--fg-on-dark); }
+
+/* 版權帶 */
+.th-footer-band {
+  background: var(--sub-footer);
+  border-top: 1px solid rgba(51, 65, 85, 0.5);
+  padding: 14px 0;
+}
+.th-footer-band-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--fs-xs);
+  color: var(--slate-300);
+}
+.th-footer-copy {
+  font-weight: 500;
+  color: var(--fg-on-dark-2);
+  flex-shrink: 0;
+}
+.th-footer-env {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  text-align: right;
+}
+.th-footer-env .sep { opacity: .3; }
+
+@media (max-width: 1100px) {
+  .th-footer-top { flex-direction: column; gap: 48px; }
+  .th-footer-about { max-width: 100%; }
+  .th-footer-links { margin-right: 0; gap: 64px; }
+}
+@media (max-width: 640px) {
+  .th-footer-about { flex-direction: column; }
+  .th-footer-title-row { flex-direction: column; align-items: flex-start; }
+  .th-footer-links { flex-direction: column; gap: 32px; }
+  .th-footer-band-inner { flex-direction: column; text-align: center; }
+  .th-footer-env { flex-direction: column; gap: 4px; }
+  .th-footer-env .sep { display: none; }
+}
+
+/* ============ RESPONSIVE — 共用元件斷點 ============ */
+@media (max-width: 900px) {
+  /* 頁首左右內距收窄，讓品牌字樣有足夠寬度不斷行 */
+  .th-header-inner { flex-wrap: wrap; gap: 10px; padding: 0 16px; }
+  /* 品牌可壓縮並與選單鈕同列；min-width:0 才允許 flex 項目縮到內容寬度以下 */
+  .th-brand { flex: 1 1 auto; min-width: 0; gap: 10px; }
+  .th-nav-toggle { flex-shrink: 0; }
+  .th-logo { height: 44px; }
+  .th-nav { gap: 16px; font-size: var(--fs-sm); }
+  .th-page-title { font-size: var(--fs-h2); }
+  .th-stepper { padding: 16px 16px; }
+  .th-page-inner { padding: 0 16px; }
+  .th-crumb { padding: 12px 16px; }
+}
+@media (max-width: 600px) {
+  .th-stepper { padding: 14px 12px; }
+  .th-header-right { align-items: flex-start; width: 100%; }
+  .th-brand { gap: 8px; }
+  .th-logo { height: 36px; }
+  .th-wordmark { font-size: var(--fs-lg); }
+}
+/* 極窄螢幕：再降一階，確保「臺灣登山申請一站式服務網」12 字維持單行 */
+@media (max-width: 360px) {
+  .th-logo { height: 32px; }
+  .th-wordmark { font-size: var(--fs-md); letter-spacing: 0; }
+}
+
+/* ============ 手機版主選單開關（內頁 .th-header 用）============ */
+.th-nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-md);
+  padding: 6px 10px;
+  font-size: var(--fs-lg);
+  color: var(--slate-700);
+  line-height: 1;
+}
+@media (max-width: 900px) {
+  .th-nav-toggle { display: inline-flex; align-items: center; }
+  .th-header-right {
+    display: none;
+    width: 100%;
+    align-items: flex-start;
+  }
+  .th-header.is-nav-open .th-header-right { display: flex; }
+  .th-nav { flex-wrap: wrap; }
+  /* 窄版主選單會換行，底線不再是頁首最後一列，改貼齊連結本身 */
+  .th-nav a.active::after { bottom: -2px; }
+}
+
+/* ============ 查詢卡 — 列表頁共用查詢條件區 ============ */
+.th-search {
+  background: var(--bg-mist);
+  border: 1px solid var(--bg-mist-3);
+  border-radius: var(--r-xl);
+  padding: 18px 22px;
+  margin-bottom: 16px;
+}
+.th-search .label { margin-bottom: 6px; }
+/* 欄位與按鈕統一高度，才能與按鈕排在同一排時完全對齊 */
+.th-search .form-control,
+.th-search .form-select,
+.th-search .input-group,
+.th-search .th-btn {
+  height: var(--field-h);
+}
+.th-search .form-control,
+.th-search .form-select {
+  font-size: var(--fs-sm);
+  border-radius: var(--r-md);
+  padding: 0 12px;
+}
+.th-search .form-control:focus,
+.th-search .form-select:focus {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+.th-search .input-group-text {
+  background: #fff;
+  /* 與前面的輸入框同色，勿改回 --slate-300（對比不足且與輸入框不一致）*/
+  border-color: var(--border-ui);
+  color: var(--fg-3);
+}
+/* 聚焦時整組（輸入框＋圖示框）一起轉為品牌色，避免只有半邊變色 */
+.input-group:focus-within .input-group-text {
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+/* 按鈕列：與查詢欄位同一排（放在 .row 內的最後一個 col）*/
+.th-search-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.th-search-actions .th-btn {
+  padding: 0 20px;
+  white-space: nowrap;
+}
+/* 欄位換行堆疊時（≤991px）按鈕改為等分滿版 */
+@media (max-width: 991px) {
+  .th-search-actions .th-btn { flex: 1; }
+}
+@media (max-width: 600px) {
+  .th-search { padding: 14px 14px; }
+}
+
+/* ============ 列表工具列 — 筆數 / 排序 / 次要連結 ============ */
+.th-listbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.th-listbar-count { font-size: var(--fs-sm); color: var(--fg-3); }
+.th-listbar-count strong { color: var(--national-700); font-weight: 700; }
+.th-listbar-actions { display: flex; align-items: center; gap: 8px; }
+.th-listbar-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--fs-sm); color: var(--fg-2);
+  padding: 6px 12px;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-pill);
+  transition: background-color .15s, border-color .15s, color .15s;
+  min-height: 24px;
+}
+.th-listbar-link:hover {
+  color: var(--national-700);
+  border-color: var(--national-300);
+  background: var(--national-50);
+}
+
+/* ============ 資料表格 ============ */
+.th-table-wrap {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+}
+.th-table-scroll { overflow-x: auto; }
+.th-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-md);
+}
+.th-table thead th {
+  background: var(--bg-mist-2);
+  color: var(--fg-1);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  text-align: left;
+  padding: 11px 16px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--bg-mist-3);
+}
+.th-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--slate-100);
+  color: var(--fg-2);
+  vertical-align: top;
+}
+.th-table tbody tr:last-child td { border-bottom: none; }
+.th-table tbody tr:hover { background: var(--bg-mist); }
+.th-table .td-title { color: var(--fg-1); font-weight: 500; line-height: var(--lh-snug); }
+.th-table .td-title a { color: var(--fg-1); }
+.th-table .td-title a:hover { color: var(--national-700); text-decoration: underline; }
+.th-table .td-date {
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  /* 用 --fg-2 而非 --fg-3：--fg-3 在有底色的列（如置頂列 --bg-mist）
+     只有 4.46:1，會低於 4.5:1 門檻 */
+  color: var(--fg-2);
+  letter-spacing: var(--tracking-wide);
+}
+.th-table .td-center { text-align: center; }
+.th-table .td-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.th-table .col-narrow { width: 1%; }
+.th-table .td-nowrap { white-space: nowrap; }
+
+/* ---- 置頂公告 ----
+   後端須將置頂項目排在查詢結果最前面，並於該列加 class="is-pinned"。
+   「置頂」兩字為可見文字，不單以顏色或圖示表意（WCAG 1.4.1）。 */
+.th-table tr.is-pinned { background: var(--bg-mist); }
+.th-table tr.is-pinned:hover { background: var(--bg-mist-2); }
+.th-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  background: var(--pin-bg);
+  border: 1px solid var(--pin-border);
+  color: var(--pin-fg);            /* 對 --pin-bg 為 5.91:1 */
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+  vertical-align: 2px;
+}
+
+/* 空資料 */
+.th-table-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--fg-3);
+  font-size: var(--fs-sm);
+}
+.th-table-empty i { display: block; font-size: 28px; color: var(--slate-300); margin-bottom: 10px; }
+
+/* 手機版：表格轉為卡片式堆疊
+   用法：<td data-label="發布日期"> —— 窄版會以 data-label 當作欄位名 */
+@media (max-width: 700px) {
+  .th-table thead { display: none; }
+  .th-table, .th-table tbody, .th-table tr, .th-table td { display: block; width: 100%; }
+  .th-table tbody tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .th-table tbody td {
+    padding: 4px 0;
+    border-bottom: none;
+    display: flex;
+    gap: 10px;
+  }
+  .th-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 84px;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--fg-3);
+  }
+  /* 標題欄不重複顯示欄名，並放大為卡片主標 */
+  .th-table tbody td.td-title { flex-direction: column; align-items: flex-start; padding-top: 6px; }
+  .th-pin { margin: 0 0 4px; }
+  .th-table tbody td.td-title::before { display: none; }
+  .th-table tbody td.td-title,
+  .th-table tbody td.td-title a { font-size: var(--fs-md); color: var(--fg-1); line-height: var(--lh-snug); }
+  .th-table .td-num, .th-table .td-center { text-align: left; }
+}
+
+/* ============ 標籤徽章 — 發布單位／狀態 ============ */
+.th-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.6;
+  border: 1px solid transparent;
+}
+/* 各管理機關配色（對應 tokens.css 的 --park-*） */
+.th-badge-yushan   { background: #eef4f0; color: var(--badge-yushan-fg);   border-color: #d4e3da; }
+.th-badge-sheipa   { background: #eef3f1; color: var(--badge-sheipa-fg);   border-color: #d6e4df; }
+.th-badge-taroko   { background: #eaf0f3; color: var(--badge-taroko-fg);   border-color: #d0e0e6; }
+.th-badge-forestry { background: #f2f4ea; color: var(--badge-forestry-fg); border-color: #e0e5cd; }
+.th-badge-police   { background: #edf1f3; color: var(--badge-police-fg);   border-color: #d6e0e5; }
+.th-badge-npa      { background: var(--national-100); color: var(--badge-npa-fg); border-color: var(--national-200); }
+/* 狀態 */
+.th-badge-open   { background: var(--success-bg); color: var(--success-fg); border-color: var(--success-border); }
+.th-badge-info   { background: var(--info-bg);    color: var(--info-fg); }
+.th-badge-warn   { background: var(--warning-bg); color: var(--warning-fg); }
+
+/* ============ 頁籤 TAB ============ */
+/* 主頁籤（第一層，例：管理機關） */
+.th-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-bottom: 2px solid var(--slate-200);
+  margin-bottom: 14px;
+}
+.th-tab {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 10px 22px;
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  color: var(--fg-3);
+  position: relative;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  transition: background-color .15s, color .15s;
+  white-space: nowrap;
+}
+.th-tab:hover { color: var(--national-700); background: var(--national-50); }
+.th-tab[aria-selected="true"] {
+  color: var(--national-700);
+  font-weight: 700;
+}
+.th-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 3px;
+  background: var(--national-700);
+  border-radius: 2px 2px 0 0;
+}
+
+/* 次頁籤（第二層，例：路線）— 膠囊式 */
+.th-subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.th-subtab {
+  appearance: none;
+  background: #fff;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-pill);
+  padding: 7px 16px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--fg-2);
+  transition: background-color .15s, border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.th-subtab:hover {
+  border-color: var(--national-400);
+  color: var(--national-700);
+  background: var(--national-50);
+}
+.th-subtab[aria-selected="true"] {
+  background: var(--filter-active);
+  border-color: var(--filter-active);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* 頁籤內容面板 */
+.th-tabpanel[hidden] { display: none; }
+
+@media (max-width: 700px) {
+  .th-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .th-tabs::-webkit-scrollbar { display: none; }
+  .th-tab { padding: 10px 16px; font-size: var(--fs-md); }
+}
+
+/* ============ 分頁 ============ */
+.th-pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.th-pager a,
+.th-pager span {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  background: #fff;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.th-pager a:hover {
+  border-color: var(--national-700);
+  color: var(--national-700);
+  background: var(--national-50);
+}
+.th-pager .is-current {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: #fff;
+  font-weight: 700;
+}
+.th-pager .is-disabled {
+  color: var(--fg-4);
+  background: var(--bg-2);
+  cursor: not-allowed;
+}
+.th-pager .th-pager-ellipsis { border: none; background: none; color: var(--fg-4); min-width: 24px; }
+
+/* ============ 內容區塊標題（頁籤面板內用）============ */
+.th-block { margin-bottom: 22px; }
+.th-block:last-child { margin-bottom: 0; }
+.th-block-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin: 0 0 10px;
+}
+.th-block-title i {
+  width: 32px; height: 32px;
+  border-radius: var(--r-pill);
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: var(--fs-md);
+  flex-shrink: 0;
+}
+.th-block-text {
+  font-size: var(--fs-md);
+  line-height: var(--lh-loose);
+  color: var(--fg-2);
+  text-align: justify;
+  margin: 0;
+}
+
+/* ============ 重點數據列（路線里程／天數等）============ */
+.th-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.th-fact {
+  flex: 1 1 140px;
+  background: var(--bg-mist);
+  border: 1px solid var(--bg-mist-3);
+  border-radius: var(--r-lg);
+  padding: 10px 14px;
+}
+.th-fact-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+  margin-bottom: 4px;
+}
+.th-fact-value {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--national-700);
+  line-height: 1.2;
+}
+.th-fact-value small { font-size: var(--fs-sm); font-weight: 500; color: var(--fg-2); }
+
+/* 尚未填入的示意文字（交付後端後應全部移除） */
+.th-placeholder { color: var(--fg-3); font-style: normal; }
+
+
+/* ============================================================
+   無障礙 AA — 全站表單元件（WCAG 1.4.11 / 1.4.3）
+   ------------------------------------------------------------
+   Bootstrap 預設邊框 #dee2e6 對白底僅 1.3:1、預設 placeholder
+   亦低於 4.5:1，故於此統一覆寫。新增表單請勿再改回。
+   ============================================================ */
+.form-control,
+.form-select,
+.input-group-text {
+  border-color: var(--border-ui);
+}
+.form-control::placeholder { color: var(--slate-500); opacity: 1; }
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.25);
+}
+.form-control:disabled,
+.form-select:disabled { background: var(--bg-2); border-color: var(--slate-300); }
+
+/* ============================================================
+   無障礙 AA — 跑馬燈暫停控制（WCAG 2.2.2 暫停、停止、隱藏）
+   ------------------------------------------------------------
+   自動捲動且持續超過 5 秒的內容必須提供暫停機制；
+   僅靠滑鼠 hover 暫停不符規範，故提供實體按鈕。
+   ============================================================ */
+.th-marquee-pause {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-ui);
+  background: #fff;
+  color: var(--fg-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.th-marquee-pause:hover { color: var(--national-700); border-color: var(--national-700); }
+.th-marquee.is-paused .th-marquee-track { animation-play-state: paused; }
+
+/* ============================================================
+   導盲磚（無障礙定位點）— 臺灣無障礙網頁開發規範
+   ------------------------------------------------------------
+   在各主要區塊起始處放置「:::」定位點，並搭配 accesskey 快速鍵，
+   讓螢幕報讀器與鍵盤使用者可直接跳至該區塊。
+     Alt + U  上方選單連結區（header）
+     Alt + C  中間主要內容區（main）
+     Alt + Z  下方選單連結區（footer）
+   ------------------------------------------------------------
+   ※「:::」為可見標記，不可用 display:none / visibility:hidden 隱藏
+     （會被螢幕報讀器忽略）。
+   ※ 真正朗讀的名稱由 aria-label 提供；「:::」本身以 aria-hidden
+     排除，避免報讀器唸出「冒號冒號冒號」。
+   ============================================================ */
+.th-accesskey {
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 2.5.8 目標尺寸：至少 24×24 CSS px */
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0 4px;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--fg-3);            /* 白底 4.76:1 */
+  text-decoration: none;
+  background: none;
+}
+.th-accesskey:hover { color: var(--national-700); }
+
+/* 深色底（頁尾）用淺色，維持 ≥4.5:1 */
+.th-accesskey-dark { color: var(--slate-300); }
+.th-accesskey-dark:hover { color: #fff; }
+
+/* 首頁 Hero 上方（照片底）：加半透明白底確保任何照片下都可辨識 */
+.th-accesskey-hero {
+  color: var(--fg-1);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--r-xs);
+}
+
+/* 定位點所在的區塊需為定位基準 */
+.th-header,
+.th-main,
+.th-footer,
+.th-home-hero { position: relative; }
+
+/* 窄版（≤900px）頁首左右內距縮為 16px，「:::」會與標誌重疊，
+   故改為「視覺隱藏、聚焦時顯示」：
+     · 不可用 display:none / visibility:hidden（會被螢幕報讀器忽略）
+     · 改用 clip 技法，元素仍在無障礙樹與 Tab 順序中
+     · accesskey（Alt+U/C/Z）不受影響，仍可正常跳轉
+     · 鍵盤聚焦時恢復可見，使用者看得到焦點落在哪裡（2.4.7） */
+@media (max-width: 900px) {
+  .th-accesskey {
+    left: 2px;
+    width: 1px;
+    height: 1px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .th-accesskey:focus,
+  .th-accesskey:focus-visible {
+    width: auto;
+    height: auto;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 0 4px;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    background: #fff;
+    color: var(--fg-1);
+    border-radius: var(--r-xs);
+  }
+  .th-accesskey-dark:focus,
+  .th-accesskey-dark:focus-visible { background: var(--sub-footer); color: #fff; }
+}
+
+/* ============================================================
+   語言選單（Disclosure Pattern）
+   ------------------------------------------------------------
+   以 <button aria-expanded aria-controls> ＋ 清單實作，
+   由 js/scripts.js 控制開合、Esc 關閉、上下鍵選擇、點外部關閉。
+   ※ 各語系項目必須帶 lang 屬性（WCAG 3.1.2 局部語言），
+     螢幕報讀器才會用正確語音朗讀「English」「日本語」。
+   ============================================================ */
+.th-lang { position: relative; }
+
+.th-lang-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 70;
+  min-width: 148px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+}
+.th-lang-menu[hidden] { display: none; }
+.th-lang-menu li + li { margin-top: 2px; }
+.th-lang-menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;          /* 2.5.8 目標尺寸 */
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  white-space: nowrap;
+}
+.th-lang-menu a:hover { background: var(--national-50); color: var(--national-700); }
+/* 目前語系 */
+.th-lang-menu a[aria-current="true"] {
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  font-weight: 700;
+}
+.th-lang-menu a .tick { width: 14px; flex-shrink: 0; font-size: var(--fs-xs); }
+.th-lang-menu a[aria-current="true"] .tick::before {
+  content: "\f26e";                 /* bootstrap-icons bi-check */
+  font-family: "bootstrap-icons";
+}
+
+/* 首頁置中頁首：選單改為置中對齊按鈕 */
+.th-home-utility .th-lang-menu { right: auto; left: 50%; transform: translateX(-50%); }
+
+@media (max-width: 600px) {
+  .th-lang-menu { right: auto; left: 0; }
+  .th-home-utility .th-lang-menu { left: 50%; }
+}
+
+/* ============================================================
+   flatpickr 日期選擇器 — 無障礙與配色覆寫
+   ------------------------------------------------------------
+   外掛預設值不符 WCAG 2.1 AA，且配色（藍 #569ff7）與本站不一致：
+     · 選取日 白字 on #569ff7 → 2.62:1（需 4.5:1）
+     · 上／下月日期 rgba(57,57,57,.3) → 1.93:1（需 4.5:1）
+     · 星期列 12.6px → 低於本站 13px 最小字級
+   本區塊統一改用設計系統色，勿刪除。
+   ============================================================ */
+.flatpickr-calendar {
+  font-family: var(--font-sans);
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+}
+/* 星期列：14px、7.10:1 */
+span.flatpickr-weekday {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+}
+/* 月份與年份 */
+.flatpickr-current-month,
+.flatpickr-current-month input.cur-year,
+.flatpickr-months .flatpickr-month { color: var(--fg-1); fill: var(--fg-1); }
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month { color: var(--fg-1); fill: var(--fg-1); }
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg { fill: var(--national-700); }
+
+/* 一般日期：7.66:1 */
+.flatpickr-day { color: var(--fg-1); }
+/* 上／下月日期：4.76:1（原 1.93:1）*/
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay { color: var(--fg-3); }
+.flatpickr-day:hover,
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover {
+  background: var(--national-50);
+  border-color: var(--national-50);
+  color: var(--national-700);
+}
+/* 今天 */
+.flatpickr-day.today {
+  border-color: var(--national-700);
+  color: var(--national-700);
+  font-weight: 700;
+}
+.flatpickr-day.today:hover { background: var(--national-50); color: var(--national-700); }
+/* 選取日／區間端點：白字 on #587a68 → 4.77:1（原 2.62:1）*/
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: #fff;
+}
+/* 區間內：深字 on 淺霧綠 */
+.flatpickr-day.inRange,
+.flatpickr-day.inRange:hover {
+  background: var(--bg-mist-2);
+  border-color: var(--bg-mist-2);
+  color: var(--fg-1);
+  box-shadow: -5px 0 0 var(--bg-mist-2), 5px 0 0 var(--bg-mist-2);
+}
+/* 停用日期（WCAG 對停用元件不要求對比，仍保留可辨識度）*/
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover { color: var(--fg-4); background: none; }
+
+/* ============================================================
+   路線介紹內容頁（information.html）
+   ------------------------------------------------------------
+   路線圖、每日行程段落、待補圖提示
+   ============================================================ */
+.th-figure {
+  margin: 0 0 20px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.th-figure img { width: 100%; height: auto; display: block; }
+.th-figure figcaption {
+  padding: 10px 14px;
+  font-size: var(--fs-xs);
+  color: var(--fg-2);
+  text-align: center;
+  background: var(--bg-mist);
+  border-top: 1px solid var(--bg-mist-3);
+}
+/* 原站有圖但本版尚未取得圖檔的提示（交付後端時應替換為實際圖片）*/
+.th-figure-todo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 22px 16px;
+  border: 1px dashed var(--border-ui);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  color: var(--fg-3);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+.th-figure-todo i { font-size: var(--fs-h3); color: var(--slate-400); }
+
+/* 每日行程：日次標籤 */
+.th-itinerary {
+  padding-left: 0;
+  margin-bottom: 10px;
+  line-height: var(--lh-loose);
+}
+.th-day {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 10px;
+  border-radius: var(--r-sm);
+  background: var(--national-700);
+  color: #fff;              /* 白字 on #587a68 → 4.77:1 */
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.th-block-text + .th-block-text { margin-top: 8px; }
+
+/* ============================================================
+   主選單下拉（Disclosure Pattern）
+   ------------------------------------------------------------
+   有子項目的主選單改用 <button aria-expanded>，子選單為 <ul hidden>；
+   沒有子項目者維持 <a>。行為由 js/scripts.js 的 initNavMenus() 處理。
+   ※ 桌機版滑鼠移入即展開，同時符合 WCAG 1.4.13：
+       可忽略（Esc 關閉）、可停留（游標可移入選單）、持續（移開才收合）
+   ============================================================ */
+.th-navitem { position: relative; }
+
+.th-navbtn {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: var(--slate-700);
+  position: relative;
+  transition: color .15s;
+}
+.th-navbtn:hover,
+.th-navbtn[aria-expanded="true"] { color: var(--national-700); }
+.th-navbtn .caret { font-size: var(--fs-xxs); transition: transform .15s; }
+.th-navbtn[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+/* 目前所在區塊的底線，與 .th-nav a.active 對齊頁首下緣 */
+.th-navitem.is-active > .th-navbtn { color: var(--national-700); }
+.th-navitem.is-active > .th-navbtn::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  /* 與 .th-nav a.active::after 用同一條公式：下內距 + 下框線。
+     ::after 相對的是按鈕的 padding box，按鈕自身的 padding 已含在內，不必再扣。 */
+  bottom: calc(-1 * var(--header-pad-y) - 1px);
+  height: 3px;
+  background: var(--national-700);
+}
+
+/* ---- 下拉選單本體 ---- */
+.th-navmenu {
+  position: absolute;
+  top: calc(100% + var(--header-pad-y) + 1px);
+  left: 0;
+  z-index: 80;
+  min-width: 220px;
+  max-width: 340px;
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--border-ui);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  box-shadow: var(--sh-lg);
+}
+.th-navmenu[hidden] { display: none; }
+/* 靠近視窗右緣時改為右對齊（由 JS 判斷後加上）*/
+.th-navmenu.is-right { left: auto; right: 0; }
+
+.th-navmenu li + li { margin-top: 2px; }
+.th-navmenu a {
+  display: flex;
+  align-items: center;
+  min-height: 38px;              /* 2.5.8 目標尺寸 */
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--fg-1);
+  line-height: var(--lh-snug);
+}
+.th-navmenu a:hover {
+  background: var(--national-50);
+  color: var(--national-700);
+}
+.th-navmenu a[aria-current="page"] {
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+/* ---- 窄版：下拉改為就地展開（手風琴），不做浮動定位 ---- */
+@media (max-width: 900px) {
+  /* 窄版主選單改為垂直清單，每列滿版 */
+  .th-nav { align-items: flex-start; flex-direction: column; gap: 2px; width: 100%; }
+  .th-nav > a { width: 100%; padding: 7px 0; }
+  .th-navitem { width: 100%; }
+  .th-navbtn { width: 100%; justify-content: space-between; padding: 6px 0; }
+  .th-navitem.is-active > .th-navbtn::after { bottom: -2px; }
+  .th-navmenu {
+    position: static;
+    max-width: none;
+    max-height: none;
+    margin: 4px 0 8px;
+    border-radius: var(--r-md);
+    box-shadow: none;
+    background: var(--bg-2);
+  }
+  .th-navmenu.is-right { right: auto; }
+}

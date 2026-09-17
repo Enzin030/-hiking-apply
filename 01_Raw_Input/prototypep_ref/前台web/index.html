@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+<title>臺灣登山申請一站式服務網</title>
+<meta name="description" content="整合玉山、雪霸、太魯閣國家公園入園申請，林業及自然保育署山屋營地申請，以及警政署入山申請之統一服務入口。">
+<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+
+<!-- ══ 字型 ══ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- ══ 外掛樣式（vendor）══ -->
+<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+<link href="vendor/flatpicker/flatpickr.min.css" rel="stylesheet">
+<link href="vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+<!-- ══ 專案樣式（載入順序固定，勿調換）══ -->
+<link href="css/tokens.css" rel="stylesheet">
+<link href="css/base.css" rel="stylesheet">
+<link href="css/layout.css" rel="stylesheet">
+<link href="css/components.css" rel="stylesheet">
+<link href="css/home.css" rel="stylesheet">
+</head>
+<body>
+
+<a class="th-skip-link" href="#main">跳至主要內容</a>
+
+<div class="th-shell">
+
+  <!-- ══════════════════════════════════════════════════════════
+       HERO：背景照片，承載「頁首／跑馬燈／雙面板」
+       ══════════════════════════════════════════════════════════ -->
+  <div class="th-home-hero">
+
+    <!-- 背景照片 + 柔化 overlay -->
+    <div class="th-home-hero-bg" aria-hidden="true">
+      <img src="img/hero-bg.jpg" alt="">
+      <div class="th-hero-overlay"></div>
+    </div>
+
+    <div class="th-home-body">
+
+      <!-- ══ ① 首頁專用置中頁首 ══════════════════════════════════
+           ※ 僅首頁使用；內頁請改用 _template.html 的 .th-header
+           ═══════════════════════════════════════════════════════ -->
+      <!-- 導盲磚：上方選單連結區 -->
+      <a class="th-accesskey th-accesskey-hero" id="AU" href="#AU" accesskey="U"
+      title="快速鍵 Alt+U：上方選單連結區" aria-label="上方選單連結區（快速鍵 Alt+U）"><span aria-hidden="true">:::</span></a>
+
+      <header class="th-home-header th-relative th-z-20">
+        <div class="th-container-md th-home-header-inner">
+
+          <!-- 品牌 -->
+          <a href="index.html" class="th-focusable th-home-brand">
+            <img src="img/favicon.png" alt="內政部國家公園署" class="th-home-logo">
+            <h1 class="th-home-wordmark">
+              臺灣<span class="th-accent">登山申請</span>一站式服務網
+            </h1>
+          </a>
+
+          <!-- 功能列（登山各項主功能已移至下方雙面板） -->
+          <nav class="th-home-utility" aria-label="功能列">
+            <a href="#" class="th-focusable">網站導覽</a>
+            <span class="th-home-sep" aria-hidden="true"></span>
+            <a href="#" class="th-focusable">警特報</a>
+            <span class="th-home-sep" aria-hidden="true"></span>
+            <a href="#" class="th-focusable">RSS</a>
+            <span class="th-home-sep" aria-hidden="true"></span>
+            <!-- 語言選單：Disclosure Pattern，行為由 js/scripts.js 處理 -->
+            <span class="th-lang" data-lang-menu>
+              <button type="button" class="th-focusable" id="lang-btn"
+                      aria-expanded="false" aria-haspopup="true" aria-controls="lang-list">
+                <i class="fas fa-globe" aria-hidden="true"></i> 語言
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </button>
+              <ul class="th-lang-menu" id="lang-list" aria-labelledby="lang-btn" hidden>
+                <li><a href="#" lang="zh-Hant-TW" aria-current="true"><span class="tick" aria-hidden="true"></span>繁體中文</a></li>
+                <li><a href="#" lang="en"><span class="tick" aria-hidden="true"></span>English</a></li>
+                <li><a href="#" lang="ja"><span class="tick" aria-hidden="true"></span>日本語</a></li>
+              </ul>
+            </span>
+            <span class="th-home-sep" aria-hidden="true"></span>
+            <button type="button" class="th-focusable">
+              <i class="fas fa-search" aria-hidden="true"></i> 搜尋
+            </button>
+          </nav>
+
+        </div>
+      </header>
+
+      <!-- ══ ② 膠囊式跑馬燈 ═══════════════════════════════════════
+           ※ 後端只需輸出一份 <a>；js/home.js 會自動複製第二份
+             以達成無縫循環，毋須手動重複輸出。
+           ═══════════════════════════════════════════════════════ -->
+      <div class="th-container th-home-marquee-slot">
+        <div class="th-marquee-wrap">
+          <div class="th-marquee" role="region" aria-label="重要即時資訊">
+            <span class="th-marquee-tag" aria-label="最新資訊">
+              <i class="fas fa-bullhorn" aria-hidden="true"></i>
+            </span>
+            <!-- WCAG 2.2.2：自動捲動超過 5 秒須提供暫停機制（由 js/home.js 控制）-->
+            <button type="button" class="th-marquee-pause th-focusable"
+                    data-marquee-pause aria-pressed="false" aria-label="暫停跑馬燈">
+              <i class="fas fa-pause" aria-hidden="true"></i>
+            </button>
+            <div class="th-marquee-viewport">
+              <div class="th-marquee-track" data-marquee-track>
+                <span class="th-marquee-gap" aria-hidden="true"></span>
+                <!-- ↓↓↓ 後端迴圈輸出區（最新公告）↓↓↓ -->
+                <a href="#">115年4月1日起至4月19日辦理奇萊稜線新山屋吊掛作業，影響入園申請</a>
+                <a href="#">雪霸國家公園清明連假期間入園申請注意事項</a>
+                <a href="#">排雲山莊容宿量調整措施延長辦理通知</a>
+                <a href="#">颱風期間各國家公園入園申請暫停及退費說明</a>
+                <!-- ↑↑↑ 後端迴圈輸出區 ↑↑↑ -->
+              </div>
+            </div>
+            <a href="news.html" class="th-marquee-more th-focusable">
+              更多 <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ③ 左右雙面板 ════════════════════════════════════════ -->
+      <main id="main" class="th-home-main">
+        <!-- 導盲磚：中間主要內容區 -->
+        <a class="th-accesskey th-accesskey-hero" id="AC" href="#AC" accesskey="C"
+           title="快速鍵 Alt+C：中間主要內容區" aria-label="中間主要內容區（快速鍵 Alt+C）"><span aria-hidden="true">:::</span></a>
+
+        <div class="th-container">
+          <section aria-label="首頁主要服務">
+            <div class="th-grid-panels">
+
+              <!-- 左：登山教育及路線介紹 -->
+              <div class="th-home-panel" aria-labelledby="edu-title">
+                <div class="th-home-panel-head is-edu">
+                  <h2 id="edu-title" class="th-home-panel-title">登山教育及路線介紹</h2>
+                </div>
+                <div class="th-home-panel-body">
+                  <div class="th-grid-tiles">
+                    <!-- ↓↓↓ 後端迴圈輸出區（功能入口）↓↓↓ -->
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-cloud-sun" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">山區氣象</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-briefcase-medical" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">PAC 位置</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-mountain" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">百岳位置</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-balance-scale" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">法令資訊</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-tasks" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">登山建議裝備清單</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">山坡地經常管制區</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-helicopter" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">救難直升機停機坪</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-green">
+                      <span class="th-tile-ic"><i class="fas fa-crosshairs" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">生態保護區事故熱點</span>
+                    </a>
+                    <!-- ↑↑↑ 後端迴圈輸出區 ↑↑↑ -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- 右：登山線上申請 -->
+              <div class="th-home-panel" aria-labelledby="apply-title">
+                <div class="th-home-panel-head is-apply">
+                  <h2 id="apply-title" class="th-home-panel-title">登山線上申請</h2>
+                </div>
+                <div class="th-home-panel-body">
+                  <div class="th-grid-tiles">
+                    <!-- ↓↓↓ 後端迴圈輸出區（服務入口）↓↓↓ -->
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-edit" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">登山申請</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-calendar-check" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">申請日期查詢</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-user-times" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">違規名單</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-question-circle" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">常見問題</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-map-signs" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">登山路線開放狀態</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-bed" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">宿營地及床位查詢</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-book-reader" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">登山須知</span>
+                    </a>
+                    <a href="#" class="th-focusable th-tile th-tile-blue">
+                      <span class="th-tile-ic"><i class="fas fa-compass" aria-hidden="true"></i></span>
+                      <span class="th-tile-label">旅遊登山資訊</span>
+                    </a>
+                    <!-- ↑↑↑ 後端迴圈輸出區 ↑↑↑ -->
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ══ FOOTER（全站共用，請與 _template.html 保持一致）══════════ -->
+  <footer class="th-footer">
+    <!-- 導盲磚：下方選單連結區 -->
+    <a class="th-accesskey th-accesskey-dark" id="AZ" href="#AZ" accesskey="Z"
+    title="快速鍵 Alt+Z：下方選單連結區" aria-label="下方選單連結區（快速鍵 Alt+Z）"><span aria-hidden="true">:::</span></a>
+
+    <div class="th-container">
+      <div class="th-footer-top">
+
+        <div class="th-footer-about">
+          <div class="th-footer-logo">
+            <img src="img/favicon.png" alt="內政部國家公園署">
+          </div>
+          <div class="th-footer-about-body">
+            <div class="th-footer-title-row">
+              <h2 class="th-footer-title">臺灣登山申請一站式服務網</h2>
+              <span class="th-footer-updated">最後更新日期：2026-03-23</span>
+            </div>
+            <p class="th-footer-desc">
+              本網站乃整合國家公園署之玉山、雪霸、太魯閣國家公園登山申請，林業及自然保育署之天池、嘉明湖、向陽、檜谷山屋營地及自然保護(留)區、野生動物保護區，以及警政署入山申請等服務。本站提供統一之申請入口，後續再由各機關個別審核。如有申請相關問題，歡迎透過聯絡我們向指定機關聯繫，謝謝。
+            </p>
+          </div>
+        </div>
+
+        <div class="th-footer-links">
+          <div>
+            <h3>服務專區</h3>
+            <ul>
+              <li><a href="#">常見問答</a></li>
+              <li><a href="#">聯絡我們</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>政策宣告</h3>
+            <ul>
+              <li><a href="#">隱私權宣告</a></li>
+              <li><a href="#">資訊安全政策</a></li>
+              <li><a href="#">資料開放宣告</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="th-footer-band">
+      <div class="th-container th-footer-band-inner">
+        <div class="th-footer-copy">Copyright © 內政部國家公園署 著作權所有</div>
+        <div class="th-footer-env">
+          <span>建議使用 Chrome、Edge 或 Safari 瀏覽器</span>
+          <span class="sep" aria-hidden="true">|</span>
+          <span>建議螢幕解析度 1440 x 960 以上</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /.th-shell -->
+
+<!-- ══ 外掛程式（vendor）══ -->
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="vendor/flatpicker/flatpickr.js"></script>
+<script src="vendor/flatpicker/zh-tw.js"></script>
+<script src="vendor/swiper/swiper-bundle.min.js"></script>
+<script src="js/all.min.js"></script>
+<!-- ══ 專案程式 ══ -->
+<script src="js/scripts.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

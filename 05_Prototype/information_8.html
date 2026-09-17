@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>雙語詞彙 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  雙語詞彙（information_8）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/information_8.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <th-page-shell :trail="['旅遊登山資訊', '雙語詞彙']" title="雙語詞彙">
+
+    <section class="th-card" id="bilingual-table">
+      <div class="th-card-body is-flush">
+        <th-data-table :columns="columns" :rows="rows" row-key="id" table-class="th-table--zebra">
+          <template #cell="{ row, column, value }">
+            <template v-if="column.key === 'link'">
+              <a :href="row.url" target="_blank" rel="noopener noreferrer" class="th-inline-link">{{ row.title }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
+            </template>
+            <template v-else>{{ value }}</template>
+          </template>
+        </th-data-table>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>
