@@ -67,7 +67,7 @@
             <span class="th-home-sep" aria-hidden="true"></span>
             <a href="https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html" target="_blank" rel="noopener noreferrer" class="th-focusable">警特報</a>
             <span class="th-home-sep" aria-hidden="true"></span>
-            <a href="#" class="th-focusable">RSS</a>
+            <a href="rss.html" class="th-focusable">RSS</a>
             <span class="th-home-sep" aria-hidden="true"></span>
             <!-- 語言選單：Disclosure Pattern，行為在 components/index-page.js（與 th-header 同一套鍵盤操作） -->
             <div class="th-lang-wrapper" ref="langWrapper" @focusout="onLangFocusOut">
@@ -120,7 +120,7 @@
                 <a v-for="(m, i) in marqueeItems" :key="'b-' + i" :href="m.href" aria-hidden="true" tabindex="-1">{{ m.text }}</a>
               </div>
             </div>
-            <a href="#" class="th-marquee-more th-focusable">
+            <a href="news_0.html" class="th-marquee-more th-focusable">
               更多 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
           </div>
@@ -143,13 +143,15 @@
                 </div>
                 <div class="th-home-panel-body">
                   <div class="th-grid-tiles">
-                    <a v-for="f in eduFunctions" :key="f.key" :href="f.href"
-                       class="th-focusable th-tile th-tile-green">
+                    <!-- href 為 null＝待建置：改用 <span> 不給假連結，與 th-header 同慣例 -->
+                    <component v-for="f in eduFunctions" :key="f.key"
+                       :is="f.href ? 'a' : 'span'" :href="f.href || null"
+                       :class="['th-tile', 'th-tile-green', f.href ? 'th-focusable' : 'is-todo']">
                       <span class="th-tile-ic">
                         <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
                       </span>
-                      <span class="th-tile-label">{{ f.label }}</span>
-                    </a>
+                      <span :class="['th-tile-label', { 'th-todo-link': !f.href }]">{{ f.label }}</span>
+                    </component>
                   </div>
                 </div>
               </div>
@@ -161,13 +163,14 @@
                 </div>
                 <div class="th-home-panel-body">
                   <div class="th-grid-tiles">
-                    <a v-for="f in applyLinks" :key="f.key" :href="f.href"
-                       class="th-focusable th-tile th-tile-blue">
+                    <component v-for="f in applyLinks" :key="f.key"
+                       :is="f.href ? 'a' : 'span'" :href="f.href || null"
+                       :class="['th-tile', 'th-tile-blue', f.href ? 'th-focusable' : 'is-todo']">
                       <span class="th-tile-ic">
                         <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
                       </span>
-                      <span class="th-tile-label">{{ f.label }}</span>
-                    </a>
+                      <span :class="['th-tile-label', { 'th-todo-link': !f.href }]">{{ f.label }}</span>
+                    </component>
                   </div>
                 </div>
               </div>

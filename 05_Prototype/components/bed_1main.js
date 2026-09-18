@@ -14,25 +14,8 @@
    見 02_Spec/14_雪霸宿營地查詢.md 檔頭。
    ============================================================ */
 
-const BED1MAIN_NOTES = [
-  { k: "待系統排定", t: "送件第一天狀態皆為「待系統排定」，不納入宿營地統計，請等候系統當日 23:00 排定床位，並於隔日重新確認申請狀態。" },
-  { k: "宿營地不足候補", t: "一般申請隊伍（外籍提前申請除外）。系統將統計每日釋出之床位總數於每晚 23:00 統一排定；若任一日宿營地不足，則繼續候補程序，每日釋出床位數量大於第一順位之候補名額則由第一順位者取得，若床位釋出數量小於第一順位者則改由更小名額之次順位隊伍遞補，若仍無床位，將於入園前 5 日（不含入園日）自動退件。" },
-  { k: "待處理", t: "已成功預約行程每日宿營地，等候管理者審核。" },
-  { k: "補件", t: "申請資料及所需附件填寫不全，由管理者以電子郵件通知補件。需於 2 日內（含通知當日）完成補件，逾期將退件處理。" },
-  { k: "已通過", t: "已完成入園審核。" },
-  { k: "餘額", t: "＝承載量－已通過－待處理－補件（不包含「待系統排定」與「候補」的隊伍）。" },
-  { k: "外籍提前", t: "外籍提前申請人數（外國人＋本國人）。於週日至週四（國定假日除外）每日提供七卡山莊、三六九山莊及九九山莊各 24 個外籍保留名額住宿。請於出園日前 4 個月至入園日前 65 日提出申請。" },
-];
-
-/* 正式站的狀態字樣對應到既有的 .th-flag 修飾 class */
-const BED1MAIN_STATUS = {
-  已通過: "is-yes",
-  宿營地不足: "is-no",
-  待系統排定: "is-proof",
-  補件: "is-proof",
-  待處理: "is-proof",
-  "待處理-未繳費": "is-proof",
-};
+/* 申請狀態說明與狀態對應已提升至 components/Bed1MainData.js（2026-09-18），
+   bed_1 的當日名單彈窗共用同一份。依專案慣例只在 data() 內讀 window.*。 */
 
 thPage({
   data() {
@@ -50,7 +33,7 @@ thPage({
       labels: window.BED1_LABELS || [],
       orgId: window.BED1_ORG_ID || "",
       snapshot: window.BED1MAIN_SNAPSHOT_DATE || "",
-      notes: BED1MAIN_NOTES,
+      notes: window.BED1MAIN_NOTES || [],
       siteId: site.id,
       date,
       draftSite: site.id,
@@ -96,6 +79,6 @@ thPage({
       u.searchParams.set("date", this.date);
       window.history.replaceState(null, "", u);
     },
-    statusClass(s) { return BED1MAIN_STATUS[s] || ""; },
+    statusClass(s) { return (window.BED1MAIN_STATUS || {})[s] || ""; },
   },
 });

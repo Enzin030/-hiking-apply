@@ -74,18 +74,21 @@ window.TH_HEADER_NAV = [
   ] },
   { key: "notice", label: "登山須知", url: "notice.html" },
   { key: "status", label: "登山路線開放狀態", url: "open.html" },
+  /* 2026-09-18 使用者指示：本區除「林業及自然保育署宿營地查詢」（bed_0）與
+     「雪霸宿營地查詢」（bed_1）外，其餘標為待建置（url: null）。
+     「太魯閣山屋查詢」（bed_4）亦於同日依使用者指示標為待建置。 */
   { key: "campsite", label: "宿營地與床位查詢", children: [
     { key: "forestry_camp",  label: "林業及自然保育署宿營地查詢", url: "bed_0.html" },  // 2026-09-17 拆為獨立頁
-    { key: "taroko_hut",     label: "太魯閣山屋查詢", url: "campsite.html?org=taroko&kind=hut" },
-    { key: "taroko_route",   label: "太魯閣路線查詢", url: "campsite.html?org=taroko&kind=route" },
+    { key: "taroko_hut",     label: "太魯閣山屋查詢", url: null },  // 2026-09-18 使用者指示標待建置
+    { key: "taroko_route",   label: "太魯閣路線查詢", url: null },
     { key: "sheipa_camp",    label: "雪霸宿營地查詢", url: "bed_1.html" },  // 2026-09-17 拆為獨立頁
-    { key: "sheipa_route",   label: "雪霸路線查詢", url: "campsite.html?org=shei-pa&kind=route" },
-    { key: "yushan_camp",    label: "玉山宿營地查詢", url: "campsite.html?org=yushan&kind=camp" },
-    { key: "yushan_oneday",  label: "玉山單日往返路線查詢", url: "campsite.html?org=yushan&kind=oneday" },
-    { key: "yushan_lot",     label: "玉山抽籤結果查詢", url: "campsite.html?org=yushan&kind=lot" },
-    { key: "yushan_lotdate", label: "玉山抽籤日期查詢", url: "campsite.html?org=yushan&kind=lotdate" },
-    { key: "yushan_refund",  label: "玉山可申請退費日期查詢", url: "campsite.html?org=yushan&kind=refund" },
-    { key: "forestry_area",  label: "林業及自然保育署區域申請及抽籤查詢", url: "campsite.html?org=forestry&kind=area" },
+    { key: "sheipa_route",   label: "雪霸路線查詢", url: null },
+    { key: "yushan_camp",    label: "玉山宿營地查詢", url: null },
+    { key: "yushan_oneday",  label: "玉山單日往返路線查詢", url: null },
+    { key: "yushan_lot",     label: "玉山抽籤結果查詢", url: null },
+    { key: "yushan_lotdate", label: "玉山抽籤日期查詢", url: null },
+    { key: "yushan_refund",  label: "玉山可申請退費日期查詢", url: null },
+    { key: "forestry_area",  label: "林業及自然保育署區域申請及抽籤查詢", url: null },
   ] },
   { key: "info", label: "旅遊登山資訊", children: [
     { key: "map2",        label: "登山路線圖資查詢", url: null },

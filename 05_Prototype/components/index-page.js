@@ -13,35 +13,44 @@
    其餘共用件（th-quick-nav、th-footer）走共用。
    ============================================================ */
 
+/* 跑馬燈導到最新消息列表（單則詳情頁 news_0_1.html 需要 id，雛形無對應資料，
+   故一律連列表頁，不給假的單則網址）。 */
 const MARQUEE_ITEMS = [
-  { text: "115年4月1日起至4月19日辦理奇萊稜線新山屋吊掛作業，影響入園申請", href: "#" },
-  { text: "雪霸國家公園清明連假期間入園申請注意事項", href: "#" },
-  { text: "排雲山莊容宿量調整措施延長辦理通知", href: "#" },
-  { text: "颱風期間各國家公園入園申請暫停及退費說明", href: "#" },
+  { text: "115年4月1日起至4月19日辦理奇萊稜線新山屋吊掛作業，影響入園申請", href: "news_0.html" },
+  { text: "雪霸國家公園清明連假期間入園申請注意事項", href: "news_0.html" },
+  { text: "排雲山莊容宿量調整措施延長辦理通知", href: "news_0.html" },
+  { text: "颱風期間各國家公園入園申請暫停及退費說明", href: "news_0.html" },
 ];
 
-// 登山教育及路線介紹 — 8 項功能入口
+/* 登山教育及路線介紹 — 8 項功能入口。
+   href 為 null＝雛形尚未建置，出「待建置」標記、不給 `#` 假連結
+   （與 th-header.js 的 url: null 同一套慣例）。
+   「山區氣象」連既有的各縣市天氣預報；其餘七項雛形沒有對應頁。 */
 const EDU_FUNCTIONS = [
-  { key: "weather",  label: "山區氣象",           icon: "fa-cloud-sun",           href: "#" },
-  { key: "pac",      label: "PAC 位置",           icon: "fa-briefcase-medical",   href: "#" },
-  { key: "peaks",    label: "百岳位置",           icon: "fa-mountain",            href: "#" },
-  { key: "law",      label: "法令資訊",           icon: "fa-scale-balanced",      href: "#" },
-  { key: "gear",     label: "登山建議裝備清單",   icon: "fa-list-check",          href: "#" },
-  { key: "control",  label: "山坡地經常管制區",   icon: "fa-triangle-exclamation", href: "#" },
-  { key: "helipad",  label: "救難直升機停機坪",   icon: "fa-helicopter",          href: "#" },
-  { key: "accident", label: "生態保護區事故熱點", icon: "fa-location-crosshairs", href: "#" },
+  { key: "weather",  label: "山區氣象",           icon: "fa-cloud-sun",           href: "information_2.html" },
+  { key: "pac",      label: "PAC 位置",           icon: "fa-briefcase-medical",   href: null },
+  { key: "peaks",    label: "百岳位置",           icon: "fa-mountain",            href: null },
+  { key: "law",      label: "法令資訊",           icon: "fa-scale-balanced",      href: null },
+  { key: "gear",     label: "登山建議裝備清單",   icon: "fa-list-check",          href: null },
+  { key: "control",  label: "山坡地經常管制區",   icon: "fa-triangle-exclamation", href: null },
+  { key: "helipad",  label: "救難直升機停機坪",   icon: "fa-helicopter",          href: null },
+  { key: "accident", label: "生態保護區事故熱點", icon: "fa-location-crosshairs", href: null },
 ];
 
 // 登山線上申請 — 右區服務入口
+/* 登山線上申請 — 右區服務入口。對應關係取自 th-header.js 的 TH_HEADER_NAV，
+   不自創路徑；「申請日期查詢」雛形無對應頁，維持待建置。
+   「宿營地及床位查詢」原連 forest-camp-1.html（林場露營），與標籤不符，
+   2026-09-18 改連 bed_0.html（林業及自然保育署宿營地查詢，導覽列該區第一項）。 */
 const APPLY_LINKS = [
   { key: "apply",     label: "登山申請",         icon: "fa-pen-to-square",   href: "apply-1.html" },
-  { key: "datequery", label: "申請日期查詢",     icon: "fa-calendar-check",  href: "#" },
-  { key: "violation", label: "違規名單",         icon: "fa-user-xmark",      href: "#" },
-  { key: "faq",       label: "常見問題",         icon: "fa-circle-question", href: "#" },
+  { key: "datequery", label: "申請日期查詢",     icon: "fa-calendar-check",  href: "applySearch.html" },
+  { key: "violation", label: "違規名單",         icon: "fa-user-xmark",      href: "news_5.html" },
+  { key: "faq",       label: "常見問題",         icon: "fa-circle-question", href: "news_7.html" },
   { key: "status",    label: "登山路線開放狀態", icon: "fa-signs-post",      href: "open.html" },
-  { key: "bed",       label: "宿營地及床位查詢", icon: "fa-bed",             href: "forest-camp-1.html" },
-  { key: "notice",    label: "登山須知",         icon: "fa-book-open-reader", href: "#" },
-  { key: "travel",    label: "旅遊登山資訊",     icon: "fa-compass",         href: "#" },
+  { key: "bed",       label: "宿營地及床位查詢", icon: "fa-bed",             href: "bed_0.html" },
+  { key: "notice",    label: "登山須知",         icon: "fa-book-open-reader", href: "notice.html" },
+  { key: "travel",    label: "旅遊登山資訊",     icon: "fa-compass",         href: "information_1.html" },
 ];
 
 /* 語言選單（2026-09-17 依設計檔補上）

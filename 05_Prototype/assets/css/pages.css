@@ -6022,21 +6022,350 @@ body:where(.p-indexb-body):before {
   flex-basis: 320px;
 }
 
+/* ── 2026-09-18 攤平層級：左窄欄（承載量總表＋宿營地介紹）＋右主欄（月曆＋當日面板）──
+   使用者指「太多層，且東西都藏起來了」。零新增，只換位置。
+   左欄寬 340px：與原本 intro 的左圖同寬，沿用同一個尺度。 */
+.p-bed1-layout {
+  display: grid;
+  /* 預設（顯示承載量）50 / 50；隱藏承載量時由 .is-compact 改成 30 / 70
+     ——表格只剩一欄名稱，把空間讓給月曆（2026-09-18 15:51 使用者指示）。 */
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+  gap: 24px;
+  /* 4. 月曆與承載量等高：兩欄都拉到該列最高者（stretch），
+     由 .p-bed1-caps-body 的 flex:1 吃掉剩餘高度。 */
+  align-items: stretch;
+  margin-top: 16px;
+  transition: grid-template-columns 200ms ease;
+}
+.p-bed1-layout.is-compact {
+  grid-template-columns: minmax(0, 0.24fr) minmax(0, 0.76fr);
+}
+/* 資訊卡在第二列，不受 stretch 影響（否則會被拉成整列高） */
+.p-bed1-side {
+  align-self: start;
+}
+/* 等高（2026-09-18 使用者指示「月曆跟承載量一樣長」）。
+   **不能只靠 stretch**：grid 的 stretch 會讓兩欄一起長到內容最高者，
+   34 列表格反而把整列撐到 1797px。作法是把卡片高度釘在月曆高度上——
+   `height: 100%` 讓卡片吃滿由月曆決定的列高，`.p-bed1-caps-body` 的
+   `flex:1 + min-height:0` 再把剩餘空間變成捲動區。 */
+.p-bed1-caps {
+  display: flex;
+  flex-direction: column;
+  /* 等高但不被自己撐高：`height: 0` ＋ `min-height: 100%` 讓卡片**不參與列高計算**
+     （高度視為 0），列高因此由月曆單獨決定，再用 min-height 填滿那個高度。
+     直接寫 `height: 100%` 不行——表格是列內容之一，34 列會先把列撐到 1797px
+     再填滿它（2026-09-18 實測）。 */
+  height: 0;
+  min-height: 100%;
+}
+.p-bed1-caps-body {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-bed1-layout {
+    transition: none;
+  }
+}
+.p-bed1-side,
+.p-bed1-main {
+  min-width: 0; /* grid 項目預設 min-width:auto，表格與月曆會撐開欄軌（見批次 5 的 apply-3 教訓） */
+}
+/* 第一列：總表（第一欄）＋月曆（第二欄）；第二列：資訊卡跨滿兩欄。
+   **必須明寫 grid-row**：side 在 DOM 裡排在 main 之前且跨兩欄，
+   只給 grid-column 會讓自動配置把月曆擠到第三列（2026-09-18 實測 y=1378）。 */
+.p-bed1-caps {
+  grid-column: 1;
+  grid-row: 1;
+}
+.p-bed1-main {
+  grid-column: 2;
+  grid-row: 1;
+}
+.p-bed1-side {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+.p-bed1-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 承載量總表：**第一列左欄**，與右邊的宿營地資訊卡並排
+   （2026-09-18 三修，使用者指示「乘載量跟景點卡片放一起，日期獨立一列」）。
+   字級與間距維持標準值——二修時壓到 14px／11px 被使用者指出「字好小」，不要退回去。 */
+/* 承載量數據開關（2026-09-18）。放在卡片標題列右側。
+   30/70 時左欄僅 357px，標題＋按鈕會擠到換行，故標題不換行、
+   按鈕不收縮，必要時整列 wrap。 */
+.p-bed1-caps .th-card-head {
+  flex-wrap: wrap;
+}
+.p-bed1-caps .th-card-title {
+  white-space: nowrap;
+}
+.p-bed1-caps-toggle {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: var(--fs-xs);
+  color: var(--national-700);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-sm);
+}
+.p-bed1-caps-toggle:hover {
+  color: var(--national-700-hover);
+  background: var(--bg-2);
+}
+/* 表頭的宿營地搜尋框（2026-09-18 使用者指示，取代原本的「宿營地」欄名）。
+   放在 sticky 的 thead 內，捲動時仍可見。 */
+.p-bed1-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-sm);
+}
+.p-bed1-search > i {
+  font-size: var(--fs-2xs);
+  color: var(--fg-3);
+}
+.p-bed1-search-input {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+  font: inherit;
+  font-weight: 400;
+  color: var(--fg-1);
+  background: none;
+  border: 0;
+}
+.p-bed1-search-input:focus {
+  outline: none;
+}
+/* 焦點框畫在外框上，維持全域焦點樣式的可見度（base.css 的 :focus-visible） */
+.p-bed1-search:focus-within {
+  outline: 2px solid var(--national-700);
+  outline-offset: 1px;
+}
+.p-bed1-search-input::placeholder {
+  font-weight: 400;
+  color: var(--fg-4);
+}
+.p-bed1-caps-empty {
+  padding: 18px;
+  text-align: center;
+  color: var(--fg-3);
+}
+
+/* 關掉承載量後只剩一欄，列高收密，一次看到更多宿營地 */
+.p-bed1-caps-table.is-compact th,
+.p-bed1-caps-table.is-compact td {
+  padding: 7px 18px;
+}
+.p-bed1-caps-body {
+  padding: 0;
+  /* 高度改由 flex 撐到與月曆齊平（2026-09-18 使用者指示「月曆跟承載量一樣長」），
+     不再寫死 max-height；捲動仍保留。 */
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  /* 底部漸層：沒有它時最後一列被切一半，看起來像破版而不是「可以捲」 */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+}
+.p-bed1-caps-table {
+  margin: 0;
+}
+.p-bed1-caps .th-card-head {
+  gap: 8px;
+}
+.p-bed1-caps-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  white-space: nowrap;
+}
+/* 全寬之後不必壓字級：沿用 .th-table 的預設（16px），只收窄上下內距讓列數多露幾列 */
+.p-bed1-caps-table th,
+.p-bed1-caps-table td {
+  padding: 10px 18px;
+}
+.p-bed1-capnum {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+/* 宿營地名稱是切換月曆的按鈕；沿用 th-inline-link 的語彙，不新增色票 */
+.p-bed1-caps-pick {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--national-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+}
+.p-bed1-caps-pick:hover {
+  color: var(--national-700-hover);
+}
+/* 目前選取的列：底色＋左側標示條，不只靠顏色表意（WCAG 1.4.1 由 aria-current 與粗體共同承擔） */
+.p-bed1-caps-table tbody tr.is-current {
+  background: var(--success-bg);
+}
+.p-bed1-caps-table tbody tr.is-current th[scope="row"] {
+  box-shadow: inset 3px 0 0 var(--national-700);
+}
+.p-bed1-caps-table tbody tr.is-current .p-bed1-caps-pick {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* 當日申請名單彈窗（2026-09-18）。9 欄表格在共用彈窗的 720px 內會被切掉右半，
+   故**只把這一個彈窗**加寬到 1040px；`.bulletin-modal` 的 720px 是全站標準，不動它
+   （改它會影響 open／news／campsite 等所有彈窗）。 */
+.p-bed1-rosterbody {
+  /* body 的父層才是 .bulletin-modal，用 :has 從 body 反向加寬面板 */
+}
+.bulletin-modal:has(.p-bed1-rosterbody) {
+  max-width: 1040px;
+}
+.p-bed1-rosterbody .th-table-wrap {
+  overflow-x: auto;
+}
+.p-bed1-rostertable {
+  margin: 0;
+  min-width: 860px;
+}
+.p-bed1-rostertable th,
+.p-bed1-rostertable td {
+  padding: 10px 14px;
+  white-space: nowrap;
+}
+.p-bed1-rostercount {
+  margin: 0 0 12px;
+  color: var(--fg-2);
+}
+/* 申請狀態說明：按鈕展開（2026-09-18 使用者指示，原為 details） */
+.p-bed1-notesbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 8px 14px;
+  font: inherit;
+  font-size: var(--fs-xs);
+  color: var(--national-700);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-sm);
+}
+.p-bed1-notesbtn:hover {
+  color: var(--national-700-hover);
+  background: var(--bg-2);
+}
+.p-bed1-rosternote-list {
+  margin: 0 0 14px;
+  padding: 12px 12px 12px 32px;
+  font-size: var(--fs-xs);
+  line-height: 1.75;
+  color: var(--fg-2);
+  background: var(--bg-2);
+  border-radius: var(--r-md);
+}
+.p-bed1-rosternote-list li + li {
+  margin-top: 6px;
+}
+
+/* modal 內的當日七項計數表 */
+.p-bed1-daytable {
+  margin: 0 0 14px;
+}
+/* modal 內的名單小標 */
+/* modal 內沿用獨立頁的統計卡片，但彈窗較窄，欄數由 4 降為 3。
+   **提高一級選擇器**：.p-bed1main-stats 的規則寫在本檔更後面，
+   同權重時後者勝，單靠 .p-bed1-modalstats 蓋不過去（2026-09-18 實測 cols=4）。 */
+.p-bed1-rosterbody .p-bed1-modalstats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+/* modal 內的區塊標題（承載量概況／各申請狀態說明／當日申請名單三處共用） */
+.p-bed1-modalsub {
+  margin: 20px 0 10px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.p-bed1-modalsub:first-child {
+  margin-top: 0;
+}
+/* modal 底部的獨立頁連結 */
+.p-bed1-rosterlinkrow {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  font-size: var(--fs-xs);
+  border-top: 1px solid var(--slate-200);
+}
+
+@media (max-width: 1100px) {
+  .p-bed1-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* 單欄堆疊順序：月曆 → 總表 → 介紹（2026-09-18 實測 @900px 確認）。
+     月曆是主要工作區，先出現；總表此時退化為參考資料。 */
+  .p-bed1-main {
+    order: -1;
+  }
+  .p-bed1-caps-body {
+    max-height: 320px;
+  }
+}
+
 .p-bed1-intro {
   margin-top: 24px;
 }
-/* 版面比照景點資訊檢視頁 .p-place-detail-grid／-carousel（2026-09-17 使用者指示） */
+/* 版面比照景點資訊檢視頁 .p-place-detail-grid／-carousel（2026-09-17 使用者指示）。
+   2026-09-18：改用 auto-fit + minmax，欄寬不足時自動收成單欄。
+   原本寫死 340px 首欄，放進 400px 的左欄後文字欄被壓成 0px 寬、
+   七行文字逐字換行把卡片撐到 2037px 高（頁高 3480，近 1900px 是空白）。
+   媒體查詢救不到這種情形——窄的是欄，不是螢幕。 */
 .p-bed1-intro-grid {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 16px 24px;
   align-items: start;
+}
+/* 容器窄到放不下「圖＋文」時收成單欄。用 container query 而非媒體查詢：
+   窄的是欄不是螢幕，媒體查詢在 1440 寬的窄欄裡不會觸發（2026-09-18 實測）。 */
+.p-bed1-intro .th-card-body {
+  container-type: inline-size;
+}
+@container (max-width: 620px) {
+  .p-bed1-intro-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .p-bed1-intro-grid.is-single {
   grid-template-columns: minmax(0, 1fr);
 }
 .p-bed1-intro-pic {
   margin: 0;
+  max-width: 100%;
+  /* 圖片區塊不隨資訊卡拉高——資訊卡與左邊的總表同列，會被較高者撐高，
+     figure 若跟著 stretch，stage 的深色底就會在圖片下方露出一條黑帶
+     （2026-09-18 實測 502×377 的圖配上被撐到更高的 figure）。 */
+  align-self: start;
   border: 1px solid var(--slate-200);
   border-radius: var(--r-md);
   overflow: hidden;
@@ -6202,4 +6531,260 @@ body:where(.p-indexb-body):before {
   .p-bed1main-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* ============================================================
+   太魯閣山屋查詢（bed_4.html / bed_4main.html）專用樣式
+   ============================================================ */
+.p-bed4-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.p-bed4-filter {
+  margin-bottom: 0;
+}
+
+.p-bed4-site-field {
+  min-width: 280px;
+}
+
+.p-bed4-snapshot-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--slate-500);
+}
+
+.p-bed4-summary-card {
+  margin-bottom: var(--space-8);
+}
+
+.p-bed4-summary-table th,
+.p-bed4-summary-table td {
+  vertical-align: middle;
+}
+
+.p-bed4-summary-table tbody tr.is-active {
+  background-color: var(--national-50);
+}
+
+.p-bed4-site-btn {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--national-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.p-bed4-site-btn:hover {
+  color: var(--national-700-hover);
+}
+
+.p-bed4-cal-wrap {
+  margin-bottom: var(--space-8);
+}
+
+.p-bed4-intro {
+  margin-top: var(--space-8);
+}
+
+.p-bed4-cap-badges {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.p-bed4-intro-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-6);
+}
+
+.p-bed4-props {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background-color: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.p-bed4-prop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-1-5) 0;
+  border-bottom: 1px dashed var(--slate-200);
+  font-size: 0.875rem;
+}
+
+.p-bed4-prop-item:last-child {
+  border-bottom: none;
+}
+
+.p-bed4-prop-k {
+  color: var(--slate-600);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.p-bed4-prop-v {
+  color: var(--slate-900);
+  font-weight: 600;
+  text-align: right;
+}
+
+.p-bed4-intro-lines {
+  list-style: disc;
+  padding-left: var(--space-5);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--slate-700);
+}
+
+.p-bed4-daytable {
+  margin-bottom: var(--space-4);
+}
+
+.p-bed4-daytable th {
+  width: 50%;
+  font-weight: 500;
+  color: var(--slate-600);
+}
+
+.p-bed4-daytable td {
+  text-align: right;
+  font-size: 1rem;
+}
+
+.p-bed4-dayaction {
+  margin-top: var(--space-4);
+}
+
+/* 當日名單明細頁 bed_4main */
+.p-bed4main-site-field {
+  min-width: 240px;
+}
+
+.p-bed4main-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.p-bed4main-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  background-color: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.p-bed4main-stat.is-main {
+  background-color: var(--national-50);
+  border-color: var(--national-200);
+}
+
+.p-bed4main-stat-k {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--slate-500);
+  margin-bottom: var(--space-1);
+}
+
+.p-bed4main-stat-v {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--slate-900);
+  line-height: 1;
+}
+
+.p-bed4main-stat.is-main .p-bed4main-stat-v {
+  color: var(--national-700);
+}
+
+.p-bed4main-stat-v small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--slate-500);
+  margin-left: var(--space-1);
+}
+
+.p-bed4main-note-list {
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--slate-700);
+}
+
+.p-bed4main-note-k {
+  color: var(--national-700);
+}
+
+.p-bed4main-table th,
+.p-bed4main-table td {
+  white-space: nowrap;
+}
+
+.p-bed4main-status {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.p-bed4main-status.is-passed {
+  background-color: var(--national-100);
+  color: var(--national-800);
+}
+
+.p-bed4main-status.is-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.p-bed4main-status.is-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+@media (max-width: 768px) {
+  .p-bed4-intro-grid {
+    grid-template-columns: 1fr;
+  }
+  .p-bed4main-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── 首頁磁磚：待建置項目（2026-09-18）──
+   href 為 null 的磁磚不是連結（渲染為 <span>），降低視覺權重並沿用
+   共用的 .th-todo-link 徽章（其「待建置」字樣由 ::after 產生）。 */
+.th-tile.is-todo {
+  cursor: default;
+  opacity: 0.72;
+}
+.th-tile.is-todo .th-tile-label {
+  flex-direction: column;
+  gap: 2px;
 }

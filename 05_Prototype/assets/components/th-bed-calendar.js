@@ -14,10 +14,14 @@
    props：
      year／month   目前年月（v-model:year／v-model:month）
      years         年份下拉選項
-     days          該月每日的值，第 i 項＝第 i+1 日：[主數字, 副數字] 或 null（該日無資料）；
+     days          該月每日的值，第 i 項＝第 i+1 日：[主數字, 副數字, 副數字2?] 或 null（該日無資料）；
                    整個月沒有快照時傳 null，元件顯示 emptyText
      mainLabel     主數字標籤，預設「剩餘」
      subLabel      副數字標籤，預設「申請」
+     sub2Label     第二個副數字的標籤；**給了才渲染第二行**（2026-09-18 為 bed_1 的
+                   「餘額／待處理／已通過」三數字而加）。不給就完全不產生該元素，
+                   所以 bed_0 的 DOM 與樣式一字未變。兩行都是 .th-bedcal-sub，
+                   沿用同一條既有樣式，components.css 不必新增規則。
      emptyText     整月無資料時的說明
      clickable     true 時有值的格子是按鈕，點了 emit pick(日)
    emits：update:year、update:month、pick(d)
@@ -33,6 +37,7 @@ window.thComponents["th-bed-calendar"] = {
     days: { type: Array, default: null },
     mainLabel: { type: String, default: "剩餘" },
     subLabel: { type: String, default: "申請" },
+    sub2Label: { type: String, default: "" },
     emptyText: { type: String, default: "" },
     clickable: { type: Boolean, default: false },
     ariaLabel: { type: String, default: "" },
@@ -111,6 +116,7 @@ window.thComponents["th-bed-calendar"] = {
                   <b v-else class="th-bedcal-num is-text">額滿</b>
                 </span>
                 <span class="th-bedcal-sub">{{ subLabel }} {{ c.v[1] }}</span>
+                <span v-if="sub2Label && c.v[2] != null" class="th-bedcal-sub">{{ sub2Label }} {{ c.v[2] }}</span>
               </component>
             </li>
           </template>
