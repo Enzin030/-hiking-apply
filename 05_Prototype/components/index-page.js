@@ -13,28 +13,33 @@
    其餘共用件（th-quick-nav、th-footer）走共用。
    ============================================================ */
 
-/* 跑馬燈導到最新消息列表（單則詳情頁 news_0_1.html 需要 id，雛形無對應資料，
-   故一律連列表頁，不給假的單則網址）。 */
+/* 跑馬燈導到**對應的公告內頁**（2026-09-18 使用者指示）。
+   內頁 news_0_1.html 以 ?id= 取文（見 components/news-detail.js 的 getQueryId）。
+   **四則文字已改為 NewsData.js 既有公告的真實標題**——原本的文字有兩則
+   （清明連假、颱風退費說明）在資料裡沒有對應公告，硬連會點到不相干的內容。
+   id 對應：a1 奇萊吊掛／a2 雪霸雪季／a7 排雲容宿量／a10 颱風警覺。 */
 const MARQUEE_ITEMS = [
-  { text: "115年4月1日起至4月19日辦理奇萊稜線新山屋吊掛作業，影響入園申請", href: "news_0.html" },
-  { text: "雪霸國家公園清明連假期間入園申請注意事項", href: "news_0.html" },
-  { text: "排雲山莊容宿量調整措施延長辦理通知", href: "news_0.html" },
-  { text: "颱風期間各國家公園入園申請暫停及退費說明", href: "news_0.html" },
+  { text: "公告115年4月1日起至4月19日辦理奇萊稜線新山屋吊掛作業", href: "news_0_1.html?id=a1" },
+  { text: "115年雪霸國家公園生態保護區雪季期間登山申請規定及注意事項", href: "news_0_1.html?id=a2" },
+  { text: "排雲山莊容宿量調整措施延長辦理通知", href: "news_0_1.html?id=a7" },
+  { text: "沙德爾颱風接近又逢大潮，國家公園署提醒山海遊憩提高警覺", href: "news_0_1.html?id=a10" },
 ];
 
 /* 登山教育及路線介紹 — 8 項功能入口。
-   href 為 null＝雛形尚未建置，出「待建置」標記、不給 `#` 假連結
-   （與 th-header.js 的 url: null 同一套慣例）。
-   「山區氣象」連既有的各縣市天氣預報；其餘七項雛形沒有對應頁。 */
+   **本頁是專案唯一容許 `#` 假連結的地方**（2026-09-18 使用者裁決）：
+   首頁要拿去跟機關確認功能範圍，磁磚少一個就會被當成「沒有這項服務」，
+   所以未建置的頁也給 `#`、不出待建置標記。
+   其餘頁面一律維持「不給假連結」的慣例（見 th-header.js 的 url: null）。
+   之後這些頁建好了，把 `#` 換成檔名即可。 */
 const EDU_FUNCTIONS = [
   { key: "weather",  label: "山區氣象",           icon: "fa-cloud-sun",           href: "information_2.html" },
-  { key: "pac",      label: "PAC 位置",           icon: "fa-briefcase-medical",   href: null },
-  { key: "peaks",    label: "百岳位置",           icon: "fa-mountain",            href: null },
-  { key: "law",      label: "法令資訊",           icon: "fa-scale-balanced",      href: null },
-  { key: "gear",     label: "登山建議裝備清單",   icon: "fa-list-check",          href: null },
-  { key: "control",  label: "山坡地經常管制區",   icon: "fa-triangle-exclamation", href: null },
-  { key: "helipad",  label: "救難直升機停機坪",   icon: "fa-helicopter",          href: null },
-  { key: "accident", label: "生態保護區事故熱點", icon: "fa-location-crosshairs", href: null },
+  { key: "pac",      label: "PAC 位置",           icon: "fa-briefcase-medical",   href: "#" },
+  { key: "peaks",    label: "百岳位置",           icon: "fa-mountain",            href: "#" },
+  { key: "law",      label: "法令資訊",           icon: "fa-scale-balanced",      href: "#" },
+  { key: "gear",     label: "登山建議裝備清單",   icon: "fa-list-check",          href: "#" },
+  { key: "control",  label: "山坡地經常管制區",   icon: "fa-triangle-exclamation", href: "#" },
+  { key: "helipad",  label: "救難直升機停機坪",   icon: "fa-helicopter",          href: "#" },
+  { key: "accident", label: "生態保護區事故熱點", icon: "fa-location-crosshairs", href: "#" },
 ];
 
 // 登山線上申請 — 右區服務入口

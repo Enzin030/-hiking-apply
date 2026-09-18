@@ -143,15 +143,15 @@
                 </div>
                 <div class="th-home-panel-body">
                   <div class="th-grid-tiles">
-                    <!-- href 為 null＝待建置：改用 <span> 不給假連結，與 th-header 同慣例 -->
-                    <component v-for="f in eduFunctions" :key="f.key"
-                       :is="f.href ? 'a' : 'span'" :href="f.href || null"
-                       :class="['th-tile', 'th-tile-green', f.href ? 'th-focusable' : 'is-todo']">
+                    <!-- 2026-09-18 使用者裁決：首頁供機關確認功能範圍，未建置項亦給 `#` 假連結、
+                         不出待建置標記。**這是專案唯一的例外**，其餘頁面仍不給假連結。 -->
+                    <a v-for="f in eduFunctions" :key="f.key" :href="f.href"
+                       class="th-focusable th-tile th-tile-green">
                       <span class="th-tile-ic">
                         <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
                       </span>
-                      <span :class="['th-tile-label', { 'th-todo-link': !f.href }]">{{ f.label }}</span>
-                    </component>
+                      <span class="th-tile-label">{{ f.label }}</span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -163,14 +163,13 @@
                 </div>
                 <div class="th-home-panel-body">
                   <div class="th-grid-tiles">
-                    <component v-for="f in applyLinks" :key="f.key"
-                       :is="f.href ? 'a' : 'span'" :href="f.href || null"
-                       :class="['th-tile', 'th-tile-blue', f.href ? 'th-focusable' : 'is-todo']">
+                    <a v-for="f in applyLinks" :key="f.key" :href="f.href"
+                       class="th-focusable th-tile th-tile-blue">
                       <span class="th-tile-ic">
                         <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
                       </span>
-                      <span :class="['th-tile-label', { 'th-todo-link': !f.href }]">{{ f.label }}</span>
-                    </component>
+                      <span class="th-tile-label">{{ f.label }}</span>
+                    </a>
                   </div>
                 </div>
               </div>

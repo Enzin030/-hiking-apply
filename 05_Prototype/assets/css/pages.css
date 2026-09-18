@@ -6776,15 +6776,3 @@ body:where(.p-indexb-body):before {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
-/* ── 首頁磁磚：待建置項目（2026-09-18）──
-   href 為 null 的磁磚不是連結（渲染為 <span>），降低視覺權重並沿用
-   共用的 .th-todo-link 徽章（其「待建置」字樣由 ::after 產生）。 */
-.th-tile.is-todo {
-  cursor: default;
-  opacity: 0.72;
-}
-.th-tile.is-todo .th-tile-label {
-  flex-direction: column;
-  gap: 2px;
-}
