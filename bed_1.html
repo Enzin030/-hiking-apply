@@ -54,7 +54,7 @@
       2026-09-17 一度拿掉 th-callout 外框，同日使用者決定用回 callout（比照正式站也是 .alert）。
       slot 內文第一段文字必須緊貼標籤，見 th-callout.js 註解。
     -->
-    <th-callout><ul class="p-bed1-notice"><li v-for="(li, i) in notice" :key="i"><template v-for="(p, j) in li" :key="j"><a v-if="p.href" class="th-inline-link" :href="p.href" target="_blank" rel="noopener noreferrer">{{ p.t }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><span v-else-if="p.red" class="p-bed1-red">{{ p.t }}</span><template v-else>{{ p.t }}</template></template></li></ul></th-callout>
+    <th-callout class="p-bed1-callout"><ul class="p-bed1-notice"><li v-for="(li, i) in notice" :key="i"><template v-for="(p, j) in li" :key="j"><a v-if="p.href" class="th-inline-link" :href="p.href" target="_blank" rel="noopener noreferrer">{{ p.t }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><span v-else-if="p.red" class="p-bed1-red">{{ p.t }}</span><template v-else>{{ p.t }}</template></template></li><li class="p-bed1-notice-tip">點選月曆上的日期，可查看當天各申請狀態的名額明細與申請名單。</li></ul></th-callout>
 
     <!--
       2026-09-18 使用者指示移除「宿營地點」下拉：改由承載量總表點列切換，兩者功能重複。
@@ -77,7 +77,7 @@
         -->
         <section class="th-card p-bed1-caps" aria-labelledby="bed1-caps-title">
           <div class="th-card-head">
-            <h2 id="bed1-caps-title" class="th-card-title">宿營地承載量</h2>
+            <h2 id="bed1-caps-title" class="th-card-title">宿營地</h2>
             <!-- 承載量數據開關（2026-09-18 使用者指示）：關掉只剩宿營地清單，列高更密 -->
             <button type="button" class="p-bed1-caps-toggle" :aria-expanded="showCaps ? 'true' : 'false'"
                     aria-controls="bed1-caps-table" @click="showCaps = !showCaps">
@@ -163,7 +163,7 @@
         <th-bed-calendar v-model:year="year" v-model:month="month" :years="years"
                          :days="calDays" main-label="餘額" sub-label="待處理" clickable
                          :aria-label="site.name + ' ' + year + ' 年 ' + month + ' 月'"
-                         :empty-text="year + ' 年 ' + month + ' 月不在雛形快照範圍內（' + rangeText + '）。'"
+                         empty-text="查無資料"
                          @pick="pickDay"></th-bed-calendar>
 
       </div><!-- /.p-bed1-main -->
@@ -174,11 +174,18 @@
 
   <!--
     當日申請名單彈窗（2026-09-18）。資料同 bed_1main.html 的 Bed1MainData，
-    覆蓋率 7.6%（297／3894 有值格），查無資料時顯示空狀態並給正式站連結，
-    不得假裝有資料。欄位與規格 §二 的名單列表一致（9 欄）。
+    覆蓋率 7.6%（297／3894 有值格），查無資料時顯示空狀態，不得假裝有資料。
+    欄位與規格 §二 的名單列表一致（9 欄）。
   -->
-  <th-modal v-if="roster" :meta="roster.name" :title="roster.date"
-            body-class="p-bed1-rosterbody" @close="closeRoster">
+  <th-modal v-if="roster" body-class="p-bed1-rosterbody" @close="closeRoster">
+    <!-- 標題列：「宿營地 - 日期」（2026-09-18 使用者指示）。
+         關閉鈕由 th-modal 自己輸出，不必重複。 -->
+    <template #head>
+      <div class="p-bed1-modalhead">
+        <h2 class="bulletin-modal-title">{{ roster.name }} - {{ roster.date }}</h2>
+      </div>
+    </template>
+
 
     <!-- fs 紅字警示（原在攤平卡片內，移進 modal 以免漏掉） -->
     <p v-if="roster.day && roster.day.fs" class="p-bed1-daynote is-danger">
@@ -188,7 +195,21 @@
     <!-- 當日統計：與獨立頁 bed_1main 相同的卡片呈現（2026-09-18 使用者指示）。
          沿用 .p-bed1main-stat* 而非另建一套——同一種東西不做兩份樣式。
          外籍提前拆為外國人／本國人兩張卡（同日使用者指示）。 -->
-    <h3 class="p-bed1-modalsub">承載量概況</h3>
+    <!-- 區塊標題列：標題在左、申請狀態說明的 info icon 在右上角
+         （2026-09-18 使用者指示）。 -->
+    <div class="p-bed1-sechead">
+      <h3 class="p-bed1-modalsub">承載量概述</h3>
+      <button type="button" class="p-bed1-infobtn" :aria-expanded="showNotes ? 'true' : 'false'"
+              aria-controls="bed1-notes" @click="showNotes = !showNotes">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>申請狀態說明
+      </button>
+    </div>
+
+    <!-- 說明展開後插在標題列下方、卡片上方；外觀用 callout（2026-09-18 使用者指示） -->
+    <th-callout v-show="showNotes" class="p-bed1-notescallout">
+      <ol id="bed1-notes" class="p-bed1-rosternote-list"><li v-for="(n, i) in notes" :key="i"><b>【{{ n.k }}】</b>{{ n.t }}</li></ol>
+    </th-callout>
+
     <ul class="p-bed1main-stats p-bed1-modalstats">
       <li v-for="st in rosterData.stat" :key="st.k" :class="['p-bed1main-stat', { 'is-main': st.k === '餘額' }]">
         <span class="p-bed1main-stat-k">{{ st.k }}</span>
@@ -199,24 +220,14 @@
         <span class="p-bed1main-stat-v">{{ st.v === '' ? '—' : st.v }}<small v-if="st.v !== ''">位</small></span>
       </li>
     </ul>
-    <p class="p-bed1main-formula">餘額 ＝ 承載量 － 待處理 － 補件 － 已通過（不包含「待系統排定」與「宿營地不足候補」的隊伍）</p>
+    <p class="p-bed1main-formula">※ 餘額 ＝ 承載量 － 待處理 － 補件 － 已通過（不包含「待系統排定」與「宿營地不足候補」的隊伍）</p>
 
-    <!-- 申請狀態說明：按鈕點擊展開（2026-09-18 使用者指示，原為 details）。
-         正式站原文七條，與 bed_1main 共用 Bed1MainData 的同一份。 -->
-    <h3 class="p-bed1-modalsub">各申請狀態說明</h3>
-    <button type="button" class="p-bed1-notesbtn" :aria-expanded="showNotes ? 'true' : 'false'"
-            aria-controls="bed1-notes" @click="showNotes = !showNotes">
-      <i :class="['fa-solid', showNotes ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>{{ showNotes ? '收合說明' : '展開說明' }}
-    </button>
-    <ol v-show="showNotes" id="bed1-notes" class="p-bed1-rosternote-list">
-      <li v-for="(n, i) in notes" :key="i"><b>【{{ n.k }}】</b>{{ n.t }}</li>
-    </ol>
-
-    <!-- 當日申請名單：資料覆蓋率 7.6%，查無資料時誠實顯示並給正式站連結 -->
+    <!-- 當日申請名單：資料覆蓋率 7.6%，查無資料時誠實顯示空狀態 -->
+    <hr class="p-bed1-modalhr" />
     <h3 class="p-bed1-modalsub">當日申請名單</h3>
     <div v-if="!rosterData.rows" class="th-empty">
       <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
-      <p>本雛形的名單資料只收錄 2026-09-22 至 09-30。<a class="th-inline-link" :href="rosterData.officialUrl" target="_blank" rel="noopener noreferrer">到現行網站查看這一天<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+      <p>查無資料</p>
     </div>
     <div v-else-if="!rosterData.rows.length" class="th-empty">
       <i class="fa-solid fa-inbox" aria-hidden="true"></i>
@@ -251,10 +262,6 @@
         </table>
       </div>
     </div>
-
-    <p class="p-bed1-rosterlinkrow">
-      <a class="th-inline-link" :href="detailUrl">在獨立頁開啟<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
-    </p>
 
   </th-modal>
 
