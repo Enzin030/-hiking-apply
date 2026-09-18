@@ -16,8 +16,9 @@
    難度等級照步道分級的處理方式：`th-level lv-N` 徽章，點開 th-modal 顯示
    window.TRAIL_LEVELS 的說明／適合對象／建議裝備（與步道分級頁、開放狀態頁同一份資料）。
 
-   **路線規劃器是頁面區域元件**：雪霸也有節點概念但資料表不同，
-   能否共用待確認，先不進 .th-* 命名空間。
+   **路線規劃器目前是頁面區域元件**：2026-09-18 實走確認玉山與太魯閣是同一套
+   （節點與按鈕 ID、兩條完成規則都相同），但雪霸未驗證，而且雛形只有本頁用到；
+   依「二次即提升」，第二個頁面要用時再提升為 .th-*。
 
    ------------------------------------------------------------
    互動約定（2026-09-17 使用者指示）
@@ -58,17 +59,48 @@ var APPLY15_STEPS = [
   { n: 4, title: "申請完成" },
 ];
 
+/* 確認頁的人員欄位，順序與標題照舊站（2026-09-17 截圖 TAR026_S04_confirm）：
+   聯絡地址＝縣市＋鄉鎮＋地址；緊急聯絡人一格內含姓名與電話 */
+var APPLY15_PERSON_COLUMNS = [
+  { key: "name", label: "姓名" },
+  { key: "mobile", label: "手機" },
+  { key: "addr", label: "聯絡地址" },
+  { key: "email", label: "E-mail" },
+  { key: "nation", label: "國籍" },
+  { key: "sid", label: "身份證號/護照號碼" },
+  { key: "sex", label: "性別", align: "center" },
+  { key: "birthday", label: "生日" },
+  { key: "contact", label: "緊急聯絡人" },
+  { key: "tel", label: "電話" },
+  { key: "fax", label: "傳真" },
+];
 var APPLY15_TEAM_COLUMNS = [
   { key: "no", label: "No.", align: "center" },
   { key: "leader", label: "領隊", align: "center" },
-  { key: "name", label: "姓名" },
-  { key: "mobile", label: "手機" },
-  { key: "email", label: "E-mail" },
-  { key: "nation", label: "國籍" },
-  { key: "sid", label: "身分證號／護照號碼" },
-  { key: "sex", label: "性別", align: "center" },
-  { key: "birthday", label: "生日" },
-];
+].concat(APPLY15_PERSON_COLUMNS);
+
+function apply15PersonRow(p) {
+  var dash = function (v) { return v ? v : "—"; };
+  return {
+    name: dash(p.name), mobile: dash(p.mobile),
+    addr: dash([p.country, p.city, p.addr].filter(Boolean).join("")),
+    email: dash(p.email), nation: dash(p.nation), sid: dash(p.sid), sex: dash(p.sex),
+    birthday: dash(p.birthday),
+    contact: dash([p.contactname, p.contacttel].filter(Boolean).join(" ")),
+    tel: dash(p.tel), fax: dash(p.fax),
+  };
+}
+
+/* 雲稜營地的營帳需求（舊站 App_Code/taroko/Yunleng_Campground.cs:62-86，node 666）：
+   1–2 人 → 2 人帳 1；3 人以上先分 4 人帳，餘 3 人再加 4 人帳 1，餘 1–2 人加 2 人帳 1 */
+function apply15YunlengNeed(n) {
+  if (n < 1) return { four: 0, two: 0 };
+  if (n < 3) return { four: 0, two: 1 };
+  var four = Math.floor(n / 4), rest = n % 4;
+  if (rest === 3) return { four: four + 1, two: 0 };
+  return { four: four, two: rest ? 1 : 0 };
+}
+var APPLY15_SELF_TENT = "自備搭帳";
 
 var APPLY15_QUEUE_COLUMNS = [
   { key: "date", label: "日期" },
@@ -81,7 +113,8 @@ var APPLY15_QUEUE_COLUMNS = [
    頁面區域元件：路線規劃器
    舊站行為（實走確認）：逐節點選擇，下一批可選節點由目前位置決定；
    只有停在宿營地才能完成當日路線；完成當日後下一天從該宿營地出發。
-   最後一天須回到出口 [推定]。
+   最後一天須回到登山口（2026-09-18 測試站實走玉山確認，舊站訊息「最後一天行程的點必須為登山口」）。
+   玉山的規劃器與太魯閣同一套（節點與按鈕 ID 相同）；雪霸未驗證，所以仍先留在頁面層。
    ------------------------------------------------------------ */
 var P_APPLY15_PLANNER = {
   props: {
@@ -137,7 +170,7 @@ var P_APPLY15_PLANNER = {
     finishDay() {
       if (this.today.length < 2) { this.msg = "請先選擇今日行經的地點"; return; }
       if (this.isLastDay) {
-        if (this.graph.exits.indexOf(this.here) < 0) { this.msg = "最後一天須回到出口（" + this.graph.exits.join("、") + "）"; return; }
+        if (this.graph.exits.indexOf(this.here) < 0) { this.msg = "最後一天行程的點必須為登山口"; return; }
         this.msg = "";
         this.push(this.plan, true);
         return;
@@ -170,9 +203,11 @@ var P_APPLY15_PLANNER = {
         </div>
         <p v-if="msg" class="th-field-hint mt-2" role="alert">{{ msg }}</p>
       </template>
-      <div v-else-if="!readonly" class="flex items-center gap-2">
+      <!-- 舊站完成路線後「完成路線」消失，仍保留「重新規劃」「返回上個地點」（2026-09-17 截圖 TAR026_S02_ready） -->
+      <div v-else-if="!readonly" class="flex flex-wrap items-center gap-2">
         <span class="th-field-hint">路線規劃完成。</span>
         <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="reset"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i>重新規劃</button>
+        <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>返回上個地點</button>
       </div>
     </div>
   `,
@@ -197,6 +232,11 @@ thPage({
       dates: dates,
       stepperSteps: APPLY15_STEPS,
       teamColumns: APPLY15_TEAM_COLUMNS,
+      applicantColumns: APPLY15_PERSON_COLUMNS,
+      npaSite: "https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList",
+      /* 舊站顯示伺服器時間；雛形取載入當下的本機時間 */
+      nowTime: new Date().toTimeString().slice(0, 5),
+      campPick: {},          // 宿營地排隊表每晚的選擇：{ 第幾晚: 地點 }，沒選＝當天終點
       queueColumns: APPLY15_QUEUE_COLUMNS,
 
       step: 1,               // 1／2／3；4＝申請完成
@@ -237,7 +277,9 @@ thPage({
       leaderSame: true,
       leader: {},
       memberConsent: true,
-      teamsCount: 1,
+      /* 隊伍人數不是輸入欄，是 members.length + 1（見 computed teamsCount）。
+         2026-09-18 撤銷「依人數自動產生隊員」：舊站三家都是逐筆新增、人數唯讀（decisions.md） */
+      teamMax: 12,
       members: [],
       staySame: false,
       stay: Object.assign({}, demo.stay),
@@ -264,23 +306,24 @@ thPage({
     endDate() { return apply15AddDays(this.startDate, this.sumday - 1); },
     leaderView() { return this.leaderSame ? Object.assign({}, this.applicant, { student: !!this.leader.student }) : this.leader; },
     planDays() { return this.plan.days.length ? this.plan.days : [[this.graph.start]]; },
+    teamsCount() { return this.members.length + 1; },   // 含領隊
     isSolo() { return this.teamsCount === 1; },
     teamRows() {
       return [Object.assign({ isLeader: true }, this.leaderView)].concat(this.members).map(function (p, i) {
-        return {
-          no: i + 1, leader: p.isLeader ? "V" : "", name: p.name || "—", mobile: p.mobile || "—",
-          email: p.email || "—", nation: p.nation || "—", sid: p.sid || "—", sex: p.sex || "—",
-          birthday: p.birthday || "—",
-        };
+        return Object.assign({ no: i + 1, leader: p.isLeader ? "V" : "" }, apply15PersonRow(p));
       });
     },
+    applicantRows() { return [apply15PersonRow(this.applicant)]; },
     queueRows() {
       var self = this;
       return this.planDays.slice(0, -1).map(function (d, i) {
-        var camp = d[d.length - 1];
-        return { date: apply15AddDays(self.startDate, i), camp: camp, qty: self.teamsCount, note: self.campNote(camp) };
+        var end = d[d.length - 1];
+        var camp = self.campPick[i] || end;
+        return { index: i, date: apply15AddDays(self.startDate, i), camp: camp,
+                 options: [end, APPLY15_SELF_TENT], qty: self.teamsCount, note: self.campNote(camp) };
       });
     },
+    hasYunleng() { return this.queueRows.some(function (r) { return r.camp === "雲稜營地"; }); },
   },
 
   watch: {
@@ -289,12 +332,7 @@ thPage({
       this.subId = first ? first.id : "";
     },
     subId() { this.plan = { days: [], finished: false }; },
-    teamsCount(n) {
-      var want = Math.max(0, Math.min(11, (Number(n) || 1) - 1));
-      var list = this.members.slice(0, want);
-      while (list.length < want) list.push({ nation: "中華民國" });
-      this.members = list;
-    },
+    plan() { this.campPick = {}; },
     applicant: {
       deep: true,
       handler(v) { if (this.staySame) this.stay = this.pickStay(v); },
@@ -303,10 +341,20 @@ thPage({
   },
 
   methods: {
+    pickCamp(i, v) {
+      var next = Object.assign({}, this.campPick);
+      next[i] = v;
+      this.campPick = next;
+    },
     campNote(camp) {
+      if (camp === APPLY15_SELF_TENT) return "請自備營帳";
       var r = this.campRemain[camp];
       if (!r) return "尚無資料";
-      if (r.kind === "tent") return "剩餘數量 4人營位數=" + r.remain4 + "，2人營位數=" + r.remain2 + "，實際順位以送出後為準";
+      if (r.kind === "tent") {
+        var need = apply15YunlengNeed(this.teamsCount);
+        return "本案需求 4人營位數 =" + need.four + ", 2人營位數 =" + need.two + ",\n" +
+               "剩餘數量 4人營位數 =" + r.remain4 + ", 2人營位數 =" + r.remain2 + ",\n實際順位以送出後為準";
+      }
       return "剩餘數量：" + r.remain + "，已預約待審：" + r.pending + "，本件需求數量：" + this.teamsCount + "，實際順位以送出後為準";
     },
     isArray(v) { return Array.isArray(v); },
@@ -321,6 +369,14 @@ thPage({
       var list = this.members.slice();
       list[i] = v;
       this.members = list;
+    },
+    /* 舊站：勾委託同意後才出現「新增隊員」，達上限即隱藏（tarokoapplyControl/step2.ascx.cs addmember_Click） */
+    addMember() {
+      if (this.teamsCount >= this.teamMax) return;
+      this.members = this.members.concat([{ nation: "中華民國" }]);
+    },
+    removeMember(i) {
+      this.members = this.members.filter(function (_, j) { return j !== i; });
     },
     remind(errs) {
       this.errors = errs;

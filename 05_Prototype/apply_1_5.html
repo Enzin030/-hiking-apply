@@ -43,7 +43,7 @@
           <h2 class="th-card-title">路線</h2>
         </div>
         <div class="th-card-body grid gap-4">
-          <p class="th-field-hint">請注意：國家公園路線於每日 23:00 至隔日 07:00 暫停受理申請。登山路線進入國家公園生態保護區須要申請，非國家公園生態保護區不須申請。如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。</p>
+          <p class="th-field-hint">請注意：國家公園路線於每日 23:00 至隔日 07:00 暫停受理申請。<strong>目前系統時間為：{{ nowTime }}</strong><br />登山路線進入國家公園生態保護區須要申請，非國家公園生態保護區不須申請。如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="th-field">
               <label class="th-label" for="f-main"><span class="req">*</span>登山主路線</label>
@@ -61,10 +61,13 @@
           </div>
 
           <template v-if="sub">
+            <!-- 舊站 showbed5() 開 bed_5show.aspx（路線承載量）；雛形尚無對應頁 -->
+            <div><th-todo-link label="路線承載量查詢"></th-todo-link></div>
             <label class="flex items-start gap-2 th-label">
               <input type="checkbox" v-model="noteChecked" class="mt-1" />已詳閱以下說明，並同意相關注意事項。</label>
-            <ul v-if="notes.length" class="th-field-hint list-disc pl-5">
+            <ul v-if="notes.length || needsNpa" class="th-field-hint list-disc pl-5">
               <li v-for="n in notes" :key="n">{{ n }}</li>
+              <li v-if="needsNpa">警政署入山申辦系統：<a class="th-inline-link break-all" :href="npaSite" target="_blank" rel="noopener noreferrer">{{ npaSite }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></li>
             </ul>
             <dl v-if="levelRow" class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
               <dt class="th-label">難度等級</dt>
@@ -178,6 +181,7 @@
           <i :class="['fa-solid ml-auto', open.apply ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
         </button>
         <div v-show="open.apply" class="th-card-body grid gap-4">
+          <p class="th-field-hint">未滿18歲者不得擔任申請人</p>
           <label class="flex items-start gap-2 th-label">
             <input type="checkbox" v-model="applyConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。</label>
           <th-person-form v-if="applyConsent" role="apply" id-prefix="apply" v-model="applicant"></th-person-form>
@@ -207,20 +211,24 @@
           <i :class="['fa-solid ml-auto', open.member ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
         </button>
         <div v-show="open.member" class="th-card-body grid gap-4">
-          <div class="th-field sm:w-60">
-            <label class="th-label" for="f-teams"><span class="req">*</span>隊伍人數（含領隊）</label>
-            <input id="f-teams" class="th-input" type="number" min="1" max="12" v-model.number="teamsCount" />
-            <span class="th-field-hint">申請上限 12 人，下限 1 人。</span>
-          </div>
-          <template v-if="members.length">
-            <label class="flex items-start gap-2 th-label">
-              <input type="checkbox" v-model="memberConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。</label>
+          <label class="flex items-start gap-2 th-label">
+            <input type="checkbox" v-model="memberConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。</label>
+          <template v-if="memberConsent">
             <div v-for="(m, i) in members" :key="i" class="grid gap-2">
-              <h3 class="th-section-title">隊員 {{ i + 1 }}</h3>
+              <div class="flex items-center gap-2">
+                <h3 class="th-section-title">隊員 {{ i + 1 }}</h3>
+                <button type="button" class="th-btn th-btn-ghost ml-auto" @click="removeMember(i)">
+                  <i class="fa-solid fa-user-minus" aria-hidden="true"></i>刪除隊員</button>
+              </div>
               <th-person-form role="member" :id-prefix="'member' + i" :model-value="m" @update:model-value="setMember(i, $event)"></th-person-form>
             </div>
+            <div v-if="teamsCount < teamMax">
+              <button type="button" class="th-btn th-btn-secondary" @click="addMember">
+                <i class="fa-solid fa-user-plus" aria-hidden="true"></i>新增隊員</button>
+            </div>
+            <p v-else class="th-field-hint">已達申請上限 {{ teamMax }} 人。</p>
           </template>
-          <p v-else class="th-field-hint">隊伍人數為 1 人（獨攀），無須填寫隊員。</p>
+          <p v-if="!members.length" class="th-field-hint">目前只有領隊 1 人（獨攀）<template v-if="!memberConsent">；勾選上方委託同意後可新增隊員</template>。</p>
         </div>
       </section>
 
@@ -249,6 +257,10 @@
           <label v-if="isSolo" class="flex items-start gap-2 th-label">
             <input type="checkbox" v-model="soloChecked" class="mt-1" />獨攀證明說明：已下載且詳閱<th-todo-link label="太魯閣國家公園獨攀申請承諾書"></th-todo-link>，並同意相關切結內容。</label>
           <div class="th-field">
+            <span class="th-label">路線行程規劃計劃書</span>
+            <div><th-todo-link label="說明文件"></th-todo-link></div>
+          </div>
+          <div class="th-field">
             <span class="th-label">路線行程規劃計劃書上傳</span>
             <div>
               <button type="button" class="th-btn th-btn-secondary"><i class="fa-solid fa-upload" aria-hidden="true"></i>點選上傳文件</button>
@@ -256,6 +268,15 @@
           </div>
         </div>
       </section>
+
+      <!-- 隊伍人數在五個區塊下方、區塊外（2026-09-17 截圖 TAR026_S03）；唯讀、由隊員數推導（舊站三家皆同，見 decisions.md） -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+        <div class="th-field">
+          <label class="th-label" for="f-teams"><span class="req">*</span>隊伍人數（含領隊）</label>
+          <input id="f-teams" class="th-input th-input-readonly" type="text" readonly :value="teamsCount" />
+        </div>
+        <p class="th-field-hint">申請上限 {{ teamMax }} 人，下限 1 人。</p>
+      </div>
 
       <section class="th-card">
         <div class="th-card-head">
@@ -272,8 +293,19 @@
           <i class="fa-solid fa-campground" aria-hidden="true"></i>
           <h2 class="th-card-title">宿營地預約查詢排隊狀況</h2>
         </div>
-        <div class="th-card-body">
-          <th-data-table :columns="queueColumns" :rows="queueRows" row-key="date" caption="宿營地預約查詢排隊狀況" empty="完成路線規劃後顯示"></th-data-table>
+        <div class="th-card-body grid gap-2">
+          <!-- 宿營地點為下拉：當天終點＋「自備搭帳」（舊站 step2.ascx.cs:618-635，選自備搭帳顯示「請自備營帳」） -->
+          <th-data-table :columns="queueColumns" :rows="queueRows" row-key="date" caption="宿營地預約查詢排隊狀況" empty="完成路線規劃後顯示">
+            <template #cell="{ row, column, value }">
+              <th-hybrid-select v-if="column.key === 'camp'"><select class="th-select" :aria-label="row.date + ' 宿營地點'"
+                      :value="row.camp" @change="pickCamp(row.index, $event.target.value)">
+                <option v-for="o in row.options" :key="o" :value="o">{{ o }}</option>
+              </select></th-hybrid-select>
+              <span v-else-if="column.key === 'note'" class="whitespace-pre-line">{{ value }}</span>
+              <template v-else>{{ value }}</template>
+            </template>
+          </th-data-table>
+          <div v-if="hasYunleng"><th-todo-link label="雲稜營地承載量計算方式說明"></th-todo-link></div>
         </div>
       </section>
 
@@ -305,17 +337,17 @@
             <dt class="th-label">登山主路線</dt><dd>{{ main ? main.name : '—' }}</dd>
             <dt class="th-label">次路線</dt><dd>{{ sub ? sub.name : '—' }}</dd>
           </dl>
-          <p-apply15-planner v-if="hasPlanner" :graph="graph" :days="sumday" :model-value="plan" readonly></p-apply15-planner>
         </div>
       </section>
 
+      <!-- 確認頁欄位照舊站（2026-09-17 截圖 TAR026_S04_confirm）：申請人一列表格、隊伍 13 欄；舊站確認頁沒有每日行程與留守人 -->
       <section class="th-card">
         <div class="th-card-head">
           <i class="fa-solid fa-user" aria-hidden="true"></i>
           <h2 class="th-card-title">申請人資料</h2>
         </div>
         <div class="th-card-body">
-          <th-person-form role="apply" id-prefix="c-apply" :model-value="applicant" readonly></th-person-form>
+          <th-data-table :columns="applicantColumns" :rows="applicantRows" row-key="name" caption="申請人資料"></th-data-table>
         </div>
       </section>
 
@@ -326,16 +358,6 @@
         </div>
         <div class="th-card-body">
           <th-data-table :columns="teamColumns" :rows="teamRows" row-key="no" caption="隊伍資料"></th-data-table>
-        </div>
-      </section>
-
-      <section class="th-card">
-        <div class="th-card-head">
-          <i class="fa-solid fa-house-user" aria-hidden="true"></i>
-          <h2 class="th-card-title">留守人資料</h2>
-        </div>
-        <div class="th-card-body">
-          <th-person-form role="stay" id-prefix="c-stay" :model-value="stay" readonly></th-person-form>
         </div>
       </section>
 

@@ -39,6 +39,14 @@
 
   /* 以下皆為示意值（見檔頭） */
   var REASONS = ["登山健行", "救濟", "文化", "醫療", "衛生", "學術研究", "其他"];
+
+  /* 登山計畫書填寫範例：舊站太魯閣步驟一的原文（範例用奇萊路線，與所選路線無關） */
+  var PLAN_EXAMPLE = [
+    "D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。",
+    "D2：月型池→磐石山→磐石山西峰→三叉營地。",
+    "D3：三叉營地→太魯閣大山→三叉營地→平安池→廣寒宮。",
+    "D4：廣寒宮→立霧主山→三冬路口→帕托魯大山→三叉路口。",
+  ];
   var PLACES = [
     { code: "865+10002+10002110+1+0", name: "南湖中央尖山(宜蘭縣-大同鄉)" },
     { code: "S-001", name: "南湖大山(台中市-和平區)" },
@@ -65,7 +73,7 @@
     },
     emits: ["update:modelValue"],
     data() {
-      return { reasons: REASONS, libs: LIBS, keyword: "", picked: "" };
+      return { reasons: REASONS, libs: LIBS, keyword: "", picked: "", planExample: PLAN_EXAMPLE };
     },
     computed: {
       v() {
@@ -172,7 +180,12 @@
             <label class="th-label" :for="fid('plan')"><span class="req">*</span>登山計畫書<span class="th-label-en">Plan</span></label>
             <textarea :id="fid('plan')" class="th-textarea" rows="5" placeholder="D1：登山口→…→宿營地。"
                       :value="v.plan" @input="emit({ plan: $event.target.value })"></textarea>
-            <span class="th-field-hint">※ 計畫書內容約 300 字，請依每日行程簡要述明。</span>
+            <!-- 範例原文取自 2026-09-17 測試站太魯閣步驟一截圖（TAR026_S02_filled） -->
+            <div v-if="!readonly" class="th-field-hint">
+              <p>【登山計畫書填寫範例】</p>
+              <p>※計畫書內容約300字，請參考範例，簡要述明。</p>
+              <p v-for="l in planExample" :key="l">{{ l }}</p>
+            </div>
           </div>
         </div>
       </div>
