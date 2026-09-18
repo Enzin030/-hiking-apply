@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>信件內容 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  信件內容（對應舊站 mail_1.aspx；規格 34_聯絡我們.md 第二節）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/mail_1.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header></th-header>
+
+  <th-page-shell
+    :trail="['聯絡我們', '信件內容']"
+    title="信件內容">
+
+
+    <!-- 送出成功提示 -->
+    <div v-if="submitSuccess" class="p-6 mb-6 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 flex flex-col gap-3">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-2xl text-emerald-600"></i>
+        <h3 class="text-xl font-bold">信件已成功送出！</h3>
+      </div>
+      <p class="text-[length:var(--fs-base)] leading-relaxed">
+        感謝您的寶貴意見與諮詢。我們已收到您的來信，客服人員將於工作日儘速指派專人處理並透過電子郵件回覆您。
+      </p>
+      <div class="flex gap-3 pt-2">
+        <a href="mail.html" class="th-btn th-btn-ghost">
+          返回聯絡我們
+        </a>
+        <button type="button" class="th-btn th-btn-primary" @click="resetForm">
+          再次填寫信件
+        </button>
+      </div>
+    </div>
+
+    <form v-else @submit.prevent="onSubmit" class="flex flex-col gap-6">
+
+      <!-- 提示區塊：姓名與電子信箱填寫叮嚀（icon 與第一列中文嚴格垂直居中） -->
+      <th-callout class="[&>i]:!mt-0 [&>i]:!h-[26px] [&>i]:!flex [&>i]:!items-center">
+        <p class="font-medium text-slate-800 leading-[26px]">姓名及電子信箱請務必填寫正確，以方便回覆您的問題以及您日後查詢案件及滿意度調查。</p>
+        <p class="text-[length:var(--fs-xs)] text-slate-500 mt-1 leading-relaxed">
+          Name and email address must be correct in case of the need for contact with the Yushan National Park Headquarters and other departments for satisfactory investigation.
+        </p>
+      </th-callout>
+
+      <!-- 卡片一：管理單位選擇（主子選單同列，col-6 + col-6） -->
+      <section class="th-card" id="org-section">
+        <div class="th-card-body flex flex-col gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" for="f-org">
+              <span class="text-red-500 mr-1">*</span>管理單位
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <div :class="['grid gap-3', hasSubMenu ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1']">
+                <!-- 主選單：管理單位 (col-6) -->
+                <div>
+                  <select
+                    id="f-org"
+                    name="org"
+                    class="th-select w-full"
+                    v-model="form.org"
+                    @change="onOrgChange">
+                    <option v-for="opt in orgOptions" :key="opt.value" :value="opt.value">
+                      {{ opt.label }}
+                    </option>
+                  </select>
+                  <div v-if="submitted && errors.org" class="th-field-error mt-1">{{ errors.org }}</div>
+                </div>
+
+                <!-- 子選單：同列右側 (col-6) -->
+                <div v-if="hasSubMenu">
+                  <!-- 自然保留區 -->
+                  <template v-if="form.org === 'reserve'">
+                    <select id="f-reserve" name="reserve" class="th-select w-full" v-model="form.subArea">
+                      <option value="">請選擇保留區</option>
+                      <option v-for="item in reserveOptions" :key="item" :value="item">{{ item }}</option>
+                    </select>
+                  </template>
+
+                  <!-- 自然保護區 -->
+                  <template v-if="form.org === 'protected'">
+                    <select id="f-protected" name="protected" class="th-select w-full" v-model="form.subArea">
+                      <option value="">請選擇保護區</option>
+                      <option v-for="item in protectedOptions" :key="item" :value="item">{{ item }}</option>
+                    </select>
+                  </template>
+
+                  <!-- 野生動物保護區 -->
+                  <template v-if="form.org === 'wildlife'">
+                    <select id="f-wildlife" name="wildlife" class="th-select w-full" v-model="form.subArea">
+                      <option value="">請選擇野生動物保護區</option>
+                      <option v-for="item in wildlifeOptions" :key="item" :value="item">{{ item }}</option>
+                    </select>
+                  </template>
+
+                  <!-- 國家步道(山屋/營地) -->
+                  <template v-if="form.org === 'trail'">
+                    <select id="f-cabin" name="cabin" class="th-select w-full" v-model="form.cabin">
+                      <option v-for="c in trailCabinOptions" :key="c.value" :value="c.value">{{ c.label }}</option>
+                    </select>
+                    <div v-if="submitted && errors.cabin" class="th-field-error mt-1">{{ errors.cabin }}</div>
+                  </template>
+
+                  <!-- 雪霸登山申請編號 -->
+                  <template v-if="form.org === 'spnp'">
+                    <input
+                      id="f-spnp-serial"
+                      name="spnpSerial"
+                      type="text"
+                      class="th-input w-full"
+                      placeholder="登山申請編號（選填）"
+                      v-model="form.serial" />
+                  </template>
+
+                  <!-- 玉山登山申請編號 -->
+                  <template v-if="form.org === 'ysnp'">
+                    <input
+                      id="f-ysnp-serial"
+                      name="ysnpSerial"
+                      type="text"
+                      class="th-input w-full"
+                      placeholder="登山申請編號（選填）"
+                      v-model="form.serial" />
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 玉山管理處專屬：18 項信件分類複選卡片 (展開於下方) -->
+          <div v-if="form.org === 'ysnp'" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start pt-2 border-t border-slate-100">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left pt-1.5">
+              <span>玉山信件分類</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Categories</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 p-3.5 bg-slate-50 border border-slate-200 rounded-lg">
+                <label v-for="cat in ysnpCategories" :key="cat" class="flex items-center gap-2 text-[length:var(--fs-sm)] text-slate-700 cursor-pointer hover:text-slate-900">
+                  <input
+                    type="checkbox"
+                    class="rounded text-[var(--national-700)] focus:ring-[var(--national-700)]"
+                    :value="cat"
+                    v-model="form.selectedCategories" />
+                  <span>{{ cat }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 卡片二：信件詳細內容 -->
+      <section class="th-card" id="form-detail">
+        <div class="th-card-body flex flex-col gap-4">
+
+          <!-- 寄件人電子信箱/Email (必填) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" for="f-email">
+              <span><span class="text-red-500 mr-1">*</span>寄件人電子信箱</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Email</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <input
+                id="f-email"
+                name="email"
+                type="email"
+                class="th-input w-full"
+                autocomplete="email"
+                v-model="form.email" />
+              <div v-if="submitted && errors.email" class="th-field-error mt-1">{{ errors.email }}</div>
+            </div>
+          </div>
+
+          <!-- 姓名/Name (必填) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" for="f-name">
+              <span><span class="text-red-500 mr-1">*</span>姓名</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Name</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <input
+                id="f-name"
+                name="name"
+                type="text"
+                class="th-input w-full"
+                autocomplete="name"
+                v-model="form.name" />
+              <div v-if="submitted && errors.name" class="th-field-error mt-1">{{ errors.name }}</div>
+            </div>
+          </div>
+
+          <!-- 電話/Telephone (必填) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" for="f-tel">
+              <span><span class="text-red-500 mr-1">*</span>電話</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Telephone</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <input
+                id="f-tel"
+                name="tel"
+                type="tel"
+                class="th-input w-full"
+                autocomplete="tel"
+                v-model="form.tel" />
+              <div v-if="submitted && errors.tel" class="th-field-error mt-1">{{ errors.tel }}</div>
+            </div>
+          </div>
+
+          <!-- 標題/Title (必填) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" for="f-title">
+              <span><span class="text-red-500 mr-1">*</span>標題</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Title</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <input
+                id="f-title"
+                name="title"
+                type="text"
+                class="th-input w-full"
+                v-model="form.title" />
+              <div v-if="submitted && errors.title" class="th-field-error mt-1">{{ errors.title }}</div>
+            </div>
+          </div>
+
+          <!-- 內容/Content (必填，5列) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left pt-2" for="f-content">
+              <span><span class="text-red-500 mr-1">*</span>內容</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Content</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <textarea
+                id="f-content"
+                name="content"
+                rows="5"
+                class="th-input w-full h-auto resize-y"
+                v-model="form.content"></textarea>
+              <div v-if="submitted && errors.content" class="th-field-error mt-1">{{ errors.content }}</div>
+            </div>
+          </div>
+
+          <!-- 附件檔案 (選填，3張獨立自訂卡片，圓形序號 -> 按鈕 -> 檔案名稱) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start pt-2 border-t border-slate-100">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left pt-1.5">
+              <span>附件檔案</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Attach File</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10 flex flex-col gap-2.5">
+              <!-- 3 張獨立自訂卡片：選擇檔案按鈕 -> 檔案名稱 -->
+              <div
+                v-for="(fileName, idx) in form.files"
+                :key="idx"
+                class="flex items-center gap-3 px-3 py-2 bg-[var(--bg-1)] border border-[var(--border-ui)] rounded-[var(--r-md)] min-h-[44px] hover:border-slate-400 transition-colors">
+                
+                <!-- 隱藏 input -->
+                <input
+                  :id="'f-file-' + idx"
+                  type="file"
+                  class="hidden"
+                  accept=".xls,.xlsx,.doc,.docx,.pdf,.jpeg,.jpg,.png,.gif"
+                  @change="onFileChange(idx, $event)" />
+
+                <!-- 1. 選擇檔案按鈕（方案 A：官方輔色海軍藍全填滿） -->
+                <button
+                  type="button"
+                  class="th-btn th-btn-secondary text-[length:var(--fs-xs)] px-3.5 py-1.5 shrink-0 !shadow-none hover:opacity-85 transition-opacity cursor-pointer flex items-center gap-1.5"
+                  @click="triggerFileInput(idx)">
+                  <i class="fa-solid fa-paperclip text-xs"></i>
+                  <span>選擇檔案</span>
+                </button>
+
+                <!-- 3. 才是檔案名稱（未選擇字色對齊 Attach File text-slate-500） -->
+                <div class="flex-1 min-w-0 flex items-center">
+                  <span
+                    v-if="fileName"
+                    class="text-[length:var(--fs-sm)] text-[var(--national-700)] font-medium truncate flex items-center gap-1.5"
+                    :title="fileName">
+                    <i class="fa-solid fa-file-circle-check"></i>
+                    <span>{{ fileName }}</span>
+                  </span>
+                  <span
+                    v-else
+                    class="text-[length:var(--fs-xs)] text-slate-500 truncate">
+                    未選擇任何檔案
+                  </span>
+                </div>
+              </div>
+
+              <!-- 說明文字：icon 僅與第一列居中對齊，英文次行字色對齊 Attach File text-slate-500 -->
+              <div class="text-[length:var(--fs-xs)] text-slate-500 leading-relaxed mt-1 flex flex-col gap-0.5">
+                <div class="flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-info text-slate-500 shrink-0 text-xs"></i>
+                  <span class="font-medium text-slate-600">支援格式：xls, xlsx, doc, docx, pdf, jpeg, jpg, png, gif（單一檔案大小上限 10MB）</span>
+                </div>
+                <p class="text-slate-500 pl-[18px]">
+                  Format files: xls, xlsx, doc(x), pdf, jpeg, jpg, png, gif (file size limit: maximum 10MB)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 驗證碼 (必填，高度 42px 齊平，不跑版) -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center pt-2 border-t border-slate-100">
+            <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" for="f-vcode">
+              <span><span class="text-red-500 mr-1">*</span>驗證碼</span>
+              <span class="block text-[length:var(--fs-xs)] font-normal text-slate-500 mt-0.5">Verification Code</span>
+            </label>
+            <div class="sm:col-span-9 lg:col-span-10">
+              <div class="flex items-center gap-2 max-w-md">
+                <input
+                  id="f-vcode"
+                  name="vcode"
+                  type="text"
+                  class="th-input flex-1 min-w-0"
+                  autocomplete="off"
+                  placeholder="請輸入驗證碼"
+                  v-model="form.vcode" />
+                <span class="flex items-center justify-center shrink-0 w-28 h-[42px] text-center font-mono font-bold tracking-[0.25em] text-blue-900 bg-indigo-50 border border-indigo-200 rounded-md select-none text-base">
+                  {{ vcodeDisplay }}
+                </span>
+                <button
+                  type="button"
+                  class="th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity"
+                  @click="refreshVcode"
+                  title="換一組驗證碼">
+                  <i class="fa-solid fa-rotate"></i>
+                </button>
+              </div>
+              <div v-if="submitted && errors.vcode" class="th-field-error mt-1">{{ errors.vcode }}</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 置中按鈕區（回上一頁線框按鈕 + 寄出信件實心按鈕） -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4 pb-12">
+        <a href="mail.html" class="th-btn th-btn-ghost px-8 py-3 text-[length:var(--fs-md)] min-w-[140px] hover:opacity-85 transition-opacity">
+          回上一頁
+        </a>
+        <button type="submit" class="th-btn th-btn-primary px-8 py-3 text-[length:var(--fs-md)] min-w-[140px] !shadow-none hover:opacity-85 transition-opacity" style="box-shadow: none;">
+          寄出信件
+        </button>
+      </div>
+
+    </form>
+
+  </th-page-shell>
+
+  <th-footer></th-footer>
+
+  <th-quick-nav></th-quick-nav>
+
+</div>
+
+</body>
+</html>

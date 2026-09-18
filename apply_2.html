@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>資料線上異動/取消入園 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_2 — 資料線上異動/取消入園（舊站 apply_2.aspx）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，不要試著收斂進 head-loader
+  （理由見 assets/includes/head.html 註解）：Tailwind → tailwind.config.js → index.css。
+
+  **檔名為什麼是底線版 `apply_2.html`**：沿用 2026-09-02 裁決「新頁檔名比照舊站 aspx」。
+  既有的 `apply-2.html`（連字號）是**申請流程的第二步**，與本頁無關，兩者不可互相取代。
+  同理本頁的腳本叫 `components/apply2-edit.js`，不叫 `apply-2.js`——後者已被申請流程占用。
+
+  本頁沒有頁面專用 CSS：版面全部由 components.css 的 .th-card／.th-field／.th-callout
+  與 Tailwind utility 組成，所以 pages.css 沒有新增 .p-apply2-*。
+
+  ------------------------------------------------------------
+  本輪範圍（2026-09-16）：只做查詢頁
+  ------------------------------------------------------------
+  使用者指示「先做到各功能查詢頁就好」。查詢通過後的異動表單（領隊／隊員／留守人
+  三段欄位、隊員與領隊互換、整隊取消）屬規格 06d 的第二層，正式站需真實案號才進得去，
+  本頁只以待建置標記示意，不編造欄位。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply2-edit.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、不留 #root -->
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '資料線上異動/取消入園']"
+    title="資料線上異動/取消入園"
+    lead="查詢已送出的登山申請，辦理隊職員資料異動、取消個人入園或整隊取消。"
+    updated="2026-09-16">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="notes">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">異動與取消的權限範圍</h2>
+        <span class="th-card-note">逐字取自正式站 apply_2.aspx（2026-09-16 實抓）</span>
+      </div>
+      <div class="th-card-body">
+        <!-- 三條權限規則逐字保留。這幾條決定「誰登入、能動到誰」，
+             改寫成摘要會讓驗收的人看不出領隊與隊員的差別。 -->
+        <th-callout type="warning">領隊如點選 取消入園，將取消整個隊伍之所有資料。</th-callout>
+        <th-callout>隊員可自行「取消個人入園」，僅取消個人之申請資料。
+            欲取消隊員，請以該員身分證字號及登山申請編號登入，方可取消該員入園資格。</th-callout>
+        <th-callout>申請人可以申請領隊異動。</th-callout>
+      </div>
+    </section>
+
+    <section class="th-card" id="query">
+      <div class="th-card-head">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <h2 class="th-card-title">查詢申請資料</h2>
+      </div>
+      <div class="th-card-body">
+        <p>請輸入您的<strong>登山申請編號</strong>及<strong>身分證號（居留證）</strong>來進行資料查詢。</p>
+
+        <div class="flex flex-col gap-4">
+        <div class="th-field">
+          <label class="th-label" for="f-serial">
+            <span class="req">*</span>（一站式／入園）申請編號
+          </label>
+          <input
+            id="f-serial"
+            name="serial"
+            ref="serial"
+            type="text"
+            class="th-input"
+            autocomplete="off"
+            placeholder="請輸入登山申請一站式 12 碼申請編號"
+            :value="serial"
+            @input="serial = $event.target.value" />
+        </div>
+
+        <!-- 舊站本頁的國籍是**獨立一列**（con_nation），與 apply_3 把國籍併進
+             身分證那一列（con_apply_nation）不同。照實抓做，不統一。 -->
+        <div class="th-field">
+          <label class="th-label" for="f-nation">
+            <span class="req">*</span>國籍
+          </label>
+          <select
+            id="f-nation"
+            name="nation"
+            class="th-select sm:w-60"
+            :value="nation"
+            @change="nation = $event.target.value">
+            <option value="">請選擇</option>
+            <option value="中華民國">中華民國</option>
+            <option value="國外">國外</option>
+          </select>
+        </div>
+
+        <div class="th-field">
+          <label class="th-label" for="f-sid">
+            <span class="req">*</span>身分證號／護照號碼（居留證）
+          </label>
+          <input
+            id="f-sid"
+            name="sid"
+            type="text"
+            class="th-input"
+            autocomplete="off"
+            :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+            :value="sid"
+            @input="sid = $event.target.value" />
+          <div class="th-field-hint">要取消某位隊員時，請填該員本人的身分證號，不是領隊的。</div>
+        </div>
+
+        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">查詢結果僅顯示與輸入身分相符的申請案。</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="reset">
+              清除
+            </button>
+            <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+            </button>
+          </div>
+        </div>
+
+        <template v-if="submitted">
+          <h3 class="th-section-title mt-6">查詢結果<span class="th-todo-tag">待確認</span></h3>
+          <p class="th-table-note">欄位組成取自規格 06d 的「申請行程資料」段；資料為匿名假資料，非真實申請案。</p>
+          <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra"></th-data-table>
+
+          <!-- 卡片要求：異動與取消是兩種結果動作，畫面上必須分開。
+               兩者的期限規則依各國家公園管理處自治條例，規格 06d 未列具體天數，故標待確認。 -->
+          <h3 class="th-section-title mt-6">可辦理的動作</h3>
+          <div class="th-notice-grid items-stretch">
+            <section class="th-card flex flex-col" v-for="act in resultActions" :key="act.id">
+              <div class="th-card-head">
+                <i :class="act.icon" aria-hidden="true"></i>
+                <h4 class="th-card-title">{{ act.title }}</h4>
+              </div>
+              <div class="th-card-body flex flex-col gap-3 flex-1">
+                <p class="th-field-hint">{{ act.desc }}</p>
+                <p class="th-table-note">{{ act.limit }}<span class="th-todo-tag">待確認</span></p>
+                <th-todo-link label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
+              </div>
+            </section>
+          </div>
+
+          <th-callout>取消入園後若要申請退還已繳規費，請另行前往
+            <a href="apply_5.html">線上申請退費</a>；本頁不重述退費比例與期限規定。</th-callout>
+        </template>
+        </div>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!--
+  樣板裡的換行位置會影響版面：Vue 的 whitespace: 'condense' 把「文字＋換行＋縮排」
+  折成「文字＋一個空白」，所以換行只能放在兩個文字之間，不要放在文字與標籤之間。
+-->
+</body>
+</html>

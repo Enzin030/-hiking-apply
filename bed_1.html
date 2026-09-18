@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>雪霸宿營地查詢 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  雪霸宿營地查詢（對應正式站 bed_1.aspx）
+  ------------------------------------------------------------
+  2026-09-17 自 campsite.html 拆出（第二張），版面比照 bed_0.html（使用者指示）：
+  月份列與月曆用共用元件 th-bed-calendar。
+
+  與 bed_0 不同處（依雪霸資料的實際樣子調整）：
+  - 宿營地 34 個，頁籤放不下，改用下拉；選了就切換，不必按查詢。預設七卡山莊。
+  - 格內主數字是「餘額」、副數字是「已通過」（雪霸沒有「申請數」）；
+    其餘 5 項（待處理、補件、待系統排定、宿營地不足候補、外籍提前）點日期看彈窗。
+  - 保留正式站頁首說明（餘額的算法）與月曆下方的宿營地介紹。
+  資料是正式站快照，見 components/Bed1Data.js 檔頭。
+
+  2026-09-18 攤平層級（使用者：「太多層，且東西都藏起來了」；任務模式 2）。
+  **零新增，只把既有的東西換位置**：
+  - 左窄欄＋右主欄兩欄。左欄＝承載量總表（2026-09-17 曾依指示移除，本次依使用者
+    「乘載量原本有列表的，如果拿掉就要」放回；欄位就是 Bed1Data 的 cap 既有五欄，
+    不加餘額欄）＋宿營地介紹；右主欄＝月曆。總表限高可捲、點列即切換宿營地，
+    是 34 項下拉之外的第二條路徑（下拉依規格保留）。
+  - 格內三數字（餘額／待處理／已通過），規格 §一「每日申請概況」就是這三個；
+    待處理原本只在 modal 裡看得到。
+  - 日期明細由 th-modal 改成月曆下方就地展開，內容一項不減。
+    **名單仍連 bed_1main.html**：Bed1MainData 只涵蓋 2026-09-22～09-30（297 筆，
+    對月曆 3894 個有值格＝覆蓋率 7.6%），就地嵌入會讓 92% 的日期展開後一片空白。
+
+  這三行必須靜態寫在頁面，順序不可調換（理由見 assets/includes/head.html 註解）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/bed_1.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <th-header active="campsite"></th-header>
+
+  <th-page-shell
+    :trail="['宿營地與床位查詢', '雪霸宿營地查詢']"
+    title="雪霸宿營地查詢"
+    :bare="true">
+
+    <!--
+      正式站 .alert 原文逐條；紅字段落照正式站標紅。
+      2026-09-17 一度拿掉 th-callout 外框，同日使用者決定用回 callout（比照正式站也是 .alert）。
+      slot 內文第一段文字必須緊貼標籤，見 th-callout.js 註解。
+    -->
+    <th-callout><ul class="p-bed1-notice"><li v-for="(li, i) in notice" :key="i"><template v-for="(p, j) in li" :key="j"><a v-if="p.href" class="th-inline-link" :href="p.href" target="_blank" rel="noopener noreferrer">{{ p.t }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a><span v-else-if="p.red" class="p-bed1-red">{{ p.t }}</span><template v-else>{{ p.t }}</template></template></li></ul></th-callout>
+
+    <!--
+      2026-09-18 使用者指示移除「宿營地點」下拉：改由承載量總表點列切換，兩者功能重複。
+      **此處與規格 §一 及正式站不同**（那邊有下拉），屬使用者明示的刻意偏離，
+      已記入 decisions.md，不要當成漏做而「修正」回去。
+    -->
+
+    <!--
+      第一列：承載量總表（左）＋月曆（右）並排；
+      第二列：宿營地資訊卡，獨佔一整列。
+      （2026-09-18 15:44 使用者指示「滾動列表跟月曆並排，景點卡片維持下方」）
+      ≤1100px 收成單欄（規則在 pages.css 的 .p-bed1-layout）。
+    -->
+    <div class="p-bed1-layout" :class="{ 'is-compact': !showCaps }">
+
+        <!--
+          承載量總表：欄位為 Bed1Data 的 cap 既有五欄，不加衍生欄位。
+          同時是宿營地選取器（點列即切換），解掉 34 項下拉難掃視的問題；
+          限高可捲，不把月曆推出第一屏。
+        -->
+        <section class="th-card p-bed1-caps" aria-labelledby="bed1-caps-title">
+          <div class="th-card-head">
+            <h2 id="bed1-caps-title" class="th-card-title">宿營地承載量</h2>
+            <!-- 承載量數據開關（2026-09-18 使用者指示）：關掉只剩宿營地清單，列高更密 -->
+            <button type="button" class="p-bed1-caps-toggle" :aria-expanded="showCaps ? 'true' : 'false'"
+                    aria-controls="bed1-caps-table" @click="showCaps = !showCaps">
+              <i :class="['fa-solid', showCaps ? 'fa-eye-slash' : 'fa-eye']" aria-hidden="true"></i>{{ showCaps ? '隱藏承載量' : '顯示承載量' }}
+            </button>
+          </div>
+          <div class="th-card-body p-bed1-caps-body">
+            <table id="bed1-caps-table" class="th-table p-bed1-caps-table" :class="{ 'is-compact': !showCaps }">
+              <caption class="sr-only">雪霸各宿營地{{ showCaps ? '承載量，欄位為宿營地、平日山屋床位、平日營地人數、假日山屋床位、假日營地人數' : '清單' }}；點宿營地名稱可切換右側月曆</caption>
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <label class="sr-only" for="f-site-search">搜尋宿營地</label>
+                    <span class="p-bed1-search">
+                      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                      <input id="f-site-search" type="search" class="p-bed1-search-input"
+                             v-model="siteQuery" placeholder="搜尋宿營地" autocomplete="off" />
+                    </span>
+                  </th>
+                  <template v-if="showCaps">
+                    <th scope="col" class="p-bed1-capnum">平日<br />山屋</th>
+                    <th scope="col" class="p-bed1-capnum">平日<br />營地</th>
+                    <th scope="col" class="p-bed1-capnum">假日<br />山屋</th>
+                    <th scope="col" class="p-bed1-capnum">假日<br />營地</th>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="s in shownSites" :key="s.id" :class="{ 'is-current': s.id === siteId }">
+                  <th scope="row">
+                    <button type="button" class="p-bed1-caps-pick" :aria-current="s.id === siteId ? 'true' : null" @click="pickSite(s.id)">{{ s.name }}</button>
+                  </th>
+                  <template v-if="showCaps">
+                    <td class="p-bed1-capnum">{{ capText(s.cap.wdBed) }}</td>
+                    <td class="p-bed1-capnum">{{ capText(s.cap.wdCamp) }}</td>
+                    <td class="p-bed1-capnum">{{ capText(s.cap.heBed) }}</td>
+                    <td class="p-bed1-capnum">{{ capText(s.cap.heCamp) }}</td>
+                  </template>
+                </tr>
+                <tr v-if="!shownSites.length">
+                  <td :colspan="showCaps ? 5 : 1" class="p-bed1-caps-empty">找不到符合「{{ siteQuery }}」的宿營地。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      <div class="p-bed1-side">
+
+        <!--
+          宿營地介紹：內容與 2026-09-17 版一字不差，只是從月曆下方搬到左欄。
+          版面比照景點資訊檢視頁（2026-09-17 使用者指示）：圖片上方深色標題列。
+        -->
+        <section class="th-card p-bed1-intro" aria-labelledby="bed1-intro-title">
+          <div class="th-card-head">
+            <i class="fa-solid fa-tent" aria-hidden="true"></i>
+            <h2 id="bed1-intro-title" class="th-card-title">{{ site.name }}</h2>
+          </div>
+          <div class="th-card-body">
+            <div class="p-bed1-intro-grid" :class="{ 'is-single': !site.intro.image }">
+              <figure v-if="site.intro.image" class="p-bed1-intro-pic">
+                <div class="p-bed1-intro-pic-head">{{ site.name }}</div>
+                <div class="p-bed1-intro-pic-stage">
+                  <img :src="site.intro.image" :alt="site.name + '實景'" loading="lazy" />
+                </div>
+              </figure>
+              <div class="p-bed1-intro-body">
+                <ul class="p-bed1-intro-lines">
+                  <li v-for="(l, i) in site.intro.lines" :key="i">{{ l }}</li>
+                </ul>
+                <p v-if="site.intro.waters" class="p-bed1-intro-line">水源：{{ site.intro.waters }}</p>
+                <p v-if="site.intro.signals" class="p-bed1-intro-line">訊號：{{ site.intro.signals }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+      </div><!-- /.p-bed1-side -->
+
+      <div class="p-bed1-main">
+
+        <th-bed-calendar v-model:year="year" v-model:month="month" :years="years"
+                         :days="calDays" main-label="餘額" sub-label="待處理" clickable
+                         :aria-label="site.name + ' ' + year + ' 年 ' + month + ' 月'"
+                         :empty-text="year + ' 年 ' + month + ' 月不在雛形快照範圍內（' + rangeText + '）。'"
+                         @pick="pickDay"></th-bed-calendar>
+
+      </div><!-- /.p-bed1-main -->
+
+    </div><!-- /.p-bed1-layout -->
+
+  </th-page-shell>
+
+  <!--
+    當日申請名單彈窗（2026-09-18）。資料同 bed_1main.html 的 Bed1MainData，
+    覆蓋率 7.6%（297／3894 有值格），查無資料時顯示空狀態並給正式站連結，
+    不得假裝有資料。欄位與規格 §二 的名單列表一致（9 欄）。
+  -->
+  <th-modal v-if="roster" :meta="roster.name" :title="roster.date"
+            body-class="p-bed1-rosterbody" @close="closeRoster">
+
+    <!-- fs 紅字警示（原在攤平卡片內，移進 modal 以免漏掉） -->
+    <p v-if="roster.day && roster.day.fs" class="p-bed1-daynote is-danger">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>正式站於當日標示「外籍提前不得申請」。
+    </p>
+
+    <!-- 當日統計：與獨立頁 bed_1main 相同的卡片呈現（2026-09-18 使用者指示）。
+         沿用 .p-bed1main-stat* 而非另建一套——同一種東西不做兩份樣式。
+         外籍提前拆為外國人／本國人兩張卡（同日使用者指示）。 -->
+    <h3 class="p-bed1-modalsub">承載量概況</h3>
+    <ul class="p-bed1main-stats p-bed1-modalstats">
+      <li v-for="st in rosterData.stat" :key="st.k" :class="['p-bed1main-stat', { 'is-main': st.k === '餘額' }]">
+        <span class="p-bed1main-stat-k">{{ st.k }}</span>
+        <span class="p-bed1main-stat-v">{{ st.v === '' ? '—' : st.v }}<small v-if="st.v !== ''">位</small></span>
+      </li>
+      <li v-for="st in foreignStat" :key="st.k" class="p-bed1main-stat">
+        <span class="p-bed1main-stat-k">{{ st.k }}</span>
+        <span class="p-bed1main-stat-v">{{ st.v === '' ? '—' : st.v }}<small v-if="st.v !== ''">位</small></span>
+      </li>
+    </ul>
+    <p class="p-bed1main-formula">餘額 ＝ 承載量 － 待處理 － 補件 － 已通過（不包含「待系統排定」與「宿營地不足候補」的隊伍）</p>
+
+    <!-- 申請狀態說明：按鈕點擊展開（2026-09-18 使用者指示，原為 details）。
+         正式站原文七條，與 bed_1main 共用 Bed1MainData 的同一份。 -->
+    <h3 class="p-bed1-modalsub">各申請狀態說明</h3>
+    <button type="button" class="p-bed1-notesbtn" :aria-expanded="showNotes ? 'true' : 'false'"
+            aria-controls="bed1-notes" @click="showNotes = !showNotes">
+      <i :class="['fa-solid', showNotes ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>{{ showNotes ? '收合說明' : '展開說明' }}
+    </button>
+    <ol v-show="showNotes" id="bed1-notes" class="p-bed1-rosternote-list">
+      <li v-for="(n, i) in notes" :key="i"><b>【{{ n.k }}】</b>{{ n.t }}</li>
+    </ol>
+
+    <!-- 當日申請名單：資料覆蓋率 7.6%，查無資料時誠實顯示並給正式站連結 -->
+    <h3 class="p-bed1-modalsub">當日申請名單</h3>
+    <div v-if="!rosterData.rows" class="th-empty">
+      <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+      <p>本雛形的名單資料只收錄 2026-09-22 至 09-30。<a class="th-inline-link" :href="rosterData.officialUrl" target="_blank" rel="noopener noreferrer">到現行網站查看這一天<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+    </div>
+    <div v-else-if="!rosterData.rows.length" class="th-empty">
+      <i class="fa-solid fa-inbox" aria-hidden="true"></i>
+      <p>當日尚無申請隊伍。</p>
+    </div>
+    <div v-else>
+      <div class="th-table-wrap">
+        <table class="th-table th-table--zebra p-bed1-rostertable">
+          <caption class="sr-only">{{ roster.date }} {{ roster.name }} 當日申請名單</caption>
+          <thead>
+            <tr>
+              <th scope="col">申請時間</th>
+              <th scope="col">隊名</th>
+              <th scope="col">領隊</th>
+              <th scope="col">進入日期</th>
+              <th scope="col">離開日期</th>
+              <th scope="col">登山路線</th>
+              <th scope="col" class="p-bed1-capnum">申請人數</th>
+              <th scope="col" class="p-bed1-capnum">分配數</th>
+              <th scope="col">申請狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(r, i) in rosterData.rows" :key="i">
+              <td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td>
+              <td>{{ r[3] }}</td><td>{{ r[4] }}</td><td>{{ r[5] }}</td>
+              <td class="p-bed1-capnum">{{ r[6] }}</td>
+              <td class="p-bed1-capnum">{{ r[7] }}</td>
+              <td><span :class="['th-flag', statusClass(r[8])]">{{ r[8] }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="p-bed1-rosterlinkrow">
+      <a class="th-inline-link" :href="detailUrl">在獨立頁開啟<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
+    </p>
+
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>，頁面腳本只在 data() 內讀取 window.BED1_* -->
+<script src="components/Bed1Data.js"></script>
+<!-- 當日申請名單彈窗的資料（與 bed_1main.html 同一份） -->
+<script src="components/Bed1MainData.js"></script>
+</body>
+</html>

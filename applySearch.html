@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>申請進度查詢/繳費/異動/取消 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  applySearch — 申請進度查詢/繳費/異動/取消（舊站 applySearch.aspx）
+  ------------------------------------------------------------
+  **本頁只有四張入口卡，不放任何表單。** 正式站的 applySearch.aspx 就是這樣：
+  一個「請選擇操作方式」區塊、四顆按鈕，各自連到 apply_2／apply_3／apply_4／apply_5。
+
+  2026-09-16 修正：原本這裡還塞著「申請進度查詢」表單與「列印與退費規定」兩個區塊，
+  那是 apply_3.aspx 的內容，已搬到 `apply_3.html`。當時的「前往查詢」是捲到同頁下方，
+  四個功能裡只有這一個沒有自己的頁，與正式站行為不符。**不要再把下游頁的內容搬回來。**
+
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
+
+  本頁有一段頁面專用 CSS：`pages.css` 末尾的 `.p-applysearch-grid`／`.p-applysearch-entry*`
+  （2026-09-16 加，理由寫在該段註解）。配色仍全部沿用 `.th-btn-primary`，
+  沒有新的 hex、沒有 !important。除此之外沿用共用層，無 §4.2 的複製案例。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply-search.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, '申請進度查詢/繳費/異動/取消']"
+    title="申請進度查詢/繳費/異動/取消">
+
+    <!-- 不給 #nav slot：全頁只有四顆按鈕，頁內目錄沒有作用；正式站也沒有。 -->
+
+    <!--
+      版型依設計參考圖 `01_Raw_Input/操作畫面截圖/2026-09-16_11-23-48.png`：
+      2×2 卡片，左側淡綠圓形圖示，右側由上而下為標題／說明／適用山屋 badge／
+      「前往…→」文字連結。樣式在 pages.css 的 .p-applysearch-*。
+
+      正式站原本是四顆不同顏色的 Bootstrap 大按鈕（primary／info／success／main），
+      本雛形不照抄——四種顏色會讀成有優先序，但四個功能是平行的。
+
+      **整張卡是一個 <a>**，下方「前往…」只是外觀上的連結（span），
+      不要改成真的 <a>：巢狀 <a> 是非法 HTML，瀏覽器會拆成兩個兄弟節點，
+      點擊範圍會裂開。頁面上也沒有「請選擇操作方式」之類的區塊標題。
+    -->
+    <div class="p-applysearch-grid">
+      <a
+        v-for="a in actions"
+        :key="a.id"
+        :href="a.href"
+        class="th-focusable p-applysearch-entry">
+        <span class="p-applysearch-entry-ic">
+          <i :class="a.icon" aria-hidden="true"></i>
+        </span>
+        <span class="p-applysearch-entry-body">
+          <span class="p-applysearch-entry-title">{{ a.title }}</span>
+          <span class="p-applysearch-entry-desc">{{ a.desc }}</span>
+          <!-- 山屋用 badge 逐項標，不要串成一行文字：這是「適用範圍清單」，
+               一項一顆才數得出來。不用 .th-chip——那支是可點的篩選籤
+               （帶 cursor: pointer 與自己的 hover），包在 <a> 裡會跟父層連結打架。 -->
+          <span v-if="a.cabins.length > 0" class="p-applysearch-entry-badges">
+            <span class="p-applysearch-badge" v-for="c in a.cabins" :key="c">{{ c }}</span>
+          </span>
+          <!-- CTA 是文字連結的樣子，但整塊 <a> 才是點擊區，所以這裡不能再放一個 <a>
+               （巢狀 <a> 是非法 HTML，瀏覽器會把它拆開）。用 span 畫成連結外觀。 -->
+          <span class="p-applysearch-entry-cta">
+            {{ a.cta }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </span>
+        </span>
+      </a>
+    </div>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>申請進度查詢/許可證下載 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_3 — 申請進度查詢/許可證下載（舊站 apply_3.aspx）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：Tailwind → tailwind.config.js → index.css。
+
+  **這頁是從 applySearch.html 拆出來的**（2026-09-16）。原本查詢表單與「列印與退費規定」
+  兩個區塊被放在 applySearch.html 裡，但正式站的 applySearch.aspx **只有四張入口卡**，
+  這兩塊屬於 apply_3.aspx。原狀態下入口頁的「前往查詢」是捲到同頁下方，與正式站
+  「點卡片開新頁」的行為不同，四個功能也只有這一個沒有自己的頁。已改為獨立頁。
+
+  **檔名為什麼是底線版**：沿用 2026-09-02 裁決「新頁檔名比照舊站 aspx」。
+  連字號的 `apply-3.html` 是申請流程第三步，與本頁無關；腳本同理叫 `apply3-progress.js`，
+  不叫 `apply-3.js`（後者已被申請流程占用）。
+
+  本頁沒有頁面專用 CSS，未新增 .p-apply3-*。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply3-progress.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '申請進度查詢/許可證下載']"
+    title="申請進度查詢/許可證下載"
+    lead="查詢已送出的登山申請進度並下載入園許可證。">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="progress">
+      <div class="th-card-head">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請進度查詢</h2>
+      </div>
+      <div class="th-card-body ">
+        <p>請輸入您的<strong>登山申請編號</strong>及<strong>身分證號／護照號碼（居留證）</strong>來進行資料查詢。</p>
+
+        <div class="flex flex-col gap-4">
+        <div class="th-field">
+          <label class="th-label" for="f-serial">
+            <span class="req">*</span>（一站式／入園）申請編號
+          </label>
+          <input
+            id="f-serial"
+            name="serial"
+            type="text"
+            class="th-input"
+            autocomplete="off"
+            placeholder="請輸入登山申請一站式 12 碼申請編號（不是警政署、不是林保署編號）"
+            :value="serial"
+            @input="serial = $event.target.value" />
+        </div>
+
+        <div class="th-field">
+          <label class="th-label" for="f-sid">
+            <span class="req">*</span>身分證號／護照號碼（居留證）
+          </label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <select
+              id="f-nation"
+              name="nation"
+              class="th-select basis-full sm:basis-44 grow-0 shrink-0"
+              aria-label="國籍"
+              :value="nation"
+              @change="nation = $event.target.value">
+              <option value="">請選擇</option>
+              <option value="中華民國">中華民國</option>
+              <option value="國外">國外</option>
+            </select>
+            <input
+              id="f-sid"
+              name="sid"
+              type="text"
+              class="th-input flex-1"
+              autocomplete="off"
+              :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+              :value="sid"
+              @input="sid = $event.target.value" />
+          </div>
+          <div class="th-field-hint">選「中華民國」填身分證字號，選「國外」填護照號碼或居留證號碼。</div>
+        </div>
+
+        <!-- 2026-09-16：這一段原本是逐字寫死的驗證碼區塊，apply_2／apply_4 也要用，
+             依「二次即提升」搬進共用元件 th-captcha，輸出的 DOM 與提升前相同。 -->
+        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
+          <p class="th-field-hint">查詢結果僅顯示與輸入身分相符的申請案。</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="th-btn th-btn-secondary" @click="reset">
+              清除
+            </button>
+            <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+            </button>
+          </div>
+        </div>
+
+        <template v-if="submitted">
+          <!-- 標題與待確認標記之間不可換行：JSX 會把標籤相鄰的換行整段刪掉，
+               Vue 卻會折成一個空白，那一個空白會讓後面整行重排
+               （見 notice.html 檔內的實測紀錄） -->
+          <h3 class="th-section-title mt-6">查詢結果<span class="th-todo-tag">待確認</span></h3>
+          <p class="th-table-note">以下欄位、狀態值與許可證下載規則皆未取得正式站可公開來源，為示意版面；
+                資料為匿名假資料，非真實申請案。</p>
+          <!-- React 版三個欄位的 render 回傳 JSX；th-data-table 的 render 只收字串，
+               要回元素改走 cell slot（見 assets/components/th-data-table.js 檔頭） -->
+          <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra">
+            <template #cell="{ row, column, value }">
+              <template v-if="column.key === 'team'">{{ row.team }}<br />{{ row.leader }}（共 {{ row.members }} 人）</template>
+              <span v-else-if="column.key === 'state'" :class="['th-flag', stateFlag[row.state] || '']">{{ row.state }}</span>
+              <template v-else-if="column.key === 'permit'"><span v-if="row.permit" class="th-todo-link">下載許可證</span><span v-else class="th-table-note">尚未核准，無法下載</span></template>
+              <template v-else>{{ value }}</template>
+            </template>
+          </th-data-table>
+          <th-callout>林保署山屋（天池、檜谷、嘉明湖／向陽）的案件可於本區進行繳費與資料異動；
+                入園申請僅提供查詢與許可證下載。國家公園山屋的繳費與退費另走
+                <a href="apply_4.html">線上繳費</a>與<a href="apply_5.html">線上退費</a>。<span class="th-todo-tag">待確認</span><span class="th-callout-src">操作範圍取自舊站 applySearch.aspx 的按鈕說明文字，實際可用功能待業務確認。</span></th-callout>
+        </template>
+        </div>
+      </div>
+    </section>
+
+    <section class="th-card" id="rules">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">列印與退費規定</h2>
+      </div>
+      <div class="th-card-body ">
+        <th-callout type="warning"><strong>國家公園入園許可證</strong>：請領隊於入園日（含）前 5 日內始可列印；
+            入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份。<span class="th-callout-src">來源：正式站 apply_3.aspx（2026-09-07 實抓）</span></th-callout>
+
+        <th-callout>登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前 1 日天氣預報不佳或身體有不適狀況，
+            考量不成行請儘速線上取消申請，避免入園當日無法取消。線上取消登山申請請至
+            <a href="apply_2.html">申請資料異動及取消</a>。<span class="th-callout-src">來源：正式站 apply_3.aspx（2026-09-07 實抓）</span></th-callout>
+
+        <h3 class="th-section-title">林保署山屋取消住宿申請之退費規定</h3>
+        <p class="th-table-note">適用檜谷山莊、天池山莊、嘉明湖／向陽。</p>
+        <th-data-table :columns="refundColumns" :rows="refundRows" row-key="when" table-class="th-table--zebra"></th-data-table>
+        <p class="th-table-note">起算日計算標準：單日住宿者，以住宿日為起算日；多日住宿者，以第一天住宿日為起算日。
+            來源：正式站 apply_3.aspx（2026-09-07 實抓）。</p>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

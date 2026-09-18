@@ -1,36 +1,187 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（forest-camp-1，重組第二頁）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
+
+  .fc-* 整族在階段 4 步驟 7 移進 components.css，未改名：
+  其中 9 個（fc-layout／fc-main／fc-aside／fc-section／fc-section-title／
+  fc-stepper-input／fc-stepper-btn／fc-stepper-val／fc-footbar）forest-camp-2
+  也在用，屬「跨頁共用但無元件擁有者」的第三類，所以落在共用層而非 pages.css。
+  **不要只把 FC1 專用的那些改名**——同一族拆到
+  兩個檔正是第五類靜默失敗（多選擇器漏複製）的溫床。
+  例外是 .fc-step*（步驟條）：它已有元件擁有者 th-fc-stepper，階段 3.0b 已複製
+  進 components.css。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
-<link rel="stylesheet" href="styles/shared.css" />
-<link rel="stylesheet" href="styles/forest-camp.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/forest-camp-1.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script type="text/babel" src="components/RouteData.jsx"></script>
-<script type="text/babel" src="components/ForestCamp1.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js。data-screen-label 沿用原 JSX 最外層那個 div -->
+<div id="th-app" v-cloak data-screen-label="FC-01 日期確認">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '日期確認']" title="山屋住宿申請" :bare="true">
+
+    <template #stepper>
+      <th-fc-stepper :current="1"></th-fc-stepper>
+    </template>
+
+    <div class="fc-layout">
+      <!-- 左欄：查詢表單 -->
+      <div class="fc-main">
+
+        <!-- 山屋資訊卡 -->
+        <div class="p-fc1-cabin-card">
+          <div class="p-fc1-cabin-thumb">
+            <img :src="cabin.image" :alt="cabin.name" />
+          </div>
+          <div class="fc-cabin-info">
+            <div class="p-fc1-cabin-name">{{ cabin.name }}</div>
+            <div class="p-fc1-cabin-meta">
+              <span><i class="ph-bold ph-buildings" aria-hidden="true"></i>{{ cabin.manager }}</span>
+              <span><i class="ph-bold ph-map-pin" aria-hidden="true"></i>{{ cabin.location }}</span>
+            </div>
+            <div class="p-fc1-cabin-tags">
+              <span v-for="f in cabin.facilities" :key="f.id" class="p-fc1-tag">
+                <i :class="f.icon" aria-hidden="true"></i>{{ f.label }}（上限 {{ f.max }} {{ f.unit }}）
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 查詢表單 -->
+        <div class="fc-section">
+          <h2 class="fc-section-title">
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>選擇行程日期與人數
+          </h2>
+
+          <div class="p-fc1-form-grid">
+            <!-- 原 ForestCamp1.jsx 自己包了一層 DatePicker，內容與 th-date-picker
+                 相同；階段 2 建該元件時就是照這裡的形狀做的（見元件檔頭） -->
+            <th-date-picker
+              label="出發日期"
+              :model-value="startDate"
+              :min="todayStr"
+              @update:model-value="setStartDate"></th-date-picker>
+
+            <div class="th-field">
+              <label class="th-label">住宿晚數</label>
+              <div class="fc-stepper-input">
+                <button class="fc-stepper-btn" @click="addNights(-1)" :disabled="nights <= cabin.minDays">
+                  <i class="fa-solid fa-minus" aria-hidden="true"></i>
+                </button>
+                <span class="fc-stepper-val">{{ nights }} 晚</span>
+                <button class="fc-stepper-btn" @click="addNights(1)" :disabled="nights >= cabin.maxDays">
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="th-field-hint">可選 {{ cabin.minDays }}～{{ cabin.maxDays }} 晚</div>
+            </div>
+
+            <div class="th-field">
+              <label class="th-label">申請人數</label>
+              <div class="fc-stepper-input">
+                <button class="fc-stepper-btn" @click="addHeadcount(-1)" :disabled="headcount <= 1">
+                  <i class="fa-solid fa-minus" aria-hidden="true"></i>
+                </button>
+                <span class="fc-stepper-val">{{ headcount }} 人</span>
+                <button class="fc-stepper-btn" @click="addHeadcount(1)" :disabled="headcount >= 12">
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="th-field-hint">最多 12 人（notice_b3：每隊 1〜12 名）</div>
+            </div>
+
+            <div v-if="endDate" class="th-field">
+              <label class="th-label">預計回程日</label>
+              <div class="th-input th-input-readonly">{{ endDate }}</div>
+            </div>
+          </div>
+
+          <!-- 原碼的 className 尾端有個永遠成立的三元運算，輸出等於多一個空白，
+               DOM 正規化後相同，這裡不重現那個空字串 -->
+          <button class="th-btn th-btn-secondary p-fc1-query-btn" :disabled="!canQuery" @click="handleQuery">
+            <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>查詢床位 / 營位狀況
+          </button>
+        </div>
+
+        <!-- 查詢結果 -->
+        <div v-if="queried" class="fc-section p-fc1-avail-section">
+          <h2 class="fc-section-title">
+            <i class="ph-bold ph-calendar-check" aria-hidden="true"></i>{{ startDate }} 出發，共 {{ nights }} 晚 · {{ headcount }} 人
+          </h2>
+
+          <p-fc1-avail-bar v-for="f in cabin.facilities" :key="f.id"
+                           :facility="f" :date="startDate" :nights="nights"></p-fc1-avail-bar>
+
+          <div class="p-fc1-avail-note">
+            <i class="ph-bold ph-info" aria-hidden="true"></i>以上為即時查詢結果，實際名額以申請後為準。床位/營位數量將於下一步選擇。
+          </div>
+        </div>
+      </div>
+
+      <!-- 右欄：山屋須知摘要 -->
+      <aside class="fc-aside">
+        <div class="p-fc1-notice-card">
+          <div class="th-sidebar-head">
+            <i class="ph-bold ph-info" aria-hidden="true"></i>
+            <span>申請前注意事項</span>
+          </div>
+          <ul class="p-fc1-notice-list">
+            <li v-for="(n, i) in cabin.notices" :key="i">
+              <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+              <span>{{ n }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-fc1-price-card">
+          <div class="th-sidebar-head">
+            <i class="ph-bold ph-currency-circle-dollar" aria-hidden="true"></i>
+            <span>費用參考</span>
+          </div>
+          <!-- 二價（2026-09-16）：官網的山屋費率分假日／平日，原本是單一數值。
+               日期在本頁尚未決定每一夜，所以兩個級距都列出；FC2 才按當夜日期取值。 -->
+          <div v-for="f in cabin.facilities" :key="f.id" class="p-fc1-price-row">
+            <span>{{ f.label }}</span>
+            <span>NT$ {{ f.price.weekday }}（平日）／{{ f.price.holiday }}（假日） / {{ f.unit }} / 晚</span>
+          </div>
+          <div class="p-fc1-price-note">假日費率以週五、六估算，連假另計〔待確認〕</div>
+          <div v-for="(n, i) in cabin.priceNotes" :key="'pn' + i" class="p-fc1-price-note">{{ n }}</div>
+          <div class="p-fc1-price-note">實際費用於確認送出時顯示</div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 底部操作列 -->
+    <div class="fc-footbar">
+      <button class="th-btn th-btn-ghost" @click="goBack">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
+      </button>
+      <button class="th-btn th-btn-primary" :disabled="!queried" @click="handleNext">下一步：行程計畫<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>

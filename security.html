@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>資訊安全政策 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  資訊安全政策（對應線上站 security.aspx）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/security.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <!-- 資訊安全政策屬頁尾政策宣告，不屬主導覽任何一項，故不傳 active -->
+  <th-header></th-header>
+
+  <th-page-shell
+    :trail="['資訊安全政策']"
+    title="資訊安全政策">
+
+    <!-- 頁內章節快速跳轉目錄 -->
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="collection">
+      <div class="th-card-head">
+        <h2 class="th-card-title">個人資料之蒐集及運用</h2>
+      </div>
+      <div class="th-card-body">
+        <ul class="space-y-3 text-[length:var(--fs-base)] text-slate-700 leading-relaxed list-disc list-outside pl-5">
+          <li>將依個人資料保護法及相關法令之規定，只就其特定目的，做為承辦所提供服務之用，不會任意對其他第三者揭露。</li>
+          <li>使用本網站時，本網站將自動收集下列資訊：日期和時間、您所擷取之網頁、您所在之網址、您的瀏覽器種類、您對本網站網頁所做行動（如下載等）及成功與否。這些資訊可能被用來改善本網站之效能。</li>
+          <li>監測對本網站造成重大負荷的網址上的行為。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="th-card" id="training">
+      <div class="th-card-head">
+        <h2 class="th-card-title">資訊安全權責與教育訓練</h2>
+      </div>
+      <div class="th-card-body">
+        <ul class="space-y-3 text-[length:var(--fs-base)] text-slate-700 leading-relaxed list-disc list-outside pl-5">
+          <li>對處理敏感性、機密性資料之人員及因工作需要須賦予系統管理權限之人員，妥適分工，分散權責並建立評估及考核制度，及視需要建立人員相互支援制度。</li>
+          <li>對離（休、停）職人員，依據人員離（休、停）職之處理程序辦理，並立即取消使用各項系統資源所有權限。</li>
+          <li>依角色及職能為基礎，針對不同層級人員，視實際需要辦理資訊安全教育訓練及宣導，促使員工瞭解資訊安全的重要性，各種可能的安全風險，以提高員工資訊安全意識，促其遵守資訊安全規定。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="th-card" id="protection">
+      <div class="th-card-head">
+        <h2 class="th-card-title">資訊安全作業及保護</h2>
+      </div>
+      <div class="th-card-body">
+        <ul class="space-y-3 text-[length:var(--fs-base)] text-slate-700 leading-relaxed list-disc list-outside pl-5">
+          <li>本網站主機均設有防火牆、防毒系統等相關的各項資訊安全設備及必要的安全防護措施，加以保護網站及您的個人資料。</li>
+          <li>採用嚴格的保護措施，只由經過授權的人員才能接觸您的個人資料，相關處理人員皆簽有保密合約，如有違反保密義務者，將會受到相關的法律處分。</li>
+          <li>如因業務需要有必要委託各相關單位提供服務時，本網站亦會嚴格要求其遵守保密義務，並且採取必要檢查程序以確定其將確實遵守。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="th-card" id="network">
+      <div class="th-card-head">
+        <h2 class="th-card-title">網路安全管理</h2>
+      </div>
+      <div class="th-card-body">
+        <ul class="space-y-3 text-[length:var(--fs-base)] text-slate-700 leading-relaxed list-disc list-outside pl-5">
+          <li>與外界網路連接之網點，設立防火牆控管外界與內部網路之資料傳輸及資源存取，並執行嚴謹的身分辨識作業。</li>
+          <li>機密性及敏感性的資料或文件，不存放在對外開放的資訊系統中，機密性文件不以電子郵件傳送。</li>
+          <li>定期對內部網路資訊安全設施與防毒進行查核，並更新防毒系統之病毒碼，及各項安全措施。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="th-card" id="access">
+      <div class="th-card-head">
+        <h2 class="th-card-title">系統存取控制管理</h2>
+      </div>
+      <div class="th-card-body">
+        <ul class="space-y-3 text-[length:var(--fs-base)] text-slate-700 leading-relaxed list-disc list-outside pl-5">
+          <li>視作業系統及安全管理需求訂定通行密碼核發及變更程序並作成記錄。</li>
+          <li>登入各作業系統時，依本署資訊科執行任務所必要之系統存取權限，由資訊室系統管理人員設定賦予權限之帳號與密碼，並定期更新。</li>
+        </ul>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

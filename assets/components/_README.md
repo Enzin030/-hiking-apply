@@ -1,0 +1,68 @@
+# assets/components/ — Vue 共用元件（階段 2）
+
+一檔一元件。每支檔案只做一件事：把元件定義掛進 `window.thComponents`，
+由 `assets/app-boot.js` 在 `createApp` 後一次全域註冊。
+
+```js
+window.thComponents = window.thComponents || {};
+window.thComponents["th-xxx"] = { props: {...}, template: `...` };
+```
+
+## 為什麼元件的 template 寫成 JS 字串，頁面版面卻不行
+
+計畫 §3 配套規則：**頁面版面留在 `.html`（in-DOM template）**，
+只有**共用元件**的 template 寫成 JS 字串。一支數十行寫一次、32 頁共用，
+字串編輯的痛可攤提；整頁版面搬進 JS 字串則不可攤提。
+
+## 樣式歸屬
+
+**`components.css` 已由階段 3.0b 填入內容**（2026-09-09 起不再為空）。
+四層結構是 `assets/css/` 的 `tokens` → `base` → `components` → `pages`，
+由 `index.css` 以 `@import` 串接。共用元件的樣式歸 `components.css`。
+
+階段 4 已完成搬移：`.th-chip`、`.th-btn*`、`.th-section-title*`、
+`.th-table-note` 與兩頁共用的 `.fc-*` 規則由 `components.css` 接手。
+FC1 專用的 `.p-fc1-avail-section .fc-section-title` 則在 `pages.css`，
+保留完整的祖先限定。`styles/shared.css` 已退場，不再編輯或載入。
+
+改樣式前先在 `assets/css/components.css` 與 `assets/css/pages.css` 確認現有規則，
+依共用／頁面專用歸屬修改原處，避免另立同選擇器副本。
+
+元件若需要**全新的**外觀（既有 class 提供不了的），寫進 `components.css`，
+不得寫在元件檔內或頁面裡。頁面專用樣式放 `pages.css`，命名 `.p-<頁名>-*`。
+
+⚠ **頁面只 link `assets/css/index.css` 一支樣式表**（階段 4 起）。
+併存期曾要求它排在 `shared.css` 之後，該檔已刪除；理由與實測見
+`assets/css/index.css` 檔頭。
+
+## 已完成
+
+| 檔案 | 對應原 React | 互動 |
+|---|---|---|
+| `th-todo-link.js` | `TodoLink` | 無 |
+| `th-breadcrumb.js` | `Breadcrumb` | 無 |
+| `th-stepper.js` | `Stepper` | 無 |
+| `th-page-nav.js` | `PageNav` | 無 |
+| `th-page-shell.js` | `PageShell` | 無 |
+| `th-header.js` | `Header` | **選單面板開關、語言下拉切換** |
+| `th-footer.js` | `Footer` | 無 |
+| `th-quick-nav.js` | `ExperienceNav` | **右下角快捷選單開關** |
+| `th-modal.js` | `bulletin-modal` 外殼、`DayModal`、`ForestryDayModal` | Esc 關閉、遮罩點擊關閉 |
+| `th-forest-camp-shared.js` | `ForestCampShared.jsx` | 無（`th-fc-stepper` ＋ `CABIN_DATA` ＋ `FC_STEPS`） |
+| `th-date-picker.js` | `ForestCamp1.jsx` 的 DatePicker | 原生 `input[type=date]` 薄包裝 |
+| `th-calendar-grid.js` | `BedCalendar` ＋ `ForestryCalendar` | `@pick`；格內容由 scoped slot 決定 |
+| `th-data-table.js` | `DataTable` | 無 |
+| `th-doc.js` | `NoticeDetail.jsx` 的版面部分 | 無（**唯一一檔多元件**，見下） |
+| `th-date-utils.js` | `ForestCampShared.jsx` 的日期工具 | 無 |
+
+## 「一檔一元件」的唯一例外：th-doc.js
+
+該檔有四個元件（`th-doc-inline`／`th-doc-paragraph`／`th-doc-list`／`th-doc-body`），
+因為它們是**同一個遞迴渲染器依 node 型別拆出來的分支**，彼此互相呼叫
+（body → list → body），單獨拿出任何一支都沒有用途。拆成四個檔只會得到四個
+不能單獨使用的檔。`th-doc-table` 也在裡面，因為它只服務這個渲染器；
+`th-data-table` 相反——它自己就是完整可用的元件，所以獨立一檔。
+
+## 未實作（計畫預留）
+
+`th-table-pager.js`、`th-form-field.js`（未來卡控與錯誤訊息的統一出口）。

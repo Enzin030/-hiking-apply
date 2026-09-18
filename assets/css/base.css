@@ -1,0 +1,182 @@
+/* ============================================================
+   base.css — 元素層 reset 與基礎排版（四層的第二層）
+   ------------------------------------------------------------
+   2026-09-11 階段 4 步驟 5 填入第一批 19 條。在此之前本檔是空的，
+   全域盒模型與元素層排版沒有明確的負責層。
+
+   **A 段必須在 B 段之前，這不是排版偏好。**
+   兩段對 `body` 的 background、`a` 的 color 有不同宣告，
+   現行行為是 B 段勝出。原因是併存期 `styles/shared.css` 第 1 行
+   `@import` 了 `design_system/colors_and_type.css`，
+   所以 A 段的規則原本就排在 shared.css 自有規則之前——
+   本檔沿用那個先後，A 段在前、B 段在後。
+   順序一反，body 底色與 a 顏色就換人，而且兩者都是低調差異
+   （白底 vs 代幣底色、繼承色 vs 指定色），像素比對看得到但容易被當雜訊。
+   這個順序是**執行期量出來的**，不是讀原始碼推論的。
+
+   `* { box-sizing: border-box }` 在執行期一直被 Tailwind 的 preflight 蓋掉
+   （同為特異性 0，而 Tailwind 的 <style> runtime 插在 head 尾端）。
+   搬進來不改變任何畫面，改變的是**責任歸屬從隱性變成明確**——
+   不搬的話，全站盒模型就隱性相依於 Tailwind CDN 還在不在。
+
+   依 §4.2「先複製後刪除」：本批是複製，兩個來源此刻都還沒動。
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   A 段：來自原 design_system/colors_and_type.css（不含 :root，
+   那 92 個代幣 tokens.css 已全數涵蓋）
+   ------------------------------------------------------------ */
+body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  font-size: var(--fs-md);
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, .h1 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-display);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-1);
+}
+
+h2, .h2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  color: var(--fg-1);
+}
+
+p {
+  font-size: var(--fs-md);
+  line-height: var(--lh-base);
+  color: var(--fg-2);
+}
+
+.label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.meta {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+}
+
+a {
+  color: var(--fg-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--national-700);
+}
+
+code, pre, .mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.92em;
+}
+
+.section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h2);
+  color: var(--fg-1);
+  border-left: 4px solid var(--filter-active);
+  padding-left: 16px;
+  line-height: var(--lh-tight);
+}
+
+/* ------------------------------------------------------------
+   B 段：來自原 styles/shared.css 的純元素選擇器
+   （無 class、無 id、不在 @media 內）
+   ------------------------------------------------------------ */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+/* ============================================================
+   焦點可見（WCAG 2.4.7 / 1.4.11）— 2026-09-14 批次 3
+   ------------------------------------------------------------
+   焦點框 --national-700 對白底 4.77:1，高於非文字對比所需的 3:1。
+   :focus 與 :focus-visible 並寫：前者涵蓋舊版瀏覽器與自動化檢測工具，
+   後者讓現代瀏覽器只在鍵盤操作時顯示。
+   **任何情況都不得寫 outline: none 而不提供替代指示**（見 components.css
+   的 .th-input 系列與 .th-hdrsearch-input）。
+   ============================================================ */
+:focus,
+:focus-visible {
+  outline: 2px solid var(--national-700);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/* 表單元件貼齊邊界，避免與自身圓角形成雙框 */
+.th-input:focus,
+.th-select:focus,
+.th-textarea:focus,
+.th-hdrsearch-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--national-700);
+  outline-offset: 0;
+}

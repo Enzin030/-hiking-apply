@@ -1,37 +1,202 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>登山線上申請｜申請須知與同意書 — 臺灣登山申請一站式服務網</title>
-<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<!--
+  ============================================================
+  階段 3 逐頁遷移（apply-2）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
+
+  **本頁有兩種模式**，由 ?unit 決定，載入後不會再切換：
+    forestry-area／police → 申請前摘要（SummaryPage）
+    其餘（yushan／shei-pa／taroko／無）→ 逐條同意書（NationalParkConsent）
+  兩個模式各自是一個 <div data-screen-label="…">，與原 JSX 的結構相同。
+  **data-screen-label 沒有掛在 #th-app 上**：那是掛載容器，樣板改不到它的屬性，
+  而這頁的標籤是兩種模式各一個字串。其餘單一模式的頁仍掛在 #th-app。
+
+  .p2-* 已依 §6.2 改名為 .p-apply2-* 並複製進 pages.css（97 條，逐條覆核過
+  @media 層級與宣告內容）。
+  ============================================================
+-->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ["Noto Sans TC", "sans-serif"],
-          serif: ["Noto Serif TC", "serif"],
-        },
-      },
-    },
-  };
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
-<link rel="stylesheet" href="styles/shared.css" />
-<link rel="stylesheet" href="styles/apply2.css" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply-2.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" src="components/Shared.jsx"></script>
-<script type="text/babel" src="components/RouteData.jsx"></script>
-<script type="text/babel" src="components/ConsentData.generated.jsx"></script>
-<script type="text/babel" src="components/Apply2.jsx"></script>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
+<div id="th-app" v-cloak>
+
+  <!-- ============ 摘要模式（forestry-area／police）============ -->
+  <div v-if="mode === 'summary'" data-screen-label="02 申請前摘要">
+    <th-header active="apply"></th-header>
+    <th-page-shell :trail="['登山申請', applyCrumb, '申請前摘要']" :title="cfg.title" :bare="true">
+      <template #stepper>
+        <th-stepper :current="2"></th-stepper>
+      </template>
+
+      <!-- 路線資訊欄 -->
+      <div v-if="routeData" class="p-apply2-sum-routebar">
+        <span class="p-apply2-sum-routeicon" :style="{ background: cfg.color }">
+          <i :class="cfg.icon" class="p-apply2-sum-routeicon-i" aria-hidden="true"></i>
+        </span>
+        <div>
+          <div class="p-apply2-sum-routename">{{ routeData.name }}</div>
+          <div class="p-apply2-sum-routemeta">{{ cfg.agencyName }} · {{ routeData.subroute }}</div>
+        </div>
+      </div>
+
+      <!-- 注意事項列表 -->
+      <div class="p-apply2-sum-card">
+        <div class="p-apply2-sum-cardhead">
+          <i class="ph-bold ph-info p-apply2-sum-cardhead-i" :style="{ color: cfg.color }" aria-hidden="true"></i>
+          <span class="p-apply2-sum-cardtitle">申請前請確認以下事項</span>
+        </div>
+
+        <div v-for="(n, i) in cfg.notices" :key="i" class="p-apply2-sum-noticerow"
+             :style="{ borderBottom: i < cfg.notices.length - 1 ? '1px solid var(--slate-100)' : 'none',
+                       background: n.warn ? 'var(--warning-bg)' : 'var(--bg-1)' }">
+          <span class="p-apply2-sum-noticeicon"
+                :style="{ background: n.warn ? '#fef3c7' : 'var(--bg-mist-2)' }">
+            <i :class="n.icon" class="p-apply2-sum-noticeicon-i"
+               :style="{ color: n.warn ? 'var(--warning-fg)' : cfg.color }" aria-hidden="true"></i>
+          </span>
+          <!-- 原碼用 dangerouslySetInnerHTML：注意事項含 <strong> 標記 -->
+          <div class="p-apply2-sum-noticetext"
+               :style="{ color: n.warn ? 'var(--warning-fg)' : 'var(--fg-2)' }"
+               v-html="n.text"></div>
+        </div>
+      </div>
+
+      <!-- 操作按鈕 -->
+      <div class="p-apply2-sum-actions">
+        <button class="th-btn th-btn-ghost" @click="goApply1">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
+        </button>
+        <button class="th-btn th-btn-primary" @click="goNext">我已了解，進入申請<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      </div>
+    </th-page-shell>
+
+    <th-quick-nav></th-quick-nav>
+    <th-footer></th-footer>
+  </div>
+
+  <!-- ============ 同意書模式（國家公園）============ -->
+  <div v-else data-screen-label="02 同意書（國家公園）">
+    <th-header active="apply"></th-header>
+    <th-page-shell :trail="['登山申請', applyCrumb, '申請須知與同意書']" title="申請須知與同意書" :bare="true">
+      <template #stepper>
+        <th-stepper :current="2"></th-stepper>
+      </template>
+
+      <div v-if="routeData" class="p-apply2-route-brief">
+        <div>
+          <span class="p-apply2-route-brief-label">申請路線</span>
+          <strong>{{ routeData.displayName || routeData.name }}</strong>
+          <span>{{ routeData.routePath || routeData.subroute }}</span>
+        </div>
+        <div>
+          <span class="p-apply2-route-brief-label">路線與天數</span>
+          <strong>{{ routeData.routeGroup || routeData.peak }}</strong>
+          <span>{{ routeData.durationLabel || (routeData.days === 1 ? '單日往返' : routeData.days + '天' + (routeData.days - 1) + '夜') }}</span>
+        </div>
+      </div>
+
+      <div class="p-apply2-layout">
+        <div>
+          <section v-for="(s, idx) in sections" :key="s.id" :id="'sec-' + s.id"
+                   :class="['p-apply2-sec', { 'is-acked': acked[s.id] }]">
+            <div class="p-apply2-sec-head">
+              <div class="p-apply2-sec-head-left">
+                <div class="p-apply2-sec-num">
+                  <i v-if="acked[s.id]" class="fa-solid fa-check" aria-hidden="true"></i>
+                  <template v-else>{{ idx + 1 }}</template>
+                </div>
+                <div class="p-apply2-sec-titles">
+                  <span class="p-apply2-sec-kicker">{{ s.label }}</span>
+                  <h2 class="p-apply2-sec-title">{{ s.title }}</h2>
+                </div>
+              </div>
+              <div class="p-apply2-sec-head-right">
+                <label class="p-apply2-sec-check" @click.stop>
+                  <input type="checkbox" :checked="acked[s.id]" @change="toggleAck(s.id)" />
+                  <span class="p-apply2-sec-ack-box"></span>
+                  <span>{{ acked[s.id] ? '已確認' : '確認' }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="p-apply2-sec-body">
+              <!-- 條文內容是 HTML 字串（來自 CONSENT_BY_ORG 的 contentHtml） -->
+              <div class="p-apply2-consent-html" v-html="clauseHtml(s)"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 側欄目錄（scroll-spy） -->
+        <aside class="p-apply2-toc">
+          <h2><i class="ph-bold ph-list-numbers" aria-hidden="true"></i>閱讀定位</h2>
+          <div class="p-apply2-confirm-meter">
+            <div class="p-apply2-progress">
+              <div class="p-apply2-progress-bar" :style="{ width: (ackedCount / total) * 100 + '%' }"></div>
+            </div>
+            <div class="p-apply2-progress-label">
+              <span>已確認 <strong>{{ ackedCount }}/{{ total }}</strong></span>
+              <span>{{ Math.round((ackedCount / total) * 100) }}%</span>
+            </div>
+          </div>
+          <ul class="p-apply2-toc-list">
+            <li v-for="(s, i) in sections" :key="s.id"
+                :class="[{ 'is-acked': acked[s.id] }, { 'is-active': i === activeIndex }]">
+              <button @click="scrollToSection(s.id)">
+                <span class="p-apply2-toc-dot"><span>{{ i + 1 }}</span></span>
+                <span class="p-apply2-toc-text">
+                  <span class="p-apply2-toc-kicker">{{ s.label }}</span>
+                  <span>{{ s.title }}</span>
+                </span>
+              </button>
+            </li>
+          </ul>
+        </aside>
+      </div>
+
+      <!-- 置底列 -->
+      <div :class="['p-apply2-footbar', { 'is-ready': canSubmit }]">
+        <div class="p-apply2-footbar-status">
+          <div class="p-apply2-footbar-icon">
+            <i :class="canSubmit ? 'fa-solid fa-check' : 'fa-solid fa-list-check'" aria-hidden="true"></i>
+          </div>
+          <div>
+            <div>已確認 <span class="num">{{ ackedCount }}</span> / {{ total }} 組事項</div>
+          </div>
+        </div>
+
+        <div class="p-apply2-footbar-actions">
+          <button class="th-btn th-btn-ghost" @click="goApply1">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
+          </button>
+          <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">同意並下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </th-page-shell>
+
+    <th-quick-nav></th-quick-nav>
+    <th-footer></th-footer>
+  </div>
+
+</div>
+
+<!-- 資料檔：階段 0 已改為一般 <script> -->
+<script src="components/RouteData.js"></script>
+<script src="components/ConsentData.generated.js"></script>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
 </html>

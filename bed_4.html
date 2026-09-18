@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>太魯閣山屋查詢 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  太魯閣山屋查詢（對應正式站 bed_4.aspx）
+  ------------------------------------------------------------
+  依 2026-09-17 拆頁架構與 02_Spec/12_太魯閣山屋查詢.md 改版：
+  1. 宿營地 15 處（14 處山屋避難小屋＋營地），採用下拉選單快速切換，不必逐次按查詢送出。
+  2. 整合承載量總表（平日/假日床位與備註說明），支援一鍵展開/收合，點選宿營地名稱可直達月曆。
+  3. 月曆使用共用元件 th-bed-calendar，格內呈現「餘額」與「已通過」，白底極簡設計。
+  4. 點選日期彈出當日名額統計（餘額、待處理、已通過），並可前往當日申請名單明細頁（bed_4main.html）。
+  5. 月曆下方提供結構化山屋介紹卡片（海拔高度、水況、廁所、照明設備、通訊品質與住宿自備裝備須知）。
+
+  這三行必須靜態寫在頁面，順序不可調換（理由見 assets/includes/head.html 註解）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/bed_4.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <th-header active="campsite"></th-header>
+
+  <th-page-shell
+    :trail="['宿營地與床位查詢', '太魯閣山屋查詢']"
+    title="太魯閣山屋查詢"
+    lead="查詢太魯閣國家公園轄區內各宿營地與避難山屋承載量、每日床位餘額與當日申請名單。"
+    :bare="true">
+
+    <!-- 頂部快照標記與提示 -->
+    <div class="p-bed4-toolbar">
+      <div class="th-filter p-bed4-filter">
+        <div class="th-filter-grid">
+          <div class="th-filter-field p-bed4-site-field">
+            <label class="th-filter-label" for="f-site">宿營地點</label>
+            <th-hybrid-select>
+              <select id="f-site" class="th-select" :value="siteId" @change="pickSite($event.target.value)">
+                <option v-for="s in sites" :key="s.id" :value="s.id">{{ s.name }}</option>
+              </select>
+            </th-hybrid-select>
+          </div>
+          <div class="th-filter-actions">
+            <button type="button" class="th-btn th-btn-ghost" @click="showSummary = !showSummary" :aria-expanded="showSummary">
+              <i class="fa-solid fa-table-list" aria-hidden="true"></i>
+              {{ showSummary ? '收合承載量總表' : '查看承載量總表' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="p-bed4-snapshot-hint">
+        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+        <span>資料來源：正式站快照（{{ snapshotDate }}），非即時查詢。</span>
+      </div>
+    </div>
+
+    <!-- 宿營地承載量總表（可收合） -->
+    <section v-if="showSummary && summary" class="th-card p-bed4-summary-card" aria-label="山屋與營地承載量總表">
+      <div class="th-card-head">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-house-chimney text-emerald-600" aria-hidden="true"></i>
+          <h2 class="th-card-title">太魯閣宿營地承載量總表</h2>
+        </div>
+        <span class="text-sm text-stone-500">點擊宿營地名稱可切換下方月曆</span>
+      </div>
+      <div class="th-card-body p-0 overflow-x-auto">
+        <table class="th-table th-table--zebra p-bed4-summary-table">
+          <thead>
+            <tr>
+              <th scope="col" rowspan="2" class="w-44">宿營地</th>
+              <th scope="col" colspan="2" class="text-center">山屋床位承載量</th>
+              <th scope="col" rowspan="2">備註與設施說明</th>
+            </tr>
+            <tr>
+              <th scope="col" class="w-24 text-center">平日</th>
+              <th scope="col" class="w-24 text-center">假日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="r in summary.rows" :key="r.id" :class="{ 'is-active': r.id === siteId }">
+              <th scope="row">
+                <button type="button" class="p-bed4-site-btn" @click="pickSiteAndScroll(r.id)" :title="'切換至 ' + r.name + ' 月曆'">
+                  <span>{{ r.name }}</span>
+                  <i v-if="r.id === siteId" class="fa-solid fa-check text-emerald-600 ml-1" aria-hidden="true"></i>
+                </button>
+              </th>
+              <td class="text-center font-mono font-medium">{{ r.cols[0] }}</td>
+              <td class="text-center font-mono font-medium">{{ r.cols[1] }}</td>
+              <td class="text-sm leading-relaxed text-stone-600 whitespace-pre-line">{{ r.cols[2] || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 月曆區域 -->
+    <div id="cal-section" class="p-bed4-cal-wrap">
+      <div class="bulletin-section-head">
+        <h2 class="th-section-title">
+          <i class="fa-solid fa-calendar-days mr-1.5 text-emerald-600" aria-hidden="true"></i>
+          {{ site.name }} — 每日床位餘額
+        </h2>
+        <span class="text-sm text-stone-500">點擊有數值的日期可查看詳細名額與當日申請名單</span>
+      </div>
+
+      <th-bed-calendar
+        v-model:year="year"
+        v-model:month="month"
+        :years="years"
+        :days="calDays"
+        main-label="餘額"
+        sub-label="已通過"
+        :clickable="true"
+        :aria-label="site.name + ' ' + year + ' 年 ' + month + ' 月'"
+        :empty-text="year + ' 年 ' + month + ' 月不在雛形快照範圍內（' + rangeText + '）。'"
+        @pick="pickDay">
+      </th-bed-calendar>
+    </div>
+
+    <!-- 山屋介紹卡片（月曆下方） -->
+    <section class="th-card p-bed4-intro" aria-labelledby="bed4-intro-title">
+      <div class="th-card-head">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-emerald-600" aria-hidden="true"></i>
+          <h2 id="bed4-intro-title" class="th-card-title">{{ site.name }} — 設施與環境簡介</h2>
+        </div>
+        <div class="p-bed4-cap-badges">
+          <span class="th-badge">平日床位：<strong>{{ site.cap.wdBed }}</strong></span>
+          <span class="th-badge">假日床位：<strong>{{ site.cap.heBed }}</strong></span>
+        </div>
+      </div>
+      <div class="th-card-body">
+        <div class="p-bed4-intro-grid">
+          <!-- 規格屬性標籤組 -->
+          <div class="p-bed4-props">
+            <div class="p-bed4-prop-item">
+              <span class="p-bed4-prop-k"><i class="fa-solid fa-mountain mr-1" aria-hidden="true"></i>海拔高度</span>
+              <span class="p-bed4-prop-v">{{ site.intro.altitude || '未標註' }}</span>
+            </div>
+            <div class="p-bed4-prop-item">
+              <span class="p-bed4-prop-k"><i class="fa-solid fa-faucet-droplet mr-1" aria-hidden="true"></i>水源狀況</span>
+              <span class="p-bed4-prop-v">{{ site.intro.water || '請依公告備水' }}</span>
+            </div>
+            <div class="p-bed4-prop-item">
+              <span class="p-bed4-prop-k"><i class="fa-solid fa-restroom mr-1" aria-hidden="true"></i>廁所型式</span>
+              <span class="p-bed4-prop-v">{{ site.intro.toilet || '無' }}</span>
+            </div>
+            <div class="p-bed4-prop-item">
+              <span class="p-bed4-prop-k"><i class="fa-solid fa-lightbulb mr-1" aria-hidden="true"></i>照明設備</span>
+              <span class="p-bed4-prop-v">{{ site.intro.lighting || '請自備頭燈' }}</span>
+            </div>
+            <div class="p-bed4-prop-item">
+              <span class="p-bed4-prop-k"><i class="fa-solid fa-tower-cell mr-1" aria-hidden="true"></i>通訊品質</span>
+              <span class="p-bed4-prop-v">{{ site.intro.signal || '不穩定' }}</span>
+            </div>
+          </div>
+
+          <!-- 詳細注意事項與說明 -->
+          <div class="p-bed4-intro-desc">
+            <h3 class="text-sm font-bold text-stone-800 mb-2">住宿與申請須知</h3>
+            <ul v-if="site.intro.lines && site.intro.lines.length" class="p-bed4-intro-lines">
+              <li v-for="(l, i) in site.intro.lines" :key="i">{{ l }}</li>
+            </ul>
+            <p v-else class="text-stone-500 text-sm">暫無特別須知，住宿請務必自備保暖睡袋與基本過夜裝備。</p>
+
+            <div class="mt-4 p-3 bg-stone-50 rounded-lg border border-stone-200 text-xs text-stone-600">
+              <i class="fa-solid fa-shield-halved text-emerald-600 mr-1" aria-hidden="true"></i>
+              山區氣候多變，冬季水源常有結凍或枯竭情形；進出生態保護區請隨身攜帶入園許可證及身分證件以供查核。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 當日明細彈窗：顯示當日餘額、待處理、已通過＋前往當日申請名單頁 -->
+  <th-modal v-if="day" :meta="site.name" :title="day.date + ' 名額概況'" @close="day = null">
+    <table class="th-table th-table--zebra p-bed4-daytable">
+      <tbody>
+        <tr>
+          <th scope="row">剩餘床位（餘額）</th>
+          <td class="font-bold text-emerald-700 font-mono">{{ day.v[0] }} 位</td>
+        </tr>
+        <tr>
+          <th scope="row">待處理審查</th>
+          <td class="font-mono">{{ day.v[1] }} 位</td>
+        </tr>
+        <tr>
+          <th scope="row">已通過核准</th>
+          <td class="font-mono text-stone-700">{{ day.v[2] }} 位</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="p-bed4-dayaction">
+      <a class="th-btn th-btn-primary w-full justify-center" :href="detailUrl">
+        <i class="fa-solid fa-list-check mr-1.5" aria-hidden="true"></i>查看當日申請隊伍名單
+      </a>
+    </div>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>，頁面腳本只在 data() 內讀取 window.BED4_* -->
+<script src="components/Bed4Data.js"></script>
+</body>
+</html>

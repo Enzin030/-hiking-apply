@@ -1,0 +1,4696 @@
+/* 2026-09-14（批次 3）：本檔不得再出現 transition: all 或無屬性的簡寫。
+   `all` 會把 outline 一起動畫化，焦點框因此延遲出現，違反 WCAG 2.4.7
+   的「焦點可見」（設計檔 ACCESSIBILITY.md 第六節硬規定第 5 條）。
+   要動畫就逐一列出屬性；transform／opacity 本來就有明列，不受影響。 */
+/* 2026-09-14（批次 3）：本檔不得再出現 transition: all 或無屬性的簡寫。
+   `all` 會把 outline 一起動畫化，焦點框因此延遲出現，違反 WCAG 2.4.7
+   的「焦點可見」（設計檔 ACCESSIBILITY.md 第六節硬規定第 5 條）。
+   要動畫就逐一列出屬性；transform／opacity 本來就有明列，不受影響。 */
+/* ============================================================
+   components.css — 可重用視覺元件（四層樣式的第三層）
+   ------------------------------------------------------------
+   放 .th-* 共用元件與其附屬 @keyframes。判準見改版計畫 §6.1／§6.1.2。
+
+   規則要點：
+   - 新定義的共用元件只能寫在這裡（§6.2）
+   - 元件**內部幾何**與**可覆寫預設尺寸**歸這裡；元件根節點的外部間距與
+     位置歸 pages.css（§6.2.1 三分類）
+   - 可覆寫預設尺寸必須能被 pages.css 以**同優先序**覆寫
+   - 同一視覺樣式在 pages.css 出現第二次就提升到這裡（§6.3 二次即提升）
+   - 頁面需要的 UI 若這裡沒有，不要在該頁自己寫一套，回報後加進
+     assets/components/（§6.4 元件優先）
+
+   目前刻意留空：階段 1.2 只建立落點，不搬既有樣式。
+   階段 2 建立的五支共用元件外觀一律寫進本檔，不得臨時寫在別處待日後搬移。
+   ============================================================ */
+/* ============================================================
+   th-header
+   ============================================================ */
+/*
+  頂欄陰影。
+
+  為什麼不寫成 Tailwind 的 shadow-[var(--sh-header)]：
+  **實測 Tailwind CDN 無法處理 shadow 任意值裡的 var()**——它會產生
+  `box-shadow: none`，而且**不報錯、不警告**，陰影就這樣無聲消失
+  （2026-09-07 階段 3.0 的視覺回歸抓到，computed boxShadow 由
+  `rgba(0,0,0,0.05) 0px 2px 10px 0px` 變成 `none`）。
+
+  原因是 Tailwind 的 shadow utility 要把顏色拆出來組成 --tw-shadow-colored，
+  無法解析的值就整條失效。**顏色與字級的 var() 沒有這個問題**
+  （text-[var(--x)]、bg-[var(--x)]、text-[length:var(--x)] 實測皆正常）。
+
+  → 凡是 shadow，一律寫成這裡的元件 class，不要用 Tailwind 任意值。
+
+  優先序：本檔隨 index.css 載入，早於 Tailwind 的 runtime <style>
+  （併存期另有 shared.css 排在 index.css 之前，該檔已於階段 4 刪除）。th-header 的 markup 移除 shadow utility 後該元素沒有任何 Tailwind
+  shadow 類別，因此不存在競爭。
+*/
+
+/* ############################################################
+   階段 4 步驟 6：由 styles/shared.css 搬入（2026-09-11）
+   ############################################################
+
+   只搬「components.css 還沒有的」。目的檔已有同選擇器且宣告等價的
+   256 條不搬（照搬會產生重複規則——值相同所以驗收全過，但往後改一邊
+   不生效且不報錯）；已有但宣告不同的 4 條也不搬，那幾條目的檔版本較新
+   （var(--fs-nav) 取代寫死的 14px、.th-menuutil 為新版手機選單重構）。
+
+   @media 條件一起搬、不攤平；同一 class 的多條維持原始先後；
+   url() 的相對路徑已依 assets/css/ 的深度修正。
+   ############################################################ */
+
+
+/* ############################################################
+   階段 4 步驟 7／7b：第三類 ＋ .fc-* ＋ .th-expcard*（2026-09-11）
+   前置插入，理由同步驟 6：搬移當時 shared.css 整份排在 components.css 之前，
+   附加到末尾會讓這些規則跑到既有規則之後，順序反轉。
+   .th-expcard* 為 2026-09-08 撤除後重新複製，已確認 17 條全部存在於 HEAD。
+   ############################################################ */
+
+.th-section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--fg-1);
+  border-left: 4px solid var(--filter-active);
+  padding-left: 16px;
+  margin: 0 0 20px;
+}
+
+.th-section-title-sub {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  margin-top: 6px;
+  letter-spacing: var(--tracking-wide);
+}
+
+.th-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  font-weight: 500;
+  font-size: var(--fs-md);
+  transition: background-color .15s, border-color .15s, color .15s;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.th-btn i {
+  position: relative;
+  top: 1px;
+}
+
+.th-btn-primary,
+.th-btn-primary:visited {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  box-shadow: var(--sh-md);
+}
+
+.th-btn-primary:hover,
+.th-btn-primary:active,
+.th-btn-primary:focus {
+  background: var(--national-700-hover);
+  border-color: var(--national-700-hover);
+  color: var(--fg-on-dark);
+}
+
+.th-btn-primary:disabled {
+  background: var(--slate-300);
+  color: var(--slate-500);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.th-btn-secondary,
+.th-btn-secondary:visited {
+  background: var(--btn-blue);
+  color: var(--fg-on-dark);
+}
+
+.th-btn-secondary:hover,
+.th-btn-secondary:active,
+.th-btn-secondary:focus {
+  background: #2f4a72;
+  color: var(--fg-on-dark);
+}
+
+.th-btn-ghost {
+  background: var(--bg-1);
+  /* 2026-09-16：預設文字色對齊設計檔的 --slate-700（原為 --fg-2＝--slate-600） */
+  color: var(--slate-700);
+  /* 2026-09-14（C 批）：同 .th-input，改為對比足夠的 --border-ui */
+  border-color: var(--border-ui);
+}
+
+.th-btn-ghost:hover {
+  /* --bg-2 就是設計檔的 --slate-50，值相同；框線改跟設計檔一樣轉深 */
+  background: var(--bg-2);
+  border-color: var(--slate-600);
+  color: var(--national-700);
+}
+
+.th-btn-lg {
+  min-height: 48px;
+}
+
+.th-btn-lg {
+  padding: 14px 28px;
+  font-size: var(--fs-nav);
+}
+
+.th-btn-sm {
+  padding: 8px 16px;
+  font-size: var(--fs-xs);
+}
+
+.th-btn-block {
+  width: 100%;
+}
+
+.th-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.th-chip {
+  padding: 6px 14px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-pill);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.th-chip:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-400);
+}
+
+.th-chip.is-active {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
+}
+
+.bulletin-section-head .th-section-title {
+  margin: 0 auto 0 0;
+  font-size: var(--fs-h3);
+}
+
+.th-expcard {
+  position: relative;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-sm);
+  padding: 20px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.th-expcard:not(:first-child)::before {
+  display: none;
+}
+
+.th-expcard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.th-expcard li {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+
+.th-expcard li::before,
+.th-expcard-grouptitle::before {
+  content: "•";
+  color: var(--national-800);
+  font-size: var(--fs-md);
+  font-weight: bold;
+  line-height: 1;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.th-expcard ul.th-expcard-nested li::before {
+  content: "◦" !important;
+  font-size: var(--fs-sm) !important;
+  margin-right: 6px !important;
+}
+
+.th-expcard li:has(.is-todo)::before {
+  color: var(--slate-400);
+}
+
+/* 關閉 a 與 .is-todo 自身的 ::before，bullet 嚴格回歸 li 項目層級，徹底避免 underline 污染 bullet */
+.th-expcard a::before,
+.th-expcard .is-todo::before,
+.th-expcard a.is-external::before,
+.th-expcard .is-todo.is-external::before,
+.th-expcard ul.th-expcard-nested a::before,
+.th-expcard ul.th-expcard-nested .is-todo::before {
+  content: none !important;
+  display: none !important;
+}
+
+.th-expcard a,
+.th-expcard .is-todo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--fg-2);
+}
+
+.th-expcard a.is-external,
+.th-expcard ul.th-expcard-nested a.is-external {
+  color: var(--national-800) !important;
+  font-weight: 400 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: var(--national-800) !important;
+}
+
+.th-expcard a.is-external:hover,
+.th-expcard ul.th-expcard-nested a.is-external:hover {
+  color: var(--national-900) !important;
+  text-decoration-color: var(--national-900) !important;
+}
+
+.th-expcard a.is-external i,
+.th-expcard .is-todo.is-external i,
+.th-expcard a i.fa-arrow-up-right-from-square,
+.th-expcard .is-todo i.fa-arrow-up-right-from-square {
+  display: inline-block !important;
+  text-decoration: none !important;
+  font-size: var(--fs-2xs) !important;
+  color: inherit !important;
+  margin-left: 4px !important;
+  margin-right: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.th-expcard .is-todo {
+  color: var(--fg-4);
+  cursor: default;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.th-expcard .is-todo::after {
+  content: "待建置";
+  font-size: var(--fs-3xs);
+  color: var(--fg-4);
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  padding: 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.th-expcard-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.th-expcard-grouptitle {
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--fg-1);
+  display: flex;
+  align-items: baseline;
+}
+
+.th-expcard ul.th-expcard-nested {
+  padding-left: 20px !important;
+  border-left: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.th-table-note {
+  margin: 12px 0 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  line-height: var(--lh-base);
+}
+
+.fc-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 28px;
+  align-items: start;
+}
+
+.fc-section {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh-sm);
+}
+
+.fc-section-title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.fc-section-title i {
+  color: var(--park-forestry);
+  font-size: 17px;
+}
+
+.fc-stepper-input {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--slate-300);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  height: 42px;
+}
+
+.fc-stepper-btn {
+  width: 42px;
+  height: 100%;
+  border: none;
+  background: var(--bg-2);
+  color: var(--fg-2);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fc-stepper-btn:hover:not(:disabled) {
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+}
+
+.fc-stepper-btn:disabled {
+  color: var(--fg-4);
+  cursor: default;
+}
+
+.fc-stepper-val {
+  flex: 1;
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.fc-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fc-footbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  margin-top: 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-card);
+  position: sticky;
+  bottom: 16px;
+}
+
+.th-chip.is-todo {
+  cursor: default;
+  background: var(--bg-2);
+  border-color: var(--slate-200);
+  color: var(--fg-4);
+}
+
+.th-chip.is-todo:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-200);
+  color: var(--fg-4);
+}
+
+@media (max-width: 768px) {
+    .bulletin-filter-row .th-btn {
+      flex: 1 1 40%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .th-expnav-grid::before,
+    .th-expcard:not(:first-child)::before {
+      display: none;
+    }
+}
+
+@media (max-width: 860px) {
+    .fc-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .fc-aside {
+      order: -1;
+    }
+}
+
+
+.th-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg-1);
+  box-shadow: var(--sh-header);
+  border-bottom: 1px solid var(--slate-100);
+  /* 2026-09-14（批次 2）12px → --header-pad-y。主選單作用中底線依同一個變數
+     對齊頁首下緣，改一處兩邊一起動。 */
+  padding: var(--header-pad-y) 0;
+}
+.th-accent {
+  color: var(--national-700);
+}
+
+.th-empty {
+  padding: 56px 20px;
+  text-align: center;
+  color: var(--fg-4);
+  font-size: var(--fs-sm);
+}
+
+.th-empty i {
+  display: block;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.th-footbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  margin: 24px -32px 0;
+  padding: 16px 32px;
+  background: var(--bg-1);
+  border-top: 1px solid var(--slate-200);
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.th-footbar-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-sm);
+  color: var(--slate-700);
+}
+
+.th-footbar-info i {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-pill);
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+}
+
+.th-footbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.th-sidebar {
+  position: sticky;
+  top: 96px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-md);
+  overflow: hidden;
+}
+
+.th-sidebar-head {
+  padding: 14px 18px;
+  background: var(--bg-mist);
+  border-bottom: 1px solid var(--bg-mist-3);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.th-sidebar-head i {
+  color: var(--national-700);
+  font-size: var(--fs-nav);
+}
+
+.th-sidebar-body {
+  padding: 16px 18px;
+}
+
+.th-sidebar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  font-size: var(--fs-xs);
+  border-bottom: 1px dashed var(--slate-100);
+  gap: 10px;
+}
+
+.th-sidebar-row:last-child {
+  border-bottom: none;
+}
+
+.th-sidebar-row .lbl {
+  color: var(--fg-3);
+  flex-shrink: 0;
+}
+
+.th-sidebar-row .val {
+  color: var(--fg-1);
+  font-weight: 500;
+  text-align: right;
+}
+
+.th-sidebar-row .val strong {
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.th-sidebar-checklist {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--slate-100);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-xxs);
+}
+
+.th-sidebar-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--slate-500);
+}
+
+.th-sidebar-checklist li i {
+  width: 14px;
+  flex-shrink: 0;
+  font-size: var(--fs-xxs);
+  color: var(--slate-300);
+}
+
+.th-sidebar-checklist li.is-ok i {
+  color: var(--success-fg);
+}
+
+.th-sidebar-checklist li.is-ok {
+  color: var(--slate-700);
+}
+
+.th-footer {
+  background: var(--footer);
+  margin-top: 80px;
+}
+
+.th-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--slate-200);
+  background: var(--bg-1);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.th-flag i {
+  font-size: var(--fs-xxs);
+}
+
+.th-flag.is-yes {
+  color: var(--success-fg);
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.th-flag.is-no {
+  color: var(--danger-fg);
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.th-flag.is-open {
+  color: var(--success-fg);
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.th-flag.is-closed {
+  color: var(--danger-fg);
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.th-flag.is-proof {
+  color: var(--warning-fg);
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
+}
+
+.th-flag.is-snow {
+  color: var(--info-fg);
+  border-color: var(--info-border);
+  background: var(--info-bg);
+}
+
+.bulletin-card {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.bulletin-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.bulletin-filter-row+.bulletin-filter-row {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--slate-200);
+}
+
+.bulletin-filter-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 84px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+.bulletin-filter-label i {
+  color: var(--fg-4);
+}
+
+.bulletin-filter-label--inline {
+  min-width: auto;
+}
+
+.th-search {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.bulletin-card .th-search {
+  flex: 0 1 200px;
+  min-width: 140px;
+}
+
+.bulletin-card .th-input--date {
+  width: 135px;
+}
+
+.th-search>i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg-4);
+  font-size: var(--fs-md);
+  pointer-events: none;
+}
+
+.bulletin-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin: 20px 0 10px;
+}
+
+.bulletin-count {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+.bulletin-count strong {
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.th-table-card {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+}
+
+.bulletin-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-pill);
+  background: var(--bg-mist);
+  color: var(--national-700);
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 2026-09-14（C 批）：徽章改為設計檔的**機關識別色**（綠、灰綠系）。
+   原本玉管處是藍、雪管處是橘，看起來像「資訊／警告」狀態色，容易誤讀。
+   文字對各自底色皆 ≥4.5:1（值與對比見 tokens.css）。 */
+.bulletin-badge.agency-nps {
+  background: var(--badge-npa-bg);
+  color: var(--badge-npa-fg);
+  border-color: var(--badge-npa-border);
+}
+
+.bulletin-badge.agency-police {
+  background: var(--badge-police-bg);
+  color: var(--badge-police-fg);
+  border-color: var(--badge-police-border);
+}
+
+.bulletin-badge.agency-yushan {
+  background: var(--badge-yushan-bg);
+  color: var(--badge-yushan-fg);
+  border-color: var(--badge-yushan-border);
+}
+
+.bulletin-badge.agency-taroko {
+  background: var(--badge-taroko-bg);
+  color: var(--badge-taroko-fg);
+  border-color: var(--badge-taroko-border);
+}
+
+.bulletin-badge.agency-sheipa {
+  background: var(--badge-sheipa-bg);
+  color: var(--badge-sheipa-fg);
+  border-color: var(--badge-sheipa-border);
+}
+
+.bulletin-badge.agency-forestry {
+  background: var(--badge-forestry-bg);
+  color: var(--badge-forestry-fg);
+  border-color: var(--badge-forestry-border);
+}
+
+
+.th-level {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  border: 1px solid var(--national-200);
+}
+
+.th-level.lv-3,
+.th-level.lv-4 {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border-color: var(--warning-border);
+}
+
+.th-level.lv-5,
+.th-level.lv-6 {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  border-color: var(--danger-border);
+}
+
+.th-kit {
+  margin: 0;
+  color: var(--fg-2);
+}
+
+.th-cell-ol {
+  margin: 0;
+  padding-left: 1.35em;
+  list-style: decimal;
+}
+
+.th-cell-ol li+li {
+  margin-top: 4px;
+}
+
+/* 字重 500 與表格內連結（.th-table a，雙語詞彙頁）一致——2026-09-17 使用者裁決，原為 400 */
+.th-inline-link {
+  display: inline;
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.th-inline-link:hover {
+  color: var(--national-900);
+}
+
+.th-inline-link i {
+  display: inline-block;
+  text-decoration: none;
+  font-size: var(--fs-2xs);
+  margin-right: 7px;
+  color: inherit;
+}
+
+/*
+  連結尾端的外開／附件 icon。`.th-inline-link i` 是為**行首** icon 寫的
+  （`margin-right: 7px` 是 icon 與文字之間的留白，campsite 的多處連結仍靠它），
+  icon 挪到尾端時那 7px 會擠開後面接續的文字，所以這裡以 0-2-0 的選擇器覆寫掉。
+  2026-09-14 由 `pages.css` 的 `.p-info8-ext` 提升（第二個消費端是 information_6
+  與 open 的「個人及團體裝備檢查表」）。原 `.p-info8-ext` 另寫了
+  `font-size: var(--fs-xxs)`，但它 0-1-0 贏不過 `.th-inline-link i` 的 0-1-1，
+  **從未生效**——這裡不趁機改值，字級維持實際呈現的 --fs-2xs。
+*/
+.th-inline-link .th-ext-icon {
+  margin-left: 6px;
+  margin-right: 0;
+}
+
+.th-legacy-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  background: var(--bg-3);
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+.th-table-notes {
+  margin: 0;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--slate-100);
+  list-style: none;
+  counter-reset: thnote;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  line-height: var(--lh-base);
+}
+
+.th-table-notes li {
+  counter-increment: thnote;
+  padding-left: 3.6em;
+  text-indent: -3.6em;
+}
+
+.th-table-notes li+li {
+  margin-top: 6px;
+}
+
+.th-table-notes li::before {
+  content: "*註" counter(thnote) "：";
+  color: var(--danger-fg);
+}
+
+.th-notice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.th-notice-grid.is-secondary {
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+
+.th-notice-grid>* {
+  min-width: 0;
+}
+
+.th-home-hero {
+  background: var(--bg-3);
+}
+
+.th-hero-overlay {
+  background: linear-gradient(180deg, rgba(247, 250, 248, 0.4) 0%, rgba(247, 250, 248, 0.1) 100%);
+  pointer-events: none;
+}
+
+.th-marquee-wrap {
+  padding-top: 4px;
+}
+
+.th-marquee {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-sm);
+  padding: 4px 8px;
+}
+
+.th-marquee-tag {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--national-700);
+  font-size: var(--fs-h3);
+}
+
+.th-marquee-viewport {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.th-marquee-gap {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 40vw;
+}
+
+.th-marquee-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  animation: th-marquee-scroll 32s linear infinite;
+}
+
+.th-marquee-track a {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-1);
+  text-decoration: none;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  line-height: 1;
+  min-height: 24px;   /* WCAG 2.5.8 目標尺寸 */
+  padding: 0 32px 0 0;
+}
+
+.th-marquee-track a:hover {
+  color: var(--national-700);
+  text-decoration: underline;
+}
+
+@keyframes th-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.th-marquee:hover .th-marquee-track,
+.th-marquee:focus-within .th-marquee-track {
+  animation-play-state: paused;
+}
+
+.th-marquee-more {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  padding: 7px 16px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* 2026-09-14（批次 2）：--national-700-hover 只比底色暗 1.39 倍，在照片背景上
+   幾乎看不出來。照設計檔改用 --home-panel-edu（暗 2.01 倍、白字 9.6:1），
+   並加陰影與箭頭位移——顏色以外另有形狀提示，對色覺障礙使用者友善。
+   color 必寫：實心按鈕用 <a> 實作時，全站的 a:hover 會把白字蓋成品牌綠。 */
+.th-marquee-more:hover,
+.th-marquee-more:focus-visible {
+  background: var(--home-panel-edu);
+  color: var(--fg-on-dark);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.3);
+}
+.th-marquee-more i,
+.th-marquee-more svg { transition: transform 0.15s ease; }
+.th-marquee-more:hover i,
+.th-marquee-more:hover svg,
+.th-marquee-more:focus-visible i,
+.th-marquee-more:focus-visible svg { transform: translateX(3px); }
+
+.th-home-header {
+  color: #1f2d26;
+}
+
+/* :where() 把權重壓到 (0,1,0)：語言選單的 .th-lang-item 也是 button，
+   寫在本段之後，同權重時由它勝出，才不會被這裡的 padding／background 歸零。 */
+.th-home-header :where(a, button) {
+  color: #1f2d26;
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.th-home-wordmark {
+  color: var(--fg-1);
+}
+
+.th-home-wordmark .th-accent {
+  color: var(--national-700);
+}
+
+.th-home-sep {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: rgba(31, 45, 38, 0.3);
+}
+
+.th-home-panel {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: var(--sh-lg);
+}
+
+.th-tile .th-tile-ic {
+  transition: transform .25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .25s, background .25s, border-color .25s;
+}
+
+.th-tile:hover .th-tile-ic {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: var(--sh-md);
+}
+
+.th-tile-green:hover .th-tile-ic {
+  background: var(--national-100);
+  border-color: var(--national-200);
+}
+
+.th-tile-blue:hover .th-tile-ic {
+  background: #dbe7ed;
+  border-color: #b6cbd3;
+}
+
+.th-focusable:focus-visible {
+  outline: 2px solid var(--national-700);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/* ------------------------------------------------------------
+   首頁版面（2026-09-17 依設計檔 前台web/css/home.css、layout.css）
+   ------------------------------------------------------------
+   原本這些是 index.html 上的 Tailwind utility，改成設計檔的具名 class，
+   數值照設計檔；只有色彩換成我方 token 名（--panel-edu-bg → --home-panel-edu、
+   --panel-edu-ic → --national-700、--panel-apply-ic → --home-panel-apply，
+   同值）。目前唯一消費端是 index.html。 */
+
+/* 容器：.th-container＝1280px（原 max-w-7xl）、.th-container-md＝1152px（原 max-w-6xl） */
+.th-container,
+.th-container-md {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.th-container    { max-width: 1280px; }
+.th-container-md { max-width: 1152px; }
+
+.th-home-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  overflow: hidden;
+}
+.th-home-hero-bg { position: absolute; inset: 0; z-index: 0; }
+.th-home-hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+.th-home-hero-bg .th-hero-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.th-home-body {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 24px;
+}
+
+.th-home-header { position: relative; z-index: 20; }
+.th-home-header-inner {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.th-home-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.th-home-logo { height: 72px; width: auto; }
+.th-home-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 48px;
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--lh-tight);
+  margin: 0;
+}
+.th-home-utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 16px;
+  row-gap: 8px;
+}
+/* 只管功能列本層的項目，語言下拉裡的選項維持 .th-lang-item 的樣子 */
+.th-home-utility > a,
+.th-home-utility > button,
+.th-home-utility .th-lang-btn {
+  font-weight: 500;
+  font-size: 17px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s ease;
+}
+.th-home-utility .th-lang-btn,
+.th-home-utility .th-lang-btn:hover { color: inherit; }
+.th-home-utility > a:hover,
+.th-home-utility > button:hover,
+.th-home-utility .th-lang-btn:hover { opacity: 0.7; }
+/* 置中頁首：語言下拉對齊按鈕中線（設計檔 components.css 同款） */
+.th-home-utility .th-lang-dropdown { right: auto; left: 50%; transform: translateX(-50%); }
+
+.th-home-marquee-slot { margin-top: 24px; }
+.th-home-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  position: relative;   /* 「中間主要內容區」導盲磚的定位基準 */
+}
+.th-home-main > .th-container { padding-top: 40px; padding-bottom: 40px; }
+
+/* 雙面板：桌機 2 欄、900px 以下 1 欄 */
+.th-grid-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+.th-home-panel {
+  border-radius: var(--r-2xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.th-home-panel-head {
+  padding: 24px;
+  text-align: center;
+}
+.th-home-panel-head.is-edu   { background: var(--home-panel-edu); }
+.th-home-panel-head.is-apply { background: var(--home-panel-apply); }
+.th-home-panel-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-h1);
+  letter-spacing: 0.15em;
+  color: var(--fg-on-dark);
+  margin: 0;
+}
+.th-home-panel-body {
+  padding: 40px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* 圓形功能鈕：4 欄，640px 以下 2 欄 */
+.th-grid-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 20px;
+  row-gap: 48px;
+  align-content: center;
+  width: 100%;
+}
+.th-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.th-tile-ic {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  box-shadow: var(--sh-sm);
+}
+.th-tile-green .th-tile-ic { color: var(--national-700); }
+.th-tile-blue  .th-tile-ic { color: var(--home-panel-apply); }
+.th-tile-label {
+  font-size: var(--fs-md);
+  font-weight: 500;
+  color: var(--slate-700);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 900px) {
+  .th-container,
+  .th-container-md { padding-left: 16px; padding-right: 16px; }
+  .th-home-wordmark { font-size: 34px; }
+  .th-home-logo { height: 56px; }
+  .th-home-utility > a,
+  .th-home-utility > button,
+  .th-home-utility .th-lang-btn { font-size: var(--fs-sm); }
+  .th-grid-panels { grid-template-columns: minmax(0, 1fr); }
+  .th-home-panel-title { font-size: 24px; }
+  .th-home-panel-body { padding: 28px 20px; }
+  .th-tile-ic { width: 76px; height: 76px; font-size: 28px; }
+  .th-tile-label { font-size: var(--fs-xs); }
+}
+@media (max-width: 640px) {
+  .th-grid-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 32px;
+  }
+}
+@media (max-width: 600px) {
+  .th-home-wordmark { font-size: 24px; }
+  .th-home-brand { gap: 10px; }
+  .th-home-logo { height: 40px; }
+}
+/* 極窄螢幕：逐階降級，站名維持單行 */
+@media (max-width: 400px) {
+  .th-home-wordmark { font-size: 20px; }
+  .th-home-brand { gap: 8px; }
+  .th-home-logo { height: 34px; }
+}
+@media (max-width: 360px) {
+  .th-home-wordmark { font-size: 18px; letter-spacing: 0; }
+  .th-home-logo { height: 30px; }
+}
+
+@media (max-width: 700px) {
+    .th-footbar {
+      margin: 24px -16px 0;
+      padding: 16px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .th-sidebar {
+      position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .bulletin-filter-label,
+    .bulletin-filter-label--inline {
+      min-width: 100%;
+    }
+
+    .th-search {
+      flex-basis: 100%;
+    }
+
+    .th-table-card {
+      border: none;
+      box-shadow: none;
+      background: transparent;
+    }
+}
+
+@media (max-width: 1024px) {
+    .th-expnav-grid::before,
+    .th-expcard:not(:first-child)::before {
+      display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .th-table-notes {
+      padding: 14px 16px 16px;
+    }
+
+    .th-notice-grid {
+      gap: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .th-marquee-track {
+      animation: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .th-marquee {
+      gap: 8px;
+    }
+}
+
+.th-header-bar {
+  box-shadow: var(--sh-header);
+}
+/* ============================================================
+   th-date-picker
+   ============================================================ */
+/*
+  欄位錯誤訊息。原 shared.css 只有 .th-field-hint（灰字說明），沒有錯誤色，
+  所以這是階段 2／3.0 唯一「真正新增的元件外觀」——依 §6.1 落在本檔，
+  不寫在元件檔內、也不寫在頁面。
+
+  預留給未來的卡控（計畫 §6.4 提到的 th-form-field 統一出口）。
+  顏色取 tokens 的 --danger-fg，不新增色票。
+*/
+/* 依原 shared.css 的順序重新複製整個 input 家族——見下方註解 */
+.th-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.th-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.th-label .req {
+  color: var(--danger-fg);
+  margin-right: 2px;
+}
+.th-label-en {
+  font-weight: 500;
+  color: var(--fg-3);
+  font-size: var(--fs-xxs);
+  margin-left: 4px;
+}
+.th-field-hint {
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+}
+/* 2026-09-14（C 批）：邊框由 --slate-300（白底 1.48:1）改 --border-ui（3.64:1），
+   WCAG 1.4.11 非文字對比需 ≥3:1。裝飾性分隔線仍用 --slate-200/300。 */
+.th-input,
+.th-select,
+.th-textarea {
+  min-height: 42px;
+  padding: 9px 12px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.th-input,
+.th-textarea {
+  width: 100%;
+}
+/*
+  .th-select 的自訂箭頭（2026-09-10，模式 2）
+  ------------------------------------------------------------
+  原本沒有 appearance: none，箭頭由瀏覽器自己畫，跨瀏覽器不一致
+  （Chrome／Firefox／Safari 三種樣子，Safari 還會自帶圓角）。
+
+  **不加 wrapper、不動任何 markup。** <select> 是 replaced element，
+  吃不下 ::before／::after，但吃得下 background —— 所以箭頭用兩道
+  linear-gradient 疊出來，顏色直接用 token。
+
+  2026-09-16：形狀由**實心三角**改為**線條式 chevron**，與頁首語言鈕的
+  `fa-angle-down` 一致（使用者要求全站統一）。做法仍是兩道 linear-gradient，
+  只是每道從「半邊填滿」改成「中間一條 1.6px 的斜線」，兩道各轉 ±45° 拼成 ∨。
+  顏色只寫一次，由 --th-select-caret 這個區域變數帶出去，
+  hover／focus／disabled 只要換那一格，不必把整組 gradient 重寫四遍。
+
+  為什麼不用 SVG data URI：data URI 裡的顏色只能寫死（SVG 當成圖片載入時
+  是獨立文件，`currentColor` 與 CSS 變數都不會解析），那就違反
+  「不新增硬編碼 hex」。gradient 是唯一能讓箭頭顏色跟著 token 走的做法。
+
+  padding-right: 32px 是本來就有的，箭頭放進那塊預留空間，
+  所以**文字可用寬度不變**，版面不受影響。
+*/
+.th-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  /* 箭頭顏色的唯一落點；狀態只換這一格 */
+  --th-select-caret: var(--slate-500);
+  background-image:
+    linear-gradient(45deg, transparent calc(50% - 0.8px), var(--th-select-caret) calc(50% - 0.8px),
+                    var(--th-select-caret) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
+    linear-gradient(-45deg, transparent calc(50% - 0.8px), var(--th-select-caret) calc(50% - 0.8px),
+                    var(--th-select-caret) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+  background-position: calc(100% - 17px) calc(50% + 1px), calc(100% - 12px) calc(50% + 1px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+.th-field .th-select {
+  width: 100%;
+}
+.th-input:hover,
+.th-select:hover {
+  border-color: var(--slate-400);
+}
+/* hover 時箭頭跟著加深，與框線同步 */
+.th-select:hover {
+  --th-select-caret: var(--slate-700);
+}
+.th-input:focus,
+.th-select:focus,
+.th-textarea:focus {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+/* focus 時箭頭轉主色，與框線一致 */
+.th-select:focus {
+  --th-select-caret: var(--national-700);
+}
+/*
+  disabled：三種表單欄位一致。原本 .th-select 完全沒有 disabled 樣式，
+  停用時與可用時長得一樣（只有游標不同），這次一併補上。
+*/
+.th-input:disabled,
+.th-select:disabled,
+.th-textarea:disabled {
+  background-color: var(--slate-100);
+  border-color: var(--slate-200);
+  color: var(--fg-4);
+  cursor: not-allowed;
+}
+.th-select:disabled {
+  --th-select-caret: var(--slate-400);
+}
+.th-input::placeholder,
+.th-textarea::placeholder {
+  color: var(--fg-4);
+}
+.th-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.th-input-readonly {
+  display: flex;
+  align-items: center;
+  background: var(--bg-2);
+  color: var(--fg-3);
+  cursor: default;
+  user-select: none;
+}
+.th-input-group {
+  position: relative;
+}
+.th-input-group .icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg-4);
+  font-size: var(--fs-sm);
+  pointer-events: none;
+}
+.th-input-group .th-input {
+  padding-left: 36px;
+}
+.th-input--date {
+  flex: 0 0 auto;
+  width: 165px;
+}
+/*
+  同上：bare 模式的 flex item 是 .th-fp-wrap，不是 input。
+  news.html 的發布日期起訖用 .th-input--date 收窄，寬度要掛在 wrapper 上，
+  input 自己吃滿。
+*/
+.th-fp-wrap:has(.th-input--date) {
+  flex: 0 0 auto;
+  width: 165px;
+}
+.th-fp-wrap .th-input--date {
+  width: 100%;
+}
+/* ============================================================
+   th-doc — 詳細須知頁的長文排版（th-doc.js 那組元件的外觀）
+   ------------------------------------------------------------
+   **這是從 styles/shared.css:3275-3428 「複製」過來的，不是搬移。**
+
+   依計畫 §4.2「共用資源以最後一個消費端為退場條件」：這組規則的消費端是
+   17 頁公告（全部走同一支 renderer），本輪只遷移了 notice_a1，
+   當時其餘 16 頁仍靠 shared.css 的原規則渲染，所以原處保留不動。
+   **那 16 頁已於階段 3 全部遷完，shared.css 也已於階段 4 刪除**，
+   所以現在這一份是唯一的真源。
+
+   §4.2 的實例就在這裡，而且差點看漏：grep 「哪些檔案用到 .th-doc-*」只會得到
+   **1 個檔**（components/NoticeDetail.jsx），看起來像單頁專用、可以直接搬移。
+   但那一支 renderer 服務 17 頁——**檔案數不等於頁面數**。
+   §6.6 的警語「搜不到明確頁名不等於無人使用」講的就是這種情況。
+   判斷消費端數量要數**頁面**，不是數檔案。
+
+   ------------------------------------------------------------
+   併存期的注意事項（cascade 順序的反面）
+   ------------------------------------------------------------
+   併存期靠 <link> 順序讓本檔這一份勝出（已遷移頁的 index.css 排在
+   shared.css 之後）；當時改 shared.css 的 .th-doc-* 只會影響未遷移頁，
+   所以兩邊要一起改。**階段 4 刪掉 shared.css 之後這個陷阱消失**——
+   .th-doc-* 只有本檔這一份。
+
+   內容逐字複製，未做任何調整——階段 3 的驗收是外觀不變
+   （已驗：notice_a1 全頁 1440x9135 像素與 React 版完全相同）。
+   ============================================================ */
+/* ============ 詳細須知頁 — 長文排版 ============
+   內容逐字取自正式站，這裡只處理可讀性：段落間距、條列懸掛縮排、子標題區隔。 */
+.th-doc-block {
+  margin: 0 0 16px;
+}
+.th-doc-block:last-child {
+  margin-bottom: 0;
+}
+.th-doc-h {
+  margin: 0 0 8px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--fg-1);
+  line-height: var(--lh-snug);
+}
+.th-doc-line {
+  margin: 0 0 6px;
+  color: var(--fg-2);
+  line-height: 1.75;
+}
+.th-doc-line:last-child {
+  margin-bottom: 0;
+}
+/* 條列行（1. / (1) / （一）／一、）縮排，讓編號對齊、續行不吃到編號位置 */
+.th-doc-line.is-item {
+  padding-left: 20px;
+  text-indent: -20px;
+}
+.th-doc-note {
+  margin: 8px 0 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+/* 內文連結：品牌 sage（--national-700 #587a68）與內文灰藍（--fg-2 #475569）明度太接近，
+   長文裡看不出是連結；改用同色系但更深更飽和的 --national-800（#166534），
+   並加粗、拉開底線間距。不用藍色，避免與整站綠色調衝突。 */
+.th-doc-block a,
+.th-doc-note a,
+.th-callout a {
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(22, 101, 52, 0.35);
+  word-break: break-all;
+  border-radius: var(--r-xs);
+  transition: background 0.12s, text-decoration-color 0.12s;
+}
+.th-doc-block a:hover,
+.th-doc-note a:hover,
+.th-callout a:hover {
+  background: var(--national-50);
+  color: var(--national-900);
+  text-decoration-color: var(--national-800);
+  box-shadow: 0 0 0 2px var(--national-50);
+}
+/* 表格內的連結不加背景，避免撐開儲存格 */
+.th-table a {
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.th-table a.p-news-link {
+  color: var(--fg-1);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  text-decoration: none;
+}
+.th-table a.p-news-link:hover {
+  color: var(--national-700);
+  text-decoration: underline;
+}
+.p-news-pin {
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--danger-fg-hover);
+  font-size: var(--fs-xxs);
+  text-decoration: none !important;
+  vertical-align: 0;
+}
+/* 步道分級表這類寬表：字級縮一級，欄寬交給 .th-table-wrap 內部捲動 */
+.th-table.th-table-compact {
+  font-size: var(--fs-sm);
+}
+.th-table.th-table-compact th,
+.th-table.th-table-compact td {
+  padding: 8px 12px;
+}
+/* 群組表格：第一欄只在群組首列有字，用留白呈現正式站的 rowspan 合併效果 */
+.th-table.th-table-grouped td:first-child {
+  color: var(--fg-1);
+  font-weight: 500;
+}
+/* 頁尾返回鍵，對應正式站底部的「返回」 */
+.th-doc-back {
+  display: flex;
+  justify-content: center;
+}
+.th-linkrow-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  text-decoration: none;
+}
+.th-linkrow-back:hover {
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+/* 條列（正式站的 <ol>/<ul>）— 編號靠外，續行對齊文字 */
+/* Tailwind preflight 會把 ol/ul 的 list-style 清掉，這裡明確加回來，
+   否則正式站原本有的編號與項目符號會整個消失 */
+.th-doc-list {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+ol.th-doc-list {
+  list-style: decimal;
+}
+ul.th-doc-list {
+  list-style: disc;
+}
+.th-doc-list:last-child {
+  margin-bottom: 0;
+}
+.th-doc-list>li {
+  margin-bottom: 10px;
+  color: var(--fg-2);
+  line-height: 1.75;
+}
+.th-doc-list>li:last-child {
+  margin-bottom: 0;
+}
+.th-doc-list>li::marker {
+  color: var(--fg-3);
+  font-weight: 500;
+}
+.th-doc-list .th-doc-line {
+  margin-bottom: 2px;
+}
+/* ############################################################
+   階段 3.0b — 已元件化元件所擁有的 CSS（2026-09-07 一次性複製）
+   ############################################################
+
+   **這 255 條當初是從 styles/shared.css「複製」過來的，不是搬移**——
+   依 §4.2「共用資源以最後一個消費端為退場條件」，複製時 32 頁裡 31 頁
+   還沒遷移，都還靠 shared.css 那份渲染，所以原處保留。
+   併存期的大量重複是當時的預期狀態（§8）；**階段 4 已刪除 shared.css，
+   現在不再有第二份**。
+
+   ------------------------------------------------------------
+   歸屬判準：只複製「已移植的 Vue 元件在 template 裡實際輸出」的 class
+   ------------------------------------------------------------
+   比計畫 §3.0b 的「該規則服務哪一支元件」再收緊一層，原因是「服務」會越界：
+   .th-btn 服務所有頁面的按鈕，但當時沒有任何元件輸出它，複製進來只會讓
+   components.css 變成第二份 shared.css。所以判準改為**元件 template 的輸出**，
+   這是可機械檢查的界線。
+
+   由此**刻意排除**的三類（清單與理由見回報，摘要如下）：
+   1. 尚未移植的 Shared.jsx 元件：LinkList（.th-linklist／.th-linkrow-*）、
+      StepList（.th-steplist／.th-steprow-*／.th-substeps／.th-shot-*）、
+      Callout（.th-callout）、BulletinPager（.bulletin-pager／.bulletin-page-*）
+      → 那些元件移植時才複製，否則 components.css 會有沒人用的規則
+   2. 頁面直接掛的工具型 class：.th-btn-*、.th-chip-*、.th-select、.th-textarea、
+      .th-flag、.th-faq-*、.th-sidebar-*、.th-tile-*、.th-video-btn、.th-empty…
+      → 沒有對應元件，擁有者其實是頁面
+   3. 舊 React header／footer 與首頁專用：.th-header／.th-header-inner／
+      .th-header-right／.th-footer-*／.th-home-*／.th-wordmark-*／.th-utility-*
+      → Vue 版 th-header／th-footer 用 Tailwind utility 組版，不吃這些規則
+
+   ------------------------------------------------------------
+   同名但不同東西，已逐一排除（差點誤收）
+   ------------------------------------------------------------
+   - .fc-stepper-btn／-input／-val：是 forest-camp-1 的「夜數」加減控制，
+     **不是** th-fc-stepper 的步驟條。名字像，東西不同
+   - .th-table-card／.th-table-note／.th-table-notes：頁面層的表格外框與附註，
+     元件本身不輸出
+   - 頁面對元件的覆寫：.open-act.th-todo-link（open.html）、
+     .p3-members-row .th-input／.p3-day-row .th-input（apply-3）
+     → 這些是該頁專用，遷移那兩頁時進 pages.css，不是元件擁有
+
+   ------------------------------------------------------------
+   併存期的注意事項（與 .th-doc-* 那段相同）
+   ------------------------------------------------------------
+   併存期靠 <link> 順序讓本檔這一份勝出；當時改 shared.css 的這些規則
+   只會影響未遷移頁，所以兩邊要一起改。**階段 4 刪掉 shared.css 之後
+   只剩本檔這一份**，這個分岔不再存在。
+
+   ------------------------------------------------------------
+   複製 CSS 的相對路徑陷阱（實測踩到，第四類「靜默失敗」）
+   ------------------------------------------------------------
+   **url() 是相對於 CSS 檔自己的位置解析的，不是相對於頁面。**
+   shared.css 當時在 styles/ 底下，寫 url("../assets/teach/x.svg") 正確；
+   同一字串複製到 assets/css/components.css 會解析成
+   assets/assets/teach/x.svg → 404。
+
+   本次唯一一處是 .th-quickpanel 的背景圖，已改為 url("../teach/x.svg")。
+   **這個坑像素比對抓不到**——該背景只在快捷選單展開時才顯示，全頁截圖
+   沒展開它。是 console 的 404 抓到的。
+   → 以後複製任何 CSS，除了像素比對，還要 grep url() 並核對深度，
+     以及看 console 有沒有 404。
+
+   內容逐字複製，除上述 url() 路徑外未做任何調整。@media 內的規則連同其
+   media 條件一起複製（§6.1.1「響應式規則不得拆散」）。
+   ############################################################ */
+/* ------------------------------------------------------------
+   th-todo-link
+   ------------------------------------------------------------ */
+.th-todo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+  color: var(--fg-4);
+}
+.th-todo-link::after {
+  content: "待建置";
+  font-size: var(--fs-3xs);
+  line-height: 1.5;
+  color: var(--fg-4);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xs);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+.th-todo-link.on-dark,
+.th-todo-link.on-dark::after {
+  color: var(--slate-400);
+}
+.th-todo-link.on-dark::after {
+  border-color: rgba(148, 163, 184, 0.4);
+}
+.th-todo-link-nav {
+  gap: 3px;
+}
+.th-todo-link-nav::after {
+  font-size: 9px;
+  padding: 0 3px;
+}
+/* ------------------------------------------------------------
+   th-breadcrumb
+   ------------------------------------------------------------ */
+/* 2026-09-14（C 批）依設計檔收緊上下內距（原 16px） */
+.th-crumb {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+/* 2026-09-14（C 批）：可點區至少 24×24 CSS px（WCAG 2.5.8 目標尺寸）。
+   原本連結只有文字高度 21px、首頁圖示更窄。 */
+.th-crumb a {
+  color: var(--fg-3);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  min-width: 24px;
+  padding: 0 2px;
+}
+.th-crumb a:hover {
+  color: var(--national-700);
+}
+/* 2026-09-16（批次 6）：首頁圖示與分隔符號改為繼承麵包屑本身的字級與顏色
+   （14px／--fg-3），與設計檔的**實際呈現**一致。
+   設計檔雖然寫了 10px／--slate-300，但那條規則在他們站上打不到目標——
+   FA5 的 JS 版會把 <i> 換成 <svg>，`.th-crumb i` 因此從未生效。
+   我方是 FA6 的 CSS 版（維持 <i>），照抄那個值反而會與畫面不符。 */
+.th-crumb i {
+  font-size: inherit;
+  color: inherit;
+}
+.th-crumb-current {
+  color: var(--fg-1);
+  font-weight: 500;
+}
+@media (max-width: 900px) {
+  .th-crumb {
+    padding: 12px 16px;
+  }
+}
+/* ------------------------------------------------------------
+   th-stepper
+   ------------------------------------------------------------ */
+.th-stepper {
+  display: flex;
+  align-items: center;
+  padding: 20px 28px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  margin-bottom: 32px;
+  overflow-x: auto;
+}
+.th-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 72px;
+  flex-shrink: 0;
+}
+.th-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-2);
+  border: 2px solid var(--slate-300);
+  color: var(--fg-4);
+  font-weight: 700;
+  font-size: var(--fs-xs);
+  flex-shrink: 0;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.th-step-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.3;
+  gap: 2px;
+}
+.th-step-label .lbl-title {
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  color: var(--fg-4);
+  white-space: nowrap;
+}
+.th-step-label .lbl-sub {
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+  display: none;
+  /* 副標在窄版隱藏，保留結構供大螢幕 */
+}
+.th-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--slate-200);
+  margin-bottom: 26px;
+  min-width: 16px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.th-step-line.is-done {
+  background: var(--national-700);
+}
+.th-step.is-current .th-step-num {
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 4px rgba(88, 122, 104, 0.15);
+}
+.th-step.is-current .lbl-title {
+  color: var(--national-700);
+}
+.th-step.is-done .th-step-num {
+  background: var(--bg-mist-2);
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+.th-step.is-done .th-step-num::before {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: var(--fs-2xs);
+}
+.th-step.is-done .th-step-num span {
+  display: none;
+}
+.th-step.is-done .lbl-title {
+  color: var(--slate-600);
+}
+@media (max-width: 900px) {
+  .th-stepper {
+    padding: 16px 16px;
+  }
+}
+@media (max-width: 600px) {
+  .th-stepper {
+    padding: 14px 12px;
+  }
+
+  .th-marquee-wrap {
+    padding: 4px 12px 0;
+  }
+}
+/* ------------------------------------------------------------
+   th-page-nav
+   ------------------------------------------------------------ */
+.th-pagenav {
+  position: sticky;
+  top: 132px;
+  border-left: 2px solid var(--slate-200);
+  padding-left: 16px;
+}
+.th-pagenav-title {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+  margin: 0 0 10px;
+}
+.th-pagenav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.th-pagenav a {
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+  line-height: var(--lh-snug);
+  display: block;
+}
+.th-pagenav a:hover {
+  color: var(--national-700);
+}
+@media (max-width: 1023px) {
+  .th-pagenav {
+    display: none;
+  }
+}
+/* ------------------------------------------------------------
+   th-page-shell
+   ------------------------------------------------------------ */
+/* sticky footer（2026-09-14 使用者裁決改全站）：**頁首＋內容＋頁尾合計**至少 100vh，
+   內容區撐滿中間剩餘高度。原本是 .th-page 自己 min-height: 100vh，頁首、麵包屑、頁尾
+   都在那一屏之外，短頁的頁尾必被推出第一屏、卡片下方留一整片空白（1920×1080 實測約 400px）。
+
+   選擇器涵蓋兩種結構：main.th-page 直接掛在 #th-app（多數頁），
+   或包在 #th-app 底下一層 v-if 分支（apply-2）。首頁自帶 Tailwind 的
+   flex／min-h-screen 版型、沒有 .th-page，不落入本規則。 */
+:is(#th-app, #th-app > div):has(> .th-page) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+:is(#th-app, #th-app > div) > .th-page {
+  flex: 1 0 auto;
+}
+/* .th-crumb 是 max-width + margin:0 auto 置中的區塊；成為 flex item 後 auto margin
+   會把它推到右側（實測麵包屑整條靠右）。補回滿寬，置中邏輯才維持原樣。 */
+:is(#th-app, #th-app > div) > .th-crumb {
+  width: 100%;
+}
+.th-page {
+  background: var(--bg-1);
+  /* 2026-09-14 使用者裁決 80px → 40px；短頁不足 100vh 時仍由上面的 flex 撐滿、頁尾貼齊視窗底部 */
+  padding-bottom: 40px;
+}
+.th-page-inner {
+  max-width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 0 32px;
+  min-width: 0;
+}
+.th-page-head {
+  margin-bottom: 24px;
+}
+.th-page-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-h1);
+  line-height: 1.2;
+  color: var(--fg-1);
+  margin: 0;
+  letter-spacing: var(--tracking-wide);
+}
+.th-page-lead {
+  margin: 14px 0 0;
+  max-width: 62em;
+  color: var(--fg-2);
+  text-align: justify;
+}
+.th-page-meta {
+  margin-top: 14px;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+}
+.th-page-body.has-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 232px;
+  gap: 32px;
+  align-items: start;
+}
+.th-page-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.th-page-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 24px;
+  padding: 28px 24px;
+  background: var(--bg-mist);
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-xl);
+}
+.th-page-cta-text {
+  margin: 0;
+  color: var(--fg-2);
+}
+@media (max-width: 1023px) {
+  .th-page-body.has-nav {
+    display: block;
+  }
+}
+@media (max-width: 900px) {
+  .th-page-title {
+    font-size: 22px;
+  }
+  .th-page-inner {
+    padding: 0 16px;
+  }
+}
+@media (max-width: 640px) {
+  .th-page-body.has-nav {
+    gap: 20px;
+  }
+  .th-page-cta {
+    padding: 20px 16px;
+  }
+}
+/* ------------------------------------------------------------
+   th-header（骨架、窄版就地展開、語言下拉）
+   ------------------------------------------------------------
+   2026-09-14（批次 1）依設計師前台web 改寫：
+   - 窄版（≤900px）由「右側滑入抽屜」改為**頁首往下就地展開**，
+     原本的 .th-menumask／.th-menupanel／.th-menunav／.th-menuutil／
+     .th-menu-lang-* 一併移除（唯一消費端是 th-header）。
+     body.th-noscroll 保留——th-quick-nav 還在用。
+   - 頁首骨架（.th-header-inner／.th-brand／.th-utility／.th-nav）由 Tailwind
+     搬到這裡：窄版要靠 .th-header.is-nav-open 切換顯示，那不是 utility class
+     表達得了的狀態。**本批數值一律沿用改版前的實測值**（標誌 64／56／40、
+     站名 24／20／16、頁首內距 12px），字級與尺寸對齊排在批次 2。
+   ------------------------------------------------------------ */
+.th-header-inner {
+  max-width: 80rem;          /* 與原 max-w-7xl 相同 */
+  margin: 0 auto;
+  padding: 0 2rem;           /* 原 px-4 sm:px-6 lg:px-8 的桌機值 */
+  display: flex;
+  /* ≥901 不換行：右側區塊留在站名旁邊，塞不下時由 .th-nav 自己換行
+     （設計檔的行為）。整塊掉到站名下方會讓頁首多長 40–60px。
+     ≤900 才需要 wrap，展開的導覽要整列。 */
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.th-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 1;
+  transition: opacity 0.15s ease;
+}
+.th-brand:hover { opacity: 0.9; }
+
+/* 2026-09-14（批次 2）標誌 64 → 56px、站名 24px/800 → 22px/700，
+   並取消「臺灣登山申請」那一段的放大（設計檔的站名是單一字級）。
+   窄版階梯照設計檔：≤900 標誌 44、≤600 36/字 19、≤360 32/字 16。 */
+.th-logo {
+  height: 56px;
+  width: auto;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.th-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  color: var(--fg-1);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--lh-tight);
+  min-width: 0;
+  white-space: nowrap;
+}
+.th-wordmark-lead { font-size: inherit; }
+.th-accent { color: var(--national-700); }
+
+/* 右側：工具列 ＋ 主導覽（桌機靠右直排，窄版整列展開） */
+.th-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.th-utility {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+.th-utility > * { flex-shrink: 0; }
+
+/* 可點區至少 24×24 CSS px（WCAG 2.5.8）——原本只有文字高度 23px */
+.th-utility-link,
+.th-utility .th-todo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 2px;
+  color: var(--fg-3);
+  font-size: var(--fs-xs);
+  transition: color 0.15s ease;
+}
+.th-utility-link:hover { color: var(--national-700); }
+
+.th-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--slate-300);
+}
+
+.th-caret { font-size: var(--fs-3xs); transition: transform 0.15s ease; }
+
+/* 主導覽：901–1280 之間會換行（與設計檔相同），不擠壓站名 */
+.th-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  font-size: var(--fs-nav);
+  line-height: var(--lh-base);
+}
+
+.th-navlink {
+  position: relative;
+  padding: 4px 0;
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  color: var(--fg-2);
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.th-navlink:hover { color: var(--national-700); }
+.th-navlink.is-current { color: var(--national-700); }
+
+/* 1-9 作用中項目的裝飾性底線：底邊對齊 .th-header 的下緣。
+   位移 = 頁首下內距 + 下框線 1px，與設計檔同一條公式，
+   改 --header-pad-y 會自己跟著走。 */
+.th-navlink.is-current::after,
+.th-navsub.is-active > .th-navsub-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--header-pad-y) - 1px);
+  height: 3px;
+  background: var(--national-700);
+}
+
+/* 窄版開合鈕：斷點由 1279 下修為 900，與設計檔一致 */
+.th-menubtn { display: none; }
+@media (max-width: 900px) {
+  .th-menubtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-lg);
+    background: var(--bg-1);
+    color: var(--fg-2);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .th-menubtn:hover {
+    background: var(--bg-2);
+    border-color: var(--slate-400);
+    color: var(--national-700);
+  }
+  .th-menubtn i { font-size: var(--fs-lg); }
+}
+
+/* ── 窄版（≤900px）：頁首往下就地展開 ───────────────────────── */
+@media (max-width: 900px) {
+  .th-header-inner { padding: 0 1rem; }
+  .th-header-inner { flex-wrap: wrap; }
+  .th-brand { flex: 1 1 auto; min-width: 0; }
+  .th-logo { height: 44px; margin-right: 10px; }
+  .th-wordmark { font-size: var(--fs-h3); }
+
+  .th-header-right {
+    display: none;
+    width: 100%;
+    align-items: flex-start;
+    padding-bottom: 8px;
+  }
+  .th-header.is-nav-open .th-header-right { display: flex; }
+
+  .th-utility { width: 100%; }
+  /* 搜尋框在窄版獨佔一列，排在輔助連結之後 */
+  .th-hdrsearch { flex: 1 1 100%; order: 1; }
+  .th-hdrsearch-input { width: 100%; }
+  .th-utility .th-divider:last-of-type { display: none; }
+
+  .th-nav {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
+  .th-navlink { width: 100%; padding: 8px 0; }
+  /* 窄版主選單換行後不再是頁首最後一列，底線改貼齊連結本身 */
+  .th-navlink.is-current::after,
+  .th-navsub.is-active > .th-navsub-btn::after { bottom: -2px; }
+}
+
+@media (max-width: 600px) {
+  .th-logo { height: 36px; margin-right: 8px; }
+  .th-wordmark { font-size: var(--fs-lg); }
+}
+/* 極窄螢幕：再降一階，確保站名 12 字維持單行（設計檔同樣的處理） */
+@media (max-width: 360px) {
+  .th-logo { height: 32px; }
+  .th-wordmark { font-size: var(--fs-md); letter-spacing: 0; }
+}
+
+.th-navsub {
+  position: relative;
+}
+.th-navsub-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  color: var(--fg-2);
+  cursor: default;   /* 滑鼠裝置靠移入展開，父項不可點，不給手指游標 */
+  transition: color 0.15s ease;
+}
+.th-navsub-btn:hover,
+.th-navsub-btn[aria-expanded="true"] { color: var(--national-700); }
+.th-navsub-btn.is-current { color: var(--national-700); }
+/* 觸控裝置沒有 hover，父項改成點擊展開，游標語意跟著改 */
+@media (hover: none) {
+  .th-navsub-btn {
+    cursor: pointer;
+  }
+}
+/* 外層只留銜接距離且必須透明：與按鈕之間若有空隙，
+   滑鼠往下移會先觸發 mouseleave 把選單關掉。 */
+/* 2026-09-14（批次 1）：下拉改為貼齊按鈕下緣、與按鈕之間無空隙
+   （有空隙的話滑鼠往下移會先觸發 mouseleave 把選單關掉）。
+   靠近視窗右緣時由 JS 加上 .is-right 改為右對齊。 */
+.th-navsub-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+}
+.th-navsub-dropdown.is-right { left: auto; right: 0; }
+.th-navsub-panel {
+  min-width: 220px;
+  max-width: 340px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--bg-1);
+  border: 1px solid var(--border-ui);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  box-shadow: var(--sh-lg);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+/* 目前所在頁的子項（設計檔以 aria-current="page" 標記） */
+.th-navsub-item[aria-current="page"] {
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+  font-weight: 700;
+}
+/* 窄版：下拉改為就地展開的手風琴，不做浮動定位 */
+@media (max-width: 900px) {
+  .th-navsub { width: 100%; }
+  .th-navsub-btn { width: 100%; justify-content: space-between; padding: 8px 0; }
+  .th-navsub-dropdown {
+    position: static;
+    width: 100%;
+  }
+  .th-navsub-panel {
+    min-width: 0;
+    max-width: none;
+    max-height: none;
+    margin: 4px 0 8px;
+    border-radius: var(--r-md);
+    box-shadow: none;
+    background: var(--bg-2);
+  }
+  .th-navsub-dropdown.is-right { right: auto; }
+}
+.th-navsub-item {
+  display: block;
+  padding: 8px 12px;
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  color: var(--fg-2);
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.th-navsub-item:hover {
+  background: var(--slate-100);
+  color: var(--national-700);
+}
+.th-navsub-item.th-todo-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+  color: var(--fg-4);
+}
+.th-navsub-item.th-todo-link:hover {
+  background: transparent;
+  color: var(--fg-4);
+}
+
+/* ── 桌機工具列的搜尋輸入框 ── */
+/* 2026-09-14（批次 2）依設計檔改膠囊型：邊框 --border-ui（AA 1.4.11）、
+   高 30px、送出鈕改實心品牌綠配白圖示（原為透明底灰圖示）。 */
+.th-hdrsearch {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  overflow: hidden;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-pill);
+  background: var(--bg-1);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.th-hdrsearch:focus-within {
+  border-color: var(--national-700);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.15);
+}
+.th-hdrsearch-input {
+  width: 140px;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 4px 0 14px;
+  font-size: var(--fs-xs);
+  color: var(--fg-1);
+}
+.th-hdrsearch-input::placeholder {
+  color: var(--slate-500);   /* 白底 4.76:1；--fg-4 只有 2.56:1 */
+}
+/* 瀏覽器預設的清除叉叉會破壞膠囊版型 */
+.th-hdrsearch-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.th-hdrsearch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 100%;
+  border: none;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-xs);
+  transition: background 0.15s ease;
+}
+.th-hdrsearch-btn:hover {
+  background: var(--national-700-hover);
+  color: var(--fg-on-dark);
+}
+
+.th-lang-wrapper {
+  position: relative;
+  display: inline-block;
+}
+/* 2026-09-14（批次 2）：與其他輔助列項目同款——同字級、可點區 24px、
+   沒有底色 hover（設計檔的輔助列是純文字連結的視覺） */
+.th-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--fg-3);
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  min-height: 24px;
+  padding: 2px;
+  transition: color 0.15s ease;
+}
+.th-lang-btn:hover { color: var(--national-700); }
+.th-lang-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 9999;
+  min-width: 150px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200, var(--slate-200));
+  border-radius: var(--r-md, var(--r-md));
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.th-lang-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: var(--fs-nav);
+  color: var(--slate-700, var(--slate-700));
+  border-radius: var(--r-sm, var(--r-sm));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  text-align: left;
+}
+.th-lang-item:hover {
+  background: var(--slate-100, var(--slate-100));
+  color: var(--national-700, var(--national-700));
+}
+.th-lang-item.is-active,
+.th-lang-item[aria-current="true"] {
+  font-weight: 600;
+  color: var(--national-700, var(--national-700));
+  background: var(--bg-selected);
+}
+.th-lang-tick { font-size: var(--fs-xs); color: var(--national-700); }
+/* ------------------------------------------------------------
+   th-hybrid-select — 原生 select 的滑鼠外觀層（2026-09-16）
+   ------------------------------------------------------------
+   由 news 的試作 .p-news-hsel* 提升（二次即提升；第二、三個消費端是
+   apply-1 與 apply-3）。行為與限制寫在 assets/components/th-hybrid-select.js 檔頭。
+
+   收起時的外觀就是 .th-select 本身（含批次 7 的 chevron），這裡只畫展開後的面板。
+   面板的圓角、內距、項目高度與間距**沿用 th-header 語言下拉的既有值**
+   （.th-lang-dropdown／.th-lang-item），不另立一套；唯一差別是陰影改用
+   --sh-lg 這個 token，沿用語言下拉時就是這樣寫的。
+
+   面板寬度與左緣由 JS 依欄位的實際位置給（包裝層是 display: contents，
+   沒有定位基準可用），不像語言下拉那樣靠右對齊——欄位本身有固定寬度，
+   清單與欄位切齊才不會看起來飄移。
+   ------------------------------------------------------------ */
+/* 包裝層不產生方塊：select 仍是原本的 flex／grid 項目，
+   頁面既有的 flex: 1／width: 80px 等規則照常生效（理由見元件檔頭）。 */
+.th-hsel {
+  display: contents;
+}
+
+.th-hsel-panel {
+  /* 座標由 JS 依 select 的實際位置給（包裝層是 display: contents，沒有定位基準） */
+  position: fixed;
+  z-index: 60;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+}
+
+.th-hsel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-1);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* hover 比選中項淺一階 */
+.th-hsel-item:hover {
+  background: var(--bg-mist);
+}
+
+.th-hsel-item.is-selected {
+  background: var(--bg-selected);
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.th-hsel-item.is-selected:hover {
+  background: var(--bg-mist-2);
+}
+
+.th-hsel-item i {
+  flex-shrink: 0;
+  color: var(--national-700);
+  font-size: var(--fs-xs);
+}
+
+/* 向上展開時改由 bottom 定位（JS 一併給座標），縮高之後才不會蓋住欄位。
+   原生 select 的清單也是這樣翻的；不翻的話頁面下半部的欄位會被視窗底部裁掉。 */
+.th-hsel-panel.is-up {
+  top: auto;
+}
+
+/* 窄版完全不套自訂介面：面板不出現，一律走原生 select
+   （JS 那邊也擋了一層，這裡是保險，避免任何殘留狀態畫出面板） */
+@media (max-width: 900px) {
+  .th-hsel-panel {
+    display: none;
+  }
+}
+
+/*
+  強制色彩模式（Windows 高對比）— 2026-09-16 實測補上
+  ------------------------------------------------------------
+  未處理前：系統會把底色與文字色全部換成自己的配色，於是**選中項與其他項
+  長得一模一樣**（底 Canvas、字 CanvasText），hover 也完全沒有回饋——
+  原生 select 在同一情境下是有的（系統自己畫 Highlight）。
+
+  做法是改用系統色關鍵字，不是關掉 forced-color-adjust：
+    hover／鍵盤高亮 → Highlight / HighlightText（跟著使用者的配色走）
+    選中項          → 外框 CanvasText ＋ 保留勾號，與 hover 的反白區分開
+*/
+@media (forced-colors: active) {
+  .th-hsel-panel {
+    border: 1px solid CanvasText;
+  }
+
+  /*
+    hover 用系統的 Highlight／HighlightText，與原生 select 的高亮列一致。
+
+    **forced-color-adjust: none 在這裡是必要的，不是偷懶**：實測 Chromium 在
+    強制色彩模式會在文字後面畫一塊 Canvas 色的 backplate，把 HighlightText
+    的白字整個蓋掉（畫面上只剩一條白方塊）。關掉自動調整之後，
+    Highlight／HighlightText 仍然解析為**使用者自己的系統配色**，
+    不是我們的 token，所以沒有違反強制色彩模式的用意。
+  */
+  .th-hsel-item:hover,
+  .th-hsel-item:hover i {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .th-hsel-item:hover i {
+    background: transparent;
+  }
+
+  /* 選中項改用外框標示（底色在強制色彩下會被系統蓋掉，分不出選中與否），
+     勾號本身也還在，兩個線索並存。 */
+  .th-hsel-item.is-selected {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
+
+.th-hsel-item.is-disabled {
+  color: var(--fg-4);
+  cursor: not-allowed;
+}
+
+.th-hsel-item.is-disabled:hover {
+  background: transparent;
+}
+
+body.th-noscroll {
+  overflow: hidden;
+}
+/* 僅螢幕報讀器可見（2026-09-14 批次 1）：外連的「（另開新視窗）」等
+   只朗讀、不顯示的文字。不可改用 display:none／visibility:hidden——
+   那會讓報讀器一併讀不到。 */
+.th-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 頁尾連結：可點區至少 24px（WCAG 2.5.8，2026-09-14 批次 2） */
+.th-footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* ------------------------------------------------------------
+   th-quick-nav
+   ------------------------------------------------------------ */
+.th-quickbtn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--r-pill);
+  border: none;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  box-shadow: var(--sh-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.th-quickbtn:hover {
+  background: var(--national-700-hover);
+  transform: translateY(-2px);
+}
+.th-quickbtn i {
+  font-size: var(--fs-h3);
+}
+.th-quickbtn span {
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+}
+.th-quickmask {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+.th-quickpanel {
+  background: var(--bg-1);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--sh-xl);
+  width: 100%;
+  max-width: 1320px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.th-quickpanel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--slate-200);
+  background: var(--bg-1);
+}
+.th-quickpanel-heading {
+  border-left: none;
+  padding-left: 0;
+}
+.th-quickpanel-head h2,
+.th-quickpanel-head .bulletin-modal-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin: 0;
+  line-height: var(--lh-snug);
+}
+.th-quickpanel-close {
+  border: none;
+  background: none;
+  color: var(--fg-4);
+  font-size: var(--fs-h3);
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+  transition: color 0.15s;
+}
+.th-quickpanel-close:hover {
+  color: var(--fg-1);
+  background: var(--slate-100);
+}
+.th-quickpanel-body {
+  padding: 24px;
+  overflow-y: auto;
+  background-color: var(--bg-1);
+  background-image: none;
+}
+.th-quick-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  margin: 0 0 12px 0;
+  padding: 8px 0 8px;
+  list-style: none;
+}
+.th-quick-steps::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 49px;
+  border-top: 1px dotted #9fb6ad;
+  z-index: 1;
+}
+.th-quick-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.th-quick-step .step-circle {
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--national-700);
+  border-radius: 50%;
+  background: var(--national-700);
+  display: grid;
+  place-items: center;
+  margin: 5px 0 6px;
+  box-shadow: 0 3px 8px rgba(45, 90, 67, 0.2);
+}
+.th-quick-step .step-circle i {
+  font-size: var(--fs-h1);
+  color: var(--fg-on-dark);
+}
+.th-quick-step.is-active .step-circle,
+.th-quick-step:first-child .step-circle {
+  background: var(--national-700);
+  border-color: var(--national-700);
+}
+.th-quick-step.is-active .step-circle i,
+.th-quick-step:first-child .step-circle i {
+  color: var(--fg-on-dark);
+}
+.th-quick-step strong {
+  font-size: var(--fs-nav);
+  letter-spacing: 1px;
+  color: #233c4a;
+  font-weight: 700;
+}
+.th-quick-step small {
+  font-size: var(--fs-xs);
+  margin-top: 2px;
+  color: #1a3244;
+  font-weight: 400;
+}
+.th-expnav-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px 14px;
+  padding-top: 0;
+}
+.th-expnav-grid::before {
+  display: none;
+}
+@media (max-width: 640px) {
+  .th-quickbtn {
+    right: 16px;
+    bottom: 16px;
+    width: 58px;
+    height: 58px;
+  }
+  .th-quickbtn i {
+    font-size: 17px;
+  }
+  .th-quickmask {
+    padding: 16px 8px;
+  }
+  .th-quickpanel-body {
+    padding: 16px;
+    background-size: 180% auto;
+  }
+  .th-expnav-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .th-quick-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .th-quick-steps::before {
+    display: none;
+  }
+  .th-quick-step .step-circle {
+    width: 54px;
+    height: 54px;
+  }
+  .th-quick-step .step-circle i {
+    font-size: 22px;
+  }
+}
+@media (max-width: 1024px) {
+  .th-expnav-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* ------------------------------------------------------------
+   th-modal
+   ------------------------------------------------------------ */
+.bulletin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.bulletin-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  background: var(--bg-1);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-xl);
+  overflow: hidden;
+}
+.bulletin-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--slate-200);
+}
+.bulletin-modal-title {
+  margin: 8px 0 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  line-height: var(--lh-snug);
+}
+.bulletin-modal-meta {
+  margin-top: 6px;
+  font-size: var(--fs-xs);
+  color: var(--fg-1);
+}
+.bulletin-modal-close {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 4px;
+  font-size: var(--fs-h3);
+  color: var(--fg-4);
+  transition: color 0.15s;
+}
+.bulletin-modal-close:hover {
+  color: var(--fg-1);
+}
+.bulletin-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  font-size: var(--fs-md);
+  color: var(--fg-2);
+  line-height: var(--lh-loose);
+  white-space: pre-line;
+}
+/* ------------------------------------------------------------
+   th-data-table
+   ------------------------------------------------------------ */
+.th-table .col-org {
+  width: 130px;
+  white-space: nowrap;
+}
+.th-table .col-date {
+  width: 120px;
+  white-space: nowrap;
+}
+.th-table .col-daterange {
+  width: 132px;
+  white-space: nowrap;
+}
+.th-table .col-cat {
+  width: 176px;
+  white-space: nowrap;
+}
+.th-table .col-name {
+  width: 90px;
+  white-space: nowrap;
+}
+.th-table tbody td.col-date,
+.th-table tbody td.col-daterange {
+  color: var(--fg-1);
+}
+.th-table tbody td.col-name {
+  font-weight: 400;
+}
+.th-table-wrap {
+  overflow-x: auto;
+}
+.th-table caption {
+  /* 表格說明只朗讀不顯示（WCAG 1.3.1）；不可用 display:none */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.th-table caption {
+  /* 表格說明只朗讀不顯示（WCAG 1.3.1）；不可用 display:none */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.th-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.th-table th,
+.th-table td {
+  padding: 14px 18px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--slate-100);
+  line-height: var(--lh-base);
+}
+/* 2026-09-14（C 批）依設計檔前台web：表頭改霧綠底、深色字、升一級字級
+   （原為 --bg-3 淺灰底、--fg-2、--fs-xs）。 */
+.th-table thead th {
+  background: var(--bg-mist-2);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--fg-1);
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--slate-200);
+}
+.th-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.th-table tbody tr:hover {
+  background: var(--bg-mist);
+}
+.th-table--zebra tbody tr {
+  background: var(--bg-1);
+}
+.th-table--zebra tbody tr:nth-child(even) {
+  background: #f8faf8;
+}
+.th-table--zebra tbody tr:hover {
+  background: var(--bg-mist);
+}
+.th-table .is-center {
+  text-align: center;
+}
+.th-table .is-right {
+  text-align: right;
+}
+.th-table-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--fg-3);
+  font-size: var(--fs-sm);
+}
+.th-table-empty i {
+  display: block;
+  font-size: var(--fs-h1);
+  color: var(--slate-300);
+  margin-bottom: 10px;
+}
+.th-table.tbl-level th:nth-child(1) {
+  width: 8%;
+}
+.th-table.tbl-level th:nth-child(2) {
+  width: 49%;
+}
+.th-table.tbl-level th:nth-child(3) {
+  width: 22%;
+}
+.th-table.tbl-level th:nth-child(4) {
+  width: 21%;
+}
+.th-table.tbl-rss th:nth-child(1) {
+  width: 156px;
+}
+.th-table.tbl-rss th:nth-child(2) {
+  width: 24%;
+}
+.th-table.tbl-rss th:nth-child(4) {
+  width: 96px;
+}
+@media (max-width: 768px) {
+  .th-table--zebra thead {
+    display: none;
+  }
+  .th-table--zebra,
+  .th-table--zebra tbody,
+  .th-table--zebra tr,
+  .th-table--zebra td {
+    display: block;
+    width: 100%;
+  }
+  .th-table--zebra tbody tr {
+    margin-bottom: 12px;
+    background: var(--bg-1);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .th-table--zebra tbody tr:nth-child(even) {
+    background: var(--bg-1);
+  }
+  .th-table--zebra tbody td {
+    display: flex;
+    gap: 12px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--slate-100);
+    border-bottom: none;
+    width: auto;
+    white-space: normal;
+  }
+  .th-table--zebra tbody td:first-child {
+    border-top: none;
+  }
+  .th-table--zebra tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 84px;
+    font-size: var(--fs-xxs);
+    font-weight: 700;
+    color: var(--fg-3);
+  }
+}
+@media (max-width: 640px) {
+  .th-table th,
+  .th-table td {
+    padding: 10px 12px;
+  }
+  .th-table.tbl-level {
+    display: block;
+  }
+  .th-table.tbl-level thead {
+    display: none;
+  }
+  .th-table.tbl-level tbody,
+  .th-table.tbl-level tbody tr {
+    display: block;
+  }
+  .th-table.tbl-level th:nth-child(1),
+  .th-table.tbl-level th:nth-child(2),
+  .th-table.tbl-level th:nth-child(3),
+  .th-table.tbl-level th:nth-child(4) {
+    width: auto;
+  }
+  .th-table.tbl-level tbody tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .th-table.tbl-level tbody tr:last-child {
+    border-bottom: none;
+  }
+  .th-table.tbl-level tbody td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+    text-align: left;
+  }
+  .th-table.tbl-level tbody td+td {
+    margin-top: 8px;
+  }
+  .th-table.tbl-level tbody td:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--fg-3);
+    letter-spacing: var(--tracking-wide);
+  }
+  .th-table.tbl-rss {
+    display: block;
+  }
+  .th-table.tbl-rss thead {
+    display: none;
+  }
+  .th-table.tbl-rss tbody,
+  .th-table.tbl-rss tbody tr {
+    display: block;
+  }
+  .th-table.tbl-rss th:nth-child(1),
+  .th-table.tbl-rss th:nth-child(2),
+  .th-table.tbl-rss th:nth-child(4) {
+    width: auto;
+  }
+  .th-table.tbl-rss tbody tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .th-table.tbl-rss tbody tr:last-child {
+    border-bottom: none;
+  }
+  .th-table.tbl-rss tbody td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+    text-align: left;
+  }
+  .th-table.tbl-rss tbody td+td {
+    margin-top: 10px;
+  }
+  .th-table.tbl-rss tbody td:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--fg-3);
+    letter-spacing: var(--tracking-wide);
+  }
+}
+/* ------------------------------------------------------------
+   th-date-picker
+   ------------------------------------------------------------ */
+.th-search .th-input {
+  padding-left: 42px;
+}
+
+/* ------------------------------------------------------------
+   flatpickr 主題（2026-09-10，模式 2）
+   ------------------------------------------------------------
+   **一律用 tokens 覆寫，不套 flatpickr 預設的藍色主題。**
+
+   ⚠ 每條選擇器都比 flatpickr 自己的多一層限定，這不是排版習慣，是必要的：
+   `flatpickr.min.css` 由 head-loader 動態插入，**落在靜態四行之後**
+   （量測當時的 head 內順序：shared.css=0、index.css=1、flatpickr.min.css=5；
+   shared.css 已刪除，但**結論與它在不在無關**——動態插入的一律在靜態之後）。
+   同特異性時後者勝，所以照抄它的選擇器會完全沒效果——而且不報錯，
+   畫面就是一片 flatpickr 藍。這是第三類層疊反轉的另一種形狀：
+   **head-loader 注入的任何 CSS 都排在四層之後。**
+
+   做法是加祖先 `.flatpickr-calendar`（或把 class 寫兩次）把特異性抬高一級，
+   不用 `!important`（§6.5 禁用）。
+
+   彈窗 append 在 <body> 底下、不在 #th-app 內，所以只能靠 .flatpickr-* 這組
+   class 本身限定，不能靠頁面的祖先。
+   ------------------------------------------------------------ */
+.flatpickr-calendar.flatpickr-calendar {
+  background: var(--bg-1);
+  /* 2026-09-14（批次 5，逐條核對設計檔）：--slate-200 對白底僅 1.3:1，
+     互動元件邊框需 ≥3:1（WCAG 1.4.11） */
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+}
+.flatpickr-calendar.arrowTop.arrowTop::before,
+.flatpickr-calendar.arrowTop.arrowTop::after {
+  border-bottom-color: var(--bg-1);
+}
+.flatpickr-calendar.arrowBottom.arrowBottom::before,
+.flatpickr-calendar.arrowBottom.arrowBottom::after {
+  border-top-color: var(--bg-1);
+}
+
+.flatpickr-calendar .flatpickr-months,
+.flatpickr-calendar .flatpickr-months .flatpickr-month {
+  background: transparent;
+  color: var(--fg-1);
+  fill: var(--fg-1);
+}
+.flatpickr-calendar .flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month input.cur-year {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month svg {
+  /* fill 必須寫在 svg 上：flatpickr 的箭頭是內層 svg，
+     寫在 .flatpickr-months 上繼承不到，靜態顏色會留在預設的 rgba(0,0,0,.9) */
+  fill: var(--fg-1);
+}
+.flatpickr-calendar .flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-calendar .flatpickr-months .flatpickr-next-month:hover svg {
+  fill: var(--national-700);
+}
+
+.flatpickr-calendar span.flatpickr-weekday {
+  /* 設計檔為 14px、--fg-2（7.58:1）；原本沿用 flatpickr 的 13.5px 與 --fg-3 */
+  color: var(--fg-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.flatpickr-calendar .flatpickr-day {
+  color: var(--fg-1);
+  /* 2026-09-16：不再覆寫 border-radius，回到 flatpickr 預設的圓形（150px），
+     與設計檔一致。原本寫 --r-md 會讓選取日變成圓角方塊。 */
+}
+.flatpickr-calendar .flatpickr-day:hover,
+.flatpickr-calendar .flatpickr-day:focus {
+  background: var(--national-50);
+  border-color: var(--national-50);
+  color: var(--national-700);
+}
+.flatpickr-calendar .flatpickr-day.today {
+  border-color: var(--national-700);
+  color: var(--national-700);
+  font-weight: 700;
+}
+.flatpickr-calendar .flatpickr-day.today:hover {
+  background: var(--national-50);
+  color: var(--national-700);
+}
+.flatpickr-calendar .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-day.selected:hover {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+}
+/* ── Range 模式覆寫（全面替換 flatpickr 預設的 #569ff7 藍色）── */
+.flatpickr-calendar .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-day.startRange,
+.flatpickr-calendar .flatpickr-day.endRange,
+.flatpickr-calendar .flatpickr-day.selected.inRange,
+.flatpickr-calendar .flatpickr-day.startRange.inRange,
+.flatpickr-calendar .flatpickr-day.endRange.inRange,
+.flatpickr-calendar .flatpickr-day.selected:focus,
+.flatpickr-calendar .flatpickr-day.startRange:focus,
+.flatpickr-calendar .flatpickr-day.endRange:focus,
+.flatpickr-calendar .flatpickr-day.selected:hover,
+.flatpickr-calendar .flatpickr-day.startRange:hover,
+.flatpickr-calendar .flatpickr-day.endRange:hover,
+.flatpickr-calendar .flatpickr-day.selected.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.startRange.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.endRange.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.selected.nextMonthDay,
+.flatpickr-calendar .flatpickr-day.startRange.nextMonthDay,
+.flatpickr-calendar .flatpickr-day.endRange.nextMonthDay {
+  background: var(--national-700) !important;
+  border-color: var(--national-700) !important;
+  color: var(--fg-on-dark, #fff) !important;
+}
+.flatpickr-calendar .flatpickr-day.inRange,
+.flatpickr-calendar .flatpickr-day.prevMonthDay.inRange,
+.flatpickr-calendar .flatpickr-day.nextMonthDay.inRange,
+.flatpickr-calendar .flatpickr-day.today.inRange,
+.flatpickr-calendar .flatpickr-day.prevMonthDay.today.inRange,
+.flatpickr-calendar .flatpickr-day.nextMonthDay.today.inRange {
+  background: var(--national-50, #f0fdf4) !important;
+  border-color: var(--national-50, #f0fdf4) !important;
+  color: var(--national-800, #166534) !important;
+  box-shadow: -5px 0 0 var(--national-50, #f0fdf4), 5px 0 0 var(--national-50, #f0fdf4) !important;
+}
+.flatpickr-calendar .flatpickr-day.inRange:hover,
+.flatpickr-calendar .flatpickr-day.prevMonthDay.inRange:hover,
+.flatpickr-calendar .flatpickr-day.nextMonthDay.inRange:hover {
+  background: var(--national-100, #dcfce7) !important;
+  border-color: var(--national-100, #dcfce7) !important;
+  color: var(--national-900, #14532d) !important;
+  box-shadow: -5px 0 0 var(--national-100, #dcfce7), 5px 0 0 var(--national-100, #dcfce7) !important;
+}
+/* 上／下月的日期是可點的一般文字，需 ≥4.5:1（設計檔同樣修正過這一條）；
+   停用日期維持 --fg-4——WCAG 對停用（inactive）元件不要求對比。 */
+.flatpickr-calendar .flatpickr-day.prevMonthDay,
+.flatpickr-calendar .flatpickr-day.nextMonthDay {
+  color: var(--fg-3);
+}
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar .flatpickr-day.flatpickr-disabled:hover {
+  /* hover 必須一起壓掉：上面的 .flatpickr-day:hover 會給停用日霧綠底＋綠字，
+     看起來像可以選（2026-09-16 對照設計檔時發現，屬誤導不是外觀偏好）。 */
+  color: var(--fg-4);
+  background: none;
+  border-color: transparent;
+  cursor: not-allowed;
+}
+@media (max-width: 768px) {
+  .th-select,
+  .th-input--date {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+/* ------------------------------------------------------------
+   th-calendar-grid
+   ------------------------------------------------------------ */
+.camp-cal {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+  background: var(--bg-1);
+}
+.camp-cal-head,
+.camp-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.camp-cal-week-short {
+  display: none;
+}
+.camp-cal-week {
+  padding: 10px 8px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: var(--tracking-wide);
+}
+.camp-cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  min-height: 96px;
+  padding: 8px 6px;
+  border-top: 1px solid var(--slate-100);
+  border-left: 1px solid var(--slate-100);
+  background: var(--bg-1);
+  text-align: center;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.camp-cal-cell:nth-child(7n + 1) {
+  border-left: none;
+}
+.camp-cal-cell.is-blank {
+  background: var(--bg-2);
+}
+.camp-cal-day {
+  align-self: flex-end;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+}
+.camp-cal-remain {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.camp-cal-unit {
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+}
+.camp-cal-none {
+  margin-top: 12px;
+  font-size: var(--fs-xxs);
+  color: var(--slate-300);
+}
+.camp-cal-cell.is-open {
+  cursor: pointer;
+}
+.camp-cal-cell.is-open .camp-cal-remain {
+  color: var(--success-fg);
+}
+.camp-cal-cell.is-open:hover {
+  background: var(--bg-mist);
+  box-shadow: inset 0 0 0 2px var(--national-200);
+}
+.camp-cal-cell.is-full {
+  cursor: pointer;
+  background: var(--danger-bg-subtle);
+}
+.camp-cal-cell.is-full .camp-cal-remain {
+  color: var(--danger-fg);
+}
+.camp-cal-cell.is-full:hover {
+  background: var(--danger-bg);
+  box-shadow: inset 0 0 0 2px var(--danger-border);
+}
+.camp-cal-cell.is-empty {
+  background: var(--bg-2);
+}
+.camp-cal-cell:focus-visible {
+  outline: 2px solid var(--national-700);
+  outline-offset: -2px;
+}
+@media (max-width: 768px) {
+  .camp-cal-cell {
+    min-height: 68px;
+    padding: 5px 2px;
+  }
+  .camp-cal-remain {
+    margin-top: 4px;
+    font-size: var(--fs-md);
+  }
+  .camp-cal-week {
+    padding: 8px 2px;
+    font-size: var(--fs-sm);
+  }
+  .camp-cal-week-full {
+    display: none;
+  }
+  .camp-cal-week-short {
+    display: inline;
+  }
+  .camp-cal-unit {
+    display: none;
+  }
+}
+/* ------------------------------------------------------------
+   th-fc-stepper
+   ------------------------------------------------------------ */
+.fc-stepper {
+  /* 沿用 th-stepper 所有樣式，僅覆寫間距 */
+  display: flex;
+  align-items: center;
+  margin: 24px 0 32px;
+  padding: 20px 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  overflow-x: auto;
+}
+.fc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 60px;
+  flex-shrink: 0;
+}
+.fc-step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--slate-300);
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-4);
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.fc-step-label {
+  font-size: var(--fs-xxs);
+  color: var(--fg-4);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.fc-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--slate-200);
+  margin-bottom: 26px;
+  min-width: 12px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.fc-step-line.is-done {
+  background: var(--national-700);
+}
+.fc-step.is-current .fc-step-dot {
+  border-color: var(--national-700);
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  box-shadow: 0 0 0 4px rgba(88, 122, 104, 0.15);
+}
+.fc-step.is-current .fc-step-label {
+  color: var(--national-700);
+  font-weight: 700;
+}
+.fc-step.is-done .fc-step-dot {
+  border-color: var(--national-700);
+  background: var(--bg-mist-2);
+  color: var(--national-700);
+}
+.fc-step.is-done .fc-step-label {
+  color: var(--slate-600);
+}
+/* ------------------------------------------------------------
+   th-card（區塊卡片，markup 在頁面）
+   ------------------------------------------------------------ */
+.th-card {
+  background: var(--bg-1);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+  scroll-margin-top: 132px;
+}
+.th-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--slate-200);
+}
+.th-card-head i {
+  color: var(--national-700);
+  font-size: var(--fs-nav);
+}
+.th-card-title {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin: 0;
+}
+.th-card-note {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+.th-card-body {
+  /* 2026-09-14（批次 2）與設計檔的 .th-card-pad 一致 */
+  padding: 22px 24px;
+}
+.th-card-body>p {
+  margin: 0 0 12px;
+}
+.th-card-body>p:last-child {
+  margin-bottom: 0;
+}
+.th-card-body.is-flush {
+  padding: 0;
+}
+.th-card-body>.th-callout {
+  margin-bottom: 16px;
+}
+@media (max-width: 640px) {
+  .th-card-body {
+    padding: 16px;
+  }
+  .th-card-head {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+  }
+  .th-card-note {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+/* ############################################################
+   階段 3（四頁零互動）— 補三支元件所擁有的 CSS
+   ############################################################
+
+   th-link-list／th-step-list／th-callout 是為了遷移 apply_teach、notice 這兩頁
+   才移植的（原 Shared.jsx 的 LinkList／StepList／Callout）。階段 3.0b 當時
+   刻意沒複製它們的 CSS，理由是「元件還沒移植，複製進來會有沒人用的規則」；
+   現在移植了，依同一條判準（已移植元件在 template 實際輸出的 class）補上。
+
+   同樣是**複製**，當時 shared.css 原處全部保留（§4.2）——還有頁面在用；
+   該檔已於階段 4 刪除，現在只剩這一份。
+   已檢查本批無 url()，不涉第四類靜默失敗（相對路徑）。
+   ############################################################ */
+/* ------------------------------------------------------------
+   th-link-list
+   ------------------------------------------------------------ */
+.th-linklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.th-linklist>li {
+  border-top: 1px solid var(--slate-100);
+}
+.th-linklist>li:first-child {
+  border-top: none;
+}
+.th-linkrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 24px;
+  font-size: var(--fs-md);
+  color: var(--fg-1);
+  transition: background 0.15s ease;
+}
+a.th-linkrow:hover {
+  background: var(--bg-2);
+  color: var(--national-700);
+}
+.th-linkrow-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-pill);
+  background: var(--bg-3);
+  color: var(--fg-3);
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.th-linkrow-text {
+  flex: 1;
+  min-width: 0;
+  line-height: var(--lh-snug);
+}
+.th-linkrow-icon {
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-4);
+}
+a.th-linkrow:hover .th-linkrow-icon {
+  color: var(--national-700);
+}
+.th-linkrow.is-todo {
+  color: var(--fg-3);
+  cursor: default;
+}
+.th-linkrow.is-todo:hover {
+  background: none;
+  color: var(--fg-3);
+}
+.th-todo-tag {
+  flex-shrink: 0;
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  color: var(--warning-fg);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  border-radius: var(--r-xs);
+  padding: 1px 7px;
+  letter-spacing: var(--tracking-wide);
+}
+/* ------------------------------------------------------------
+   th-step-list
+   ------------------------------------------------------------ */
+.th-steplist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.th-steprow {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.th-steprow-num {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-pill);
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.th-steprow-body {
+  flex: 1;
+  min-width: 0;
+}
+.th-steprow-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin: 6px 0 8px;
+  line-height: var(--lh-snug);
+}
+.th-steprow-body p {
+  margin: 0 0 10px;
+  text-align: justify;
+}
+.th-steprow-body p:last-child {
+  margin-bottom: 0;
+}
+.th-substeps {
+  margin: 0;
+  padding-left: 22px;
+  list-style: decimal outside;
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+}
+.th-substeps li {
+  line-height: var(--lh-base);
+  padding-left: 4px;
+  margin-top: 6px;
+}
+.th-substeps li:first-child {
+  margin-top: 0;
+}
+.th-shot-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.th-shot {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.th-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.th-shot figcaption {
+  padding: 8px 12px;
+  border-top: 1px solid var(--slate-200);
+  color: var(--fg-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-base);
+}
+.th-shot-placeholder {
+  margin-top: 12px;
+  border: 1px dashed var(--slate-300);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  color: var(--fg-4);
+  font-size: var(--fs-xs);
+  text-align: center;
+  padding: 28px 16px;
+}
+.th-shot-placeholder i {
+  display: block;
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: var(--slate-300);
+}
+/* ------------------------------------------------------------
+   th-callout
+   ------------------------------------------------------------ */
+.th-callout {
+  display: flex;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--r-lg);
+  background: var(--bg-mist);
+  border: 1px solid var(--national-200);
+  color: var(--fg-2);
+  line-height: var(--lh-base);
+  text-align: justify;
+}
+.th-callout>i {
+  flex-shrink: 0;
+  color: var(--national-700);
+  font-size: var(--fs-md);
+  margin-top: 3px;
+}
+.th-callout.is-warning {
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+}
+.th-callout.is-warning>i {
+  color: var(--warning-fg);
+}
+.th-callout strong {
+  color: var(--fg-1);
+}
+.th-callout-src {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--fs-xxs);
+  color: var(--fg-3);
+}
+@media (max-width: 640px) {
+  .th-callout {
+    padding: 14px;
+  }
+}
+/* ############################################################
+   .th-expcard* 已於 2026-09-08 撤除（使用者裁決）
+   ############################################################
+
+   階段 3.0b 複製 th-quick-nav 的 CSS 時，一併把**使用者當時未提交**的
+   .th-expcard 修改（4 條選擇器、6 條含 !important）複製了進來並提交。
+   HEAD 的 shared.css 沒有那些規則，工作樹才有。
+
+   留著會造成分裂：components.css 有一份定版複製、shared.css 那份還沒提交，
+   改一邊另一邊不動且不報錯（已遷移頁由 components.css 勝出）。
+   故整個 .th-expcard* 區塊撤除，快捷選單的外觀暫時全部由 shared.css 提供
+   （已遷移頁仍載入 shared.css，外觀不變——已像素驗證）。
+   **等使用者提交那份修改後再複製回來。**
+
+   由此得到的一般規則（v4 §6.4.2 已載明）：
+   **複製任何規則前先確認它存在於 HEAD；只在工作樹裡的跳過並回報。**
+   ############################################################ */
+
+/* ############################################################
+   input 家族的順序修正（2026-09-08，遷移 apply-1 時發現）
+   ############################################################
+
+   **踩到的坑**：階段 3.0b 複製 th-date-picker 擁有的 .th-input 時，命中的是
+   shared.css 的**多選擇器規則** `.th-input, .th-select, .th-textarea`，
+   於是連 .th-select／.th-textarea 的基礎樣式一起搬了過來。
+   但 shared.css 裡**更後面**還有 `.th-select { padding-right: 32px }`，那條沒被複製。
+
+   後果：index.css 晚於 shared.css → 複製過來的多選擇器規則（含 padding: 9px 12px）
+   位置變成最後，把 shared.css 那條 padding-right: 32px 蓋掉。
+   apply-1 的排序下拉因此少了右側 20px 的箭頭空間（192px → 172px），
+   **而且不會報錯**。
+
+   **修正方式**：把 shared.css 的整個 input 家族**依原順序**重新複製一次，
+   不再只挑自己「擁有」的那幾條。
+
+   **一般規則**：複製多選擇器規則時，必須連同 shared.css 裡**後面所有針對其中
+   任一選擇器的細化規則**一起複製，否則兩者的先後會反轉。
+   稽核腳本見 scratchpad/audit_copy.py（可重跑）。
+   ############################################################ */
+
+
+/* ------------------------------------------------------------
+   th-table-pager（原 Shared.jsx 的 BulletinPager）
+   ------------------------------------------------------------
+   從 shared.css 複製，原處保留（§4.2）。已依 §6.4.2b 把 .bulletin-pager 與
+   .bulletin-page-* 的**全部**規則依原順序一起複製。
+
+   **@media 條件必須一起搬**（2026-09-08 踩到）：shared.css 的
+   `@media (max-width: 768px) { .bulletin-pager { justify-content: center } }`
+   第一次複製時被我攤平成頂層規則，於是桌機寬度也套用了 center，
+   分頁列由靠右變成置中——computed 指紋當時沒抓到，因為我的屬性清單裡
+   沒有 justify-content；是全頁像素比對抓到的。
+------------------------------------------------------------ */
+
+/* 2026-09-14（C 批）依設計檔：分頁改置中（原靠右） */
+.bulletin-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+/* 2026-09-14（C 批）：按鈕 38px、邊框改 --border-ui */
+.bulletin-page-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+/* 2026-09-16：hover 由灰系改為品牌綠系，與設計檔的 .th-pager a:hover 一致
+   （原本底 --bg-2、框 --slate-400，與同一排的「清除／查詢」語言不一致）。 */
+.bulletin-page-btn:hover:not(:disabled) {
+  background: var(--national-50);
+  border-color: var(--national-700);
+  color: var(--national-700);
+}
+.bulletin-page-btn.is-active {
+  background: var(--national-700);
+  border-color: var(--national-700);
+  color: var(--fg-on-dark);
+  font-weight: 700;
+}
+.bulletin-page-btn.is-active:hover {
+  background: var(--national-700-hover);
+  border-color: var(--national-700-hover);
+}
+.bulletin-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.bulletin-page-gap {
+  padding: 0 2px;
+  color: var(--fg-4);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 768px) {
+  .bulletin-pager {
+    justify-content: center;
+  }
+}
+
+/* 包含分頁按鈕與「共 N 筆」計數的外外殼 */
+.th-table-pager-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.th-table-pager-wrap .bulletin-pager {
+  margin-top: 0;
+}
+.th-table-pager-wrap .th-listbar-count strong {
+  color: var(--national-800);
+}
+
+/* ============================================================
+   無障礙骨架：跳至主要內容、導盲磚、跑馬燈暫停鈕
+   ------------------------------------------------------------
+   2026-09-14 依設計師前台web（css/base.css、components.css 與
+   ACCESSIBILITY.md）移植，值改為我方 token，不寫 hex。
+   消費端：th-header（skip link、#AU）、th-page-shell（#AC）、
+   th-footer（#AZ）、index.html 自有頁首（skip link、#AU、#AC、暫停鈕）。
+
+   導盲磚（臺灣無障礙網頁開發規範）：
+   - 「:::」是可見標記，**不可用 display:none / visibility:hidden 隱藏**，
+     那會讓報讀器讀不到，等於拿掉導盲磚；窄版改用 clip 視覺隱藏。
+   - 朗讀名稱由 aria-label 提供，「:::」本身 aria-hidden。
+   - 所在區塊必須是定位基準（position 非 static），否則會跑到錯的位置。
+   ============================================================ */
+.th-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  padding: 10px 18px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  border-radius: 0 0 var(--r-md) 0;
+}
+.th-skip-link:focus,
+.th-skip-link:hover {
+  left: 0;
+  color: var(--fg-on-dark);
+}
+
+.th-accesskey {
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* WCAG 2.5.8 目標尺寸：至少 24×24 CSS px */
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0 4px;
+  font-size: var(--fs-xxs);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--fg-3);            /* 白底 4.76:1 */
+  text-decoration: none;
+  background: none;
+}
+.th-accesskey:hover { color: var(--national-700); }
+
+/* 深色底（頁尾）用淺色，維持 ≥4.5:1 */
+.th-accesskey-dark { color: var(--slate-300); }
+.th-accesskey-dark:hover { color: var(--fg-on-dark); }
+
+/* 首頁照片底：半透明白底確保任何照片下都可辨識（設計檔為 rgba 白 0.85） */
+.th-accesskey-hero {
+  color: var(--fg-1);
+  background: color-mix(in srgb, var(--white) 85%, transparent);
+  border-radius: var(--r-xs);
+}
+
+/* 窄版（≤900px）「:::」會與標誌重疊：視覺隱藏、鍵盤聚焦時再顯示 */
+@media (max-width: 900px) {
+  .th-accesskey {
+    left: 2px;
+    width: 1px;
+    height: 1px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .th-accesskey:focus,
+  .th-accesskey:focus-visible {
+    width: auto;
+    height: auto;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 0 4px;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    background: var(--white);
+    color: var(--fg-1);
+    border-radius: var(--r-xs);
+  }
+  .th-accesskey-dark:focus,
+  .th-accesskey-dark:focus-visible {
+    background: var(--sub-footer);
+    color: var(--fg-on-dark);
+  }
+}
+
+/* 導盲磚 #AC 的定位基準（th-page-shell 的 main） */
+.th-page { position: relative; }
+
+/* 跑馬燈暫停鈕（WCAG 2.2.2，A 級）：自動捲動超過 5 秒必須能主動停止，
+   只靠 hover／focus 暫停不符規範（鍵盤與觸控使用者停不下來） */
+.th-marquee-pause {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-ui);
+  background: var(--white);
+  color: var(--fg-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.th-marquee-pause:hover {
+  color: var(--national-700);
+  border-color: var(--national-700);
+}
+.th-marquee.is-paused .th-marquee-track { animation-play-state: paused; }
+
+/* ############################################################
+   .th-tabs／.th-tab — 頁籤（2026-09-14 由 pages.css 的 .p-campsite-* 提升）
+   ############################################################
+   依 CLAUDE.md「二次即提升」：第一個消費端是 campsite（機關頁籤），
+   第二個是 information_4（即時影像觀看的景點頁籤）。宣告逐條照搬，
+   只改名不改值；`@media (max-width: 768px)` 的橫向捲動一起搬，未攤平。
+   `.th-tab.is-todo` 供「尚未建置」的頁籤使用（搭配 th-todo-link）。
+   markup 於同一輪一起改（campsite.html），不留同名兩份。
+   ############################################################ */
+
+.th-tabs {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.th-tabs-nav {
+  min-width: max-content;
+  display: inline-flex;
+  gap: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--slate-200);
+  border-radius: 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+    .th-tabs {
+      overflow-x: auto;
+    }
+}
+
+
+.th-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 4px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.th-tab i {
+  font-size: var(--fs-nav);
+  color: var(--fg-4);
+  transition: color 0.2s ease;
+}
+
+.th-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.th-tab:hover {
+  color: var(--national-700);
+}
+
+.th-tab:hover::after {
+  background: var(--slate-300);
+}
+
+.th-tab:hover i {
+  color: var(--national-700);
+}
+
+.th-tab.is-active {
+  background: transparent;
+  color: var(--national-700);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.th-tab.is-active::after {
+  background: var(--national-700);
+}
+
+.th-tab.is-active i {
+  color: var(--national-700);
+}
+
+.th-tab.is-todo {
+  cursor: default;
+  background: transparent;
+  border-bottom-color: transparent;
+  color: var(--fg-4);
+  opacity: 0.6;
+}
+
+.th-tab.is-todo:hover {
+  background: transparent;
+  border-bottom-color: transparent;
+  color: var(--fg-4);
+}
+
+/* ============================================================
+   th-filter — 查詢型列表頁共用篩選列（二次即提升，2026-09-16）
+   ------------------------------------------------------------
+   標籤置於欄位上方、欄位與操作按鈕同一排且等高（--field-h）。
+   消費端：news.html、information_place.html。
+   .p-news-filter* 保留為相容別名。
+   ============================================================ */
+.th-filter,
+.p-news-filter {
+  margin-bottom: 16px;
+}
+
+.th-filter-grid,
+.p-news-filter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.th-filter-field,
+.p-news-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 1 240px;
+  min-width: 0;
+}
+
+.th-filter-field--grow,
+.p-news-field--grow {
+  flex: 1 1 260px;
+}
+
+.th-filter-label,
+.p-news-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+}
+
+.th-filter .th-search,
+.p-news-filter .th-search {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.th-filter .th-select,
+.th-filter .th-input,
+.th-filter .th-btn,
+.p-news-filter .th-select,
+.p-news-filter .th-input,
+.p-news-filter .th-btn {
+  min-height: var(--field-h);
+  height: var(--field-h);
+}
+
+.th-filter-actions,
+.p-news-filter-actions {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.th-filter-daterange,
+.p-news-daterange {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.th-filter-daterange .th-fp-wrap,
+.p-news-daterange .th-fp-wrap {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.th-filter-daterange .th-input--date,
+.p-news-daterange .th-input--date {
+  width: 100%;
+}
+
+.th-filter-sep,
+.p-news-sep {
+  color: var(--fg-2);
+  font-size: var(--fs-md);
+  line-height: 1;
+  user-select: none;
+}
+
+@media (max-width: 991px) {
+  .th-filter-actions,
+  .p-news-filter-actions {
+    flex: 1 1 100%;
+  }
+  .th-filter-actions .th-btn,
+  .p-news-filter-actions .th-btn {
+    flex: 1;
+  }
+}
+
+/* ============================================================
+   th-listbar — 列表工具列（左筆數、右次要操作/連結，2026-09-16）
+   ============================================================ */
+.th-listbar,
+.p-news-listbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.th-listbar-count,
+.p-news-count {
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+
+.th-listbar-count strong,
+.p-news-count strong {
+  color: var(--national-700);
+  font-weight: 700;
+}
+
+.th-listbar-actions,
+.p-news-listbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.th-listbar-link,
+.p-news-listbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-ui);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  text-decoration: none;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+
+.th-listbar-link:hover,
+.p-news-listbar-link:hover {
+  color: var(--national-700);
+  border-color: var(--national-300);
+  background: var(--national-50);
+}
+
+
+/* ============================================================
+   th-bed-calendar — 宿營地／床位查詢的月份列＋單一數字月曆
+   ------------------------------------------------------------
+   2026-09-17 由 pages.css 的 .p-bed0-* 提升（bed_0、bed_1 兩頁共用，二次即提升）。
+   配色與排版逐項經使用者定案：白底格、主數字 --green-700、額滿用置頂標記字色、
+   「剩餘」與數字垂直置中、月份列無底色。元件見 assets/components/th-bed-calendar.js。
+   ============================================================ */
+.th-bedcal-monthbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.th-bedcal-ym {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--fg-1);
+}
+.th-bedcal-ym .th-select {
+  width: auto;
+  min-width: 88px;
+}
+
+.th-bedcal-cal {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-1);
+  box-shadow: var(--sh-sm);
+}
+.th-bedcal-head,
+.th-bedcal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.th-bedcal-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.th-bedcal-week {
+  padding: 10px 8px;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-align: center;
+}
+.th-bedcal-week-short {
+  display: none;
+}
+.th-bedcal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 0 0 8px;
+  border-top: 1px solid var(--slate-100);
+  border-left: 1px solid var(--slate-100);
+  background: var(--bg-1);
+}
+.th-bedcal-cell:nth-child(7n + 1) {
+  border-left: none;
+}
+.th-bedcal-cell.is-blank {
+  background: var(--bg-2);
+}
+/* 格內包裝：非按鈕時不產生盒子；可點時撐滿整格 */
+.th-bedcal-body {
+  display: contents;
+}
+.th-bedcal-body.is-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  flex: 1;
+  padding: 0 0 4px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.th-bedcal-body.is-btn:hover {
+  background: var(--bg-2);
+}
+/* 有資料的格子才撐高；整週都沒資料（過去日期）的那一列會自動變矮 */
+.th-bedcal-cell.is-open,
+.th-bedcal-cell.is-full {
+  min-height: 104px;
+}
+
+/* 日期列：靠右一整列。正式站的 `bg-light` 淺底 2026-09-17 依使用者指示不採用 */
+.th-bedcal-day {
+  width: 100%;
+  padding: 6px 8px 0;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  text-align: right;
+}
+/* 沒有資料的日子整格淺底（2026-09-17 使用者指示保留）；日期本身不另加底色 */
+.th-bedcal-cell.is-empty {
+  background: var(--bg-2);
+}
+.th-bedcal-cell.is-empty .th-bedcal-day {
+  color: var(--fg-4);
+}
+/* 「剩餘」與數字垂直置中（2026-09-17 使用者指示，原為 baseline） */
+.th-bedcal-main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+/* 剩餘數字用 --green-700（主色 --national-700 不夠顯眼）；額滿用最新消息「置頂」標記的字色
+   （2026-09-17 使用者指示） */
+.th-bedcal-num {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--green-700);
+  font-variant-numeric: tabular-nums;
+}
+.th-bedcal-num.is-text {
+  font-size: var(--fs-lg);
+  color: var(--danger-fg-hover);
+}
+.th-bedcal-unit {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+.th-bedcal-sub {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+
+@media (max-width: 640px) {
+  .th-bedcal-monthbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .th-bedcal-ym {
+    order: -1;
+    flex: 1 0 100%;
+    justify-content: center;
+  }
+  .th-bedcal-week {
+    padding: 8px 2px;
+    font-size: var(--fs-xs);
+  }
+  .th-bedcal-week-full {
+    display: none;
+  }
+  .th-bedcal-week-short {
+    display: inline;
+  }
+  .th-bedcal-cell {
+    min-height: 40px;
+    padding: 0 0 4px;
+  }
+  .th-bedcal-day {
+    padding: 4px 4px 0;
+  }
+  .th-bedcal-cell.is-open,
+  .th-bedcal-cell.is-full {
+    min-height: 64px;
+  }
+  .th-bedcal-num {
+    font-size: var(--fs-md);
+  }
+  .th-bedcal-num.is-text {
+    font-size: var(--fs-xs);
+  }
+  /* 窄螢幕只留大數字；說明句提到申請數，一併隱藏以免對不上 */
+  .th-bedcal-unit,
+  .th-bedcal-sub {
+    display: none;
+  }
+}

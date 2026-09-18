@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>線上申請退費（玉山國家公園） — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_5 — 線上申請退費（玉山國家公園）（舊站 apply_5.aspx）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：Tailwind → tailwind.config.js → index.css。
+
+  **這頁與 apply_4（繳費）形態不同，不要照著繳費頁改。**
+  繳費頁是查詢型（申請編號＋隊名＋圖形驗證碼）；本頁是**身分驗證型**：
+  身分證字號＋手機號碼 →「寄送驗證密碼」（簡訊 OTP）→ 輸入驗證密碼 → 確定。
+  所以本頁**沒有** th-captcha，驗證密碼是 type="password" 的 OTP 欄位，不是圖形驗證碼。
+
+  標題逐字保留「(玉山國家公園)」。頁內明寫適用「排雲山莊」、「觀高山屋」使用規費，
+  兩處都在本頁範圍內，不需要也不應該做山屋選擇器。
+
+  正式站 apply_5t.aspx 於 2026-09-16 實抓回應為「系統維護中」，無內容可參考。
+
+  本頁沒有頁面專用 CSS，未新增 .p-apply5-*。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply5-refund.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak>
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '線上申請退費']"
+    title="線上申請退費（玉山國家公園）"
+    lead="已取消入園者，於此驗證身分後申請退還排雲山莊、觀高山屋已繳之使用規費。"
+    updated="2026-09-16">
+
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="before">
+      <div class="th-card-head">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請前必須先完成的事</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- 先取消再退費是硬性前置，放在頁首第一個區塊。
+             使用者若先來這頁會白跑一趟，舊站也是把這段擺最前面。 -->
+        <th-callout type="warning">隊伍或隊員如果因故無法成行，務請自行於線上取消
+            「<a href="apply_2.html">資料線上異動/取消入園</a>」或以
+            <a href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。
+            <strong>如欲申請退費，請先取消入園後再提出申請。</strong><span class="th-callout-src">來源：正式站 apply_5.aspx（2026-09-16 實抓）</span></th-callout>
+      </div>
+    </section>
+
+    <section class="th-card" id="rules">
+      <div class="th-card-head">
+        <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+        <h2 class="th-card-title">退費規定</h2>
+        <span class="th-card-note">逐字取自正式站，未改寫、未精簡</span>
+      </div>
+      <div class="th-card-body">
+        <h3 class="th-section-title">申請人資格</h3>
+        <p>退費申請人應為原登山申請案之申請人、領隊或隊員等之任一員。如多個登山申請案之退費申請人及退費帳戶相同，得併案提出申請。</p>
+
+        <h3 class="th-section-title">申請退費原因</h3>
+        <!-- 五天與十四天是**依入園日切分的新舊制**，不是二選一，更不可合併成一條。
+             114-12-01 是分界日：當天起適用 5 天，之前適用 14 天。 -->
+        <th-data-table :columns="reasonColumns" :rows="reasonRows" row-key="no" table-class="th-table--zebra"></th-data-table>
+        <p class="th-table-note">第二、三款是依<strong>申請入園日</strong>切分的新舊制，不是擇一適用。</p>
+
+        <h3 class="th-section-title">退費方式與應備文件</h3>
+        <p>退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
+        <p>登山申請資料原則保留 2 年，如無法由線上申請退費，請依規以退費申請書提出申請。</p>
+        <th-callout>實退金額須扣除銀行手續費 30 元。<span class="th-todo-tag">待確認</span><span class="th-callout-src">來源：規格 02_Spec/06c_線上申請退費(排雲).md，未在正式站公開頁面取得佐證</span></th-callout>
+
+        <h3 class="th-section-title">相關規定與說明</h3>
+        <th-link-list :items="refLinks"></th-link-list>
+      </div>
+    </section>
+
+    <section class="th-card" id="verify">
+      <div class="th-card-head">
+        <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
+        <h2 class="th-card-title">驗證身份</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- 雛形不寄簡訊。這段註記必須留著：按鈕做得像會寄，驗收時會被當成已接上。 -->
+        <th-callout type="warning">本頁為雛形，<strong>「寄送驗證密碼」不會真的發送簡訊</strong>，
+            輸入任何驗證密碼皆可按「確定」。實際的一次性密碼由後端產生。<span class="th-todo-tag">待建置</span></th-callout>
+
+        <div class="flex flex-col gap-4">
+        <div class="th-field">
+          <label class="th-label" for="f-sid">
+            <span class="req">*</span>退費申請人身分證字號
+          </label>
+          <input
+            id="f-sid"
+            name="aplysid"
+            ref="sid"
+            type="text"
+            class="th-input"
+            autocomplete="off"
+            placeholder="請輸入退費申請人身分證字號"
+            :value="sid"
+            @input="sid = $event.target.value" />
+          <div class="th-field-hint">須為原登山申請案的申請人、領隊或隊員之一。</div>
+        </div>
+
+        <div class="th-field">
+          <label class="th-label" for="f-mobile">
+            <span class="req">*</span>手機號碼
+          </label>
+          <div class="flex flex-col sm:flex-row gap-2 items-start">
+            <input
+              id="f-mobile"
+              name="aplymobile"
+              type="tel"
+              class="th-input flex-1"
+              autocomplete="off"
+              placeholder="請輸入可接收簡訊的手機號碼"
+              :value="mobile"
+              @input="mobile = $event.target.value" />
+            <button type="button" class="th-btn th-btn-secondary shrink-0" @click="sendOtp">
+              <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>寄送驗證密碼
+            </button>
+          </div>
+          <div class="th-field-hint" v-if="otpSent">已送出（雛形不發送真實簡訊，請直接填寫下方欄位）。</div>
+        </div>
+
+        <div class="th-field">
+          <label class="th-label" for="f-otp">
+            <span class="req">*</span>驗證密碼
+          </label>
+          <input
+            id="f-otp"
+            name="vcode"
+            type="password"
+            class="th-input sm:w-60"
+            autocomplete="one-time-code"
+            placeholder="請輸入驗證密碼"
+            :value="otp"
+            @input="otp = $event.target.value" />
+        </div>
+
+        <p class="th-field-hint">提醒：申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。</p>
+
+        <div class="flex flex-wrap gap-2 justify-end mt-2">
+          <button type="button" class="th-btn th-btn-secondary" @click="reset">
+            清除
+          </button>
+          <button type="button" class="th-btn th-btn-primary" @click="verified = true">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>確定
+          </button>
+        </div>
+
+        <template v-if="verified">
+          <h3 class="th-section-title mt-6">退費申請人資訊<span class="th-todo-tag">待確認</span></h3>
+          <p class="th-table-note">欄位取自規格 06c「退費資訊展示頁」段；資料為匿名假資料，非真實案件。</p>
+          <th-data-table :columns="personColumns" :rows="demoPerson" row-key="sid" table-class="th-table--zebra"></th-data-table>
+
+          <h3 class="th-section-title mt-6">可辦理的動作</h3>
+          <div class="th-notice-grid items-stretch">
+            <section class="th-card flex flex-col" v-for="act in resultActions" :key="act.id">
+              <div class="th-card-head">
+                <i :class="act.icon" aria-hidden="true"></i>
+                <h4 class="th-card-title">{{ act.title }}</h4>
+              </div>
+              <div class="th-card-body flex flex-col gap-3 flex-1">
+                <p class="th-field-hint">{{ act.desc }}</p>
+                <th-todo-link label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
+              </div>
+            </section>
+          </div>
+          <p class="th-table-note">存摺影本與委託書的上傳（舊站 <code>apply_5files.aspx</code>）未帶案件參數時導回首頁，
+                欄位與檔案格式限制查無公開來源，不予編造。<span class="th-todo-tag">待確認</span></p>
+        </template>
+        </div>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

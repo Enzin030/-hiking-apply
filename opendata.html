@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>政府網站資料開放宣告 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  政府網站資料開放宣告（對應線上站 OpenData.aspx）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換：
+  Tailwind → tailwind.config.js → index.css
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/opendata.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <!-- 資料開放宣告屬頁尾政策宣告，不屬主導覽任何一項，故不傳 active -->
+  <th-header></th-header>
+
+  <th-page-shell
+    :trail="['資料開放宣告']"
+    title="政府網站資料開放宣告">
+
+    <!-- 頁內章節快速跳轉目錄 -->
+    <template #nav>
+      <th-page-nav :items="navItems"></th-page-nav>
+    </template>
+
+    <section class="th-card" id="scope">
+      <div class="th-card-head">
+        <h2 class="th-card-title">授權方式及範圍</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="text-[length:var(--fs-base)] text-slate-700 leading-relaxed">
+          為利各界廣為利用網站資料，臺灣登山申請一站式服務網網站上刊載之所有資料與素材，其得受著作權保護之範圍，以無償、非專屬，得再授權之方式提供公眾使用，使用者得不限時間及地域，重製、改作、編輯、公開傳輸或為其他方式之利用，開發各種產品或服務（簡稱加值衍生物），此一授權行為不會嗣後撤回，使用者亦無須取得本機關之書面或其他方式授權。然使用時，應註明出處。
+        </p>
+      </div>
+    </section>
+
+    <section class="th-card" id="notes">
+      <div class="th-card-head">
+        <h2 class="th-card-title">相關事項說明</h2>
+      </div>
+      <div class="th-card-body">
+        <ul class="space-y-3 text-[length:var(--fs-base)] text-slate-700 leading-relaxed list-disc list-outside pl-5">
+          <li>本授權範圍僅及於著作權保護之範圍，不及於其他智慧財產權利，包括但不限於專利、商標、及機關標誌之提供。</li>
+          <li>當事人自行公開或依法令公開之個人資料是否得被蒐集、處理及利用，使用者須自行依照個人資料保護法之相關規定，規劃並執行法律要求之相應措施。</li>
+          <li>部分的影音、圖像、樂譜、專人專案撰文或其他著作，經機關特別聲明須經同意方可使用者。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="th-card" id="moral-rights">
+      <div class="th-card-head">
+        <h2 class="th-card-title">第三人之著作人格權</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="text-[length:var(--fs-base)] text-slate-700 leading-relaxed">
+          應注意不得侵害第三人之著作人格權（包括姓名表示權及禁止不當變更權）。
+        </p>
+      </div>
+    </section>
+
+    <section class="th-card" id="liability">
+      <div class="th-card-head">
+        <h2 class="th-card-title">惡意變更資訊之法律責任</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="text-[length:var(--fs-base)] text-slate-700 leading-relaxed">
+          使用本授權提供之資料與素材，不得惡意變更其相關資訊，若利用後所展示之資訊與原資料與素材不符，使用者須自負民事、刑事上之法律責任。
+        </p>
+      </div>
+    </section>
+
+    <section class="th-card" id="disclaimer">
+      <div class="th-card-head">
+        <h2 class="th-card-title">加值衍生物之地位宣告</h2>
+      </div>
+      <div class="th-card-body">
+        <p class="text-[length:var(--fs-base)] text-slate-700 leading-relaxed">
+          本網站之授權，並不授予使用者代表本機關建議、認可或贊同其加值衍生物之地位。
+        </p>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+</body>
+</html>

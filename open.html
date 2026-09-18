@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山路線開放狀態 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  階段 3 逐頁遷移（open，中組）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
+
+  兩個彈窗改用共用的 th-modal（DOM 同構），理由與 Esc 的語意對照寫在
+  components/open.js 檔頭。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/open.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js。class 沿用原 JSX 最外層 -->
+<div id="th-app" v-cloak class="bg-white min-h-screen text-slate-800 antialiased">
+
+  <th-header active="status"></th-header>
+
+  <!-- bare：版面自帶結構，不要 th-page-main 的 flex 包裝 -->
+  <th-page-shell :trail="['登山路線開放狀態']" title="登山路線開放狀態" :bare="true">
+
+    <!-- 查詢條件：比照景點資訊改用 .th-filter 系列 -->
+    <form class="th-filter" @submit.prevent="submit">
+      <div class="th-filter-grid">
+
+        <div class="th-filter-field p-open-route-field">
+          <label class="th-filter-label" id="lbl-org" for="f-org-btn">機關</label>
+          <div class="p-open-combobox" ref="orgCombo">
+            <button id="f-org-btn" type="button" class="th-select p-open-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="orgOpen"
+                    @click.stop="toggleOrgDropdown">
+              <span class="p-open-combo-val">{{ currentOrgLabel }}</span>
+            </button>
+            <div v-if="orgOpen" class="p-open-combo-panel" role="listbox" aria-labelledby="lbl-org" @click.stop>
+              <div class="p-open-combo-list">
+                <div v-for="o in orgButtons" :key="o.key"
+                     class="p-open-combo-item" :class="{ 'is-selected': draft.org === o.key }"
+                     role="option" :aria-selected="draft.org === o.key"
+                     @click="selectOrg(o.key)">
+                  {{ o.label }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-filter-field p-open-route-field">
+          <label class="th-filter-label" id="lbl-route" for="f-route-btn">路線</label>
+          <div class="p-open-combobox" ref="routeCombo">
+            <button id="f-route-btn" type="button" class="th-select p-open-combo-trigger"
+                    aria-haspopup="listbox" :aria-expanded="routeOpen"
+                    @click.stop="toggleRouteDropdown">
+              <span class="p-open-combo-val">{{ draft.route === 'all' ? '全部路線' : draft.route }}</span>
+            </button>
+            <div v-if="routeOpen" class="p-open-combo-panel" role="listbox" aria-labelledby="lbl-route" @click.stop>
+              <div class="p-open-combo-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input ref="routeSearchInput" type="text" class="th-input p-open-combo-input"
+                       placeholder="搜尋路線名稱..."
+                       v-model="routeSearchQuery"
+                       @keydown.esc="routeOpen = false" />
+                <button v-if="routeSearchQuery" type="button" class="p-open-combo-clear"
+                        @click="routeSearchQuery = ''" aria-label="清空搜尋">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="p-open-combo-list">
+                <div class="p-open-combo-item" :class="{ 'is-selected': draft.route === 'all' }"
+                     role="option" :aria-selected="draft.route === 'all'"
+                     @click="selectRoute('all')">
+                  全部路線
+                </div>
+                <template v-if="filteredRoutes.length > 0">
+                  <div v-for="m in filteredRoutes" :key="m"
+                       class="p-open-combo-item" :class="{ 'is-selected': draft.route === m }"
+                       role="option" :aria-selected="draft.route === m"
+                       @click="selectRoute(m)">
+                    {{ m }}
+                  </div>
+                </template>
+                <div v-else class="p-open-combo-empty">尚無資料</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="th-filter-field th-filter-field--grow">
+          <label class="th-filter-label" for="f-kw">關鍵字</label>
+          <div class="th-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input id="f-kw" type="text" class="th-input" autocomplete="off"
+                   placeholder="請輸入路線名稱、主路線或備註關鍵字"
+                   :value="draft.q" @input="setField({ q: $event.target.value })" />
+          </div>
+        </div>
+
+        <div class="th-filter-actions">
+          <button type="button" class="th-btn th-btn-ghost" @click="reset">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>清除
+          </button>
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- 圖例區：可點擊即時篩選 Badge -->
+    <div class="p-open-legend-box">
+      <p class="p-open-legend-line" :class="{ 'has-active': activeCanApply }">
+        <span class="p-open-legend-title">可否申請：</span>
+        <button v-for="k in ['yes', 'no']" :key="k" type="button"
+                :class="['th-flag', 'p-open-filter-badge', canApplyMeta[k].cls, { 'is-active': activeCanApply === k }]"
+                :aria-pressed="activeCanApply === k"
+                @click="toggleCanApply(k)">
+          <i :class="canApplyMeta[k].icon" aria-hidden="true"></i>{{ canApplyMeta[k].label }}
+        </button>
+      </p>
+      <p class="p-open-legend-line" :class="{ 'has-active': activeStatus }">
+        <span class="p-open-legend-title">路線現況：</span>
+        <button v-for="k in ['open', 'closed', 'proof', 'snow']" :key="k" type="button"
+                :class="['th-flag', 'p-open-filter-badge', statusMeta[k].cls, { 'is-active': activeStatus === k }]"
+                :aria-pressed="activeStatus === k"
+                @click="toggleStatus(k)">
+          <i :class="statusMeta[k].icon" aria-hidden="true"></i>{{ statusMeta[k].label }}
+        </button>
+      </p>
+    </div>
+
+    <!-- 表格區：兩層表頭，欄位呈現對齊正式站 -->
+    <div class="th-table-wrap th-table-card p-open-table-wrap">
+      <table class="th-table th-table--zebra p-open-table">
+        <caption>登山路線開放狀態列表，欄位為機關、登山主路線、路線名稱、可否申請、路線現況、是否須要申請（入園證、林業及自然保育署自然保護留區、林業及自然保育署住宿、警政署入山證）、登山路線難度等級與功能</caption>
+        <thead>
+          <tr>
+            <th scope="col" rowspan="2" class="col-org">機關</th>
+            <th scope="col" rowspan="2" class="col-main">登山主路線</th>
+            <th scope="col" rowspan="2" class="col-name2">路線名稱</th>
+            <th scope="col" rowspan="2" class="col-can">可否申請</th>
+            <th scope="col" rowspan="2" class="col-status">路線現況</th>
+            <th scope="col" colspan="4" class="col-needs">是否須要申請</th>
+            <th scope="col" rowspan="2" class="col-level">登山路線<br />難度等級</th>
+            <th scope="col" rowspan="2" class="col-fn">功能</th>
+          </tr>
+          <tr>
+            <th scope="col" class="col-need">入園證</th>
+            <th scope="col" class="col-need">林業及自然保育署<br />自然保護留區</th>
+            <th scope="col" class="col-need">林業及自然保育署<br />住宿</th>
+            <th scope="col" class="col-need">警政署<br />入山證</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-if="pageRows.length > 0">
+            <tr v-for="(r, i) in pageRows" :key="r.fId + '-' + r.cId + '-' + i">
+              <td class="col-org" data-label="機關">
+                <span>{{ r.orgLabel }}</span>
+              </td>
+              <td class="col-main" data-label="登山主路線">{{ r.mainRoute }}</td>
+              <td class="col-name2" data-label="路線名稱">{{ r.name }}</td>
+              <td class="col-can text-center" data-label="可否申請">
+                <span v-if="canApplyMeta[r.canApply]" :class="['p-open-status-icon', canApplyMeta[r.canApply].cls]" :title="canApplyMeta[r.canApply].label">
+                  <i :class="canApplyMeta[r.canApply].icon" aria-hidden="true"></i>
+                  <span class="sr-only">{{ canApplyMeta[r.canApply].label }}</span>
+                </span>
+              </td>
+              <td class="col-status text-center" data-label="路線現況">
+                <span v-if="statusMeta[r.status]" :class="['p-open-status-icon', statusMeta[r.status].cls]" :title="statusMeta[r.status].label">
+                  <i :class="statusMeta[r.status].icon" aria-hidden="true"></i>
+                  <span class="sr-only">{{ statusMeta[r.status].label }}</span>
+                </span>
+              </td>
+              <td v-for="c in needColumns" :key="c.key" class="col-need text-center" :data-label="c.label">
+                <span v-if="r[c.key]" class="font-bold text-slate-700">V</span>
+              </td>
+              <td class="col-level text-center" data-label="難度等級">
+                <button v-if="r.level !== null" type="button"
+                        :class="['th-level', 'lv-' + r.level, 'p-open-level-badge']"
+                        @click="levelModal = r.level">第 {{ r.level }} 級</button>
+                <span v-else>—</span>
+              </td>
+              <td class="col-fn" data-label="功能">
+                <div class="p-open-actions">
+                  <a v-if="r.hasIntro" class="th-btn th-btn-ghost p-open-btn-compact" href="information_1.html">介紹</a>
+                  <a v-if="r.canApply === 'yes'" class="th-btn th-btn-primary p-open-btn-compact p-open-btn-apply" href="apply-1.html">申請</a>
+                  <button v-if="r.note" type="button" class="th-btn th-btn-secondary p-open-btn-compact" @click="noteModal = r">備註</button>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <tr v-else>
+            <td colspan="11">
+              <div class="th-empty">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>尚無資料
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <th-table-pager :page="page" :total-pages="totalPages" :total="rows.length" @change="page = $event"></th-table-pager>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+  <!--
+    難度等級彈窗。判空必須用 !== null：難度有第 0 級，用真假值會讓它點不開
+    （原 React 寫的也是 levelModal !== null）。
+  -->
+  <th-modal v-if="levelModal !== null && levelRow"
+            :title="'難度等級 － 第' + levelRow.level + '級'" body-class="p-open-modal-def"
+            @close="levelModal = null">
+    <dl>
+      <dt>說明</dt>
+      <dd>
+        <ol v-if="isArray(levelRow.desc)" class="th-cell-ol">
+          <li v-for="d in levelRow.desc" :key="d">{{ d }}</li>
+        </ol>
+        <template v-else>{{ levelRow.desc }}</template>
+      </dd>
+      <dt>適合對象</dt>
+      <dd>{{ levelRow.who }}</dd>
+      <dt>建議裝備</dt>
+      <dd>
+        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（PDF，另開新視窗）</span></a>{{ levelRow.kitRef }}</span>
+        <template v-else>{{ levelRow.kit }}</template>
+      </dd>
+    </dl>
+  </th-modal>
+
+  <!-- 備註彈窗：標題改為 備註 － {名稱} -->
+  <th-modal v-if="noteModal" :title="'備註 － ' + noteModal.name" @close="noteModal = null">
+    {{ noteModal.note }}<div v-if="noteModal.closures.length > 0" class="p-open-closures">
+      <p class="p-open-closures-title">部分關閉日期、原因</p>
+      <ul><li v-for="c in noteModal.closures" :key="c">{{ c }}</li></ul>
+    </div>
+  </th-modal>
+
+</div>
+
+<!-- 資料檔：階段 0 已改為一般 <script> -->
+<script src="components/TrailLevelData.js"></script>
+<script src="components/OpenStatusData.js"></script>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
+</body>
+</html>

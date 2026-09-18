@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>雪霸宿營地當日申請名單 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  雪霸宿營地查詢 — 當日申請名單明細（對應正式站 bed_1main.aspx）
+  ------------------------------------------------------------
+  2026-09-17 補建：規格 `02_Spec/14_雪霸宿營地查詢.md` 第二節有這一頁，
+  拆頁時漏做（使用者指出）。由 bed_1.html 的日期彈窗「查看明細」進入。
+
+  版面照正式站：查詢區（宿營地點＋日期＋查詢）→ 標題「{日期} {機關}-{宿營地}」
+  → 承載量概況七項 → 申請狀態說明 → 當日申請名單表格。
+  名單的領隊與隊名已匿名，見 components/Bed1MainData.js 檔頭。
+
+  這三行必須靜態寫在頁面，順序不可調換（理由見 assets/includes/head.html 註解）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/bed_1main.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <th-header active="campsite"></th-header>
+
+  <th-page-shell
+    :trail="[{ label: '宿營地與床位查詢' }, { label: '雪霸宿營地查詢', href: 'bed_1.html' }, '當日申請名單']"
+    title="雪霸宿營地當日申請名單"
+    :bare="true">
+
+    <!-- 查詢區：宿營地點＋日期＋查詢（正式站同欄位） -->
+    <form class="th-filter" @submit.prevent="submit">
+      <div class="th-filter-grid">
+        <div class="th-filter-field p-bed1main-site-field">
+          <label class="th-filter-label" for="f-site">宿營地點</label>
+          <th-hybrid-select>
+            <select id="f-site" class="th-select" v-model="draftSite">
+              <option v-for="s in sites" :key="s.id" :value="s.id">{{ s.name }}</option>
+            </select>
+          </th-hybrid-select>
+        </div>
+        <div class="th-filter-field">
+          <label class="th-filter-label" for="f-date">日期</label>
+          <th-date-picker :bare="true" input-id="f-date"
+                          :model-value="draftDate"
+                          @update:model-value="draftDate = $event"></th-date-picker>
+        </div>
+        <div class="th-filter-actions">
+          <button type="submit" class="th-btn th-btn-primary">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div class="bulletin-section-head">
+      <h2 class="th-section-title">{{ date }}　雪霸國家公園管理處－{{ site.name }}</h2>
+    </div>
+
+    <!-- 承載量概況：承載量來自本頁快照，其餘六項與月曆同源 -->
+    <ul v-if="stat" class="p-bed1main-stats">
+      <li v-for="s in stat" :key="s.k" :class="['p-bed1main-stat', { 'is-main': s.k === '餘額' }]">
+        <span class="p-bed1main-stat-k">{{ s.k }}</span>
+        <span class="p-bed1main-stat-v">{{ s.v }}<small v-if="s.unit">位</small></span>
+      </li>
+    </ul>
+    <p v-if="stat" class="p-bed1main-formula">餘額 ＝ 承載量 － 待處理 － 補件 － 已通過（不包含「待系統排定」與「宿營地不足候補」的隊伍）</p>
+
+    <!-- 申請狀態說明：正式站原文逐條 -->
+    <section class="th-card p-bed1main-note">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請狀態說明</h2>
+      </div>
+      <div class="th-card-body">
+        <ol class="p-bed1main-note-list">
+          <li v-for="(n, i) in notes" :key="i"><b class="p-bed1main-note-k">【{{ n.k }}】</b>{{ n.t }}</li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="bulletin-section-head">
+      <h2 class="th-section-title">當日申請名單</h2>
+      <span v-if="rows" class="bulletin-count">共 <strong>{{ rows.length }}</strong> 隊</span>
+    </div>
+
+    <div v-if="!rec" class="th-empty">
+      <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+      <p>本雛形只收錄 2026 年 9 月有資料的日期。<a class="th-inline-link" :href="officialUrl" target="_blank" rel="noopener noreferrer">到現行網站查看這一天<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+    </div>
+
+    <div v-else-if="!rows.length" class="th-empty">
+      <i class="fa-solid fa-inbox" aria-hidden="true"></i>
+      <p>當日尚無申請隊伍。</p>
+    </div>
+
+    <div v-else class="th-table-wrap">
+      <table class="th-table th-table--zebra p-bed1main-table">
+        <caption class="sr-only">{{ date }} {{ site.name }} 當日申請名單</caption>
+        <thead>
+          <tr>
+            <th scope="col">申請時間</th>
+            <th scope="col">隊名</th>
+            <th scope="col">領隊</th>
+            <th scope="col">進入日期</th>
+            <th scope="col">離開日期</th>
+            <th scope="col">登山路線</th>
+            <th scope="col" class="p-bed1main-num">申請人數</th>
+            <th scope="col" class="p-bed1main-num">分配數</th>
+            <th scope="col">申請狀態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(r, i) in rows" :key="i">
+            <td>{{ r[0] }}</td>
+            <td>{{ r[1] }}</td>
+            <td>{{ r[2] }}</td>
+            <td>{{ r[3] }}</td>
+            <td>{{ r[4] }}</td>
+            <td>{{ r[5] }}</td>
+            <td class="p-bed1main-num">{{ r[6] }}</td>
+            <td class="p-bed1main-num">{{ r[7] }}</td>
+            <td><span :class="['th-flag', statusClass(r[8])]">{{ r[8] }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>，頁面腳本只在 data() 內讀取 window.BED1* -->
+<script src="components/Bed1Data.js"></script>
+<script src="components/Bed1MainData.js"></script>
+</body>
+</html>

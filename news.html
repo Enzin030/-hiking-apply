@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>公布欄 — 臺灣登山申請一站式服務網</title>
+<script>
+(function () {
+  var t = new URLSearchParams(window.location.search).get("tab");
+  var target = "news_0.html";
+  if (t === "violation" || t === "1") target = "news_5.html";
+  else if (t === "download" || t === "2") target = "news_6.html";
+  else if (t === "faq" || t === "3") target = "news_7.html";
+  window.location.replace(target);
+})();
+</script>
+</head>
+<body>
+<p>頁面跳轉中，請稍候...</p>
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜行程登記及登山申請（太魯閣）— 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_1_5 — 行程登記及登山申請（太魯閣國家公園）
+  ------------------------------------------------------------
+  2026-09-17 新增，由 template/page.html 起手。
+  檔名比照舊站 apply_1_5.aspx（2026-09-02 裁決：新頁檔名比照舊站）。
+
+  步驟放頁首 th-stepper；元件與互動約定寫在 components/apply_1_5.js 檔頭。
+  本頁不新增任何 CSS：全部用 components.css 的 .th-* 與 Tailwind utility。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_1_5.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="03 行程登記（太魯閣）">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell
+    :trail="['登山申請', '登山線上申請', '行程登記及登山申請']"
+    title="行程登記及登山申請"
+    lead="以太魯閣國家公園「南湖大山線」為例，依步驟填寫行程、人員資料並確認送出。">
+
+    <template #stepper>
+      <th-stepper :current="step" :steps="stepperSteps"></th-stepper>
+    </template>
+
+    <!-- ====================== 步驟一　行程規劃 ====================== -->
+    <div v-show="step === 1" class="grid gap-6">
+
+      <section class="th-card" id="sec-route">
+        <div class="th-card-head">
+          <i class="fa-solid fa-route" aria-hidden="true"></i>
+          <h2 class="th-card-title">路線</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <p class="th-field-hint">請注意：國家公園路線於每日 23:00 至隔日 07:00 暫停受理申請。<strong>目前系統時間為：{{ nowTime }}</strong><br />登山路線進入國家公園生態保護區須要申請，非國家公園生態保護區不須申請。如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="th-field">
+              <label class="th-label" for="f-main"><span class="req">*</span>登山主路線</label>
+              <th-hybrid-select><select id="f-main" class="th-select" v-model="mainId">
+                <option v-for="r in routes" :key="r.id" :value="r.id">{{ r.name }}</option>
+              </select></th-hybrid-select>
+            </div>
+            <div class="th-field">
+              <label class="th-label" for="f-sub"><span class="req">*</span>次路線</label>
+              <th-hybrid-select><select id="f-sub" class="th-select" v-model="subId" :disabled="!main || !main.subs.length">
+                <option value="">請選擇</option>
+                <option v-for="s in (main ? main.subs : [])" :key="s.id" :value="s.id">{{ s.name }}</option>
+              </select></th-hybrid-select>
+            </div>
+          </div>
+
+          <template v-if="sub">
+            <!-- 舊站 showbed5() 開 bed_5show.aspx（路線承載量）；雛形尚無對應頁 -->
+            <div><th-todo-link label="路線承載量查詢"></th-todo-link></div>
+            <label class="flex items-start gap-2 th-label">
+              <input type="checkbox" v-model="noteChecked" class="mt-1" />已詳閱以下說明，並同意相關注意事項。</label>
+            <ul v-if="notes.length || needsNpa" class="th-field-hint list-disc pl-5">
+              <li v-for="n in notes" :key="n">{{ n }}</li>
+              <li v-if="needsNpa">警政署入山申辦系統：<a class="th-inline-link break-all" :href="npaSite" target="_blank" rel="noopener noreferrer">{{ npaSite }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></li>
+            </ul>
+            <dl v-if="levelRow" class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
+              <dt class="th-label">難度等級</dt>
+              <dd><button type="button" :class="['th-level', 'lv-' + levelRow.level]" @click="levelOpen = true">第 {{ levelRow.level }} 級</button></dd>
+              <dt class="th-label">說明</dt>
+              <dd>
+                <ol v-if="isArray(levelRow.desc)" class="th-cell-ol">
+                  <li v-for="d in levelRow.desc" :key="d">{{ d }}</li>
+                </ol>
+                <template v-else>{{ levelRow.desc }}</template>
+              </dd>
+              <dt class="th-label">適合對象</dt>
+              <dd>{{ levelRow.who }}</dd>
+              <dt class="th-label">建議裝備</dt>
+              <dd>
+                <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（PDF，另開新視窗）</span></a>{{ levelRow.kitRef }}</span>
+                <template v-else>{{ levelRow.kit }}</template>
+              </dd>
+            </dl>
+            <p v-if="sub.closed" class="th-flag is-closed">關閉日期：{{ sub.closed }}</p>
+          </template>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="th-field">
+              <label class="th-label" for="f-sumday"><span class="req">*</span>登山總日數</label>
+              <th-hybrid-select><select id="f-sumday" class="th-select" v-model.number="sumday">
+                <option v-for="n in 7" :key="n" :value="n">共{{ n }}天</option>
+              </select></th-hybrid-select>
+            </div>
+            <div class="th-field">
+              <label class="th-label" for="f-start"><span class="req">*</span>入園日期</label>
+              <th-hybrid-select><select id="f-start" class="th-select" v-model="startDate" :disabled="!sub || !!sub.closed">
+                <option value="">請選擇入園日</option>
+                <option v-for="d in dates" :key="d" :value="d">{{ d }}</option>
+              </select></th-hybrid-select>
+            </div>
+            <div class="th-field">
+              <span class="th-label">離開園區日期</span>
+              <span class="th-input th-input-readonly">{{ endDate || '—' }}</span>
+            </div>
+          </div>
+          <p class="th-field-hint">請注意，異動日期後，請重新輸入「隊伍人數」，並確認「隊員資料」是否正確。</p>
+        </div>
+      </section>
+
+      <section class="th-card" id="sec-plan">
+        <div class="th-card-head">
+          <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+          <h2 class="th-card-title">路線規劃</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <p-apply15-planner v-if="hasPlanner" :graph="graph" :days="sumday" v-model="plan"></p-apply15-planner>
+          <p v-else class="th-field-hint">此路線目前沒有路線規劃資料。</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="th-field">
+              <label class="th-label" for="f-sat">衛星電話</label>
+              <input id="f-sat" class="th-input" type="text" placeholder="請輸入衛星電話" v-model="satellitephone" />
+            </div>
+            <div class="th-field">
+              <label class="th-label" for="f-freq">無線電頻</label>
+              <input id="f-freq" class="th-input" type="text" placeholder="請輸入無線電頻" v-model="frequency" />
+            </div>
+          </div>
+          <div class="th-field">
+            <label class="th-label" for="f-note">備註</label>
+            <textarea id="f-note" class="th-textarea" rows="3" placeholder="請填入備註" v-model="noteUser"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="needsNpa" class="th-card" id="sec-npa">
+        <div class="th-card-head">
+          <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+          <h2 class="th-card-title">警政署入山證申請</h2>
+        </div>
+        <div class="th-card-body">
+          <th-npa-permit id-prefix="npa" v-model="npa"></th-npa-permit>
+        </div>
+      </section>
+
+      <div class="flex justify-end">
+        <button type="button" class="th-btn th-btn-primary th-btn-lg" @click="next">下一步<i class="fa-solid fa-angles-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+
+    <!-- ====================== 步驟二　人員資料 ====================== -->
+    <div v-show="step === 2" class="grid gap-6">
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-flag" aria-hidden="true"></i>
+          <h2 class="th-card-title">國家公園行程計畫</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
+            <dt class="th-label">入園日期</dt><dd>{{ startDate || '—' }}</dd>
+            <dt class="th-label">離園日期</dt><dd>{{ endDate || '—' }}</dd>
+            <dt class="th-label">登山主路線</dt><dd>{{ main ? main.name : '—' }}</dd>
+            <dt class="th-label">次路線</dt><dd>{{ sub ? sub.name : '—' }}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <p class="th-field-hint">請注意，人員資料必須有：申請人、領隊、隊員（如無則免）、留守人。</p>
+
+      <!-- 申請人 -->
+      <section class="th-card">
+        <button type="button" class="th-card-head w-full text-left" :aria-expanded="open.apply" @click="toggle('apply')">
+          <i class="fa-solid fa-user" aria-hidden="true"></i>
+          <h2 class="th-card-title">申請人資料</h2>
+          <i :class="['fa-solid ml-auto', open.apply ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
+        </button>
+        <div v-show="open.apply" class="th-card-body grid gap-4">
+          <p class="th-field-hint">未滿18歲者不得擔任申請人</p>
+          <label class="flex items-start gap-2 th-label">
+            <input type="checkbox" v-model="applyConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。</label>
+          <th-person-form v-if="applyConsent" role="apply" id-prefix="apply" v-model="applicant"></th-person-form>
+        </div>
+      </section>
+
+      <!-- 領隊 -->
+      <section class="th-card">
+        <button type="button" class="th-card-head w-full text-left" :aria-expanded="open.leader" @click="toggle('leader')">
+          <i class="fa-solid fa-flag" aria-hidden="true"></i>
+          <h2 class="th-card-title">領隊資料</h2>
+          <i :class="['fa-solid ml-auto', open.leader ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
+        </button>
+        <div v-show="open.leader" class="th-card-body grid gap-4">
+          <label class="flex items-center gap-2 th-label">
+            <input type="checkbox" v-model="leaderSame" />同申請人</label>
+          <th-person-form v-if="leaderSame" role="leader" id-prefix="leader-v" :model-value="leaderView" readonly></th-person-form>
+          <th-person-form v-else role="leader" id-prefix="leader" v-model="leader"></th-person-form>
+        </div>
+      </section>
+
+      <!-- 隊員 -->
+      <section class="th-card">
+        <button type="button" class="th-card-head w-full text-left" :aria-expanded="open.member" @click="toggle('member')">
+          <i class="fa-solid fa-users" aria-hidden="true"></i>
+          <h2 class="th-card-title">隊員資料</h2>
+          <i :class="['fa-solid ml-auto', open.member ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
+        </button>
+        <div v-show="open.member" class="th-card-body grid gap-4">
+          <label class="flex items-start gap-2 th-label">
+            <input type="checkbox" v-model="memberConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。</label>
+          <template v-if="memberConsent">
+            <div v-for="(m, i) in members" :key="i" class="grid gap-2">
+              <div class="flex items-center gap-2">
+                <h3 class="th-section-title">隊員 {{ i + 1 }}</h3>
+                <button type="button" class="th-btn th-btn-ghost ml-auto" @click="removeMember(i)">
+                  <i class="fa-solid fa-user-minus" aria-hidden="true"></i>刪除隊員</button>
+              </div>
+              <th-person-form role="member" :id-prefix="'member' + i" :model-value="m" @update:model-value="setMember(i, $event)"></th-person-form>
+            </div>
+            <div v-if="teamsCount < teamMax">
+              <button type="button" class="th-btn th-btn-secondary" @click="addMember">
+                <i class="fa-solid fa-user-plus" aria-hidden="true"></i>新增隊員</button>
+            </div>
+            <p v-else class="th-field-hint">已達申請上限 {{ teamMax }} 人。</p>
+          </template>
+          <p v-if="!members.length" class="th-field-hint">目前只有領隊 1 人（獨攀）<template v-if="!memberConsent">；勾選上方委託同意後可新增隊員</template>。</p>
+        </div>
+      </section>
+
+      <!-- 留守人 -->
+      <section class="th-card">
+        <button type="button" class="th-card-head w-full text-left" :aria-expanded="open.stay" @click="toggle('stay')">
+          <i class="fa-solid fa-house-user" aria-hidden="true"></i>
+          <h2 class="th-card-title">留守人資料</h2>
+          <i :class="['fa-solid ml-auto', open.stay ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
+        </button>
+        <div v-show="open.stay" class="th-card-body grid gap-4">
+          <label class="flex items-center gap-2 th-label">
+            <input type="checkbox" v-model="staySame" />同申請人</label>
+          <th-person-form role="stay" id-prefix="stay" v-model="stay"></th-person-form>
+        </div>
+      </section>
+
+      <!-- 附件 -->
+      <section class="th-card">
+        <button type="button" class="th-card-head w-full text-left" :aria-expanded="open.file" @click="toggle('file')">
+          <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
+          <h2 class="th-card-title">附件上傳資料</h2>
+          <i :class="['fa-solid ml-auto', open.file ? 'fa-chevron-up' : 'fa-chevron-down']" aria-hidden="true"></i>
+        </button>
+        <div v-show="open.file" class="th-card-body grid gap-4">
+          <label v-if="isSolo" class="flex items-start gap-2 th-label">
+            <input type="checkbox" v-model="soloChecked" class="mt-1" />獨攀證明說明：已下載且詳閱<th-todo-link label="太魯閣國家公園獨攀申請承諾書"></th-todo-link>，並同意相關切結內容。</label>
+          <div class="th-field">
+            <span class="th-label">路線行程規劃計劃書</span>
+            <div><th-todo-link label="說明文件"></th-todo-link></div>
+          </div>
+          <div class="th-field">
+            <span class="th-label">路線行程規劃計劃書上傳</span>
+            <div>
+              <button type="button" class="th-btn th-btn-secondary"><i class="fa-solid fa-upload" aria-hidden="true"></i>點選上傳文件</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 隊伍人數在五個區塊下方、區塊外（2026-09-17 截圖 TAR026_S03）；唯讀、由隊員數推導（舊站三家皆同，見 decisions.md） -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+        <div class="th-field">
+          <label class="th-label" for="f-teams"><span class="req">*</span>隊伍人數（含領隊）</label>
+          <input id="f-teams" class="th-input th-input-readonly" type="text" readonly :value="teamsCount" />
+        </div>
+        <p class="th-field-hint">申請上限 {{ teamMax }} 人，下限 1 人。</p>
+      </div>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-people-group" aria-hidden="true"></i>
+          <h2 class="th-card-title">承載量隊狀況</h2>
+        </div>
+        <div class="th-card-body">
+          <p>您申請的行程 承載量：{{ capacity.total }}，已通過：{{ capacity.approved }}，待初審：{{ capacity.pending }}，剩餘：{{ capacity.remain }}，需求數量：{{ teamsCount }}</p>
+        </div>
+      </section>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-campground" aria-hidden="true"></i>
+          <h2 class="th-card-title">宿營地預約查詢排隊狀況</h2>
+        </div>
+        <div class="th-card-body grid gap-2">
+          <!-- 宿營地點為下拉：當天終點＋「自備搭帳」（舊站 step2.ascx.cs:618-635，選自備搭帳顯示「請自備營帳」） -->
+          <th-data-table :columns="queueColumns" :rows="queueRows" row-key="date" caption="宿營地預約查詢排隊狀況" empty="完成路線規劃後顯示">
+            <template #cell="{ row, column, value }">
+              <th-hybrid-select v-if="column.key === 'camp'"><select class="th-select" :aria-label="row.date + ' 宿營地點'"
+                      :value="row.camp" @change="pickCamp(row.index, $event.target.value)">
+                <option v-for="o in row.options" :key="o" :value="o">{{ o }}</option>
+              </select></th-hybrid-select>
+              <span v-else-if="column.key === 'note'" class="whitespace-pre-line">{{ value }}</span>
+              <template v-else>{{ value }}</template>
+            </template>
+          </th-data-table>
+          <div v-if="hasYunleng"><th-todo-link label="雲稜營地承載量計算方式說明"></th-todo-link></div>
+        </div>
+      </section>
+
+      <th-captcha v-model="vcode2" input-id="f-vcode2" code="2220" layout="col12"></th-captcha>
+
+      <div class="flex flex-wrap justify-between gap-2">
+        <div class="flex gap-2">
+          <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-angles-left" aria-hidden="true"></i>上一步</button>
+          <button type="button" class="th-btn th-btn-secondary" @click="draftOpen = true">儲存草稿</button>
+        </div>
+        <button type="button" class="th-btn th-btn-primary th-btn-lg" @click="next">下一步<i class="fa-solid fa-angles-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+
+    <!-- ====================== 步驟三　確認送出 ====================== -->
+    <div v-show="step === 3" class="grid gap-6">
+      <th-callout>請確認資料正確無誤後，再確認送出！</th-callout>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-flag" aria-hidden="true"></i>
+          <h2 class="th-card-title">國家公園行程計畫</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
+            <dt class="th-label">出發人數</dt><dd>{{ teamsCount }}</dd>
+            <dt class="th-label">入園日期</dt><dd>{{ startDate || '—' }}</dd>
+            <dt class="th-label">離園日期</dt><dd>{{ endDate || '—' }}</dd>
+            <dt class="th-label">登山主路線</dt><dd>{{ main ? main.name : '—' }}</dd>
+            <dt class="th-label">次路線</dt><dd>{{ sub ? sub.name : '—' }}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 確認頁欄位照舊站（2026-09-17 截圖 TAR026_S04_confirm）：申請人一列表格、隊伍 13 欄；舊站確認頁沒有每日行程與留守人 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-user" aria-hidden="true"></i>
+          <h2 class="th-card-title">申請人資料</h2>
+        </div>
+        <div class="th-card-body">
+          <th-data-table :columns="applicantColumns" :rows="applicantRows" row-key="name" caption="申請人資料"></th-data-table>
+        </div>
+      </section>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-users" aria-hidden="true"></i>
+          <h2 class="th-card-title">隊伍資料</h2>
+        </div>
+        <div class="th-card-body">
+          <th-data-table :columns="teamColumns" :rows="teamRows" row-key="no" caption="隊伍資料"></th-data-table>
+        </div>
+      </section>
+
+      <section v-if="needsNpa" class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+          <h2 class="th-card-title">警政署入山證申請</h2>
+        </div>
+        <div class="th-card-body">
+          <th-npa-permit id-prefix="c-npa" :model-value="npa" readonly></th-npa-permit>
+        </div>
+      </section>
+
+      <th-captcha v-model="vcode3" input-id="f-vcode3" code="JHF20J" layout="col12"></th-captcha>
+
+      <div class="flex flex-wrap justify-between gap-2">
+        <div class="flex gap-2">
+          <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-angles-left" aria-hidden="true"></i>上一步</button>
+          <button type="button" class="th-btn th-btn-secondary" @click="draftOpen = true">儲存草稿</button>
+        </div>
+        <button type="button" class="th-btn th-btn-primary th-btn-lg" @click="submit">確認送出</button>
+      </div>
+    </div>
+
+    <!-- ====================== 申請完成 ====================== -->
+    <section v-if="step === 4" class="th-card">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請完成</h2>
+      </div>
+      <div class="th-card-body grid gap-3">
+        <p>您的申請已送出，請留意電子郵件通知，並至「申請進度查詢」查看審查結果與繳費資訊。</p>
+        <div><a class="th-btn th-btn-ghost" href="applySearch.html">前往申請進度查詢</a></div>
+      </div>
+    </section>
+
+  </th-page-shell>
+
+  <!-- 送出時的欄位提醒 -->
+  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
+    <ul class="list-disc pl-5 grid gap-1">
+      <li v-for="e in errors" :key="e">{{ e }}</li>
+    </ul>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+    </template>
+  </th-modal>
+
+  <!-- 難度等級（同步道分級的呈現方式） -->
+  <th-modal v-if="levelOpen && levelRow" :title="'難度等級 － 第' + levelRow.level + '級'" @close="levelOpen = false">
+    <dl class="grid gap-2">
+      <dt class="th-label">說明</dt>
+      <dd>
+        <ol v-if="isArray(levelRow.desc)" class="th-cell-ol">
+          <li v-for="d in levelRow.desc" :key="d">{{ d }}</li>
+        </ol>
+        <template v-else>{{ levelRow.desc }}</template>
+      </dd>
+      <dt class="th-label">適合對象</dt>
+      <dd>{{ levelRow.who }}</dd>
+      <dt class="th-label">建議裝備</dt>
+      <dd>
+        <span v-if="levelRow.kitRef">請參考<a class="th-inline-link" :href="kitPdf" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（PDF，另開新視窗）</span></a>{{ levelRow.kitRef }}</span>
+        <template v-else>{{ levelRow.kit }}</template>
+      </dd>
+    </dl>
+  </th-modal>
+
+  <!-- 儲存草稿 -->
+  <th-modal v-if="draftOpen" title="儲存草稿" @close="draftOpen = false">
+    <p>草稿已儲存，可至「草稿編輯」繼續填寫。</p>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="draftOpen = false">確定</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：parser-inserted，頁面腳本只在 data() 裡讀 -->
+<script src="components/TrailLevelData.js"></script>
+<script src="components/Apply15Data.js"></script>
+</body>
+</html>

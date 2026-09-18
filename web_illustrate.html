@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>本站使用說明 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  階段 3 逐頁遷移（web_illustrate，輕組）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/web-illustrate.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
+<div id="th-app" v-cloak>
+
+  <th-header active="info"></th-header>
+
+  <!-- class 會落到 th-page-shell 的根 main 上，供 pages.css 取消本頁導言的寬度上限 -->
+  <th-page-shell
+    class="p-illustrate"
+    :trail="['本站使用說明']"
+    title="本站使用說明">
+
+    <template #lead>
+      第一次申請入園或第一次進入本站一站式服務網之申請民眾，可參考下方新手常見問題快速獲得登山入園相關資訊。也可以點擊<a class="th-inline-link" href="news.html?tab=faq" target="_blank" rel="noopener noreferrer">常見問答<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>，查看本站所有常見問題唷！
+    </template>
+
+    <!--
+      「首次申請入園／入山」——結合原本兩張卡片內容（2026-09-17 起僅留說明文字與提示框），
+      Vue 的 whitespace: 'condense' 會把「文字＋換行＋縮排」折成「文字＋一個空白」，
+      換行若落在文字與標籤之間就會多出空白，每段壓成一行；slot 內文第一段文字緊貼標籤。
+    -->
+    <section class="th-card" id="intro">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">首次申請入園／入山</h2>
+      </div>
+      <div class="th-card-body">
+        <!--
+          2026-09-17 使用者裁決：保留正式站原句，刪除「許可種類／法源依據／適用情形／核發機關」
+          對照表（與本段重疊）。表格內容見 git 歷史，需要時可取回。
+        -->
+        <p>根據國家公園法第十九條，進入玉山、太魯閣、雪霸國家公園生態保護區需先申請【國家公園入園許可】。倘若登山路線進入山地管制區，則除【國家公園入園許可】以外，需額外申請【入山許可證】。</p>
+
+        <!-- slot 內文的第一段文字必須緊貼標籤，見 th-callout.js 註解 -->
+        <th-callout>您可於本站中選擇國家公園路線進行【國家公園入園許可】申請，本站將會自動依據申請路線協助判斷是否需申請【入山許可證】，並提示您填寫相關資料。</th-callout>
+      </div>
+    </section>
+
+    <section class="th-card" id="faq">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+        <h2 class="th-card-title">首次使用常見問題</h2>
+      </div>
+      <div class="th-card-body">
+        <!--
+          .p-illustrate-* 是本頁專用樣式，規則見 assets/css/pages.css。
+          2026-09-17 改為卡片格狀、全部展開，連結嵌在解答句中（片段由
+          components/web-illustrate.js 的 splitAnswer 切好）。
+          模板裡片段之間不留換行：Vue 的 whitespace: 'condense' 會把換行折成空白，
+          句中就會多出空格。
+        -->
+        <ol class="p-illustrate-faq-grid">
+          <li v-for="(f, i) in faqs" :key="f.q" class="p-illustrate-faq-item">
+            <div class="p-illustrate-faq-q">
+              <span class="p-illustrate-faq-no" aria-hidden="true">Q{{ i + 1 }}</span>
+              <h3 class="p-illustrate-faq-title">{{ f.q }}</h3>
+            </div>
+            <p class="p-illustrate-faq-a"><template v-for="(p, j) in f.parts" :key="j"><template v-if="!p.link">{{ p.text }}</template><span v-else-if="p.link.todo" class="p-illustrate-faq-link is-todo">{{ p.text }}<span class="th-todo-tag">待建置</span></span><a v-else class="th-inline-link" :href="p.link.href" :title="p.link.label" target="_blank" rel="noopener noreferrer">{{ p.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></template></p>
+            <p v-if="f.tail.length" class="p-illustrate-faq-a"><template v-for="t in f.tail" :key="t.text"><a class="th-inline-link" :href="t.link.href" target="_blank" rel="noopener noreferrer">{{ t.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a> </template></p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 頁尾主要 CTA：只保留按鈕，移除說明文字與外框底色 -->
+    <div class="p-illustrate-cta">
+      <a class="th-btn th-btn-primary th-btn-lg" href="apply-1.html">
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>進入登山申請
+      </a>
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
+</body>
+</html>

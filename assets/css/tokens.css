@@ -1,0 +1,320 @@
+/* ============================================================
+   tokens.css — 設計變數的唯一落點（四層樣式的第一層）
+   ------------------------------------------------------------
+   只放變數宣告，不得出現任何規則（選擇器）。歸屬判準見改版計畫 §6.1。
+
+   內容來源：design_system/colors_and_type.css 的 :root 區塊。
+   併存期是**複製**而非搬移——當時 styles/shared.css 仍 @import 那支，
+   依 §4.2「共用資源以最後一個消費端為退場條件」要等最後一個消費端遷完。
+   **階段 4 已刪除 shared.css 與 design_system/colors_and_type.css**，
+   本檔是色票的唯一真源，改色票只改這裡。
+
+   刻意不含字型的 @import：字型由 assets/includes/head.html 統一載入一次，
+   同頁共用資源只能載入一次（改版計畫 §5 階段 1.3）。
+
+   新增色票或主色需使用者同意（§6.5）。
+   ============================================================ */
+
+:root {
+  /* --------------------------------------------------------
+     CORE BRAND — National Park sage green
+     The signature 587a68 is a muted, lichen-y green that
+     reads as "national park signage" in Taiwan.
+  -------------------------------------------------------- */
+  --national-50:  #f2fbf5;
+  --national-100: #e1f6e8;
+  --national-200: #c4ead0;
+  --national-300: #9dd5b0;
+  --national-400: #6fb888;
+  --national-500: #22c55e;
+  --national-600: #16a34a;
+  --national-700: #587a68;   /* primary brand sage */
+  --national-700-hover: #456353;
+  --national-800: #166534;
+  --national-900: #14532d;
+
+  /* --------------------------------------------------------
+     SUPPORTING ACCENTS
+  -------------------------------------------------------- */
+  --btn-blue:   #3b5f8f;     /* secondary CTA — steady navy */
+  --footer:     #243447;     /* deep navy footer */
+  --sub-footer: var(--slate-700);     /* footer sub-band */
+  --filter-active: var(--national-700);  /* active filter pill */
+  --bg-gray:    #f5f7f2;     /* faint sage-tinted neutral */
+
+  /* --------------------------------------------------------
+     NEUTRALS — slate-leaning grays for text + chrome
+  -------------------------------------------------------- */
+  --slate-50:  #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --gray-800:  #343a40;      /* 2026-09-16 使用者指定：景點照片上方標題底色 */
+
+  /* --------------------------------------------------------
+     狀態色的原色階梯（2026-09-11 A2 新增）
+     ------------------------------------------------------------
+     這些值本來直接寫在下面的語意 token 上（--danger-fg: #dc2626）。
+     抽出來的理由：設計師換色票時給的是「危險色要改成什麼」，
+     不是「--danger-fg 這一格」。有階梯才接得住。
+
+     **值一個都沒有變**，只是多了一層名字。
+     來源標註是為了讓下一個人知道這一格原本對應什麼：
+     四組都取自 Tailwind 的預設色階（本專案的既有值本來就抄自那裡）。
+
+     **只建實際用到的格**——補滿 50–900 會造出一堆沒人引用的變數，
+     那與零引用 token 是同一個問題。
+  -------------------------------------------------------- */
+  --red-25:  #fff8f8;    /* 非 Tailwind，本專案自訂；比 red-50 更淡 */
+  --red-50:  #fef2f2;    /* Tailwind red-50 */
+  --red-200: #fecaca;    /* Tailwind red-200 */
+  --red-500: #ef4444;    /* Tailwind red-500 */
+  --red-600: #dc2626;    /* Tailwind red-600 */
+  --red-700: #b91c1c;    /* Tailwind red-700 */
+
+  --amber-50:  #fffbeb;  /* Tailwind amber-50 */
+  --amber-200: #fde68a;  /* Tailwind amber-200 */
+  --amber-600: #d97706;  /* Tailwind amber-600；RSS 圖示用，白底對比約 3.2:1（WCAG 1.4.11 需 3:1） */
+  --amber-700: #b45309;  /* Tailwind amber-700 */
+
+  --green-50:  #f0fdf4;  /* Tailwind green-50。與品牌綠 --national-* 是兩套，
+                            這組只服務 success 狀態，不要混用 */
+  --green-200: #bbf7d0;  /* Tailwind green-200 */
+  --green-700: #15803d;  /* Tailwind green-700 */
+
+  --blue-50:  #eff6ff;   /* Tailwind blue-50 */
+  --blue-200: #bfdbfe;   /* Tailwind blue-200 */
+  --blue-700: #1d4ed8;   /* Tailwind blue-700 */
+
+  /* 品牌綠的淺色調三階。不是 Tailwind，是本專案自己的霧綠，
+     與 --national-* 同一個色相、更低彩度。換品牌色時這三格要一起換。 */
+  --mist-50:  #f4f9f2;
+  --mist-100: #e2f1e4;
+  --mist-200: #cadcce;
+  --mist-75:  #f0f7f3;   /* 介於 50 與 100 之間；語言選單的選中項底色 */
+
+  /* 純白。同時是 surface 與深色底上的前景，兩個語意共用一格。 */
+  --white: #ffffff;
+
+  /* --------------------------------------------------------
+     SEMANTIC FOREGROUND / BACKGROUND
+  -------------------------------------------------------- */
+  --fg-1: var(--slate-800);          /* primary text */
+  --fg-2: var(--slate-600);          /* secondary text */
+  --fg-3: var(--slate-500);          /* tertiary / metadata */
+  --fg-4: var(--slate-400);          /* placeholder / disabled */
+  --fg-on-dark: var(--white);
+
+  --bg-1: var(--white);              /* surface */
+  --bg-2: var(--slate-50);           /* subtle alt surface */
+  --bg-3: var(--bg-gray);            /* sage-neutral panel */
+  --bg-mist: var(--mist-50);                /* alpine mist tint */
+  --bg-mist-2: var(--mist-100);              /* deeper mist */
+  --bg-selected: var(--mist-75);             /* 選中項底色 */
+  --bg-mist-3: var(--mist-200);              /* horizon haze */
+
+  /* --------------------------------------------------------
+     STATUS — lifted from the bulletin pills
+  -------------------------------------------------------- */
+  --success-bg: var(--green-50);
+  --success-fg: var(--green-700);
+  --success-border: var(--green-200);
+  --info-bg: var(--blue-50);
+  --info-fg: var(--blue-700);
+  --info-border: var(--blue-200);  /* 2026-09-14 C：補完 info 的 bg／fg／border 三件組 */
+  --warning-bg: var(--amber-50);
+  --warning-fg: var(--amber-700);
+  --rss-icon: var(--amber-600);     /* RSS 圖示；正式站原色 #ffc107 白底對比僅 1.6:1，2026-09-14 使用者裁決改暗 */
+  --danger-fg: var(--red-600);      /* asterisk warnings */
+  --danger-soft: var(--red-500);    /* pinned-pin red */
+  /* 2026-09-08（遷移 notice）新增：紅色按鈕的 hover 深色。
+     來源是原 shared.css 的 .th-video-btn:hover 寫死的 #b91c1c；
+     該規則要移進 pages.css，而 §6.1.1 禁止 pages.css 出現 hex 字面值，
+     故收成 token。命名沿用既有的 --national-700-hover 慣例。
+     當時只加在 tokens.css、不動 design_system（32 頁未遷移頁靠它）；
+     該檔已於階段 4 刪除，本檔是唯一真源。 */
+  --danger-fg-hover: var(--red-700);
+
+  /* --------------------------------------------------------
+     2026-09-08（遷移 apply-1）新增四個。前三個是**補完既有的
+     bg／fg／border 三件組**——success 與 warning 本來就有 border，
+     info／danger 缺，而 apply-1 的狀態徽章與膠囊需要：
+  -------------------------------------------------------- */
+  --danger-bg: var(--red-50);       /* 暫停／熱門徽章底色 */
+  --danger-border: var(--red-200);  /* 暫停膠囊框線 */
+  --danger-bg-subtle: var(--red-25); /* 日曆已額滿格，比 --danger-bg 更淡 */
+  --warning-border: var(--amber-200); /* 抽籤膠囊框線 */
+
+  /* 深色遮罩。同一組色（--slate-900 = rgb(15,23,42)）另有 0.55 的用法在
+     .bulletin-modal-overlay，兩個 alpha 不同，故分開命名。
+     值為 rgba 是刻意的：tokens.css 是變數宣告檔，§6.1.1 的「禁 hex/rgb」
+     限制的是 pages.css。 */
+  --scrim: rgba(15, 23, 42, 0.55);        /* 一般彈窗遮罩，與
+                                             .bulletin-modal-overlay 同值 */
+  --scrim-strong: rgba(15, 23, 42, .82);  /* 圖片上的難度徽章底 */
+
+  /* --------------------------------------------------------
+     PARK-PROCESS COLOR CODES
+     (used on bulletin tags — green by default, but each
+      managing agency could be color-coded here)
+  -------------------------------------------------------- */
+  --park-yushan:    #587a68;   /* 玉山 — Yushan NP */
+  --park-shei-pa:   #6b8e7f;   /* 雪霸 — Shei-Pa NP */
+  --park-taroko:    #4f6e7a;   /* 太魯閣 — Taroko NP */
+  --park-forestry:  #7a8a5a;   /* 林業及自然保育署 */
+  --park-police:    #5a6e7a;   /* 警政署 */
+
+  /* --------------------------------------------------------
+     2026-09-14（設計師前台web）新增：無障礙 AA 與機關徽章、欄位節奏。
+     值逐一取自設計檔 css/tokens.css 與 components.css（徽章底／框色
+     在設計檔是寫死 hex，這裡收成 token）。對比數字照設計檔 ACCESSIBILITY.md。
+     與設計檔同值異名者沿用我方名稱，不另立：
+       --pin-fg／-bg／-border → --red-700／--red-50／--red-200
+       --panel-edu-bg／-apply-bg → --home-panel-edu／--home-panel-apply
+       --fg-on-dark-2 → --slate-300；--panel-edu-ic → --national-700
+  -------------------------------------------------------- */
+  /* 可互動元件邊框（輸入框、下拉、次要按鈕、分頁）。白底 3.64:1；
+     --slate-300 只有 1.48:1，低於 WCAG 1.4.11 的 3:1，只能留給裝飾性分隔線 */
+  --border-ui: #7b8799;
+
+  /* 機關徽章：按機關識別色配色（不是狀態色）。fg 對各自 bg 皆 ≥4.5:1 */
+  --badge-yushan-fg:     #557664;   /* on #eef4f0 → 4.53:1 */
+  --badge-yushan-bg:     #eef4f0;
+  --badge-yushan-border: #d4e3da;
+  --badge-sheipa-fg:     #577468;   /* on #eef3f1 → 4.56:1 */
+  --badge-sheipa-bg:     #eef3f1;
+  --badge-sheipa-border: #d6e4df;
+  --badge-taroko-fg:     #4f6e7a;   /* on #eaf0f3 → 4.75:1 */
+  --badge-taroko-bg:     #eaf0f3;
+  --badge-taroko-border: #d0e0e6;
+  --badge-forestry-fg:     #66734b; /* on #f2f4ea → 4.59:1 */
+  --badge-forestry-bg:     #f2f4ea;
+  --badge-forestry-border: #e0e5cd;
+  --badge-police-fg:     #5a6e7a;   /* on #edf1f3 → 4.68:1 */
+  --badge-police-bg:     #edf1f3;
+  --badge-police-border: #d6e0e5;
+  --badge-npa-fg:        #547563;   /* on --national-100 → 4.52:1 */
+  --badge-npa-bg:        var(--national-100);
+  --badge-npa-border:    var(--national-200);
+
+  /* 查詢列的輸入框、下拉、按鈕統一高度，同一排才對得齊 */
+  --field-h: 44px;
+  /* 頁首上下內距。主選單作用中底線依此值對齊頁首下緣，兩者共用 */
+  --header-pad-y: 5px;
+
+  /* --------------------------------------------------------
+     2026-09-08（遷移首頁）新增：首頁雙卡片的面板標頭底色。
+     來源是 Index.jsx 寫死在 inline style 的 #2d4b3e 與 #35484d
+     （PanelHead 的 color prop）。§7 禁 inline style、§6.1.1 禁 pages.css
+     出現 hex 字面值，兩條合起來就必須收成 token。
+     --home-panel-apply 同時是右側圓鈕圖示的 accent（原值相同）；
+     左側圓鈕的 accent #587a68 已有 --national-700，不另加。
+     當時只加在 tokens.css、不動 design_system（32 頁未遷移頁靠它）；
+     該檔已於階段 4 刪除，本檔是唯一真源。
+  -------------------------------------------------------- */
+  --home-panel-edu:   #2d4b3e;
+  --home-panel-apply: #35484d;
+
+  /* --------------------------------------------------------
+     2026-09-14（山域事故統計儀表板）新增：圖表類別色，15 格。
+     值逐一取自正式站 MountainDashboard.aspx 圖表 JSON 的 colors（原順序）：
+     原因分類用前 13 格、路線分類依序循環 15 格、申請隊伍數用第 1 與第 9 格。
+     ECharts 需要實際色值，由 components/accident-dashboard.js 以
+     getComputedStyle 讀取本組變數，不在 JS 寫 hex。
+     **已知無障礙債**：dataviz 色票驗證器判定 FAILED（相鄰色 CVD／正常視覺
+     分辨度不足、第 13–15 格對白底對比 < 1.3），照正式站原色保留，
+     以圖例文字＋資料表補償。見 decisions.md 同日紀錄。
+  -------------------------------------------------------- */
+  --chart-cat-1:  #1F3A5F;
+  --chart-cat-2:  #274A73;
+  --chart-cat-3:  #2F5D8C;
+  --chart-cat-4:  #3A6EA5;
+  --chart-cat-5:  #4A7FB5;
+  --chart-cat-6:  #6B8A5D;
+  --chart-cat-7:  #7FA174;
+  --chart-cat-8:  #95B88E;
+  --chart-cat-9:  #D36B4A;
+  --chart-cat-10: #E08A6C;
+  --chart-cat-11: #C4A484;
+  --chart-cat-12: #B0B7C3;
+  --chart-cat-13: #E5E7EB;
+  --chart-cat-14: #CCFF33;
+  --chart-cat-15: #FFFF00;
+  --chart-grid:   #e0e0e0;   /* 正式站 y 軸格線色 */
+
+  /* --------------------------------------------------------
+     TYPE — Noto family, the de-facto Traditional-Chinese
+     gov / civic stack. Serif headings, sans body.
+  -------------------------------------------------------- */
+  --font-sans:  "Noto Sans TC", -apple-system, BlinkMacSystemFont,
+                "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+
+  /* font sizes
+     2026-09-14 依設計師交付的前台web 整體放大一階（原值依序為
+     32／28／24／20／18／15／14／13／12）。設計檔 tokens.css 與本檔同源，
+     這 9 格是兩個分支的主要差異。下方 --fs-nav／--fs-2xs／--fs-3xs 刻意不跟著改，
+     理由見各自註解與 decisions.md 同日紀錄。 */
+  --fs-display: 34px;   /* hero brand wordmark */
+  --fs-h1: 30px;
+  --fs-h2: 26px;        /* section titles 最新公告 / 常見問答 */
+  --fs-h3: 22px;
+  --fs-lg: 19px;        /* primary nav */
+  --fs-md: 16px;        /* body, buttons, list rows */
+  --fs-sm: 15px;        /* meta, secondary nav, pills */
+  --fs-xs: 14px;        /* form labels, footer */
+  --fs-xxs: 13px;       /* date pills */
+
+  /* --------------------------------------------------------
+     2026-09-07（階段 3.0）新增兩級字級。當時只有 tokens.css 有、
+     design_system/colors_and_type.css 沒有——刻意不改那支，因為當時 32 頁
+     未遷移頁都靠它，動它等於動全站；那些頁用的是 React 版 header，
+     字級寫死在 JSX 裡，本來就不需要這兩個變數。
+     併存期的關係是 tokens.css ⊇ design_system（共有項數值全部一致）；
+     **design_system 已於階段 4 刪除**，現在只有本檔這一份。
+
+     為什麼需要新增：th-header 原本寫 text-[16px] 與 text-[10px]，
+     §6.5 禁止 Tailwind 任意值寫死外觀，但既有字級階梯沒有這兩級
+     （--fs-md 15px、--fs-lg 18px、--fs-xxs 12px 都不是），
+     而階段 3.0 的驗收條件是**視覺不變**，不能就近取 15px 或 18px。
+     兩者都不是新色票，不涉 §6.5 的「不得新增主色」。
+  -------------------------------------------------------- */
+  --fs-nav: 16px;       /* 主導覽字級。**不可改大**：六個項目加三個「待建置」
+                           標記後，18px 在 1280 容器內塞不下同一行 */
+  --fs-2xs: 11px;       /* apply-1 的篩選計數徽章。原本寫死在 inline style，
+                           既有階梯 xxs=12、3xs=10 都不是 11，而外觀不得改變 */
+  --fs-3xs: 10px;       /* 下拉箭頭等小圖示 */
+
+  /* line height + tracking */
+  --lh-tight: 1.2;
+  --lh-snug: 1.4;
+  --lh-base: 1.6;
+  --lh-loose: 1.8;
+  --tracking-wide: 0.025em;
+
+  /* --------------------------------------------------------
+     SPACING + RADIUS + SHADOW
+  -------------------------------------------------------- */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;     /* form inputs, buttons */
+  --r-lg: 12px;    /* small cards */
+  --r-xl: 16px;    /* feature cards */
+  --r-2xl: 20px;   /* hero cards, side panel */
+  --r-pill: 9999px;
+
+  --sh-header: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --sh-card:   0 4px 20px rgba(0, 0, 0, 0.08);
+  --sh-sm:     0 1px 2px rgba(0, 0, 0, 0.05);
+  --sh-md:     0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --sh-lg:     0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  --sh-xl:     0 20px 40px -10px rgba(0, 0, 0, 0.15);
+
+  /* gradients — alpine mist (used on hero) */
+}

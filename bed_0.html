@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>林業及自然保育署宿營地查詢 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  林業及自然保育署宿營地查詢（對應正式站 bed_0.aspx）
+  ------------------------------------------------------------
+  2026-09-17 使用者裁決：宿營地與床位查詢拆成各自獨立頁，檔名比照正式站 bed_N，
+  拿掉機關頁籤與類別切換，一次做一張、先貼近正式站畫面。本頁是第一張。
+  其餘 10 種查詢仍在 campsite.html，逐張拆出。
+
+  版面照正式站：宿營地查詢（宿營地點下拉＋查詢）→ 查詢後才出現
+  山屋/營地概況（上個月／年／月／下個月＋月曆，格內逐設施列剩餘數量與現在申請數）。
+  資料是正式站快照，見 components/Bed0Data.js 檔頭。
+
+  這三行必須靜態寫在頁面，順序不可調換（理由見 assets/includes/head.html 註解）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/bed_0.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁 -->
+<div id="th-app" v-cloak>
+
+  <th-header active="campsite"></th-header>
+
+  <th-page-shell
+    :trail="['宿營地與床位查詢', '林業及自然保育署宿營地查詢']"
+    title="林業及自然保育署宿營地查詢"
+    :bare="true">
+
+    <!--
+      2026-09-17 使用者選定「一次看一個設施」：地點是頁籤、設施是按鈕，點了就切換，不必按查詢；
+      月曆每格只放「剩餘 N」與「申請 N」，白底，額滿以紅字「額滿」表示（綠／紅底經使用者否決）。
+      正式站是「下拉＋查詢」、格內列出全部設施，這裡刻意不同。
+    -->
+    <!-- 宿營地點：頁籤（2026-09-17 使用者指示），外觀同 campsite／information_4 的 .th-tabs -->
+    <div class="th-tabs">
+      <nav class="th-tabs-nav" aria-label="宿營地點">
+        <button v-for="s in sites" :key="s.id" type="button"
+                :class="['th-tab', { 'is-active': s.id === siteId }]"
+                :aria-current="s.id === siteId ? 'true' : null" @click="pickSite(s.id)">
+          <span>{{ s.name }}</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-bed0-pickers">
+      <!-- 「設施」標題 2026-09-17 依使用者指示移除，群組名改由 aria-label 提供 -->
+      <div v-if="facilities.length" class="p-bed0-picker" role="group" aria-label="設施">
+        <div class="th-chip-row">
+          <button v-for="f in facilities" :key="f" type="button"
+                  :class="['th-chip', { 'is-active': f === facility }]"
+                  :aria-pressed="f === facility" @click="facilityPick = f">{{ f }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 月份列與月曆：共用元件 th-bed-calendar（assets/components/th-bed-calendar.js） -->
+    <th-bed-calendar v-model:year="year" v-model:month="month" :years="years"
+                     :days="calDays" main-label="剩餘" sub-label="申請"
+                     :aria-label="facility + ' ' + year + ' 年 ' + month + ' 月'"
+                     :empty-text="year + ' 年 ' + month + ' 月不在雛形快照範圍內（' + rangeText + '）。'"></th-bed-calendar>
+
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：一般 <script>，頁面腳本只在 data() 內讀取 window.BED0_* -->
+<script src="components/Bed0Data.js"></script>
+</body>
+</html>

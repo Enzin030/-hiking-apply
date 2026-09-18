@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>RSS 訂閱 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  階段 3 逐頁遷移（rss，輕組）
+  ------------------------------------------------------------
+  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
+  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
+  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
+  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
+  它之前，該檔已於階段 4 退場，**不要再加回來**。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/rss.js"></script>
+</head>
+<body>
+
+<!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
+<div id="th-app" v-cloak>
+
+  <!-- RSS 不屬於主導覽任何一項（正式站放在工具列），故不傳 active，不點亮任何項目 -->
+  <th-header></th-header>
+
+  <!-- 2026-09-14 依正式站 RssWeb.aspx 改版：版面只有「何謂RSS？」「如何訂閱RSS」兩段，
+       不放導言、更新日期、頁內導覽與訂閱網址清單（同日使用者裁決拿掉「訂閱網址」卡）。 -->
+  <th-page-shell
+    :trail="['RSS 訂閱']"
+    title="RSS 訂閱">
+
+    <section class="th-card" id="what">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">何謂 RSS？</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- 定義段落沿用正式站原文，未改寫 -->
+        <p>RSS（Real Simple Syndication）－網頁資料交換技術架構，是一種用來分發和匯集網頁內容的 XML 格式，您可以想像您可以訂閱許多您有興趣的資訊來源，但是不用留下基本資料、電子郵件信箱⋯⋯， 對於 RSS 的訂閱者而言，可以最快的得到最新訊息以及頭條新聞，而不用被動式的去每個網站上去搜索。</p>
+      </div>
+    </section>
+
+    <section class="th-card" id="how">
+      <div class="th-card-head">
+        <i class="fa-solid fa-rss" aria-hidden="true"></i>
+        <h2 class="th-card-title">如何訂閱 RSS</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- 第 2 步句中要放 RSS 圖示，th-step-list 的 body 只吃純文字，故直接沿用其 class 寫靜態步驟。
+             第 1、3 步說明與第 2 步圖示照正式站原文（2026-09-14 使用者裁決）。 -->
+        <ol class="th-steplist">
+          <li class="th-steprow">
+            <span class="th-steprow-num">1</span>
+            <div class="th-steprow-body">
+              <h3 class="th-steprow-title">準備一個 RSS 閱讀器</h3>
+              <p>如您的網頁瀏覽器並未支援 RSS 訂閱功能（如 IE），須先下載 RSS 閱讀器（RSS Reader）或安裝網頁瀏覽器的外掛程式（如 Firefox 的 Sage）。</p>
+            </div>
+          </li>
+          <li class="th-steprow">
+            <span class="th-steprow-num">2</span>
+            <div class="th-steprow-body">
+              <h3 class="th-steprow-title">複製 RSS 網址</h3>
+              <p>在出現有圖示<i class="fa-solid fa-square-rss p-rss-icon" aria-label="RSS 圖示" role="img"></i>的網頁上，於圖示按滑鼠右鍵選擇「複製連結網址」；或點選<i class="fa-solid fa-square-rss p-rss-icon" aria-label="RSS 圖示" role="img"></i>後，複製網址列出現的路徑。</p>
+            </div>
+          </li>
+          <li class="th-steprow">
+            <span class="th-steprow-num">3</span>
+            <div class="th-steprow-body">
+              <h3 class="th-steprow-title">加入閱讀器</h3>
+              <p>再到您的 Reader 程式中加入此一 RSS 路徑即可。</p>
+            </div>
+          </li>
+        </ol>
+        <th-callout class="p-rss-howto-note">詳細訂閱方法請參考各 RSS 閱讀器或外掛程式的操作說明。</th-callout>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
+</body>
+</html>
