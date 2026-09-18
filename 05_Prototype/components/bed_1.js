@@ -24,8 +24,13 @@ thPage({
     return {
       sites,
       labels: window.BED1_LABELS || [],
-      notice: window.BED1_NOTICE || [],
-      orgId: window.BED1_ORG_ID || "",
+      /* 頁首說明：**濾掉餘額公式那一條**（2026-09-18 使用者指示）——
+         同一條公式已經在當日 modal 的統計卡片下方以「※ 餘額 ＝ …」呈現，
+         頁首再出一次是重複。在此過濾而不改 Bed1Data.js，因為那份是正式站
+         .alert 的逐字快照，改它會讓來源失真。 */
+      notice: (window.BED1_NOTICE || []).filter(
+        (li) => !li.some((p) => String(p.t).includes("【餘額】"))
+      ),
       siteId: def ? def.id : "",
       /* 當日申請名單彈窗：null＝未開啟 */
       roster: null,
@@ -56,13 +61,6 @@ thPage({
     },
     monthData() {
       return this.site.months.find((m) => m.y === this.year && m.m === this.month) || null;
-    },
-    rangeText() {
-      const ms = this.sites.length ? this.sites[0].months : [];
-      if (!ms.length) return "";
-      const a = ms[0];
-      const b = ms[ms.length - 1];
-      return `${a.y} 年 ${a.m} 月至 ${b.y} 年 ${b.m} 月`;
     },
     /* 交給 th-bed-calendar：每日 [餘額, 待處理]（數字），無資料為 null。
        2026-09-18 使用者指示月曆格內不顯示「已通過」——它仍在當日面板的七項計數裡，
@@ -101,9 +99,6 @@ thPage({
         ],
         rows: rec ? rec.rows : null,
         cap: rec ? rec.cap : null,
-        officialUrl: "https://hike.taiwan.gov.tw/bed_1main.aspx?orgid=" +
-          encodeURIComponent(this.orgId) + "&node_id=" +
-          encodeURIComponent(this.roster.node) + "&sdate=" + this.roster.date,
       };
     },
     /* 外籍提前拆成兩張統計卡（2026-09-18 使用者指示）。
@@ -119,11 +114,6 @@ thPage({
         { k: "外籍提前（外國人）", v: ok ? parts[0] : "" },
         { k: "外籍提前（本國人）", v: ok ? parts[1] : "" },
       ];
-    },
-    /* 當日申請名單頁（本站 bed_1main.html，比照正式站 bed_1main.aspx 的 node_id／sdate） */
-    detailUrl() {
-      if (!this.day) return "";
-      return "bed_1main.html?node=" + encodeURIComponent(this.site.id) + "&date=" + this.day.s;
     },
   },
 

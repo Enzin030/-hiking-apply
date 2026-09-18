@@ -6009,6 +6009,23 @@ body:where(.p-indexb-body):before {
   font-weight: 700;
 }
 
+/* 頁首說明區：2026-09-18 使用者指示拿掉 info 圖示。
+   th-callout 的圖示寫在共用元件樣板內，且該元件有 12 個消費端，
+   故**只在本頁隱藏**，不動元件本身。 */
+.p-bed1-callout > i {
+  display: none;
+}
+
+/* 最後一條是本站補的操作說明（非正式站 .alert 原文），
+   與上面逐條原文以顏色與上緣分隔線區隔，避免被誤認為機關公告內容。 */
+.p-bed1-notice-tip {
+  margin-top: 10px;
+  padding-top: 10px;
+  color: var(--fg-1);
+  font-weight: 500;
+  border-top: 1px dashed var(--national-200);
+}
+
 /* 查詢列與月曆之間加分隔線（2026-09-17 使用者指示） */
 .p-bed1-filter {
   margin: 20px 0 0;
@@ -6239,7 +6256,7 @@ body:where(.p-indexb-body):before {
   /* body 的父層才是 .bulletin-modal，用 :has 從 body 反向加寬面板 */
 }
 .bulletin-modal:has(.p-bed1-rosterbody) {
-  max-width: 1040px;
+  max-width: 1200px;
 }
 .p-bed1-rosterbody .th-table-wrap {
   overflow-x: auto;
@@ -6258,12 +6275,45 @@ body:where(.p-indexb-body):before {
   color: var(--fg-2);
 }
 /* 申請狀態說明：按鈕展開（2026-09-18 使用者指示，原為 details） */
-.p-bed1-notesbtn {
+/* modal 標題列：只有「宿營地 - 日期」；關閉鈕由 th-modal 自己輸出。
+   共用的 .bulletin-modal-head 是 align-items: flex-start（其他 modal 的標題上方
+   還有 meta 小字），本 modal 沒有 meta，改為垂直置中讓標題與關閉鈕對齊
+   （2026-09-18 使用者指示）。只限本 modal，不動共用值。 */
+.bulletin-modal:has(.p-bed1-rosterbody) .bulletin-modal-head {
+  align-items: center;
+}
+.p-bed1-modalhead {
+  flex: 1;
+  min-width: 0;
+}
+/* 名單與上方統計之間的分隔線 */
+.p-bed1-modalhr {
+  margin: 22px 0 0;
+  border: 0;
+  border-top: 1px solid var(--slate-200);
+}
+.p-bed1-modalhead .bulletin-modal-title {
+  margin: 0;
+}
+/* 區塊標題列：標題在左、申請狀態說明按鈕在右上角
+   （2026-09-18 使用者指示，原為標題列上的文字按鈕） */
+.p-bed1-sechead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.p-bed1-sechead .p-bed1-modalsub {
+  margin-bottom: 0;
+}
+/* 文字按鈕，圖示為 info（2026-09-18 使用者指示：不是只留 icon，是按鈕裡的圖示換成 info） */
+.p-bed1-infobtn {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 10px;
-  padding: 8px 14px;
+  padding: 6px 12px;
   font: inherit;
   font-size: var(--fs-xs);
   color: var(--national-700);
@@ -6272,18 +6322,32 @@ body:where(.p-indexb-body):before {
   border: 1px solid var(--border-ui);
   border-radius: var(--r-sm);
 }
-.p-bed1-notesbtn:hover {
+.p-bed1-infobtn:hover {
   color: var(--national-700-hover);
   background: var(--bg-2);
 }
-.p-bed1-rosternote-list {
-  margin: 0 0 14px;
-  padding: 12px 12px 12px 32px;
-  font-size: var(--fs-xs);
-  line-height: 1.75;
-  color: var(--fg-2);
+.p-bed1-infobtn[aria-expanded="true"] {
+  color: var(--national-700-hover);
   background: var(--bg-2);
-  border-radius: var(--r-md);
+}
+/* 說明外觀比照**本頁頁首那個 callout**（2026-09-18 使用者指示）：
+   同樣不出 info 圖示、同樣是 disc 項目符號清單，字級與行距沿用 .p-bed1-notice。 */
+.p-bed1-notescallout {
+  margin: 10px 0 14px;
+}
+.p-bed1-notescallout > i {
+  display: none;
+}
+.p-bed1-rosternote-list {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style: disc;
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+}
+.p-bed1-rosternote-list li + li {
+  margin-top: 4px;
 }
 .p-bed1-rosternote-list li + li {
   margin-top: 6px;
@@ -6309,13 +6373,6 @@ body:where(.p-indexb-body):before {
 }
 .p-bed1-modalsub:first-child {
   margin-top: 0;
-}
-/* modal 底部的獨立頁連結 */
-.p-bed1-rosterlinkrow {
-  margin: 14px 0 0;
-  padding-top: 12px;
-  font-size: var(--fs-xs);
-  border-top: 1px solid var(--slate-200);
 }
 
 @media (max-width: 1100px) {
