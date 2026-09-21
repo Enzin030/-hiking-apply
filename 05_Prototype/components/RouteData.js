@@ -859,8 +859,8 @@ window.ROUTE_DATA = [
     },
     {
         "id":  "np-2",
-        "name":  "玉山線 2~5天",
-        "displayName":  "玉山線 2~5天",
+        "name":  "2~5天(塔塔加 - 玉山線 - 塔塔加)",
+        "displayName":  "2~5天(塔塔加 - 玉山線 - 塔塔加)",
         "originalName":  "2~5天(塔塔加 - 玉山線 - 塔塔加)",
         "routeGroup":  "玉山線",
         "routePath":  "塔塔加 - 玉山線 - 塔塔加",

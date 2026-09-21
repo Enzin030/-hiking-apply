@@ -236,6 +236,17 @@ thPage({
       return (s.clauses[0] && s.clauses[0].html) || "";
     },
 
+    /* 條文的純文字版，供側欄與 title 使用。
+       **用 DOM 解析而非正則**：條文含 &gt;&nbsp; 等 HTML 實體
+       （例「Online Application &gt;&gt; Apply for Park Permit」），
+       手動 replace 一定會漏——2026-09-21 審核就抓到側欄出現字面的 &gt;&gt;。
+       textContent 會自動解碼所有實體。 */
+    plainClause(s) {
+      const d = document.createElement("div");
+      d.innerHTML = this.clauseHtml(s);
+      return (d.textContent || "").replace(/\s+/g, " ").trim();
+    },
+
     toggleAck(id) { this.acked[id] = !this.acked[id]; },
 
     scrollToSection(id) {

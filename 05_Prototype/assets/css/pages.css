@@ -2552,10 +2552,22 @@ button.p-open-filter-badge.is-active {
   font-weight: 700;
 }
 
+/* Tailwind preflight 會把 ol/ul 的 list-style 清掉，這裡明確加回來，
+   否則正式站原本有的編號與項目符號會整個消失
+   （同 components.css 的 .th-doc-list，2026-09-21 實測本頁也中招：
+     「緊急災難處理」6 項、「環境維護」5 項的編號全不見）*/
 .p-apply2-item-text ul,
 .p-apply2-item-text ol {
   margin: 8px 0 0;
-  padding-left: 20px;
+  padding-left: 24px;
+}
+
+.p-apply2-item-text ol {
+  list-style: decimal;
+}
+
+.p-apply2-item-text ul {
+  list-style: disc;
 }
 
 .p-apply2-item-text li {
@@ -2709,6 +2721,29 @@ button.p-open-filter-badge.is-active {
   justify-content: center;
   gap: 12px;
   margin-top: 36px;
+}
+
+/* 按鈕下方附註（正式站 apply_1_2.aspx 的 .text-center 區塊） */
+.p-apply2-actions-note {
+  margin: 20px 0 32px;
+  padding: 0 16px;
+  text-align: center;
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+.p-apply2-actions-note a {
+  color: var(--national-800);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(22, 101, 52, 0.35);
+}
+
+.p-apply2-actions-note a:hover {
+  color: var(--national-900);
+  text-decoration-color: var(--national-800);
 }
 
 /* disabled 重新設計：

@@ -2833,6 +2833,73 @@ body.th-noscroll {
   font-weight: 500;
   letter-spacing: var(--tracking-wide);
 }
+/* ------------------------------------------------------------
+   th-back-to-top — 回到頂端（對照舊站 #gotop）
+   ------------------------------------------------------------
+   位置在 .th-quickbtn **上方**，尺寸相同（68px），間距 12px
+   → bottom = 24 + 68 + 12 = 104px。
+
+   **為什麼快捷選單在下、Top 在上**（2026-09-21 使用者裁決）：
+   快捷選單是常駐的主要功能，該佔最順手的右下角且位置固定；
+   Top 是偶爾出現的輔助功能，放上方。
+   若反過來讓 Top 佔底、捲動時推動快捷選單，會造成移動中的點擊目標
+   （使用者正要點，它就跑掉），那是可用性問題而非美觀問題。 */
+.th-gotop {
+  position: fixed;
+  right: 24px;
+  bottom: 104px;
+  z-index: 60;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--r-pill);
+  /* 框線與文字色比照 .th-btn-ghost，維持次要按鈕的一致外觀 */
+  border: 1px solid var(--border-ui);
+  background: var(--bg-1);
+  color: var(--slate-700);
+  box-shadow: var(--sh-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity .2s ease, visibility .2s ease, transform .2s ease, background .15s ease;
+}
+
+.th-gotop.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* hover 比照 .th-btn-ghost（清除查詢那種次要按鈕）：
+   淡灰底 + 框線轉深 + 主色字，不做整顆填滿——
+   Top 是輔助功能，填滿會與快捷選單的實心主色搶視覺 */
+.th-gotop:hover {
+  background: var(--bg-2);
+  border-color: var(--slate-600);
+  color: var(--national-700);
+}
+
+.th-gotop i {
+  font-size: var(--fs-h3);
+  line-height: 1;
+}
+
+.th-gotop span {
+  font-size: var(--fs-xxs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 640px) {
+  .th-gotop {
+    right: 16px;
+  }
+}
+
 .th-quickmask {
   position: fixed;
   inset: 0;

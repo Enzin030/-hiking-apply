@@ -91,7 +91,10 @@
   <!-- ============ 同意書模式（國家公園）============ -->
   <div v-else data-screen-label="02 同意書（國家公園）">
     <th-header active="apply"></th-header>
-    <th-page-shell :trail="['登山申請', applyCrumb, '申請須知與同意書']" title="申請須知與同意書" :bare="true">
+    <!-- 麵包屑用「閱讀同意書」與步驟條統一——兩者在畫面上緊鄰，
+         用不同名字指同一件事會讓人以為是兩個地方。
+         標題同樣用「閱讀同意書」（使用者 2026-09-21 15:47 裁示三處統一）。 -->
+    <th-page-shell :trail="['登山申請', applyCrumb, '閱讀同意書']" title="閱讀同意書" :bare="true">
       <!-- 步驟依正式站 apply_1_4.aspx 的實際流程拆分（2026-09-21 實走）：
            原本第 3 步「行程登記」在正式站是三個步驟，同頁切換 -->
       <template #stepper>
@@ -105,18 +108,9 @@
         ]"></th-stepper>
       </template>
 
-      <!-- 路線資訊：沿用共用元件 .th-filter 的版型（標籤在上、值在下、橫向排列），
-           同 news.html／information_place.html 的查詢區 -->
-      <div v-if="routeData" class="th-filter-grid p-apply2-route">
-        <div class="th-filter-field">
-          <span class="th-filter-label">登山主路線</span>
-          <span class="p-apply2-route-value">{{ routeData.routeGroup || routeData.peak }}</span>
-        </div>
-        <div class="th-filter-field">
-          <span class="th-filter-label">次路線</span>
-          <span class="p-apply2-route-value">{{ routeData.displayName || routeData.name }}</span>
-        </div>
-      </div>
+      <!-- 2026-09-21 移除路線資訊區：正式站的同意書頁沒有這塊，是雛形自創的。
+           路線在上一頁剛選完、下一頁又會顯示且可修改，夾在中間只是重述；
+           「確認選對路線」的需求由麵包屑的機關名滿足。 -->
 
       <!-- 文案取自正式站 apply_1_2.aspx 原文（2026-09-21 實走擷取） -->
       <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug p-apply2-lead">
@@ -132,8 +126,8 @@
                    :class="['p-apply2-item', { 'is-acked': acked[s.id] }]"
                    role="button" tabindex="0"
                    :aria-pressed="acked[s.id] ? 'true' : 'false'"
-                   @click="toggleAck(s.id)"
-                   @keydown.enter.prevent="toggleAck(s.id)"
+                   @click="$event.target.closest('a') || toggleAck(s.id)"
+                   @keydown.enter="$event.target.closest('a') || ($event.preventDefault(), toggleAck(s.id))"
                    @keydown.space.prevent="toggleAck(s.id)">
             <div class="p-apply2-item-lead" aria-hidden="true">
               <span class="p-apply2-item-box">
@@ -163,10 +157,8 @@
                      （抽引號內名稱、砍開頭動詞），猜出來的東西資料裡並不存在——
                      19 條裡出現三次「排雲山莊」就是抽到引號內的設施名而非條文主旨。
                      勾勾放文字後面：放前面會把每列文字起點推開，未確認的列就對不齊。 -->
-                <button type="button"
-                        :title="clauseHtml(s).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()"
-                        @click="scrollToSection(s.id)">
-                  <span class="p-apply2-side-text">{{ clauseHtml(s).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim() }}</span>
+                <button type="button" :title="plainClause(s)" @click="scrollToSection(s.id)">
+                  <span class="p-apply2-side-text">{{ plainClause(s) }}</span>
                   <span class="p-apply2-side-tick" aria-hidden="true"></span>
                 </button>
               </li>
@@ -180,14 +172,23 @@
       <!-- 按鈕文案照正式站 apply_1_2.aspx：同意／不同意，不是上一步／下一步。
            「不同意」等同放棄申請，退回路線選擇頁。 -->
       <div class="p-apply2-actions">
-        <button class="th-btn th-btn-ghost" @click="goApply1">不同意</button>
+        <button class="th-btn th-btn-ghost" @click="goApply1">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>不同意
+        </button>
         <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">
           同意<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </button>
       </div>
+
+      <!-- 按鈕下方附註，照正式站 apply_1_2.aspx 原文（連結另開新視窗到登山須知）。
+           它是 .text-center 區塊、不在 checkbox 清單裡，逐條比對條文時抓不到 -->
+      <p class="p-apply2-actions-note">
+        <strong>地方政府登山活動管理自治條例，詳見<a href="notice.html" target="_blank" rel="noopener noreferrer">各地方政府公告資訊</a>。</strong>
+      </p>
     </th-page-shell>
 
     <th-quick-nav></th-quick-nav>
+    <th-back-to-top></th-back-to-top>
     <th-footer></th-footer>
   </div>
 
