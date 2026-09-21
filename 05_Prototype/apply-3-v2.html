@@ -157,12 +157,6 @@
           <div class="v2-planner-box">
             <!-- 單日往返模式：自動帶入固定行程 -->
             <template v-if="isSingleDay">
-              <div class="th-callout mb-3">
-                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                <div>
-                  <strong>單日往返路線：</strong>系統已依管理處核定之步道路徑自動帶入完整往返行程，無需手動選擇節點。
-                </div>
-              </div>
               <ul class="v2-plan-days">
                 <li class="v2-plan-day-item">
                   <span class="day-tag">第 1 天行程：</span>
@@ -311,21 +305,14 @@
         </section>
 
         <!-- 區塊 4：警政署入山證申請 -->
-        <section id="sec-npa" class="v2-section">
-          <div class="v2-section-head">
-            <h2 class="v2-section-title">
+        <section id="sec-npa" class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">
               警政署入山證申請
             </h2>
-            <p class="v2-section-sub">本路線進入山地管制區，系統將連線警政署同步辦理入山申請</p>
           </div>
 
-          <div class="v2-notice mb-4">
-            <i class="fa-solid fa-shield-halved text-blue-700" aria-hidden="true"></i>
-            <div>
-              <strong>警政署管制區提示：</strong>玉山國家公園多數登山路線座落於山地經常管制區內，系統已整合入山許可申請流程，請詳實填列以下入山事由與計畫書。
-            </div>
-          </div>
-
+          <div class="th-card-body">
           <div class="v2-grid">
             <div class="th-field">
               <label class="th-label" for="con_NpaReasons"><span class="req">*</span>入山事由</label>
@@ -377,8 +364,8 @@
             <div class="th-field v2-grid-full">
               <label class="th-label" for="con_NpaPlan"><span class="req">*</span>登山計畫書</label>
               <textarea id="con_NpaPlan" class="th-textarea" rows="4" v-model="NpaPlan" placeholder="請依每日行程詳細填寫，約 300 字。例如：&#10;D1:排雲登山服務中心→塔塔加登山口→排雲山莊。&#10;D2:排雲山莊→玉山主峰→塔塔加登山口→排雲登山服務中心。"></textarea>
-              <div class="th-field-hint">每日行程需註明。範例：D1:排雲登山服務中心→塔塔加登山口→排雲山莊；D2:排雲山莊→主峰→下山。</div>
             </div>
+          </div>
           </div>
         </section>
 
