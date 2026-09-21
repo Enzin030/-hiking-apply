@@ -128,7 +128,7 @@
                 <i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>關閉日期：{{ c.dateRange }}
               </p>
               <p class="p-apply3-closure-reason">
-                原因：<a class="p-apply3-closure-link" :href="c.href" target="_blank" rel="noopener noreferrer">{{ c.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（另開新視窗）</span></a>
+                原因：<a class="p-apply3-closure-link" :href="c.href" target="_blank" rel="noopener noreferrer" title="查看公告全文（另開新視窗）">{{ c.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
               </p>
             </div>
           </div>
@@ -167,7 +167,7 @@
                   <th scope="row">建議裝備</th>
                   <td>
                     <p v-if="trailLevel.kit" class="th-kit">{{ trailLevel.kit }}</p>
-                    <p v-else class="th-kit">參考<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（PDF，另開新視窗）</span></a>{{ trailLevel.kitRef }}</p>
+                    <p v-else class="th-kit">參考<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer" title="個人及團體裝備檢查表（PDF，另開新視窗）">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>{{ trailLevel.kitRef }}</p>
                   </td>
                 </tr>
                 <!-- 備註：正式站這格有三段——檢查表下載、該路線自己的說明、
@@ -176,10 +176,10 @@
                 <tr>
                   <th scope="row">備註</th>
                   <td class="p-apply3-remark">
-                    <p class="p-apply3-remark-download">歡迎下載：<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（PDF，另開新視窗）</span></a></p>
+                    <p class="p-apply3-remark-download">歡迎下載：<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer" title="個人及團體裝備檢查表（PDF，另開新視窗）">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></p>
                     <p v-if="routeNoteText" class="p-apply3-remark-note">{{ routeNoteText }}</p>
                     <p class="p-apply3-remark-links">
-                      <a v-for="l in routeConditionLinks" :key="l.href" class="th-inline-link" :href="l.href" target="_blank" rel="noopener noreferrer">{{ l.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（另開新視窗）</span></a>
+                      <a v-for="l in routeConditionLinks" :key="l.href" class="th-inline-link" :href="l.href" target="_blank" rel="noopener noreferrer" :title="l.text + '（另開新視窗）'">{{ l.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
                     </p>
                   </td>
                 </tr>
@@ -193,14 +193,11 @@
         <!-- 區塊 2：路線規劃 -->
         <section id="sec-planner" class="th-card">
           <div class="th-card-head">
-            <h2 class="th-card-title">路線規劃</h2>
+            <!-- 正式站的操作說明為 news_7_1.aspx?ID=2564（常見問答內文頁）；
+                 雛形尚無該內文頁，先連常見問答列表，[待確認] -->
+            <h2 class="th-card-title">路線規劃<a class="th-inline-link p-apply3-help" href="news_7.html" target="_blank" rel="noopener noreferrer" title="路線規劃操作說明（另開新視窗）">（操作說明）<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></h2>
           </div>
           <div class="th-card-body grid gap-4">
-            <p class="th-field-hint">
-              <a href="https://hike.taiwan.gov.tw/news_7_1.aspx?ID=2564" target="_blank" rel="noopener noreferrer">
-                <i class="fa-solid fa-circle-question mr-1" aria-hidden="true"></i>路線規劃操作說明
-              </a>
-            </p>
 
           <div class="v2-planner-box">
             <!-- 單日往返模式：自動帶入固定行程 -->
@@ -241,7 +238,12 @@
 
               <!-- 尚未完成規劃：節點選擇與控制按鈕 -->
               <div v-if="!plannerFinished" class="v2-planner-interactive">
-                <p class="v2-planner-prompt">
+                <!-- 正式站首步是「請選擇起點：」，選了才變成逐點接續。
+                     here 一律有值（預設起點），所以用「今天只有起點、還沒接下一點」判斷 -->
+                <p class="v2-planner-prompt" v-if="today.length <= 1">
+                  請選擇起點：<strong>{{ here }}</strong>
+                </p>
+                <p class="v2-planner-prompt" v-else>
                   第 {{ dayIndex + 1 }} 天 · 目前位置：<strong>{{ here }}</strong>，請選擇下一個地點：
                 </p>
 
@@ -305,7 +307,7 @@
           <div class="th-card-body">
           <div class="v2-grid">
             <div class="th-field">
-              <label class="th-label" for="con_seminar"><span class="req">*</span>登山行前講習</label>
+              <label class="th-label" for="con_seminar"><span class="req">*</span>登山行前講習<span class="p-apply3-label-en">General knowledge about hiking</span></label>
               <th-hybrid-select>
                 <select id="con_seminar" class="th-select" v-model="seminar">
                   <option value="">請選擇</option>
@@ -315,14 +317,14 @@
               </th-hybrid-select>
               <div class="th-field-hint">
                 <a href="https://www.ysnp.gov.tw/Video/C005200" id="con_hlSeminar" target="_blank" rel="noopener noreferrer">
-                  <i class="fa-solid fa-video mr-1" aria-hidden="true"></i>線上觀看登山安全宣導影片
+                  <i class="fa-solid fa-video mr-1" aria-hidden="true"></i>登山安全影片
                 </a>
               </div>
             </div>
 
             <div class="th-field">
               <label class="th-label" for="con_gps">
-                <span class="req">*</span>是否攜帶 GPS 及緊急通訊設備
+                <span class="req">*</span>是否攜帶 GPS 及可供緊急聯絡之通信設備（包含智慧型手機、智慧型手錶、個人數位助理（PDA）等）<span class="p-apply3-label-en">Will you be carrying a GPS device? (i.e. Smart phone)</span>
               </label>
               <th-hybrid-select>
                 <select id="con_gps" class="th-select" v-model="gps">
@@ -331,22 +333,21 @@
                   <option value="0">否</option>
                 </select>
               </th-hybrid-select>
-              <div class="th-field-hint">包含智慧型手機、智慧型手錶、個人數位助理（PDA）等。</div>
             </div>
 
             <div class="th-field" id="con_divGps">
-              <label class="th-label" for="con_satellitephone">衛星電話（選填）</label>
-              <input id="con_satellitephone" type="text" class="th-input" v-model="satellitephone" placeholder="請輸入衛星電話號碼" />
+              <label class="th-label" for="con_satellitephone">衛星電話<span class="p-apply3-label-en">Satellite phone number</span></label>
+              <input id="con_satellitephone" type="text" class="th-input" v-model="satellitephone" placeholder="請輸入衛星電話" />
             </div>
 
             <div class="th-field" id="con_divWireless">
-              <label class="th-label" for="con_frequency">無線電頻率（選填）</label>
-              <input id="con_frequency" type="text" class="th-input" v-model="frequency" placeholder="例：145.500 MHz" />
+              <label class="th-label" for="con_frequency">無線電頻<span class="p-apply3-label-en">Radio Frequency</span></label>
+              <input id="con_frequency" type="text" class="th-input" v-model="frequency" placeholder="請輸入無線電頻" />
             </div>
 
             <div class="th-field v2-grid-full">
-              <label class="th-label" for="con_note_user">備註（選填）</label>
-              <textarea id="con_note_user" class="th-textarea" rows="3" v-model="note_user" placeholder="若有特殊需求或行程注意事項請填入此欄"></textarea>
+              <label class="th-label" for="con_note_user">備註<span class="p-apply3-label-en">Note</span></label>
+              <textarea id="con_note_user" class="th-textarea" rows="3" v-model="note_user" placeholder="請填入備註"></textarea>
             </div>
           </div>
           </div>
@@ -395,6 +396,7 @@
               <div v-else class="th-field-hint text-red-600">請至少加入一個前往地點。</div>
             </div>
 
+            <!-- 詞庫為兩層：選定主詞庫後，正式站以 postback 帶回子詞庫選項 -->
             <div class="th-field">
               <label class="th-label" for="con_NpaPaths">登山路線圖詞庫</label>
               <th-hybrid-select>
@@ -405,13 +407,31 @@
             </div>
 
             <div class="th-field">
-              <label class="th-label" for="con_RouteMap_V">選定的路線圖（唯讀）</label>
+              <label class="th-label" for="con_NpasubPaths">子詞庫</label>
+              <th-hybrid-select>
+                <select id="con_NpasubPaths" class="th-select" v-model="NpasubPaths" :disabled="!NpaPaths">
+                  <option v-for="s in npaSubPathsOptions" :key="s.value" :value="s.value">{{ s.text }}</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <div class="th-field v2-grid-full">
+              <label class="th-label" for="con_RouteMap_V">選定的路線圖</label>
               <input id="con_RouteMap_V" type="text" class="th-input th-input-readonly" :value="RouteMap_V" readonly />
             </div>
 
             <div class="th-field v2-grid-full">
               <label class="th-label" for="con_NpaPlan"><span class="req">*</span>登山計畫書</label>
-              <textarea id="con_NpaPlan" class="th-textarea" rows="4" v-model="NpaPlan" placeholder="請依每日行程詳細填寫，約 300 字。例如：&#10;D1:排雲登山服務中心→塔塔加登山口→排雲山莊。&#10;D2:排雲山莊→玉山主峰→塔塔加登山口→排雲登山服務中心。"></textarea>
+              <textarea id="con_NpaPlan" class="th-textarea" rows="5" v-model="NpaPlan" placeholder="D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。"></textarea>
+              <!-- 範例為正式站原文，逐字保留 -->
+              <div class="p-apply3-plan-example">
+                <p class="p-apply3-plan-example-title">【登山計畫書填寫範例】</p>
+                <p class="p-apply3-plan-example-note">※計畫書內容約300字，請參考範例，簡要述明。</p>
+                <p>D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。</p>
+                <p>D2：月型池→磐石山→磐石山西峰→三叉營地。</p>
+                <p>D3：三叉營地→太魯閣大山→三叉營地→平安池→廣寒宮。</p>
+                <p>D4：廣寒宮→立霧主山→三冬路口→帕托魯大山→三叉路口。</p>
+              </div>
             </div>
           </div>
           </div>
@@ -476,7 +496,6 @@
   <th-modal
     v-if="mapOpen"
     :title="(openRow ? openRow.mainRoute : '玉山線') + '地圖'"
-    :meta="openRow ? openRow.name : ''"
     body-class="p-apply3-map-modal"
     @close="mapOpen = false">
 
@@ -493,23 +512,30 @@
       </button>
     </div>
 
+    <!-- 圖卡比照 information_1 的路線圖資：外框 figure ＋ 圖 ＋ 圖說列，
+         「查看原圖」釘在圖說列右側，而非整個彈窗底部 -->
     <div class="p-apply3-map-grid" v-if="activeMapTab">
-      <div v-for="(img, imgIdx) in activeMapTab.images" :key="imgIdx" class="p-apply3-map-wrap">
-        <img :src="img.src" :alt="img.alt" loading="lazy" class="p-apply3-map-img" />
-      </div>
+      <figure v-for="(img, imgIdx) in activeMapTab.images" :key="imgIdx" class="p-apply3-map-figure">
+        <div class="p-apply3-map-wrap">
+          <img :src="img.src" :alt="img.alt" loading="lazy" class="p-apply3-map-img" />
+        </div>
+        <figcaption class="p-apply3-map-caption">
+          <span class="p-apply3-map-caption-text">{{ img.caption || img.alt }}</span>
+          <a
+            class="p-apply3-map-zoom"
+            :href="img.src"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="查看原圖（另開新視窗）">
+            <i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>查看原圖
+          </a>
+        </figcaption>
+      </figure>
     </div>
 
     <template #foot>
       <div class="p-apply3-map-foot">
-      <a
-        v-if="activeMapTab && activeMapTab.images.length"
-        class="th-btn th-btn-ghost"
-        :href="activeMapTab.images[0].src"
-        target="_blank"
-        rel="noopener noreferrer">
-        <i class="fa-solid fa-up-right-and-down-left-from-center mr-2" aria-hidden="true"></i>查看原圖<span class="th-sr-only">（另開新視窗）</span>
-      </a>
-      <button type="button" class="th-btn th-btn-primary" @click="mapOpen = false">關閉</button>
+        <button type="button" class="th-btn th-btn-primary" @click="mapOpen = false">關閉</button>
       </div>
     </template>
   </th-modal>

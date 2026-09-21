@@ -186,6 +186,7 @@ thPage({
         { value: "B00", text: "台灣地理人文全覽圖南島" },
         { value: "A00", text: "台灣地理人文全覽圖北島" }
       ],
+      NpasubPaths: "",
       RouteMap_V: "玉山國家登山路線導覽圖",
       NpaPlan: "",
 
@@ -264,6 +265,14 @@ thPage({
          2. 主路線全線圖：沿用登山路線介紹（information_1）的 ROUTE_INTRO_DATA，
             以 openRow.mainRoute 對該管處的路線名稱，可能有多張（中西／中東）
        單日往返在正式站也有自己的建議路線圖，故同樣走這組 tab，不分開處理。 */
+    /* 詞庫是兩層：主詞庫（NpaPaths）選定後，正式站以 postback 帶回子詞庫
+       （NpasubPaths）的選項。子詞庫清單未擷取到 [待確認]，
+       這裡只還原兩層結構與連動關係，不編造選項內容。 */
+    npaSubPathsOptions() {
+      if (!this.NpaPaths) return [];
+      return [{ value: "", text: "請選擇子詞庫" }];
+    },
+
     routeMapTabs() {
       const tabs = [];
       const sub = SUBROUTE_MAPS[this.climbline];
@@ -451,6 +460,7 @@ thPage({
     NpaPaths(val) {
       const match = this.npaPathsOptions.find(o => o.value === val);
       this.RouteMap_V = match ? match.text : "";
+      this.NpasubPaths = "";
     }
   },
 

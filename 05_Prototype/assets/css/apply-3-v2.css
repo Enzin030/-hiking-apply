@@ -559,25 +559,6 @@
 
 /* ---------- 路線地圖摺疊面板 ----------
    呈現比照 information_1 的路線圖資區塊。 */
-.p-apply3-map-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.p-apply3-map-wrap {
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-sm);
-  overflow: hidden;
-  background: var(--bg-2);
-}
-
-.p-apply3-map-img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 /* ---------- 難度等級列：等級徽章 ＋ 路線圖按鈕 ---------- */
 .p-apply3-level-cell {
   display: flex;
@@ -612,4 +593,117 @@
   gap: 8px;
   padding: 16px 24px;
   border-top: 1px solid var(--slate-200);
+}
+
+/* ---------- 雙語欄位標籤 ----------
+   正式站每個欄位標籤是「中文<br>English」兩行，英文為輔助說明。
+   這裡用 block 換行並降一級字級與色階，讓中文仍是主要視覺。 */
+.p-apply3-label-en {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--fg-3);
+}
+
+/* 卡片標題旁的（操作說明）連結：不搶標題的視覺重量 */
+.p-apply3-help {
+  margin-left: 6px;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+}
+
+/* ---------- 本頁連結字級一律 --fs-sm ----------
+   .th-inline-link 本身沒有 font-size，會繼承容器：表格內是 --fs-sm、
+   卡片標題內是 --fs-lg，同一種連結因此忽大忽小。這裡統一釘住。 */
+.v2-main a.th-inline-link,
+.v2-main a.p-apply3-closure-link {
+  font-size: var(--fs-sm);
+}
+
+/* ---------- 路線圖卡（比照 information_1 的 .p-info1-image-*） ---------- */
+.p-apply3-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.p-apply3-map-figure {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--slate-50);
+  width: 100%;
+}
+
+.p-apply3-map-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-1);
+  width: 100%;
+}
+
+.p-apply3-map-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.p-apply3-map-caption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--slate-200);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+
+.p-apply3-map-caption-text {
+  text-align: center;
+  padding: 0 90px;
+}
+
+.p-apply3-map-zoom {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--fs-xs);
+  color: var(--national-800);
+  white-space: nowrap;
+}
+
+.p-apply3-map-zoom:hover {
+  color: var(--national-900);
+}
+
+/* ---------- 登山計畫書填寫範例（正式站原文） ---------- */
+.p-apply3-plan-example {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  line-height: var(--lh-loose);
+}
+
+.p-apply3-plan-example p {
+  margin: 0;
+}
+
+.p-apply3-plan-example-title {
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.p-apply3-plan-example-note {
+  color: var(--danger-fg);
 }
