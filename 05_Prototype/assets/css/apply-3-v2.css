@@ -154,7 +154,7 @@
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border-radius: var(--r-full);
+  border-radius: var(--r-pill);
   background: var(--national-100);
   color: var(--national-800);
   font-size: var(--fs-2xs);
@@ -190,7 +190,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: var(--r-full);
+  border-radius: var(--r-pill);
   border: 1px solid var(--slate-300);
   background: var(--bg-1);
   color: var(--slate-700);
@@ -277,9 +277,22 @@
   background: var(--danger-bg);
 }
 
-/* ---------- 內文連結規範 ---------- */
-.v2-main a,
-.v2-main a:hover,
+/* ---------- 內文連結規範（照全站 .th-doc-block a）----------
+   2026-09-21 修：原本這兩個選擇器沒有規則體，直接接到 .v2-side，
+   等於連結樣式從未生效，而且把 .v2-side 一起綁進同一條選擇器。 */
+.v2-main a {
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.v2-main a:hover {
+  color: var(--national-900);
+  background: var(--national-50);
+}
+
 /* ---------- 側欄頁內目錄（.th-pagenav 視覺語言） ---------- */
 .v2-side {
   min-width: 0;
@@ -302,7 +315,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--fg-3);
@@ -332,6 +345,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .v2-side-list button {
@@ -340,12 +355,12 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  padding: 4px 0;
+  padding: 0;
   background: none;
   border: 0;
   text-align: left;
   cursor: pointer;
-  color: var(--fg-3);
+  color: var(--fg-2);
   font-size: var(--fs-sm);
   line-height: var(--lh-snug);
   transition: color .15s ease;
@@ -355,24 +370,24 @@
   color: var(--national-700);
 }
 
+/* 與 apply-2 的側欄勾勾完全一致：14px 圓角方塊、無框、只靠底色表達狀態 */
 .v2-side-tick {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: var(--r-full);
-  border: 1px solid var(--slate-300);
+  width: 14px;
+  height: 14px;
+  border-radius: var(--r-xs);
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all .15s ease;
+  transition: background-color .15s ease;
 }
 
 .v2-side-tick::before {
   content: "\f00c";
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
-  font-size: 9px;
+  font-size: 8px;
   line-height: 1;
   color: transparent;
   transition: color .15s ease;
@@ -387,10 +402,14 @@
   color: var(--fg-on-dark);
 }
 
+/* 已完成的項目轉淡，與 apply-2 一致——
+   完成的不需要爭取注意力，該突顯的是還沒做的 */
 .v2-side-list li.is-acked button {
-  color: var(--slate-700);
-  font-weight: 500;
+  color: var(--slate-400);
 }
+
+/* 本頁不標「目前位置」：表單分段是逐段填寫，狀態由「完成／未完成」表達就夠，
+   再加一個目前位置反而讓三種狀態互相干擾（使用者裁示 2026-09-21 16:29）。 */
 
 .v2-side-text {
   flex: 1;

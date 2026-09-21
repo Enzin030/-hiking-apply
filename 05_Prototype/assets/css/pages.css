@@ -2658,7 +2658,7 @@ button.p-open-filter-badge.is-active {
   border: 0;
   text-align: left;
   cursor: pointer;
-  color: var(--fg-3);
+  color: var(--fg-2);
   font-size: var(--fs-sm);
   line-height: var(--lh-snug);
   transition: color .15s ease;
@@ -2705,6 +2705,18 @@ button.p-open-filter-badge.is-active {
 .p-apply2-side-list li.is-acked button {
   color: var(--slate-400);
 }
+
+/* 目前讀到的條文：文字轉深加粗，與 apply-3 一致 */
+/* 目前讀到的位置：主色標示，**不加粗**——
+   加粗會讓行寬跳動，捲動時整個清單跟著抖 */
+.p-apply2-side-list li.is-active button {
+  color: var(--national-700);
+}
+
+.p-apply2-side-list li.is-active .p-apply2-side-tick {
+  border-color: var(--national-700);
+}
+
 
 .p-apply2-side-text {
   flex: 1;
