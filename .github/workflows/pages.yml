@@ -1,0 +1,51 @@
+# ============================================================
+# GitHub Pages 自動發布（2026-09-21 建立）
+# ------------------------------------------------------------
+# 只發布 master 的 05_Prototype/，不是整個 repo——01_Raw_Input（機關提供的
+# .rp／.docx）、02_Spec、04_Handover 等內部文件不上線。
+#
+# 取代的舊做法：手動以 `master:05_Prototype` 建快照 commit 推到 main
+# （見 decisions.md 2026-09-18）。那個做法每次推 master 都要重做一次，
+# 漏做就會出現「本機對、線上舊」的落差，已實際發生過一次。
+# ============================================================
+name: Deploy Prototype to Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '05_Prototype/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:        # 也可在 Actions 頁手動觸發
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時只跑一個部署；排隊中的舊的直接取消，但不中斷進行中的
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # .nojekyll：不加的話 Jekyll 會忽略底線開頭的檔案／資料夾
+      - name: Add .nojekyll
+        run: touch 05_Prototype/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: 05_Prototype
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
