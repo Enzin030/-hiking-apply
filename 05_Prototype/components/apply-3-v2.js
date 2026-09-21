@@ -34,6 +34,31 @@ function generateDateOptions() {
   return list;
 }
 
+/* 由公告事由文字反推關閉日期區間。
+   正式站文字格式：「公告自115年9月30日起至10月1日止（為期2天），…」
+   民國年 +1911；迄日若省略年月則沿用起日的年（跨月時月份會另外寫出）。
+   解析不出來就回傳空字串，讓樣板只顯示事由不顯示日期——不猜。 */
+function parseClosureDateRange(text) {
+  const m = String(text).match(/自(\d{2,3})年(\d{1,2})月(\d{1,2})日起至(?:(\d{2,3})年)?(?:(\d{1,2})月)?(\d{1,2})日止/);
+  if (!m) return "";
+  const pad = v => String(v).padStart(2, "0");
+  const y1 = Number(m[1]) + 1911;
+  const y2 = m[4] ? Number(m[4]) + 1911 : y1;
+  const mo2 = m[5] ? m[5] : m[2];
+  return `${y1}/${pad(m[2])}/${pad(m[3])}-${y2}/${pad(mo2)}/${pad(m[6])}`;
+}
+
+/* 次路線專屬路線圖。正式站 apply_1_4.aspx 的 con_imgMap 逐次路線給圖，
+   目前只取回 2~5 天那張（2026-09-21 自正式站下載）；
+   其餘次路線的圖 [待確認]，沒有就只顯示主路線全線圖，不拿別張頂替。 */
+const SUBROUTE_MAPS = {
+  "2": {
+    src: "images/ys_玉山線_2-5天路線圖.png",
+    alt: "2~5天(塔塔加 - 玉山線 - 塔塔加) 路線圖",
+    caption: "2~5天(塔塔加 - 玉山線 - 塔塔加)",
+  },
+};
+
 // 玉山線 2~5 天路線節點圖
 const YUSHAN_PLANNER_GRAPH = {
   start: "排雲登山服務中心",
@@ -69,6 +94,10 @@ thPage({
     else if (qRoute === "np-3" || qCid === "3") defaultClimb = "3";
 
     return {
+      // 0. 路線圖彈窗
+      mapOpen: false,
+      mapTabKey: "sub",
+
       // 1. 基本路線控制項
       teams_name: "天眼1隊",
       climblinemain: "1", // 1: 玉山線
@@ -213,9 +242,64 @@ thPage({
       return Array.isArray(lv.desc) ? lv.desc : [lv.desc];
     },
 
-    // 本路線的公告關閉事由，逐條列出；無公告時整塊不顯示
+    /* 正式站「備註」欄有兩段：裝備檢查表下載，以及該路線自己的說明文字。
+       後者存在 OPEN_STATUS_ROWS 的 note，句尾的 [登山路線路況][園區路況]
+       是兩個連結被擷取時壓成純文字的殘留，這裡切開還原成連結。 */
+    routeNoteText() {
+      const raw = (this.openRow && this.openRow.note) || "";
+      return raw.replace(/\s*\[登山路線路況\]\s*\[園區路況\]\s*$/, "").trim();
+    },
+
+    /* 路線圖：正式站在「登山主路線／次路線」旁有一顆「<主路線>地圖」按鈕，
+       點開顯示該次路線的路線圖。這裡給兩組圖並以 tab 切換——
+         1. 本次路線圖：正式站 con_imgMap 的那張（已下載到 images/）
+         2. 主路線全線圖：沿用登山路線介紹（information_1）的 ROUTE_INTRO_DATA，
+            以 openRow.mainRoute 對該管處的路線名稱，可能有多張（中西／中東）
+       單日往返在正式站也有自己的建議路線圖，故同樣走這組 tab，不分開處理。 */
+    routeMapTabs() {
+      const tabs = [];
+      const sub = SUBROUTE_MAPS[this.climbline];
+      if (sub) {
+        tabs.push({ key: "sub", label: "本路線路線圖", images: [sub] });
+      }
+      const data = window.ROUTE_INTRO_DATA || {};
+      const org = data[(this.openRow && this.openRow.filterKey) || "yushan"];
+      const main = (this.openRow && this.openRow.mainRoute) || "";
+      const hit = org && org.routes ? org.routes.find(r => r.name === main) : null;
+      if (hit && hit.images && hit.images.length) {
+        tabs.push({ key: "main", label: main + "全線圖", images: hit.images });
+      }
+      return tabs;
+    },
+
+    activeMapTab() {
+      const tabs = this.routeMapTabs;
+      if (!tabs.length) return null;
+      return tabs.find(t => t.key === this.mapTabKey) || tabs[0];
+    },
+
+    // 玉管處兩個路況連結，正式站在備註欄末尾固定出現
+    routeConditionLinks() {
+      if (!this.openRow) return [];
+      return [
+        { text: "登山路線路況", href: "https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5" },
+        { text: "園區路況", href: "https://www.ysnp.gov.tw/Highway/C001300" }
+      ];
+    },
+
+    /* 本路線的公告關閉事由。正式站呈現為「關閉日期：<起>-<迄>」紅字一行，
+       下一行「原因：」接一個連到公告內文的連結。
+       OPEN_STATUS_ROWS 的 closures 只存事由文字，日期與公告 id 沒有被擷取進來，
+       所以日期由事由文字裡的民國日期反推，公告連結 [待確認]——
+       正式站此例為 news_0_1.aspx?id=4800，但 id 無法由現有資料推得，
+       故連結一律指向公告列表頁，不編造 id。 */
     routeClosures() {
-      return (this.openRow && this.openRow.closures) || [];
+      const list = (this.openRow && this.openRow.closures) || [];
+      return list.map(text => ({
+        text,
+        dateRange: parseClosureDateRange(text),
+        href: "notice.html"
+      }));
     },
 
     routeData() {

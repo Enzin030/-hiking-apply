@@ -86,6 +86,12 @@
                   <option v-for="sr in subRoutes" :key="sr.value" :value="sr.value">{{ sr.text }}</option>
                 </select>
               </th-hybrid-select>
+              <!-- 正式站在路線欄位旁有一顆「<主路線>地圖」按鈕，點開看路線圖 -->
+              <p class="th-field-hint" v-if="routeMapTabs.length">
+                <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="mapOpen = true">
+                  <i class="fa-solid fa-map mr-2" aria-hidden="true"></i>{{ openRow ? openRow.mainRoute : '玉山線' }}地圖
+                </button>
+              </p>
             </div>
 
             <div class="th-field">
@@ -118,48 +124,69 @@
                  難度等級 ← OPEN_STATUS_ROWS 該路線的 level（open.aspx 擷取）
                  說明／適合對象／建議裝備 ← TRAIL_LEVELS 按等級查表（linelevel.aspx 那組）
                原本是把第 3 級的文字寫死又標成「第 5 級」，換路線不會變。 -->
+          <!-- 關閉公告：正式站放在路線資訊表「之上」，紅底 alert。
+               日期為紅字，事由連到公告內文。 -->
+          <div class="p-apply3-closure" v-if="routeClosures.length">
+            <div class="p-apply3-closure-item" v-for="(c, cIdx) in routeClosures" :key="cIdx">
+              <p v-if="c.dateRange" class="p-apply3-closure-date">
+                <i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>關閉日期：{{ c.dateRange }}
+              </p>
+              <p class="p-apply3-closure-reason">
+                原因：<a class="p-apply3-closure-link" :href="c.href" target="_blank" rel="noopener noreferrer">{{ c.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（另開新視窗）</span></a>
+              </p>
+            </div>
+          </div>
+
           <div class="th-table-wrap" v-if="trailLevel">
-            <table class="th-table">
+            <table class="th-table tbl-routeinfo">
+              <caption>本路線的難度等級與行前準備資訊</caption>
               <tbody>
-                <tr><th scope="row">難度等級</th><td>第 {{ trailLevel.level }} 級</td></tr>
+                <tr>
+                  <th scope="row">難度等級</th>
+                  <td><span :class="'th-level lv-' + trailLevel.level">第 {{ trailLevel.level }} 級</span></td>
+                </tr>
                 <tr>
                   <th scope="row">說明</th>
                   <td>
-                    <template v-if="trailLevelDesc.length > 1">
-                      <ol class="p-apply3-desc-list">
-                        <li v-for="(d, dIdx) in trailLevelDesc" :key="dIdx">{{ d }}</li>
-                      </ol>
-                    </template>
+                    <ol v-if="trailLevelDesc.length > 1" class="th-cell-ol">
+                      <li v-for="(d, dIdx) in trailLevelDesc" :key="dIdx">{{ d }}</li>
+                    </ol>
                     <template v-else>{{ trailLevelDesc[0] }}</template>
                   </td>
                 </tr>
-                <tr><th scope="row">適合對象</th><td>{{ trailLevel.who }}</td></tr>
+                <tr>
+                  <th scope="row">適合對象</th>
+                  <td>{{ trailLevel.who }}</td>
+                </tr>
+                <!-- 建議裝備：行文中的參考指引。0~2 級是純文字（kit），
+                     3~6 級是「參考＋連結＋kitRef」三段連寫，中間不可留空白，
+                     否則 Vue 的 whitespace condense 會多折一個空格出來。 -->
                 <tr>
                   <th scope="row">建議裝備</th>
                   <td>
-                    <template v-if="trailLevel.kit">{{ trailLevel.kit }}</template>
-                    <template v-else>參考<a :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表</a>{{ trailLevel.kitRef }}</template>
+                    <p v-if="trailLevel.kit" class="th-kit">{{ trailLevel.kit }}</p>
+                    <p v-else class="th-kit">參考<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（PDF，另開新視窗）</span></a>{{ trailLevel.kitRef }}</p>
                   </td>
                 </tr>
+                <!-- 備註：正式站這格有三段——檢查表下載、該路線自己的說明、
+                     以及固定的兩個路況連結。下載是動作故用按鈕型連結，
+                     與上一列「建議裝備」的行文連結分道處理。 -->
                 <tr>
                   <th scope="row">備註</th>
-                  <td>歡迎下載：<a :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表</a></td>
+                  <td class="p-apply3-remark">
+                    <a class="th-btn th-btn-ghost th-btn-sm" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">
+                      <i class="fa-solid fa-download mr-2" aria-hidden="true"></i>下載個人及團體裝備檢查表<span class="th-sr-only">（PDF，另開新視窗）</span>
+                    </a>
+                    <p v-if="routeNoteText" class="p-apply3-remark-note">{{ routeNoteText }}</p>
+                    <p class="p-apply3-remark-links">
+                      <a v-for="l in routeConditionLinks" :key="l.href" class="th-inline-link" :href="l.href" target="_blank" rel="noopener noreferrer">{{ l.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="th-sr-only">（另開新視窗）</span></a>
+                    </p>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- 關閉日期公告：正式站是 table 之外的獨立 alert 區塊；
-               本路線無公告時整塊不出現 -->
-          <div class="v2-notice v2-notice-danger mb-0" v-if="routeClosures.length">
-            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-            <div>
-              <strong>本路線公告</strong>
-              <ul class="p-apply3-closure-list">
-                <li v-for="(c, cIdx) in routeClosures" :key="cIdx">{{ c }}</li>
-              </ul>
-            </div>
-          </div>
           </div>
         </section>
 
@@ -442,6 +469,37 @@
     </div>
   </th-page-shell>
 
+  <!-- 路線圖彈窗：一條次路線可能有「本路線圖」與「主路線全線圖」兩組，
+       用 th-chip 當 tab 切換（與 information_1 的路線選擇同一套視覺語言）。 -->
+  <th-modal v-if="mapOpen" :title="(openRow ? openRow.mainRoute : '玉山線') + '地圖'" :meta="openRow ? openRow.name : ''" @close="mapOpen = false">
+    <div class="th-chip-row" role="tablist" aria-label="路線圖切換" v-if="routeMapTabs.length > 1">
+      <button
+        v-for="t in routeMapTabs"
+        :key="t.key"
+        type="button"
+        role="tab"
+        :aria-selected="activeMapTab && activeMapTab.key === t.key"
+        :class="['th-chip', { 'is-active': activeMapTab && activeMapTab.key === t.key }]"
+        @click="mapTabKey = t.key">
+        {{ t.label }}
+      </button>
+    </div>
+
+    <div class="p-apply3-map-grid" v-if="activeMapTab">
+      <figure v-for="(img, imgIdx) in activeMapTab.images" :key="imgIdx" class="p-apply3-map-figure">
+        <div class="p-apply3-map-wrap">
+          <img :src="img.src" :alt="img.alt" loading="lazy" class="p-apply3-map-img" />
+        </div>
+        <figcaption class="p-apply3-map-caption">
+          <span>{{ img.caption || img.alt }}</span>
+          <a :href="img.src" target="_blank" rel="noopener noreferrer" class="th-inline-link" title="開啟高解析度原圖">
+            <i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>查看原圖<span class="th-sr-only">（另開新視窗）</span>
+          </a>
+        </figcaption>
+      </figure>
+    </div>
+  </th-modal>
+
   <th-quick-nav></th-quick-nav>
   <th-back-to-top></th-back-to-top>
   <th-footer></th-footer>
@@ -450,5 +508,6 @@
 <script src="components/RouteData.js"></script>
 <script src="components/TrailLevelData.js"></script>
 <script src="components/OpenStatusData.js"></script>
+<script src="components/RouteIntroData.js"></script>
 </body>
 </html>

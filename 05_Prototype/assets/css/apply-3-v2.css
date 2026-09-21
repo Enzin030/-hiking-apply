@@ -47,7 +47,6 @@
   font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--slate-900);
-  letter-spacing: var(--tracking-tight);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -58,7 +57,7 @@
   margin: 0;
   color: var(--slate-500);
   font-size: var(--fs-sm);
-  line-height: var(--lh-normal);
+  line-height: var(--lh-base);
 }
 
 /* ---------- 表單欄位格線 ---------- */
@@ -88,7 +87,7 @@
   border: 1px solid var(--slate-200);
   color: var(--slate-700);
   font-size: var(--fs-sm);
-  line-height: var(--lh-relaxed);
+  line-height: var(--lh-loose);
   margin-bottom: 20px;
 }
 
@@ -463,20 +462,126 @@
   }
 }
 
-/* ---------- 路線資訊表內的分項清單 ----------
-   Tailwind preflight 會清掉 list-style，這裡明確補回 */
-.p-apply3-desc-list {
-  list-style: decimal;
-  padding-left: 1.4em;
+/* ---------- 路線資訊表：左標頭欄寬 ----------
+   這是「列標頭」型表格（th scope=row），不是 .tbl-level 那種有 thead 的四欄表，
+   所以指定 tbody th 而非 th:nth-child(n)。
+   .th-table 沒有 table-layout: fixed，百分比對 th 只是建議值——td 內容一長
+   瀏覽器仍會撐寬標頭欄，故一併 nowrap（標籤最長 4 字，不會被截）。 */
+.tbl-routeinfo tbody th {
+  width: 22%;
+  white-space: nowrap;
+  color: var(--fg-1);
+  font-weight: 700;
+  background: var(--bg-mist-2);
+}
+
+@media (max-width: 640px) {
+  .tbl-routeinfo tbody th {
+    width: 30%;
+  }
+}
+
+/* ---------- 關閉公告（表格上方） ----------
+   正式站是紅底 alert，日期一行、事由一行且事由連到公告內文。 */
+.p-apply3-closure {
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  border-radius: var(--r-md);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.p-apply3-closure-item + .p-apply3-closure-item {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--danger-border);
+}
+
+.p-apply3-closure-date {
+  margin: 0;
+  font-weight: 700;
+  color: var(--danger-fg);
+  font-size: var(--fs-sm);
+}
+
+/* 事由字級與上一行日期一致（皆 --fs-sm）。 */
+.p-apply3-closure-reason {
+  margin: 4px 0 0;
+  color: var(--fg-1);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+}
+
+/* 事由本身就是連結，但維持黑字——紅底區塊裡再放主色連結會有兩個強調色打架；
+   可點性改由底線與外開 icon 表達。 */
+.p-apply3-closure-link {
+  color: var(--fg-1);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.p-apply3-closure-link:hover {
+  color: var(--national-900);
+  background: var(--national-50);
+}
+
+/* ---------- 備註欄三段 ----------
+   下載（動作）／路線說明（內文）／路況連結（外部參考）字級一致，
+   都跟表格本體同為 --fs-sm，不因為角色不同就改大小。 */
+.p-apply3-remark-note {
+  margin: 10px 0 0;
+  color: var(--fg-1);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+}
+
+.p-apply3-remark-links {
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: var(--fs-sm);
+}
+
+/* 表格內的下載按鈕不放大字級 */
+.p-apply3-remark .th-btn-sm {
+  font-size: var(--fs-sm);
+}
+
+/* ---------- 路線地圖摺疊面板 ----------
+   呈現比照 information_1 的路線圖資區塊。 */
+.p-apply3-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.p-apply3-map-figure {
   margin: 0;
 }
 
-.p-apply3-closure-list {
-  list-style: disc;
-  padding-left: 1.4em;
-  margin: 4px 0 0;
+.p-apply3-map-wrap {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: var(--bg-2);
 }
 
-.p-apply3-closure-list li + li {
-  margin-top: 4px;
+.p-apply3-map-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.p-apply3-map-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
 }
