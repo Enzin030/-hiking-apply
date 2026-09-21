@@ -92,98 +92,98 @@
   <div v-else data-screen-label="02 同意書（國家公園）">
     <th-header active="apply"></th-header>
     <th-page-shell :trail="['登山申請', applyCrumb, '申請須知與同意書']" title="申請須知與同意書" :bare="true">
+      <!-- 步驟依正式站 apply_1_4.aspx 的實際流程拆分（2026-09-21 實走）：
+           原本第 3 步「行程登記」在正式站是三個步驟，同頁切換 -->
       <template #stepper>
-        <th-stepper :current="2"></th-stepper>
+        <th-stepper :current="2" :steps="[
+          { n: 1, title: '選擇路線' },
+          { n: 2, title: '閱讀同意書' },
+          { n: 3, title: '行程規劃' },
+          { n: 4, title: '人員資料' },
+          { n: 5, title: '確認資料' },
+          { n: 6, title: '申請完成' }
+        ]"></th-stepper>
       </template>
 
-      <div v-if="routeData" class="p-apply2-route-brief">
-        <div>
-          <span class="p-apply2-route-brief-label">申請路線</span>
-          <strong>{{ routeData.displayName || routeData.name }}</strong>
-          <span>{{ routeData.routePath || routeData.subroute }}</span>
+      <!-- 路線資訊：沿用共用元件 .th-filter 的版型（標籤在上、值在下、橫向排列），
+           同 news.html／information_place.html 的查詢區 -->
+      <div v-if="routeData" class="th-filter-grid p-apply2-route">
+        <div class="th-filter-field">
+          <span class="th-filter-label">登山主路線</span>
+          <span class="p-apply2-route-value">{{ routeData.routeGroup || routeData.peak }}</span>
         </div>
-        <div>
-          <span class="p-apply2-route-brief-label">路線與天數</span>
-          <strong>{{ routeData.routeGroup || routeData.peak }}</strong>
-          <span>{{ routeData.durationLabel || (routeData.days === 1 ? '單日往返' : routeData.days + '天' + (routeData.days - 1) + '夜') }}</span>
+        <div class="th-filter-field">
+          <span class="th-filter-label">次路線</span>
+          <span class="p-apply2-route-value">{{ routeData.displayName || routeData.name }}</span>
         </div>
       </div>
 
-      <div class="p-apply2-layout">
-        <div>
-          <section v-for="(s, idx) in sections" :key="s.id" :id="'sec-' + s.id"
-                   :class="['p-apply2-sec', { 'is-acked': acked[s.id] }]">
-            <div class="p-apply2-sec-head">
-              <div class="p-apply2-sec-head-left">
-                <div class="p-apply2-sec-num">
-                  <i v-if="acked[s.id]" class="fa-solid fa-check" aria-hidden="true"></i>
-                  <template v-else>{{ idx + 1 }}</template>
-                </div>
-                <div class="p-apply2-sec-titles">
-                  <span class="p-apply2-sec-kicker">{{ s.label }}</span>
-                  <h2 class="p-apply2-sec-title">{{ s.title }}</h2>
-                </div>
-              </div>
-              <div class="p-apply2-sec-head-right">
-                <label class="p-apply2-sec-check" @click.stop>
-                  <input type="checkbox" :checked="acked[s.id]" @change="toggleAck(s.id)" />
-                  <span class="p-apply2-sec-ack-box"></span>
-                  <span>{{ acked[s.id] ? '已確認' : '確認' }}</span>
-                </label>
-              </div>
-            </div>
+      <!-- 文案取自正式站 apply_1_2.aspx 原文（2026-09-21 實走擷取） -->
+      <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug p-apply2-lead">
+        須先點閱以下說明後，始可進行後續之申請作業
+      </p>
 
-            <div class="p-apply2-sec-body">
-              <!-- 條文內容是 HTML 字串（來自 CONSENT_BY_ORG 的 contentHtml） -->
-              <div class="p-apply2-consent-html" v-html="clauseHtml(s)"></div>
+      <div class="p-apply2-layout">
+        <!-- 條文區：整條可點，無卡片 -->
+        <div class="p-apply2-main">
+          <!-- id 必須是 sec-<id>：components/apply-2.js 的 scrollToSection()
+               寫死 document.getElementById("sec-" + id)，改前綴會定位不到 -->
+          <section v-for="(s, idx) in sections" :key="s.id" :id="'sec-' + s.id"
+                   :class="['p-apply2-item', { 'is-acked': acked[s.id] }]"
+                   role="button" tabindex="0"
+                   :aria-pressed="acked[s.id] ? 'true' : 'false'"
+                   @click="toggleAck(s.id)"
+                   @keydown.enter.prevent="toggleAck(s.id)"
+                   @keydown.space.prevent="toggleAck(s.id)">
+            <div class="p-apply2-item-lead" aria-hidden="true">
+              <span class="p-apply2-item-box">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </div>
+            <div class="p-apply2-item-body">
+              <div class="p-apply2-item-text" v-html="clauseHtml(s)"></div>
             </div>
           </section>
         </div>
 
-        <!-- 側欄目錄（scroll-spy） -->
-        <aside class="p-apply2-toc">
-          <h2><i class="ph-bold ph-list-numbers" aria-hidden="true"></i>閱讀定位</h2>
-          <div class="p-apply2-confirm-meter">
-            <div class="p-apply2-progress">
-              <div class="p-apply2-progress-bar" :style="{ width: (ackedCount / total) * 100 + '%' }"></div>
-            </div>
-            <div class="p-apply2-progress-label">
-              <span>已確認 <strong>{{ ackedCount }}/{{ total }}</strong></span>
-              <span>{{ Math.round((ackedCount / total) * 100) }}%</span>
-            </div>
+        <!-- 側欄：無底無框，純清單 -->
+        <aside class="p-apply2-side">
+          <div class="p-apply2-side-inner">
+            <p class="p-apply2-side-head">
+              閱讀定位
+              <span class="p-apply2-side-count" :class="{ 'is-done': canSubmit }">
+                <span class="num">{{ ackedCount }}</span>/{{ total }}
+              </span>
+            </p>
+            <ol class="p-apply2-side-list">
+              <li v-for="(s, i) in sections" :key="s.id"
+                  :class="[{ 'is-acked': acked[s.id] }, { 'is-active': i === activeIndex }]">
+                <!-- 用條文原文開頭，不用 s.excerpt。
+                     excerpt 來自 apply-2.js 的 extractSmartTopic()，那是用規則「猜」主題
+                     （抽引號內名稱、砍開頭動詞），猜出來的東西資料裡並不存在——
+                     19 條裡出現三次「排雲山莊」就是抽到引號內的設施名而非條文主旨。
+                     勾勾放文字後面：放前面會把每列文字起點推開，未確認的列就對不齊。 -->
+                <button type="button"
+                        :title="clauseHtml(s).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()"
+                        @click="scrollToSection(s.id)">
+                  <span class="p-apply2-side-text">{{ clauseHtml(s).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim() }}</span>
+                  <span class="p-apply2-side-tick" aria-hidden="true"></span>
+                </button>
+              </li>
+            </ol>
           </div>
-          <ul class="p-apply2-toc-list">
-            <li v-for="(s, i) in sections" :key="s.id"
-                :class="[{ 'is-acked': acked[s.id] }, { 'is-active': i === activeIndex }]">
-              <button @click="scrollToSection(s.id)">
-                <span class="p-apply2-toc-dot"><span>{{ i + 1 }}</span></span>
-                <span class="p-apply2-toc-text">
-                  <span class="p-apply2-toc-kicker">{{ s.label }}</span>
-                  <span>{{ s.title }}</span>
-                </span>
-              </button>
-            </li>
-          </ul>
         </aside>
       </div>
 
-      <!-- 置底列 -->
-      <div :class="['p-apply2-footbar', { 'is-ready': canSubmit }]">
-        <div class="p-apply2-footbar-status">
-          <div class="p-apply2-footbar-icon">
-            <i :class="canSubmit ? 'fa-solid fa-check' : 'fa-solid fa-list-check'" aria-hidden="true"></i>
-          </div>
-          <div>
-            <div>已確認 <span class="num">{{ ackedCount }}</span> / {{ total }} 組事項</div>
-          </div>
-        </div>
-
-        <div class="p-apply2-footbar-actions">
-          <button class="th-btn th-btn-ghost" @click="goApply1">
-            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
-          </button>
-          <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">同意並下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-        </div>
+      <!-- 置底列：隨頁面流動，按鈕置中，無上方分隔線
+           （進度已在側欄標題，這裡不重複） -->
+      <!-- 按鈕文案照正式站 apply_1_2.aspx：同意／不同意，不是上一步／下一步。
+           「不同意」等同放棄申請，退回路線選擇頁。 -->
+      <div class="p-apply2-actions">
+        <button class="th-btn th-btn-ghost" @click="goApply1">不同意</button>
+        <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">
+          同意<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
       </div>
     </th-page-shell>
 
