@@ -34,6 +34,14 @@ function generateDateOptions() {
   return list;
 }
 
+/* 公告事由 → 最新消息 id 的對照。正式站每則 closures 都連到 news_0_1.aspx?id=N，
+   但 open.aspx 擷取時只留下事由文字，id 沒帶進來。
+   這裡只登記已經查到 id 的那一則（2026-09-21 自正式站取得），
+   其餘 [待確認]，查無對照就連到公告列表頁，不編造 id。 */
+const CLOSURE_NEWS_IDS = {
+  "公告自115年9月30日起至10月1日止（為期2天），暫停本園生態保護區「玉山主、群峰線」之入園活動。": "4800",
+};
+
 /* 由公告事由文字反推關閉日期區間。
    正式站文字格式：「公告自115年9月30日起至10月1日止（為期2天），…」
    民國年 +1911；迄日若省略年月則沿用起日的年（跨月時月份會另外寫出）。
@@ -290,16 +298,19 @@ thPage({
     /* 本路線的公告關閉事由。正式站呈現為「關閉日期：<起>-<迄>」紅字一行，
        下一行「原因：」接一個連到公告內文的連結。
        OPEN_STATUS_ROWS 的 closures 只存事由文字，日期與公告 id 沒有被擷取進來，
-       所以日期由事由文字裡的民國日期反推，公告連結 [待確認]——
-       正式站此例為 news_0_1.aspx?id=4800，但 id 無法由現有資料推得，
-       故連結一律指向公告列表頁，不編造 id。 */
+       所以日期由事由文字裡的民國日期反推。
+       公告連結：正式站此例為 news_0_1.aspx?id=4800，雛形已在 NewsData 建同 id
+       的公告，故直接連過去；其餘公告的 id [待確認]，查無對照時連公告列表頁。 */
     routeClosures() {
       const list = (this.openRow && this.openRow.closures) || [];
-      return list.map(text => ({
-        text,
-        dateRange: parseClosureDateRange(text),
-        href: "notice.html"
-      }));
+      return list.map(text => {
+        const id = CLOSURE_NEWS_IDS[text];
+        return {
+          text,
+          dateRange: parseClosureDateRange(text),
+          href: id ? `news_0_1.html?id=${id}` : "news_0.html"
+        };
+      });
     },
 
     routeData() {
