@@ -606,11 +606,26 @@
   color: var(--fg-3);
 }
 
-/* 卡片標題旁的（操作說明）連結：不搶標題的視覺重量 */
-.p-apply3-help {
-  margin-left: 6px;
+/* 卡片標題旁的「操作說明」連結：icon 在左、與標題拉開距離，
+   字級與內文一致（--fs-sm），不跟著標題放大也不搶標題的視覺重量。
+   不用外開 icon——那顆是給行文中的連結標示另開視窗用的，
+   放在標題旁會讓一行裡出現兩個圖示，反而雜。 */
+.v2-main a.p-apply3-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 12px;
   font-size: var(--fs-sm);
   font-weight: 400;
+  color: var(--national-800);
+  text-decoration: none;
+}
+
+.v2-main a.p-apply3-help:hover {
+  color: var(--national-900);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
 }
 
 /* ---------- 本頁連結字級一律 --fs-sm ----------
