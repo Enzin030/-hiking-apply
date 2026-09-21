@@ -2,24 +2,23 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
-<title>登山線上申請｜行程登記及登山申請 — 臺灣登山申請一站式服務網</title>
+<title>登山線上申請｜行程規劃 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  階段 3 逐頁遷移（apply-3）
+  apply-3.html — 申請流程步驟三「行程規劃」
   ------------------------------------------------------------
-  這三行必須靜態寫在頁面，順序不可調換，**不要試著收斂進 head-loader**
-  （已驗證過會壞，理由見 assets/includes/head.html 註解）。
-  `index.css` 是唯一的靜態樣式表，以 @import 串接四層（tokens → base →
-  components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
-  它之前，該檔已於階段 4 退場，**不要再加回來**。
+  對應正式站 apply_1_4.aspx 步驟一（行程規劃）。2026-09-21 依正式站
+  實走結果重做，取代原本的四步驟版本。
 
-  .p3-* 已依 §6.2 改名為 .p-apply3-* 並複製進 pages.css（75 條，逐條覆核過
-  @media 層級與宣告內容）。
-  四處靜態 inline style 收成 .p-apply3-days-select／-id-cell／-idtype-select
-  ／-plan-textarea，本頁沒有依資料算出來的 style。
+  區塊劃分依正式站（block_title 只有兩個）：
+    1. 路線與基本資料   隊名、主次路線、天數、日期、難度等級表、關閉公告
+    2. 路線規劃         逐點規劃 ＋ 行前講習與通訊設備（正式站同屬一塊）
+    3. 警政署入山證申請 入山事由、前往地點、詞庫、登山計畫書
 
-  **falsy 判空的處置逐條列在 components/apply-3.js 檔頭**，其中
-  `routeData?.diff || 3` 是原碼既有的缺陷（難度有第 0 級），照搬未改。
+  資料來源：
+    難度等級 ← OPEN_STATUS_ROWS（open.aspx）
+    等級說明 ← TRAIL_LEVELS（linelevel.aspx）
+    路線圖   ← ROUTE_INTRO_DATA（登山路線介紹）＋ 正式站次路線圖
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -29,339 +28,553 @@
 </head>
 <body>
 
-<!-- 掛載契約見 assets/app-boot.js。data-screen-label 沿用原 JSX 最外層那個 div -->
-<div id="th-app" v-cloak data-screen-label="03 行程登記">
-
+<div id="th-app" v-cloak data-screen-label="03 行程規劃">
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, '行程登記及登山申請']" title="行程登記及登山申請" :bare="true">
-
+  <th-page-shell :trail="['登山申請', applyCrumb, '行程規劃']" title="行程規劃" :bare="true">
     <template #stepper>
-      <th-stepper :current="3"></th-stepper>
+      <th-stepper :current="3" :steps="[
+        { n: 1, title: '選擇路線' },
+        { n: 2, title: '閱讀同意書' },
+        { n: 3, title: '行程規劃' },
+        { n: 4, title: '人員資料' },
+        { n: 5, title: '確認資料' },
+        { n: 6, title: '申請完成' }
+      ]"></th-stepper>
     </template>
 
-    <div class="p-apply3-layout">
-      <div>
-        <!-- 路線預覽 -->
-        <div class="p-apply3-route-card">
-          <div class="p-apply3-route-head">
-            <div class="p-apply3-route-thumb">
-              <img :src="routeData?.image || 'assets/route-yushan.png'" alt="" />
-              <span class="p-apply3-route-thumb-tag">第 {{ routeData?.diff || 3 }} 級</span>
-            </div>
-            <div class="p-apply3-route-info">
-              <h2>{{ route }}</h2>
-              <div class="p-apply3-route-info-sub">{{ subroute }}</div>
-              <div class="p-apply3-route-tags">
-                <span class="p-apply3-route-tag"><i class="ph-bold ph-buildings" aria-hidden="true"></i>{{ unit }}</span>
-                <span class="p-apply3-route-tag"><i class="ph-bold ph-mountains" aria-hidden="true"></i>{{ routeData?.peak || '玉山主峰 3,952m' }}</span>
-                <span class="p-apply3-route-tag"><i class="fa-regular fa-clock" aria-hidden="true"></i>建議 {{ routeData?.days || 2 }} 天 {{ Math.max(0, (routeData?.days || 2) - 1) }} 夜</span>
-                <span v-if="routeData?.status === 'lottery'" class="p-apply3-route-tag tag-warn"><i class="fa-solid fa-shuffle" aria-hidden="true"></i>抽籤路線</span>
-              </div>
-            </div>
-            <button class="p-apply3-route-change">
-              <i class="fa-solid fa-pen" aria-hidden="true"></i> 變更
-            </button>
-          </div>
-          <div class="p-apply3-route-warn">
-            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-            <div>
-              <strong>請注意：</strong>本系統公開時段為每日 23:00 至次日 07:00 暫停受理申請。<template v-if="routeData?.status === 'lottery'">本路線需參加抽籤，請依管理處公告時程辦理。</template><template v-else>請確認入園日期、行程天數與每日路線規劃符合管理處規定。</template>
-            </div>
-          </div>
-        </div>
+    <!-- 2026-09-21 移除路線資訊區：步驟一本身就有主/次路線下拉可修改，
+         上方再顯示一次是重複；apply-2 也已移除同樣的區塊。 -->
 
-        <!-- 1 行程基本資料 -->
-        <section class="p-apply3-section">
-          <div class="p-apply3-section-head">
-            <span class="p-apply3-section-num">1</span>
-            <div class="p-apply3-section-titles">
-              <h2 class="p-apply3-section-title">行程基本資料</h2>
-              <p class="p-apply3-section-sub">請確認入山日期與整體行程天數</p>
+    <div class="p-apply3-layout">
+      <!-- 主欄表單內容 -->
+      <div class="p-apply3-main">
+
+        <!-- 區塊 1：路線與基本資料 -->
+        <section id="sec-route" class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">路線與基本資料</h2>
+          </div>
+          <div class="th-card-body grid gap-4">
+
+          <!-- 系統受理時段與草稿提醒 -->
+          <div class="th-callout">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <div>
+              <strong>請注意：</strong>國家公園路線<strong>於每日 23:00 至隔日 07:00 暫停受理申請</strong>。如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。
             </div>
           </div>
-          <div class="p-apply3-section-body">
-            <div class="p-apply3-grid">
-              <div class="th-field p-apply3-grid-full">
-                <label class="th-label"><span class="req">*</span>入山日期</label>
-                <div class="p-apply3-date-row">
-                  <!--
-                    2026-09-10：原生 input[type=date] 改用 th-date-picker（flatpickr）。
-                    bare 是因為外層的 .th-field 與 <label> 本來就在這裡，
-                    不 bare 會多一層 flex column 把橫向的「日期 → 天數」排版拆開。
-                  -->
-                  <th-date-picker :bare="true" input-class="p-apply3-date-input"
-                                  :model-value="startDate"
-                                  @update:model-value="startDate = $event"></th-date-picker>
-                  <i class="p-apply3-date-arrow fa-solid fa-arrow-right" aria-hidden="true"></i>
-                  <th-hybrid-select><select class="th-select p-apply3-days-select" :value="days" @change="days = Number($event.target.value)">
-                    <option v-for="n in [1, 2, 3, 4, 5, 6, 7]" :key="n" :value="n">{{ n }} 天</option>
-                  </select></th-hybrid-select>
-                </div>
-                <div class="p-apply3-date-result">
-                  <span>入山 <strong>{{ startDate }}</strong></span>
-                  <span>下山 <strong>{{ endDate }}</strong></span>
-                  <span>共 <strong>{{ days }} 天 {{ Math.max(0, days - 1) }} 夜</strong></span>
-                </div>
-              </div>
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>申請目的</label>
-                <th-hybrid-select><select class="th-select" :value="purpose" @change="purpose = $event.target.value">
-                  <option value="">請選擇申請目的</option>
-                  <option value="hiking">登山活動</option>
-                  <option value="research">學術研究</option>
-                  <option value="news">新聞採訪</option>
-                  <option value="other">其他（請於備註欄說明）</option>
-                </select></th-hybrid-select>
-              </div>
-              <div class="th-field">
-                <label class="th-label">細部路線圖（選填）</label>
-                <div class="th-input-group">
-                  <i class="icon fa-solid fa-paperclip" aria-hidden="true"></i>
-                  <input type="text" class="th-input" placeholder="可另上傳 GPX 軌跡檔" />
-                </div>
-              </div>
+
+          <div class="p-apply3-grid">
+            <div class="th-field">
+              <label class="th-label" for="con_teams_name">
+                <span><span class="req">*</span>隊名</span>
+              </label>
+              <input id="con_teams_name" type="text" class="th-input" v-model="teams_name" maxlength="50" placeholder="請輸入隊名" />
             </div>
+
+            <div class="th-field">
+              <label class="th-label" for="con_climblinemain">
+                <span><span class="req">*</span>登山主路線</span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_climblinemain" class="th-select" v-model="climblinemain">
+                  <option v-for="r in mainRoutes" :key="r.value" :value="r.value">{{ r.text }}</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <div class="th-field">
+              <label class="th-label" for="con_climbline">
+                <span><span class="req">*</span>次路線</span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_climbline" class="th-select" v-model="climbline">
+                  <option v-for="sr in subRoutes" :key="sr.value" :value="sr.value">{{ sr.text }}</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <div class="th-field">
+              <label class="th-label" for="con_sumday">
+                <span><span class="req">*</span>登山總日數</span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_sumday" class="th-select" v-model="sumday">
+                  <option v-for="s in sumdayOptions" :key="s.value" :value="s.value">{{ s.text }}</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <div class="th-field">
+              <label class="th-label" for="con_applystart">
+                <span><span class="req">*</span>入園日期</span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_applystart" class="th-select" v-model="applystart">
+                  <option value="">請選擇入園日</option>
+                  <option v-for="d in dateOptions" :key="d" :value="d">{{ d }}</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <div class="th-field">
+              <label class="th-label">
+                <span>離開園區日期（系統自動計算）</span>
+              </label>
+              <input type="text" class="th-input th-input-readonly" :value="endDate ? endDate + '（共 ' + sumday + ' 天）' : '請先選擇入園日期與天數'" readonly />
+            </div>
+          </div>
+
+          <!-- 路線資訊：正式站用 table 五列（難度等級／說明／適合對象／建議裝備／備註），
+               2026-09-21 實走擷取。整塊隨「次路線」變動：
+                 難度等級 ← OPEN_STATUS_ROWS 該路線的 level（open.aspx 擷取）
+                 說明／適合對象／建議裝備 ← TRAIL_LEVELS 按等級查表（linelevel.aspx 那組）
+               原本是把第 3 級的文字寫死又標成「第 5 級」，換路線不會變。 -->
+          <!-- 關閉公告：正式站放在路線資訊表「之上」，紅底 alert。
+               日期為紅字，事由連到公告內文。 -->
+          <hr class="p-apply3-rule" v-if="(routeClosures && routeClosures.length) || trailLevel" />
+
+          <div class="p-apply3-closure" v-if="routeClosures && routeClosures.length">
+            <div class="p-apply3-closure-item" v-for="(c, cIdx) in routeClosures" :key="cIdx">
+              <p v-if="c.dateRange" class="p-apply3-closure-date">
+                <i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>關閉日期：{{ c.dateRange }}
+              </p>
+              <p class="p-apply3-closure-reason">
+                原因：<a class="p-apply3-closure-link" :href="c.href" target="_blank" rel="noopener noreferrer" title="查看公告全文（另開新視窗）">{{ c.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
+              </p>
+            </div>
+          </div>
+
+          <div class="th-table-wrap" v-if="trailLevel">
+            <table class="th-table tbl-routeinfo">
+              <caption>本路線的難度等級與行前準備資訊</caption>
+              <tbody>
+                <tr>
+                  <th scope="row">難度等級</th>
+                  <td class="p-apply3-level-cell">
+                    <span :class="'th-level lv-' + trailLevel.level">第 {{ trailLevel.level }} 級</span>
+                    <!-- 「玉山線地圖」按鈕，點開看路線圖 -->
+                    <button type="button" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" @click="mapOpen = true">
+                      <i class="fa-solid fa-map mr-2" aria-hidden="true"></i>{{ openRow ? openRow.mainRoute : '玉山線' }}地圖
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">說明</th>
+                  <td>
+                    <ol v-if="trailLevelDesc && trailLevelDesc.length > 1" class="th-cell-ol">
+                      <li v-for="(d, dIdx) in trailLevelDesc" :key="dIdx">{{ d }}</li>
+                    </ol>
+                    <template v-else-if="trailLevelDesc && trailLevelDesc.length">{{ trailLevelDesc[0] }}</template>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">適合對象</th>
+                  <td>{{ trailLevel.who }}</td>
+                </tr>
+                <!-- 建議裝備：行文中的參考指引。0~2 級是純文字（kit），
+                     3~6 級是「參考＋連結＋kitRef」三段連寫，中間不可留空白，
+                     否則 Vue 的 whitespace condense 會多折一個空格出來。 -->
+                <tr>
+                  <th scope="row">建議裝備</th>
+                  <td>
+                    <p v-if="trailLevel.kit" class="th-kit">{{ trailLevel.kit }}</p>
+                    <p v-else class="th-kit">參考<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer" title="個人及團體裝備檢查表（PDF，另開新視窗）">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>{{ trailLevel.kitRef }}</p>
+                  </td>
+                </tr>
+                <!-- 備註：正式站這格有三段——檢查表下載、該路線自己的說明、
+                     以及固定的兩個路況連結。下載比照正式站原文寫成
+                     「歡迎下載：<連結>」的行文連結，不做成按鈕。 -->
+                <tr>
+                  <th scope="row">備註</th>
+                  <td class="p-apply3-remark">
+                    <p class="p-apply3-remark-download">歡迎下載：<a class="th-inline-link" :href="kitPdfUrl" target="_blank" rel="noopener noreferrer" title="個人及團體裝備檢查表（PDF，另開新視窗）">個人及團體裝備檢查表<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></p>
+                    <p v-if="routeNoteText" class="p-apply3-remark-note">{{ routeNoteText }}</p>
+                    <p class="p-apply3-remark-links">
+                      <a v-for="l in routeConditionLinks" :key="l.href" class="th-inline-link" :href="l.href" target="_blank" rel="noopener noreferrer" :title="l.text + '（另開新視窗）'">{{ l.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           </div>
         </section>
 
-        <!-- 2 隊員名單 -->
-        <section class="p-apply3-section">
-          <div class="p-apply3-section-head">
-            <span class="p-apply3-section-num">2</span>
-            <div class="p-apply3-section-titles">
-              <h2 class="p-apply3-section-title">隊員名單</h2>
-              <p class="p-apply3-section-sub">玉山國家公園隊員人數：2–12 人。第 1 位為領隊。</p>
-            </div>
+        <!-- 區塊 2：路線規劃 -->
+        <section id="sec-planner" class="th-card">
+          <div class="th-card-head flex items-center justify-between">
+            <h2 class="th-card-title flex items-center">
+              <span>路線規劃</span>
+              <a class="p-apply3-help" href="news_7.html" target="_blank" rel="noopener noreferrer" title="路線規劃操作說明（另開新視窗）">
+                <i class="fa-solid fa-circle-question" aria-hidden="true"></i>操作說明
+              </a>
+            </h2>
+            <a class="th-btn th-btn-brown th-btn-sm" href="https://hike.taiwan.gov.tw/bed_6.aspx" target="_blank" rel="noopener noreferrer" title="查看宿營地部份關閉日期（另開新視窗）">
+              <i class="fa-regular fa-calendar-xmark mr-1 text-white" aria-hidden="true"></i>查看宿營地部份關閉日期
+            </a>
           </div>
-          <div class="p-apply3-section-body">
-            <div class="p-apply3-members">
-              <div class="p-apply3-members-head">
-                <span></span>
-                <span>姓名</span>
-                <span>身分證／護照號碼</span>
-                <span>聯絡電話</span>
-                <span>緊急聯絡人</span>
-                <span>身分</span>
-                <span></span>
-              </div>
-              <div v-for="(m, i) in members" :key="m.id" class="p-apply3-members-row">
-                <span class="row-num">{{ i + 1 }}<span v-if="i === 0" class="leader-tag">領隊</span></span>
-                <input type="text" class="th-input" placeholder="姓名"
-                  :value="m.name" @input="updateMember(m.id, 'name', $event.target.value)" />
-                <div class="p-apply3-id-cell">
-                  <th-hybrid-select><select class="th-select p-apply3-idtype-select"
-                    :value="m.idType" @change="updateMember(m.id, 'idType', $event.target.value)">
-                    <option value="id">身分證</option>
-                    <option value="passport">護照</option>
-                  </select></th-hybrid-select>
-                  <input type="text" class="th-input" :placeholder="m.idType === 'id' ? 'A123456789' : 'Passport No.'"
-                    :value="m.idNum" @input="updateMember(m.id, 'idNum', $event.target.value)" />
+          <div class="th-card-body grid gap-4">
+
+          <div class="p-apply3-planner-box">
+            <!-- 單日往返模式：自動帶入固定行程 -->
+            <template v-if="isSingleDay">
+              <ul class="p-apply3-plan-days">
+                <li class="p-apply3-plan-day-item">
+                  <span class="day-tag">第 1 天行程：</span>
+                  <div class="p-apply3-plan-nodes" v-if="climbline === '3'">
+                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>玉山前峰</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                  </div>
+                  <div class="p-apply3-plan-nodes" v-else>
+                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-blue"><i class="fa-solid fa-bed" aria-hidden="true"></i><span>排雲山莊</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>玉山主峰</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="p-apply3-node-arrow">→</span>
+                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                  </div>
+                </li>
+              </ul>
+            </template>
+
+            <!-- 多日模式（2~5天）：互動式逐點手選 -->
+            <template v-else>
+              <ul class="p-apply3-plan-days">
+                <li v-for="(dayNodes, idx) in planDays" :key="idx" class="p-apply3-plan-day-item">
+                  <span class="day-tag">第 {{ idx + 1 }} 天行程：</span>
+                  <div class="p-apply3-plan-nodes">
+                    <template v-for="(node, nIdx) in dayNodes" :key="nIdx">
+                      <span :class="['p-apply3-node-badge', 'is-' + nodeBadgeType(node)]">
+                        <i :class="nodeBadgeIcon(node)" aria-hidden="true"></i>
+                        <span>{{ node }}</span>
+                        <!-- 具備 close 按鈕：點擊直接移除此點（取代返回上個地點按鈕） -->
+                        <button v-if="canRemoveNode(idx, nIdx)" type="button" class="p-apply3-badge-close" @click.stop="backNode" title="移除此地點（返回上個地點）" aria-label="移除此地點">
+                          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                      </span>
+                      <span v-if="nIdx < dayNodes.length - 1" class="p-apply3-node-arrow" aria-hidden="true">→</span>
+                    </template>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- 尚未完成規劃：節點選擇與控制按鈕 -->
+              <div v-if="!plannerFinished" class="p-apply3-planner-interactive">
+                <!-- 選項按鈕前面加上「請選擇下一個地點：」，並排且大小完全統一 -->
+                <div class="p-apply3-node-chips flex flex-wrap items-center gap-2">
+                  <span class="text-sm font-semibold text-slate-700 whitespace-nowrap">請選擇下一個地點：</span>
+                  <button v-for="node in options" :key="node" type="button"
+                          :class="['p-apply3-node-badge', 'is-' + nodeBadgeType(node), 'p-apply3-node-choice']"
+                          @click="pickNode(node)">
+                    <i :class="nodeBadgeIcon(node)" aria-hidden="true"></i>
+                    <span>{{ node }}</span>
+                  </button>
                 </div>
-                <input type="tel" class="th-input" placeholder="09xx-xxx-xxx"
-                  :value="m.phone" @input="updateMember(m.id, 'phone', $event.target.value)" />
-                <input type="tel" class="th-input" placeholder="緊急聯絡電話"
-                  :value="m.emergency" @input="updateMember(m.id, 'emergency', $event.target.value)" />
-                <th-hybrid-select><select class="th-select"
-                  :value="m.role" @change="updateMember(m.id, 'role', $event.target.value)">
-                  <option value="leader">領隊</option>
-                  <option value="member">隊員</option>
-                  <option value="guide">嚮導</option>
-                </select></th-hybrid-select>
-                <button class="row-del" @click="removeMember(m.id)" :disabled="members.length <= 1">
-                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+
+                <div class="p-apply3-planner-toolbar">
+                  <button type="button" class="th-btn th-btn-ghost th-btn-sm" id="con_btnreset" @click="resetPlanner">
+                    <i class="fa-solid fa-rotate-left mr-1" aria-hidden="true"></i>重新規劃
+                  </button>
+                  <button type="button" class="th-btn th-btn-primary th-btn-sm" id="con_btnover" @click="finishDay">
+                    <i class="fa-solid fa-check mr-1" aria-hidden="true"></i>完成路線
+                  </button>
+                </div>
+
+                <div v-if="plannerMsg" class="p-apply3-planner-alert" role="alert">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>{{ plannerMsg }}</span>
+                </div>
+              </div>
+
+              <!-- 路線規劃完成狀態（拿掉完成文字，只留重新規劃按鈕居中） -->
+              <div v-else class="p-apply3-planner-interactive flex flex-wrap items-center justify-center gap-3">
+                <button type="button" class="th-btn th-btn-ghost th-btn-sm" id="con_btnreset" @click="resetPlanner">
+                  <i class="fa-solid fa-rotate-left mr-1" aria-hidden="true"></i>重新規劃
                 </button>
               </div>
-            </div>
-            <div class="p-apply3-members-foot">
-              <span>目前 <strong>{{ members.length }}</strong> 人 · 此路線限 2–12 人</span>
-              <button class="p-apply3-add-member" @click="addMember" :disabled="members.length >= 12">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i> 新增隊員
-              </button>
-            </div>
+            </template>
           </div>
-        </section>
 
-        <!-- 3 路線規劃 -->
-        <section class="p-apply3-section">
-          <div class="p-apply3-section-head">
-            <span class="p-apply3-section-num">3</span>
-            <div class="p-apply3-section-titles">
-              <h2 class="p-apply3-section-title">路線規劃</h2>
-              <p class="p-apply3-section-sub">通訊裝置、登山技能與機關備註</p>
-            </div>
-          </div>
-          <div class="p-apply3-section-body">
-            <div class="p-apply3-grid">
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>登山相關經歷</label>
-                <!-- 原碼此處沒有綁值，是未受控的下拉 -->
-                <th-hybrid-select><select class="th-select">
-                  <option>初次參加登山活動</option>
-                  <option>曾參加過 1–3 次</option>
-                  <option>曾參加過 4–10 次</option>
-                  <option>專業／資深登山者</option>
-                </select></th-hybrid-select>
-              </div>
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>是否攜帶 GPS 等通訊裝置</label>
-                <div class="p-apply3-radio-row">
-                  <label :class="['p-apply3-radio', { 'is-active': hasGps === 'yes' }]">
-                    <input type="radio" :checked="hasGps === 'yes'" @change="hasGps = 'yes'" />是，會攜帶
-                  </label>
-                  <label :class="['p-apply3-radio', { 'is-active': hasGps === 'no' }]">
-                    <input type="radio" :checked="hasGps === 'no'" @change="hasGps = 'no'" />否
-                  </label>
-                </div>
-              </div>
-              <div class="th-field">
-                <label class="th-label">衛星電話</label>
-                <input type="text" class="th-input" placeholder="請輸入電話號碼" :value="satPhone" @input="satPhone = $event.target.value" />
-              </div>
-              <div class="th-field">
-                <label class="th-label">無線電頻率</label>
-                <input type="text" class="th-input" placeholder="例：145.500 MHz" :value="radio" @input="radio = $event.target.value" />
-              </div>
-              <div class="th-field p-apply3-grid-full">
-                <label class="th-label">機關備註</label>
-                <textarea class="th-textarea" placeholder="若有特殊需求請於此處說明" :value="note" @input="note = $event.target.value"></textarea>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 4 留守人資訊 -->
-        <section class="p-apply3-section">
-          <div class="p-apply3-section-head">
-            <span class="p-apply3-section-num">4</span>
-            <div class="p-apply3-section-titles">
-              <h2 class="p-apply3-section-title">留守人資訊</h2>
-              <p class="p-apply3-section-sub">指定一位行程外人員作為留守聯絡窗口</p>
-            </div>
-          </div>
-          <div class="p-apply3-section-body">
-            <div class="p-apply3-grid p-apply3-grid-3">
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>留守人姓名</label>
-                <input type="text" class="th-input" placeholder="姓名" :value="keeperName" @input="keeperName = $event.target.value" />
-              </div>
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>聯絡電話</label>
-                <input type="tel" class="th-input" placeholder="09xx-xxx-xxx" :value="keeperPhone" @input="keeperPhone = $event.target.value" />
-              </div>
-              <div class="th-field">
-                <label class="th-label">關係</label>
-                <th-hybrid-select><select class="th-select" :value="keeperRel" @change="keeperRel = $event.target.value">
+          <!-- 行前講習與通訊設備：3 行對 3 行高度對齊 -->
+          <div class="p-apply3-grid">
+            <div class="th-field">
+              <label class="th-label p-apply3-label-3lines" for="con_seminar">
+                <span class="p-apply3-line-1"><span class="req">*</span>登山行前講習</span>
+                <span class="p-apply3-label-en">General knowledge about hiking</span>
+                <span class="p-apply3-line-3">
+                  <a href="https://www.ysnp.gov.tw/Video/C005200" id="con_hlSeminar" target="_blank" rel="noopener noreferrer" class="p-apply3-video-btn">
+                    <i class="fa-solid fa-video" aria-hidden="true"></i>登山安全影片
+                  </a>
+                </span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_seminar" class="th-select" v-model="seminar">
                   <option value="">請選擇</option>
-                  <option>家人</option><option>朋友</option><option>同事</option><option>其他</option>
-                </select></th-hybrid-select>
-              </div>
+                  <option value="1">網路線上學習</option>
+                  <option value="0">團體自行辦理講習</option>
+                </select>
+              </th-hybrid-select>
             </div>
+
+            <div class="th-field">
+              <label class="th-label p-apply3-label-3lines" for="con_gps">
+                <span class="p-apply3-line-1"><span class="req">*</span>是否攜帶GPS及可供緊急聯絡之通信設備</span>
+                <span class="p-apply3-line-2">(包含智慧型手機、智慧型手錶、個人數位助理（PDA）等)</span>
+                <span class="p-apply3-label-en">Will you be carrying a GPS device? (i.e. Smart phone)</span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_gps" class="th-select" v-model="gps">
+                  <option value="">請選擇</option>
+                  <option value="1">是</option>
+                  <option value="0">否</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <div class="th-field" id="con_divGps">
+              <label class="th-label" for="con_satellitephone">
+                <span>衛星電話</span>
+                <span class="p-apply3-label-en">Satellite phone number</span>
+              </label>
+              <input id="con_satellitephone" type="text" class="th-input" v-model="satellitephone" placeholder="請輸入衛星電話" />
+            </div>
+
+            <div class="th-field" id="con_divWireless">
+              <label class="th-label" for="con_frequency">
+                <span>無線電頻</span>
+                <span class="p-apply3-label-en">Radio Frequency</span>
+              </label>
+              <input id="con_frequency" type="text" class="th-input" v-model="frequency" placeholder="請輸入無線電頻" />
+            </div>
+
+            <div class="th-field p-apply3-grid-full">
+              <label class="th-label" for="con_note_user">
+                <span>備註</span>
+                <span class="p-apply3-label-en">Note</span>
+              </label>
+              <textarea id="con_note_user" class="th-textarea" rows="3" v-model="note_user" placeholder="請填入備註"></textarea>
+            </div>
+          </div>
           </div>
         </section>
 
-        <!-- 5 警政署入山證申請 -->
-        <section class="p-apply3-section">
-          <div class="p-apply3-section-head">
-            <span class="p-apply3-section-num">5</span>
-            <div class="p-apply3-section-titles">
-              <h2 class="p-apply3-section-title">警政署入山證申請</h2>
-              <p class="p-apply3-section-sub">本路線進入山地管制區，需同時申請入山許可</p>
+        <!-- 區塊 4：警政署入山證申請（入山事由與前往地點並排） -->
+        <section id="sec-npa" class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">
+              警政署入山證申請
+            </h2>
+          </div>
+
+          <div class="th-card-body">
+          <div class="p-apply3-grid">
+            <div class="th-field">
+              <label class="th-label" for="con_NpaReasons">
+                <span><span class="req">*</span>入山事由</span>
+                <span class="p-apply3-label-en">Reason for Mountain Entry</span>
+              </label>
+              <th-hybrid-select>
+                <select id="con_NpaReasons" class="th-select" v-model="NpaReasons">
+                  <option v-for="opt in npaReasonsOptions" :key="opt.value" :value="opt.value">{{ opt.text }}</option>
+                </select>
+              </th-hybrid-select>
+            </div>
+
+            <!-- 前往地點：與入山事由並排（各占 col6），輸入框內嵌加入地點按鈕 -->
+            <div class="th-field">
+              <label class="th-label" for="con_NpaPlacesInfo">
+                <span><span class="req">*</span>前往地點</span>
+                <span class="p-apply3-label-en">Destination</span>
+              </label>
+              <div class="p-apply3-input-group">
+                <th-hybrid-select class="p-apply3-joined-hybrid">
+                  <select id="con_NpaPlacesInfo" class="th-select" v-model="NpaPlacesInfo">
+                    <option v-for="opt in npaPlacesOptions" :key="opt.value" :value="opt.value">{{ opt.text }}</option>
+                  </select>
+                </th-hybrid-select>
+                <button type="button" class="th-btn th-btn-secondary th-btn-sm p-apply3-joined-btn" id="con_AddNpaPlacesInfo" @click="addPlace">加入地點</button>
+              </div>
+            </div>
+
+            <!-- 地點列獨立佔 col12 -->
+            <div class="th-field p-apply3-grid-full" v-if="addedPlaces.length > 0">
+              <ul class="p-apply3-places-list">
+                <li v-for="(p, pIdx) in addedPlaces" :key="p.id" class="p-apply3-place-row">
+                  <i class="fa-solid fa-location-dot text-red-500 flex-shrink-0" aria-hidden="true"></i>
+                  <span class="p-apply3-place-opt-name">{{ p.optionName }}</span>
+                  <input type="text" class="th-input p-apply3-place-input" v-model="p.customText" placeholder="請自訂地點名稱" :id="'con_lisNpaPlacesList_desc_' + pIdx" />
+                  <button type="button" class="p-apply3-place-del" title="刪除地點" @click="removePlace(p.id)">
+                    <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i>刪除
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 登山路線圖：拿掉詞庫標題與選定的路線圖標題 -->
+            <div class="th-field p-apply3-grid-full">
+              <label class="th-label">
+                <span><span class="req">*</span>登山路線圖</span>
+                <span class="p-apply3-label-en">Route Map</span>
+              </label>
+              <div class="p-apply3-vocab-row">
+                <th-hybrid-select>
+                  <select name="ctl00$con$NpaPaths" id="con_NpaPaths" class="th-select" v-model="NpaPaths" @change="updateRouteMap">
+                    <option v-for="p in npaPathsOptions" :key="p.value" :value="p.value">{{ p.text }}</option>
+                  </select>
+                </th-hybrid-select>
+                <th-hybrid-select>
+                  <select name="ctl00$con$NpasubPaths" id="con_NpasubPaths" class="th-select" v-model="NpasubPaths" :disabled="!NpaPaths" @change="updateRouteMap">
+                    <option v-for="s in npaSubPathsOptions" :key="s.value" :value="s.value">{{ s.text }}</option>
+                  </select>
+                </th-hybrid-select>
+              </div>
+              <div class="mt-2">
+                <input id="con_RouteMap_V" type="text" class="th-input th-input-readonly" :value="RouteMap_V" readonly />
+              </div>
+            </div>
+
+            <div class="th-field p-apply3-grid-full">
+              <label class="th-label" for="con_NpaPlan">
+                <span><span class="req">*</span>登山計畫書</span>
+                <span class="p-apply3-label-en">Plan</span>
+              </label>
+              <textarea id="con_NpaPlan" class="th-textarea" rows="5" v-model="NpaPlan" placeholder="D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。"></textarea>
+              <!-- 範例為正式站原文，逐字保留 -->
+              <div class="p-apply3-plan-example">
+                <p class="p-apply3-plan-example-title">【登山計畫書填寫範例】</p>
+                <p>※計畫書內容約300字，請參考範例，簡要述明。</p>
+                <p>D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。</p>
+                <p>D2：月型池→磐石山→磐石山西峰→三叉營地。</p>
+                <p>D3：三叉營地→太魯閣大山→三叉營地→平安池→廣寒宮。</p>
+                <p>D4：廣寒宮→立霧主山→三冬路口→帕托魯大山→三叉路口。</p>
+              </div>
             </div>
           </div>
-          <div class="p-apply3-section-body">
-            <div class="p-apply3-police-note">
-              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-              <div><strong>提示：<br/></strong>本路線位於山地管制區內，系統會自動將以下資料送交警政署辦理入山申請。請確認登山計畫書內容已包含每日預定行程與住宿點。</div>
-            </div>
-            <div class="p-apply3-grid">
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>入山事由</label>
-                <th-hybrid-select><select class="th-select"><option>登山活動</option><option>學術研究</option><option>其他</option></select></th-hybrid-select>
-              </div>
-              <div class="th-field">
-                <label class="th-label"><span class="req">*</span>預定地點</label>
-                <!-- 原碼是 defaultValue（未受控），Vue 用靜態 value 屬性等價 -->
-                <input type="text" class="th-input" value="玉山國家公園 排雲山莊" />
-              </div>
-              <div class="th-field p-apply3-grid-full">
-                <label class="th-label"><span class="req">*</span>登山計畫書</label>
-                <textarea class="th-textarea p-apply3-plan-textarea"
-                  placeholder="請依每日行程詳細填寫，例如：&#10;D1：塔塔加登山口→排雲山莊（宿）&#10;D2：排雲山莊→玉山主峰→塔塔加登山口"
-                  :value="planText" @input="planText = $event.target.value"></textarea>
-                <div class="th-field-hint">每日行程需註明 500 字以內。範例：D1：塔塔加→排雲山莊（宿）；D2：排雲山莊→主峰→下山。</div>
-              </div>
-            </div>
           </div>
         </section>
 
       </div>
 
-      <!-- 側欄摘要 -->
-      <aside class="th-sidebar">
-        <div class="th-sidebar-head">
-          <i class="ph-bold ph-clipboard-text" aria-hidden="true"></i>申請摘要
-        </div>
-        <div class="th-sidebar-body">
-          <div class="th-sidebar-row">
-            <span class="lbl">管理機關</span>
-            <span class="val">{{ unit }}</span>
-          </div>
-          <div class="th-sidebar-row">
-            <span class="lbl">路線</span>
-            <span class="val">{{ route }}</span>
-          </div>
-          <div class="th-sidebar-row">
-            <span class="lbl">入山日期</span>
-            <span class="val"><strong>{{ startDate }}</strong></span>
-          </div>
-          <div class="th-sidebar-row">
-            <span class="lbl">天數</span>
-            <span class="val"><strong>{{ days }} 天 {{ Math.max(0, days - 1) }} 夜</strong></span>
-          </div>
-          <div class="th-sidebar-row">
-            <span class="lbl">隊員人數</span>
-            <span class="val"><strong>{{ members.length }} / 12 人</strong></span>
-          </div>
-          <div class="th-sidebar-row">
-            <span class="lbl">許可項目</span>
-            <span class="val">入園許可 + 入山許可</span>
-          </div>
-
-          <ul class="th-sidebar-checklist">
-            <li v-for="(c, i) in checks" :key="i" :class="{ 'is-ok': c.ok }">
-              <i :class="c.ok ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'" aria-hidden="true"></i>{{ c.label }}
+      <!-- 側欄頁內目錄導覽（比照 .th-pagenav 視覺語言） -->
+      <aside class="p-apply3-side">
+        <div class="p-apply3-side-inner">
+          <p class="p-apply3-side-head">
+            本頁內容
+            <span class="p-apply3-side-count" :class="{ 'is-done': canSubmit }">
+              <span class="num">{{ completedSectionsCount }}</span>/3
+            </span>
+          </p>
+          <ol class="p-apply3-side-list">
+            <li :class="{ 'is-acked': secRouteOk, 'is-active': activeNavIndex === 0 }">
+              <button type="button" @click="scrollToSection('sec-route', 0)">
+                <span class="p-apply3-side-text">1. 路線與基本資料</span>
+                <span class="p-apply3-side-tick" aria-hidden="true"></span>
+              </button>
             </li>
-          </ul>
+            <li :class="{ 'is-acked': secPlannerOk, 'is-active': activeNavIndex === 1 }">
+              <button type="button" @click="scrollToSection('sec-planner', 1)">
+                <span class="p-apply3-side-text">2. 路線規劃</span>
+                <span class="p-apply3-side-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+            <li :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
+              <button type="button" @click="scrollToSection('sec-npa', 2)">
+                <span class="p-apply3-side-text">3. 警政署入山證</span>
+                <span class="p-apply3-side-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+          </ol>
         </div>
       </aside>
     </div>
 
-    <div :class="['th-footbar', { 'is-ready': allOk }]">
-      <div class="th-footbar-info">
-        <i :class="allOk ? 'fa-solid fa-check' : 'fa-solid fa-list-check'" aria-hidden="true"></i>
-        <div>
-          <div>必填完成 <strong>{{ doneCount }}</strong> / {{ checks.length }}</div>
-        </div>
-      </div>
-      <div class="th-footbar-actions">
-        <button class="th-btn th-btn-ghost" @click="goPrev">
-          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
-        </button>
-        <button class="th-btn th-btn-primary" :disabled="!allOk" @click="submit">送出申請<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-      </div>
+    <!-- 置底列：隨頁面流動，按鈕置中、無上方分隔線 -->
+    <div class="p-apply3-actions">
+      <button class="th-btn th-btn-ghost" @click="goPrev">
+        <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
+      </button>
+      <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext" id="con_btnToStep21">
+        下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>
+      </button>
     </div>
   </th-page-shell>
+
+  <!-- 路線圖彈窗：一條次路線可能有「本路線圖」與「主路線全線圖」兩組，
+       用 th-chip 當 tab 切換（與 information_1 的路線選擇同一套視覺語言）。
+       圖說與「查看原圖」不再逐圖重複——tab 標籤已經說明是哪張圖，
+       modal 標題也有次路線名稱；原圖改由 foot 的單一按鈕提供。 -->
+  <th-modal
+    v-if="mapOpen"
+    :title="(openRow ? openRow.mainRoute : '玉山線') + '地圖'"
+    body-class="p-apply3-map-modal"
+    @close="mapOpen = false">
+
+    <div class="th-chip-row" role="tablist" aria-label="路線圖切換" v-if="routeMapTabs && routeMapTabs.length > 1">
+      <button
+        v-for="t in routeMapTabs"
+        :key="t.key"
+        type="button"
+        role="tab"
+        :aria-selected="activeMapTab && activeMapTab.key === t.key"
+        :class="['th-chip', { 'is-active': activeMapTab && activeMapTab.key === t.key }]"
+        @click="mapTabKey = t.key">
+        {{ t.label }}
+      </button>
+    </div>
+
+    <!-- 圖卡比照 information_1 的路線圖資：外框 figure ＋ 圖 ＋ 圖說列，
+         「查看原圖」釘在圖說列右側，而非整個彈窗底部 -->
+    <div class="p-apply3-map-grid" v-if="activeMapTab">
+      <figure v-for="(img, imgIdx) in activeMapTab.images" :key="imgIdx" class="p-apply3-map-figure">
+        <div class="p-apply3-map-wrap">
+          <img :src="img.src" :alt="img.alt" loading="lazy" class="p-apply3-map-img" />
+        </div>
+        <figcaption class="p-apply3-map-caption">
+          <span class="p-apply3-map-caption-text">{{ img.caption || img.alt }}</span>
+          <a
+            class="p-apply3-map-zoom"
+            :href="img.src"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="查看原圖（另開新視窗）">
+            <i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>查看原圖
+          </a>
+        </figcaption>
+      </figure>
+    </div>
+
+    <template #foot>
+      <div class="p-apply3-map-foot">
+        <button type="button" class="th-btn th-btn-ghost" @click="mapOpen = false">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉
+        </button>
+      </div>
+    </template>
+  </th-modal>
 
   <th-quick-nav></th-quick-nav>
   <th-back-to-top></th-back-to-top>
   <th-footer></th-footer>
-
 </div>
 
-<!-- 資料檔：階段 0 已改為一般 <script> -->
 <script src="components/RouteData.js"></script>
-
-<!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
+<script src="components/TrailLevelData.js"></script>
+<script src="components/OpenStatusData.js"></script>
+<script src="components/RouteIntroData.js"></script>
 </body>
 </html>

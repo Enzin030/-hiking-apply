@@ -6504,3 +6504,1004 @@ body:where(.p-indexb-body):before {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+
+/* ============================================================
+   以下為 apply-3（行程規劃）2026-09-21 重做後的樣式
+   ============================================================ */
+
+/* ============================================================
+   apply-3 — 申請流程步驟三「行程規劃」
+   ------------------------------------------------------------
+   2026-09-21 由 apply-3-v2.css 整併進來，`.v2-*` 一律改名 `.p-apply3-*`
+   （樣式歸屬：單頁專用前綴 .p-<頁名>-*）。原獨立樣式表已刪除，
+   本頁只 link index.css 一支。
+   ============================================================ */
+
+/* ---------- 兩欄版面：主欄 + 側欄導覽 ---------- */
+.p-apply3-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 56px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.p-apply3-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ---------- 去卡片化區塊 ---------- */
+.p-apply3-section {
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.p-apply3-section:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.p-apply3-section-head {
+  margin-bottom: 24px;
+}
+
+.p-apply3-section-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--slate-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+}
+
+.p-apply3-section-title .p-apply3-section-sub {
+  margin: 0;
+  color: var(--slate-500);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+}
+
+/* ---------- 表單欄位格線 ---------- */
+.p-apply3-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+}
+
+.p-apply3-grid-full {
+  grid-column: 1 / -1;
+}
+
+.p-apply3-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 24px;
+}
+
+/* ---------- 提示與公告盒 ---------- */
+.p-apply3-notice {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  color: var(--slate-700);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+  margin-bottom: 20px;
+}
+
+.p-apply3-notice i {
+  color: var(--slate-500);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.p-apply3-notice-danger {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger-fg);
+}
+
+.p-apply3-notice-danger i {
+  color: var(--danger-fg);
+}
+
+/* ---------- 路線規劃器互動區 ---------- */
+.p-apply3-planner-box {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  padding: 20px;
+  background: var(--bg-1);
+}
+
+.p-apply3-plan-days {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.p-apply3-plan-day-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  color: var(--slate-800);
+}
+
+.p-apply3-plan-day-item .day-tag {
+  font-weight: 700;
+  color: var(--national-700);
+  white-space: nowrap;
+}
+
+/* 節點徽章鏈 */
+.p-apply3-plan-nodes {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-apply3-node-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  transition: all .15s ease;
+}
+
+/* 綠色：起點、終點、服務中心（05a t_list_s） */
+.p-apply3-node-badge.is-green {
+  background: var(--national-50);
+  border: 1px solid var(--national-300);
+  color: var(--national-800);
+}
+
+.p-apply3-node-badge.is-green i {
+  color: var(--national-700);
+}
+
+/* 紅色：一般步道節點、山峰、登山口（05a t_list_p） */
+.p-apply3-node-badge.is-red {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-fg);
+}
+
+.p-apply3-node-badge.is-red i {
+  color: var(--danger-fg);
+}
+
+/* 藍色：宿營地（05a t_list_e） */
+.p-apply3-node-badge.is-blue {
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  color: var(--info-fg);
+}
+
+.p-apply3-node-badge.is-blue i {
+  color: var(--info-fg);
+}
+
+/* 選項按鈕比照上面 badge 樣式（大小完全統一） */
+.p-apply3-node-badge.p-apply3-node-choice {
+  cursor: pointer;
+  user-select: none;
+}
+
+.p-apply3-node-badge.p-apply3-node-choice:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.p-apply3-node-badge.p-apply3-node-choice.is-green:hover {
+  background: var(--national-100);
+  border-color: var(--national-700);
+}
+
+.p-apply3-node-badge.p-apply3-node-choice.is-red:hover {
+  background: var(--red-100, var(--danger-bg));
+  border-color: var(--danger-soft);
+}
+
+.p-apply3-node-badge.p-apply3-node-choice.is-blue:hover {
+  background: var(--blue-100, var(--info-bg));
+  border-color: var(--blue-700);
+}
+
+.p-apply3-node-arrow {
+  color: var(--slate-400);
+  font-size: var(--fs-xs);
+  user-select: none;
+}
+
+/* 輸入框與按鈕結合 */
+.p-apply3-input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.p-apply3-joined-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+}
+
+.p-apply3-joined-hybrid {
+  flex: 1;
+  min-width: 0;
+}
+
+.p-apply3-joined-hybrid .th-select {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.p-apply3-joined-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  white-space: nowrap;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+  height: 38px;
+  flex-shrink: 0;
+}
+
+/* 欄位 3 行對 3 行高度對齊 */
+.p-apply3-main .th-label.p-apply3-label-3lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 72px;
+  margin-bottom: 6px;
+}
+
+.p-apply3-main .th-label.p-apply3-label-3lines .p-apply3-line-1,
+.p-apply3-main .th-label.p-apply3-label-3lines .p-apply3-line-2 {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--slate-700);
+  line-height: 1.35;
+}
+
+.p-apply3-main .th-label.p-apply3-label-3lines .p-apply3-label-en {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--fg-3);
+  line-height: 1.35;
+  margin-top: 0;
+}
+
+/* 登山安全影片小按鈕 */
+.p-apply3-video-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--national-800);
+  background: var(--national-50);
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-xs);
+  text-decoration: none;
+  line-height: 1.2;
+  width: fit-content;
+  transition: all .15s ease;
+}
+
+.p-apply3-video-btn:hover {
+  background: var(--national-100);
+  border-color: var(--national-300);
+  color: var(--national-900);
+  text-decoration: none;
+}
+
+/* 白框按鈕（查看宿營地部份關閉日期） */
+.p-apply3-btn-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-1);
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-sm);
+  color: var(--slate-700);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-decoration: none;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all .15s ease;
+}
+
+.p-apply3-btn-white:hover {
+  background: var(--slate-50);
+  border-color: var(--slate-400);
+  color: var(--slate-900);
+  text-decoration: none;
+}
+
+.p-apply3-main a.th-btn-secondary,
+.p-apply3-main a.th-btn-secondary i {
+  color: #fff;
+}
+
+/* 黃棕色按鈕樣式（暖琥珀黃棕色調） */
+.th-btn-brown,
+.th-btn-brown:visited {
+  background: #b45309;
+  color: #fff;
+  border-color: #b45309;
+}
+
+.th-btn-brown:hover,
+.th-btn-brown:active,
+.th-btn-brown:focus {
+  background: #92400e;
+  border-color: #92400e;
+  color: #fff;
+}
+
+.p-apply3-main a.th-btn-brown,
+.p-apply3-main a.th-btn-brown i {
+  color: #fff;
+}
+
+/* Badge 上的 close 按鈕：點擊即可移除最後一個地點（取代返回上個地點） */
+.p-apply3-badge-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin-left: 2px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-pill);
+  color: currentColor;
+  opacity: .7;
+  cursor: pointer;
+  transition: opacity .15s ease, background-color .15s ease;
+}
+
+.p-apply3-badge-close:hover {
+  opacity: 1;
+  background: var(--slate-200);
+}
+
+.p-apply3-badge-close i {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.p-apply3-planner-interactive {
+  border-top: 1px dashed var(--slate-200);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.p-apply3-node-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+/* 節點 chip：純文字藥丸，移除 icon */
+.p-apply3-node-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--slate-300);
+  background: var(--bg-1);
+  color: var(--slate-700);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.p-apply3-node-chip:hover {
+  border-color: var(--national-700);
+  color: var(--national-700);
+  background: var(--national-50);
+}
+
+.p-apply3-node-chip.is-camp {
+  border-color: var(--national-300);
+  background: var(--national-50);
+  color: var(--national-800);
+}
+
+.p-apply3-node-chip.is-camp:hover {
+  border-color: var(--national-700);
+  background: var(--national-100);
+}
+
+/* 詞庫雙下拉並列 */
+.p-apply3-vocab-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .p-apply3-vocab-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.p-apply3-planner-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.p-apply3-planner-alert {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-fg);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- 地點清單清單項 ---------- */
+.p-apply3-places-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.p-apply3-place-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm);
+}
+
+.p-apply3-place-opt-name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--slate-800);
+  white-space: nowrap;
+}
+
+.p-apply3-place-input {
+  flex: 1;
+  min-width: 140px;
+  height: 32px;
+  font-size: var(--fs-sm);
+  padding: 4px 10px;
+}
+
+.p-apply3-place-del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  cursor: pointer;
+  padding: 4px 10px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+
+.p-apply3-place-del:hover:not(:disabled) {
+  background: var(--red-100, #fee2e2);
+  border-color: var(--danger-fg);
+}
+
+.p-apply3-place-del:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* ---------- 內文連結規範（照全站 .th-doc-block a）---------- */
+.p-apply3-main a:not(.th-btn):not(.p-apply3-video-btn):not(.p-apply3-help) {
+  color: var(--national-800);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.p-apply3-main a:not(.th-btn):not(.p-apply3-video-btn):not(.p-apply3-help):hover {
+  color: var(--national-900);
+  background: var(--national-50);
+}
+
+/* ---------- 側欄頁內目錄（.th-pagenav 視覺語言） ---------- */
+.p-apply3-side {
+  min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: 132px;
+}
+
+.p-apply3-side-inner {
+  border-left: 2px solid var(--slate-200);
+  padding-left: 16px;
+  max-height: calc(100vh - 160px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.p-apply3-side-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+}
+
+.p-apply3-side-count {
+  color: var(--fg-1);
+  font-weight: 400;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.p-apply3-side-count .num {
+  color: var(--danger-fg);
+}
+
+.p-apply3-side-count.is-done,
+.p-apply3-side-count.is-done .num {
+  color: var(--national-700);
+}
+
+.p-apply3-side-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.p-apply3-side-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  transition: color .15s ease;
+}
+
+.p-apply3-side-list button:hover {
+  color: var(--national-700);
+}
+
+/* 與 apply-2 的側欄勾勾完全一致：14px 圓角方塊、無框、只靠底色表達狀態 */
+.p-apply3-side-tick {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--r-xs);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .15s ease;
+}
+
+.p-apply3-side-tick::before {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 8px;
+  line-height: 1;
+  color: transparent;
+  transition: color .15s ease;
+}
+
+.p-apply3-side-list li.is-acked .p-apply3-side-tick {
+  background: var(--national-700);
+  border-color: var(--national-700);
+}
+
+.p-apply3-side-list li.is-acked .p-apply3-side-tick::before {
+  color: var(--fg-on-dark);
+}
+
+/* 已完成的項目轉淡，與 apply-2 一致——
+   完成的不需要爭取注意力，該突顯的是還沒做的 */
+.p-apply3-side-list li.is-acked button {
+  color: var(--slate-400);
+}
+
+/* 本頁不標「目前位置」：表單分段是逐段填寫，狀態由「完成／未完成」表達就夠，
+   再加一個目前位置反而讓三種狀態互相干擾（使用者裁示 2026-09-21 16:29）。 */
+
+.p-apply3-side-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- 置底列：隨頁面流動，按鈕置中、無上方分隔線 ---------- */
+.p-apply3-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 48px;
+}
+
+.p-apply3-actions .th-btn-primary:enabled {
+  border: 1px solid var(--national-700);
+}
+
+.p-apply3-actions .th-btn-primary:disabled {
+  background: transparent;
+  border: 1px dashed var(--slate-300);
+  color: var(--slate-400);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.p-apply3-actions .th-btn-primary:disabled i {
+  opacity: .5;
+}
+
+/* ---------- 響應式 ---------- */
+@media (max-width: 1024px) {
+  .p-apply3-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .p-apply3-side {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .p-apply3-grid,
+  .p-apply3-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 路線資訊表：左標頭欄寬 ----------
+   這是「列標頭」型表格（th scope=row），不是 .tbl-level 那種有 thead 的四欄表，
+   所以指定 tbody th 而非 th:nth-child(n)。
+   .th-table 沒有 table-layout: fixed，百分比對 th 只是建議值——td 內容一長
+   瀏覽器仍會撐寬標頭欄，故一併 nowrap（標籤最長 4 字，不會被截）。 */
+.tbl-routeinfo tbody th {
+  width: 22%;
+  white-space: nowrap;
+  color: var(--fg-1);
+  font-weight: 700;
+  background: var(--bg-mist-2);
+}
+
+@media (max-width: 640px) {
+  .tbl-routeinfo tbody th {
+    width: 30%;
+  }
+}
+
+/* ---------- 關閉公告（表格上方） ----------
+   正式站是紅底 alert，日期一行、事由一行且事由連到公告內文。 */
+.p-apply3-closure {
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  border-radius: var(--r-md);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.p-apply3-closure-item + .p-apply3-closure-item {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--danger-border);
+}
+
+.p-apply3-closure-date {
+  margin: 0;
+  font-weight: 700;
+  color: var(--danger-fg);
+  font-size: var(--fs-sm);
+}
+
+/* 事由字級與上一行日期一致（皆 --fs-sm）。 */
+.p-apply3-closure-reason {
+  margin: 4px 0 0;
+  color: var(--fg-1);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+}
+
+/* 事由本身就是連結，但維持黑字——紅底區塊裡再放主色連結會有兩個強調色打架；
+   可點性改由底線與外開 icon 表達。 */
+/* 選擇器要寫成 .p-apply3-main a.xxx：上面的 .p-apply3-main a 是 (0,1,1)，
+   單一 class (0,1,0) 贏不過它，黑字會被主色蓋掉而且完全不報錯。 */
+.p-apply3-main a.p-apply3-closure-link {
+  color: var(--fg-1);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.p-apply3-main a.p-apply3-closure-link:hover {
+  color: var(--national-900);
+  background: var(--national-50);
+}
+
+/* ---------- 備註欄三段 ----------
+   下載（動作）／路線說明（內文）／路況連結（外部參考）字級一致，
+   都跟表格本體同為 --fs-sm，不因為角色不同就改大小。 */
+.p-apply3-remark-download {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+.p-apply3-remark-note {
+  margin: 10px 0 0;
+  color: var(--fg-1);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+}
+
+.p-apply3-remark-links {
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: var(--fs-sm);
+}
+
+/* 表格內的下載按鈕不放大字級 */
+.p-apply3-remark .th-btn-sm {
+  font-size: var(--fs-sm);
+}
+
+/* ---------- 路線地圖摺疊面板 ----------
+   呈現比照 information_1 的路線圖資區塊。 */
+/* ---------- 難度等級列：等級徽章 ＋ 路線圖按鈕 ---------- */
+.p-apply3-level-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 地圖按鈕靠右：等級徽章留在左，按鈕推到該列尾端 */
+.p-apply3-map-btn {
+  margin-left: auto;
+}
+
+/* ---------- 關閉公告上方的分隔線 ---------- */
+.p-apply3-rule {
+  border: 0;
+  border-top: 1px solid var(--slate-200);
+  margin: 20px 0 16px;
+}
+
+/* ---------- 路線圖彈窗 ----------
+   tab 與圖之間要留間距，圖不貼齊 tab。 */
+/* tab 與圖的間距：modal body 本身已有上方 padding，這裡只補下方 */
+.p-apply3-map-modal .th-chip-row {
+  margin-top: -4px;
+  margin-bottom: 12px;
+}
+
+.p-apply3-map-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--slate-200);
+}
+
+/* ---------- 雙語欄位標籤 ----------
+   正式站每個欄位標籤是「中文<br>English」兩行，英文為輔助說明。
+   除特定 3 行欄位外，其餘英文一律水平放右邊。 */
+.p-apply3-main .th-label {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.p-apply3-label-en {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--fg-3);
+  line-height: var(--lh-snug);
+}
+
+/* 卡片標題旁的「操作說明」連結：icon 在左、與標題拉開距離，
+   字級與內文一致（--fs-sm），不跟著標題放大也不搶標題的視覺重量。 */
+.p-apply3-main a.p-apply3-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--national-800);
+  text-decoration: none;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.p-apply3-main a.p-apply3-help:hover {
+  color: var(--national-900);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+}
+
+/* ---------- 本頁連結字級一律 --fs-sm ----------
+   .th-inline-link 本身沒有 font-size，會繼承容器：表格內是 --fs-sm、
+   卡片標題內是 --fs-lg，同一種連結因此忽大忽小。這裡統一釘住。 */
+.p-apply3-main a.th-inline-link,
+.p-apply3-main a.p-apply3-closure-link {
+  font-size: var(--fs-sm);
+}
+
+/* ---------- 路線圖卡（比照 information_1 的 .p-info1-image-*） ---------- */
+.p-apply3-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.p-apply3-map-figure {
+  margin: 0;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--slate-50);
+  width: 100%;
+}
+
+.p-apply3-map-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-1);
+  width: 100%;
+}
+
+.p-apply3-map-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.p-apply3-map-caption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--slate-200);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+
+.p-apply3-map-caption-text {
+  text-align: center;
+  padding: 0 90px;
+}
+
+.p-apply3-map-zoom {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--fs-xs);
+  color: var(--national-800);
+  white-space: nowrap;
+}
+
+.p-apply3-map-zoom:hover {
+  color: var(--national-900);
+}
+
+/* ---------- 登山計畫書填寫範例（統一小字體） ---------- */
+.p-apply3-main .p-apply3-plan-example,
+.p-apply3-main .p-apply3-plan-example p,
+.p-apply3-main .p-apply3-plan-example-title {
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+.p-apply3-main .p-apply3-plan-example {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  color: var(--fg-2);
+}
+
+.p-apply3-main .p-apply3-plan-example p {
+  margin: 0;
+}
+
+.p-apply3-main .p-apply3-plan-example p + p {
+  margin-top: 3px;
+}
+
+.p-apply3-main .p-apply3-plan-example-title {
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
