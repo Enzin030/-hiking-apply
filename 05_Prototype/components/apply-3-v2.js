@@ -183,6 +183,41 @@ thPage({
       ];
     },
 
+    /* 正式站的路線資訊表：難度等級來自 open.aspx 的該路線 level，
+       說明／適合對象／建議裝備則是「按等級查表」——同一等級所有路線共用同一段文字
+       （來源 TrailLevelData.js，即正式站 linelevel.aspx 彈窗那組）。
+       原本雛形把第 3 級的文字寫死又標成「第 5 級」，換路線也不會變。 */
+    // 裝備檢查表 PDF：TrailLevelData 已備好絕對網址，不在樣板寫死
+    kitPdfUrl() {
+      return window.KIT_PDF || "";
+    },
+
+    openRow() {
+      const rows = window.OPEN_STATUS_ROWS || [];
+      // applyId 全站不唯一（489 列只有 439 個相異值，各管處各自編號），
+      // 必須連同管處一起比對，否則會撈到別處的同號路線
+      return rows.find(r => r.filterKey === "yushan" && r.applyId === this.climbline) || null;
+    },
+
+    trailLevel() {
+      const row = this.openRow;
+      if (!row || row.level == null) return null;
+      const levels = window.TRAIL_LEVELS || [];
+      return levels.find(l => l.level === row.level) || null;
+    },
+
+    // 第 6 級的 desc 是陣列（兩個分項），其餘為字串，統一成陣列讓樣板一種寫法
+    trailLevelDesc() {
+      const lv = this.trailLevel;
+      if (!lv) return [];
+      return Array.isArray(lv.desc) ? lv.desc : [lv.desc];
+    },
+
+    // 本路線的公告關閉事由，逐條列出；無公告時整塊不顯示
+    routeClosures() {
+      return (this.openRow && this.openRow.closures) || [];
+    },
+
     routeData() {
       const routes = window.ROUTE_DATA || [];
       if (this.climbline === "3") {

@@ -65,7 +65,7 @@
           </div>
 
           <div class="v2-grid">
-            <div class="th-field v2-grid-full">
+            <div class="th-field">
               <label class="th-label" for="con_teams_name"><span class="req">*</span>隊名</label>
               <input id="con_teams_name" type="text" class="th-input" v-model="teams_name" maxlength="50" placeholder="請輸入隊名" />
             </div>
@@ -107,36 +107,57 @@
               </th-hybrid-select>
             </div>
 
-            <div class="th-field v2-grid-full">
+            <div class="th-field">
               <label class="th-label">離開園區日期（系統自動計算）</label>
               <input type="text" class="th-input th-input-readonly" :value="endDate ? endDate + '（共 ' + sumday + ' 天）' : '請先選擇入園日期與天數'" readonly />
             </div>
           </div>
 
           <!-- 路線資訊：正式站用 table 五列（難度等級／說明／適合對象／建議裝備／備註），
-               2026-09-21 實走擷取。原本雛形是自創的 dl 格線，缺「說明」與「備註」，
-               且多了正式站沒有的「即時路況」。 -->
-          <div class="th-table-wrap">
+               2026-09-21 實走擷取。整塊隨「次路線」變動：
+                 難度等級 ← OPEN_STATUS_ROWS 該路線的 level（open.aspx 擷取）
+                 說明／適合對象／建議裝備 ← TRAIL_LEVELS 按等級查表（linelevel.aspx 那組）
+               原本是把第 3 級的文字寫死又標成「第 5 級」，換路線不會變。 -->
+          <div class="th-table-wrap" v-if="trailLevel">
             <table class="th-table">
               <tbody>
-                <tr><th scope="row">難度等級</th><td>第 {{ routeData.diff || 3 }} 級</td></tr>
-                <tr><th scope="row">說明</th><td>步道位處較偏遠山區，路徑尚稱清晰但部分坡度升降較大、氣候變化大而有潛在風險，一般行程約 1 至 3 天。</td></tr>
-                <tr><th scope="row">適合對象</th><td>體力佳，具備初步地圖判讀、負重行進、風險評估及應變能力者。</td></tr>
-                <tr><th scope="row">建議裝備</th><td>參考個人及團體裝備檢查表，依行程需求攜帶宿營或緊急宿營裝備。</td></tr>
+                <tr><th scope="row">難度等級</th><td>第 {{ trailLevel.level }} 級</td></tr>
+                <tr>
+                  <th scope="row">說明</th>
+                  <td>
+                    <template v-if="trailLevelDesc.length > 1">
+                      <ol class="p-apply3-desc-list">
+                        <li v-for="(d, dIdx) in trailLevelDesc" :key="dIdx">{{ d }}</li>
+                      </ol>
+                    </template>
+                    <template v-else>{{ trailLevelDesc[0] }}</template>
+                  </td>
+                </tr>
+                <tr><th scope="row">適合對象</th><td>{{ trailLevel.who }}</td></tr>
+                <tr>
+                  <th scope="row">建議裝備</th>
+                  <td>
+                    <template v-if="trailLevel.kit">{{ trailLevel.kit }}</template>
+                    <template v-else>參考<a :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表</a>{{ trailLevel.kitRef }}</template>
+                  </td>
+                </tr>
                 <tr>
                   <th scope="row">備註</th>
-                  <td>歡迎下載：<a href="https://hike.taiwan.gov.tw/images/%E5%80%8B%E4%BA%BA%E5%8F%8A%E5%9C%98%E9%AB%94%E8%A3%9D%E5%82%99%E6%AA%A2%E6%9F%A5%E8%A1%A8.pdf" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表</a></td>
+                  <td>歡迎下載：<a :href="kitPdfUrl" target="_blank" rel="noopener noreferrer">個人及團體裝備檢查表</a></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- 關閉日期公告：正式站是 table 之外的獨立 alert 區塊 -->
-          <div class="v2-notice v2-notice-danger mb-0">
+          <!-- 關閉日期公告：正式站是 table 之外的獨立 alert 區塊；
+               本路線無公告時整塊不出現 -->
+          <div class="v2-notice v2-notice-danger mb-0" v-if="routeClosures.length">
             <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
             <div>
-              <strong>關閉日期：2026/09/30-2026/10/01</strong><br />
-              原因：公告自 115 年 9 月 30 日起至 10 月 1 日止（為期 2 天），暫停本園生態保護區「玉山主、群峰線」之入園活動。
+              <strong>本路線公告</strong>
+              <ul class="p-apply3-closure-list">
+                <li v-for="(c, cIdx) in routeClosures" :key="cIdx">{{ c }}</li>
+              </ul>
             </div>
           </div>
           </div>
@@ -427,5 +448,7 @@
 </div>
 
 <script src="components/RouteData.js"></script>
+<script src="components/TrailLevelData.js"></script>
+<script src="components/OpenStatusData.js"></script>
 </body>
 </html>
