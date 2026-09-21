@@ -293,21 +293,12 @@
               </div>
             </template>
           </div>
-          </div>
-        </section>
 
-        <!-- 區塊 3：行前講習與設備 -->
-        <section id="sec-equipment" class="th-card">
-          <div class="th-card-head">
-            <h2 class="th-card-title">
-              行前講習與通訊設備
-            </h2>
-          </div>
-
-          <div class="th-card-body">
+          <!-- 行前講習與通訊設備：正式站同屬「路線規劃」這一塊，
+               不是獨立區塊（block_title 只有「路線規劃」與「警政署入山證申請」兩個） -->
           <div class="v2-grid">
             <div class="th-field">
-              <label class="th-label" for="con_seminar"><span class="req">*</span>登山行前講習<span class="p-apply3-label-en">General knowledge about hiking</span></label>
+              <label class="th-label" for="con_seminar"><span><span class="req">*</span>登山行前講習</span><span class="p-apply3-label-en">General knowledge about hiking</span></label>
               <th-hybrid-select>
                 <select id="con_seminar" class="th-select" v-model="seminar">
                   <option value="">請選擇</option>
@@ -324,7 +315,7 @@
 
             <div class="th-field">
               <label class="th-label" for="con_gps">
-                <span class="req">*</span>是否攜帶 GPS 及可供緊急聯絡之通信設備（包含智慧型手機、智慧型手錶、個人數位助理（PDA）等）<span class="p-apply3-label-en">Will you be carrying a GPS device? (i.e. Smart phone)</span>
+                <span><span class="req">*</span>是否攜帶 GPS 及可供緊急聯絡之通信設備（包含智慧型手機、智慧型手錶、個人數位助理（PDA）等）</span><span class="p-apply3-label-en">Will you be carrying a GPS device? (i.e. Smart phone)</span>
               </label>
               <th-hybrid-select>
                 <select id="con_gps" class="th-select" v-model="gps">
@@ -336,17 +327,17 @@
             </div>
 
             <div class="th-field" id="con_divGps">
-              <label class="th-label" for="con_satellitephone">衛星電話<span class="p-apply3-label-en">Satellite phone number</span></label>
+              <label class="th-label" for="con_satellitephone"><span>衛星電話</span><span class="p-apply3-label-en">Satellite phone number</span></label>
               <input id="con_satellitephone" type="text" class="th-input" v-model="satellitephone" placeholder="請輸入衛星電話" />
             </div>
 
             <div class="th-field" id="con_divWireless">
-              <label class="th-label" for="con_frequency">無線電頻<span class="p-apply3-label-en">Radio Frequency</span></label>
+              <label class="th-label" for="con_frequency"><span>無線電頻</span><span class="p-apply3-label-en">Radio Frequency</span></label>
               <input id="con_frequency" type="text" class="th-input" v-model="frequency" placeholder="請輸入無線電頻" />
             </div>
 
             <div class="th-field v2-grid-full">
-              <label class="th-label" for="con_note_user">備註<span class="p-apply3-label-en">Note</span></label>
+              <label class="th-label" for="con_note_user"><span>備註</span><span class="p-apply3-label-en">Note</span></label>
               <textarea id="con_note_user" class="th-textarea" rows="3" v-model="note_user" placeholder="請填入備註"></textarea>
             </div>
           </div>
@@ -426,7 +417,7 @@
               <!-- 範例為正式站原文，逐字保留 -->
               <div class="p-apply3-plan-example">
                 <p class="p-apply3-plan-example-title">【登山計畫書填寫範例】</p>
-                <p class="p-apply3-plan-example-note">※計畫書內容約300字，請參考範例，簡要述明。</p>
+                <p>※計畫書內容約300字，請參考範例，簡要述明。</p>
                 <p>D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。</p>
                 <p>D2：月型池→磐石山→磐石山西峰→三叉營地。</p>
                 <p>D3：三叉營地→太魯閣大山→三叉營地→平安池→廣寒宮。</p>
@@ -445,7 +436,7 @@
           <p class="v2-side-head">
             閱讀定位
             <span class="v2-side-count" :class="{ 'is-done': canSubmit }">
-              <span class="num">{{ completedSectionsCount }}</span>/4
+              <span class="num">{{ completedSectionsCount }}</span>/3
             </span>
           </p>
           <ol class="v2-side-list">
@@ -461,15 +452,9 @@
                 <span class="v2-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secEquipmentOk, 'is-active': activeNavIndex === 2 }">
-              <button type="button" @click="scrollToSection('sec-equipment', 2)">
-                <span class="v2-side-text">3. 行前講習與設備</span>
-                <span class="v2-side-tick" aria-hidden="true"></span>
-              </button>
-            </li>
-            <li :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 3 }">
-              <button type="button" @click="scrollToSection('sec-npa', 3)">
-                <span class="v2-side-text">4. 警政署入山證</span>
+            <li :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
+              <button type="button" @click="scrollToSection('sec-npa', 2)">
+                <span class="v2-side-text">3. 警政署入山證</span>
                 <span class="v2-side-tick" aria-hidden="true"></span>
               </button>
             </li>
@@ -535,7 +520,9 @@
 
     <template #foot>
       <div class="p-apply3-map-foot">
-        <button type="button" class="th-btn th-btn-primary" @click="mapOpen = false">關閉</button>
+        <button type="button" class="th-btn th-btn-ghost" @click="mapOpen = false">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉
+        </button>
       </div>
     </template>
   </th-modal>

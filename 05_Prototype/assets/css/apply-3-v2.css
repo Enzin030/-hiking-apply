@@ -581,8 +581,10 @@
 
 /* ---------- 路線圖彈窗 ----------
    tab 與圖之間要留間距，圖不貼齊 tab。 */
+/* tab 與圖的間距：modal body 本身已有上方 padding，這裡只補下方 */
 .p-apply3-map-modal .th-chip-row {
-  margin-bottom: 16px;
+  margin-top: -4px;
+  margin-bottom: 12px;
 }
 
 .p-apply3-map-foot {
@@ -598,6 +600,8 @@
 /* ---------- 雙語欄位標籤 ----------
    正式站每個欄位標籤是「中文<br>English」兩行，英文為輔助說明。
    這裡用 block 換行並降一級字級與色階，讓中文仍是主要視覺。 */
+/* 比照 mail_1 的雙語標籤：中文一行、英文另起一行，
+   英文降一級字級、常規字重、淡一階色。 */
 .p-apply3-label-en {
   display: block;
   margin-top: 2px;
@@ -714,11 +718,12 @@
   margin: 0;
 }
 
+.p-apply3-plan-example p + p {
+  margin-top: 6px;
+}
+
 .p-apply3-plan-example-title {
   font-weight: 700;
   color: var(--fg-1);
 }
 
-.p-apply3-plan-example-note {
-  color: var(--danger-fg);
-}

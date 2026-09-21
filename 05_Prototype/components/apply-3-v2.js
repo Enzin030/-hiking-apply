@@ -402,8 +402,10 @@ thPage({
     secRouteOk() {
       return !!this.teams_name.trim() && !!this.climblinemain && !!this.climbline && !!this.sumday && !!this.applystart;
     },
+    /* 行前講習與通訊設備併入「路線規劃」這一區（正式站同屬一塊），
+       所以本區完成 = 路線規劃完成 且 講習與 GPS 都已選。 */
     secPlannerOk() {
-      return this.isSingleDay || this.plannerFinished;
+      return (this.isSingleDay || this.plannerFinished) && this.secEquipmentOk;
     },
     secEquipmentOk() {
       return !!this.seminar && !!this.gps;
@@ -412,17 +414,17 @@ thPage({
       return !!this.NpaReasons && this.addedPlaces.length > 0 && !!this.NpaPlan.trim();
     },
 
+    // 三區：路線與基本資料／路線規劃（含講習設備）／警政署入山證
     completedSectionsCount() {
       let count = 0;
       if (this.secRouteOk) count++;
       if (this.secPlannerOk) count++;
-      if (this.secEquipmentOk) count++;
       if (this.secNpaOk) count++;
       return count;
     },
 
     canSubmit() {
-      return this.secRouteOk && this.secPlannerOk && this.secEquipmentOk && this.secNpaOk;
+      return this.secRouteOk && this.secPlannerOk && this.secNpaOk;
     }
   },
 
