@@ -143,24 +143,22 @@
         </section>
 
         <!-- 區塊 2：路線規劃 -->
-        <section id="sec-planner" class="v2-section">
-          <div class="v2-section-head">
-            <h2 class="v2-section-title">
-              路線規劃
-            </h2>
-            <p class="v2-section-sub">
-              規劃每日行經地點及夜宿宿營地
-              <a href="https://hike.taiwan.gov.tw/news_7_1.aspx?ID=2564" target="_blank" rel="noopener noreferrer" class="ml-2">
+        <section id="sec-planner" class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">路線規劃</h2>
+          </div>
+          <div class="th-card-body grid gap-4">
+            <p class="th-field-hint">
+              <a href="https://hike.taiwan.gov.tw/news_7_1.aspx?ID=2564" target="_blank" rel="noopener noreferrer">
                 <i class="fa-solid fa-circle-question mr-1" aria-hidden="true"></i>路線規劃操作說明
               </a>
             </p>
-          </div>
 
           <div class="v2-planner-box">
             <!-- 單日往返模式：自動帶入固定行程 -->
             <template v-if="isSingleDay">
-              <div class="v2-notice mb-3">
-                <i class="fa-solid fa-circle-check text-green-600" aria-hidden="true"></i>
+              <div class="th-callout mb-3">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                 <div>
                   <strong>單日往返路線：</strong>系統已依管理處核定之步道路徑自動帶入完整往返行程，無需手動選擇節點。
                 </div>
@@ -251,12 +249,13 @@
               </div>
             </template>
           </div>
+          </div>
         </section>
 
         <!-- 區塊 3：行前講習與設備 -->
-        <section id="sec-equipment" class="v2-section">
-          <div class="v2-section-head">
-            <h2 class="v2-section-title">
+        <section id="sec-equipment" class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">
               行前講習與通訊設備
             </h2>
             <p class="v2-section-sub">確認行前講習方式與緊急聯絡設備準備狀況</p>
