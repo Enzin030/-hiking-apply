@@ -102,6 +102,112 @@ function isValidDate(dateStr) {
   return /^\d{4}-\d{2}-\d{2}$/.test(dateStr.trim());
 }
 
+// 計算日期加天數
+function addDaysToDate(dateStr, days) {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return dateStr;
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  d.setDate(d.getDate() + Number(days));
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+// 檢驗是否年滿 18 歲（法定成年人）
+function isAdult(birthdayStr, refDateStr) {
+  if (!isValidDate(birthdayStr)) return false;
+  const parts = birthdayStr.split("-");
+  if (parts.length !== 3) return false;
+  const birthYear = Number(parts[0]);
+  const birthMonth = Number(parts[1]);
+  const birthDay = Number(parts[2]);
+
+  let ref = new Date();
+  if (refDateStr && isValidDate(refDateStr)) {
+    const rParts = refDateStr.split("-");
+    if (rParts.length === 3) {
+      ref = new Date(Number(rParts[0]), Number(rParts[1]) - 1, Number(rParts[2]));
+    }
+  }
+
+  let age = ref.getFullYear() - birthYear;
+  const m = (ref.getMonth() + 1) - birthMonth;
+  if (m < 0 || (m === 0 && ref.getDate() < birthDay)) {
+    age--;
+  }
+  return age >= 18;
+}
+
+// 依行程與天數動態產生宿營地列
+function createQueueRows(startDate, sumday, isSingleDay, planDays) {
+  if (isSingleDay || String(sumday) === "1") {
+    return [
+      {
+        date: startDate,
+        camp: "入山管制點（塔塔加）",
+        capacity: 100,
+        queueNum: 12,
+        reviewNum: 8,
+        approvedNum: 45,
+        pref: "none",
+        isSingle: true
+      }
+    ];
+  }
+
+  const daysCount = Math.max(2, Number(sumday) || 2);
+  const nightsCount = daysCount - 1; // 需住宿晚數
+  const rows = [];
+
+  for (let i = 0; i < nightsCount; i++) {
+    const curDate = addDaysToDate(startDate, i);
+    let campName = "排雲山莊";
+    let capacity = 136;
+    let queueNum = 61;
+    let reviewNum = 29;
+    let approvedNum = 98;
+
+    if (planDays && Array.isArray(planDays) && planDays[i] && planDays[i].length > 0) {
+      const dayNodes = planDays[i];
+      const lastNode = dayNodes[dayNodes.length - 1];
+      if (lastNode === "圓峰山屋") {
+        campName = "圓峰山屋";
+        capacity = 15;
+        queueNum = 18;
+        reviewNum = 6;
+        approvedNum = 12;
+      } else if (lastNode === "圓峰營地") {
+        campName = "圓峰營地";
+        capacity = 9;
+        queueNum = 10;
+        reviewNum = 4;
+        approvedNum = 8;
+      } else if (lastNode === "排雲山莊") {
+        campName = "排雲山莊";
+        capacity = 136;
+        queueNum = 61;
+        reviewNum = 29;
+        approvedNum = 98;
+      }
+    }
+
+    rows.push({
+      date: curDate,
+      camp: campName,
+      capacity: capacity,
+      queueNum: queueNum,
+      reviewNum: reviewNum,
+      approvedNum: approvedNum,
+      pref: "none",
+      isSingle: false
+    });
+  }
+
+  return rows;
+}
+
 thPage({
   data() {
     const qTeams = getParam("teams_name");
@@ -115,19 +221,7 @@ thPage({
     const teamName = qTeams || "天眼1隊";
 
     // 計算離園日期
-    let endStr = qStart;
-    if (qStart) {
-      const parts = qStart.split("-");
-      if (parts.length === 3) {
-        const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-        d.setDate(d.getDate() + Math.max(0, Number(qDays) - 1));
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        endStr = `${y}-${m}-${day}`;
-      }
-    }
-
+    const endStr = addDaysToDate(qStart, Math.max(0, Number(qDays) - 1));
     const isSingleDay = String(qDays) === "1" || subName.includes("單日往返");
 
     return {
@@ -160,66 +254,90 @@ thPage({
         climbline: qClimb || (isSingleDay ? "3" : "2")
       },
 
-      // 2. 申請人資料（依規格預設未勾選，欄位初始全空白）
-      applyConsent: false,
-      applicant: createPerson(),
+      // 步驟三完整資料備份
+      step3Data: null,
 
-      // 3. 領隊資料（預設不勾同申請人，領隊 1 人初始全空白）
-      leaderSame: false,
+      // 2. 申請人資料（直接預先帶入測試資料，預設勾選同意書）
+      applyConsent: true,
+      applicant: createPerson({
+        name: "王小明",
+        tel: "02-23456789",
+        country: "臺北市",
+        city: "中正區",
+        addr: "公園路1號",
+        mobile: "0912345678",
+        fax: "",
+        email: "wang.sample@example.com",
+        nation: "中華民國",
+        sid: "A123456789",
+        sex: "1",
+        birthday: "1990-05-15",
+        contactname: "王大同",
+        contacttel: "0911000111"
+      }),
+
+      // 3. 領隊資料（預設勾選同申請人）
+      leaderSame: true,
       leader: createPerson(),
 
-      // 4. 隊員資料（依規格正常申請從空白 0 隊員開始）
-      members: [],
+      // 4. 隊員資料（預先帶入 2 名示範隊員）
+      members: [
+        createPerson({
+          name: "陳小華",
+          tel: "02-27891234",
+          country: "臺北市",
+          city: "大安區",
+          addr: "信義路三段100號",
+          mobile: "0923456789",
+          fax: "",
+          email: "chen.sample@example.com",
+          nation: "中華民國",
+          sid: "B123456788",
+          sex: "1",
+          birthday: "1992-08-20",
+          contactname: "陳媽媽",
+          contacttel: "0922000222"
+        }),
+        createPerson({
+          name: "林美麗",
+          tel: "04-22334455",
+          country: "臺中市",
+          city: "西屯區",
+          addr: "臺灣大道三段99號",
+          mobile: "0934567890",
+          fax: "",
+          email: "lin.sample@example.com",
+          nation: "中華民國",
+          sid: "B223456786",
+          sex: "2",
+          birthday: "1994-11-10",
+          contactname: "林爸爸",
+          contacttel: "0933000333"
+        })
+      ],
+      memberOpenStates: [true, true],
       teamMax: 12,
       soloChecked: false, // cbOneMan 單人獨攀切結確認
 
-      // 5. 留守人資料（預設不勾同申請人，初始全空白）
+      // 5. 留守人資料
       staySame: false,
       stay: {
-        name: "",
-        mobile: "",
+        name: "李守護",
+        mobile: "0988777666",
         fax: "",
-        email: "",
-        birthday: "",
+        email: "stay.angel@example.com",
+        birthday: "1985-03-25",
         nation: "中華民國",
-        sid: ""
+        sid: "E123456787"
       },
 
-      // 6. 宿營地預約查詢排隊狀況（與日期、天數連動，預設「不限」）
+      // 6. 宿營地預約查詢排隊狀況（與日期、天數動態連動，多日依天數產生逐日列，預設「不限」）
       isSingleDay: isSingleDay,
-      queueRows: isSingleDay
-        ? [
-            {
-              date: qStart,
-              camp: "入山管制點（塔塔加）",
-              capacity: 100,
-              queueNum: 12,
-              reviewNum: 8,
-              approvedNum: 45,
-              pref: "none",
-              isSingle: true
-            }
-          ]
-        : [
-            {
-              date: qStart,
-              camp: "排雲山莊",
-              capacity: 136,
-              queueNum: 61,
-              reviewNum: 29,
-              approvedNum: 98,
-              pref: "none", // 正式站空白截圖預設為「不限」
-              isSingle: false
-            }
-          ],
+      queueRows: createQueueRows(qStart, qDays, isSingleDay, null),
 
-      // 送件驗證碼
-      captchaInput: "",
+      // 送件驗證碼（預先填入測試碼）
       captchaCode: "8F2K",
-
-      // 提示與草稿恢復
-      hasDraftNotice: false,
-      draftTime: ""
+      captchaInput: "8F2K"
     };
   },
 
@@ -259,21 +377,32 @@ thPage({
       return this.stay;
     },
 
-    // 各區塊完成度驗證（補齊性別、生日、Email、手機格式檢核）
+    // 檢驗申請人是否已滿 18 歲（法定成年人）
+    isApplicantAdult() {
+      if (!this.applicant.birthday) return true;
+      return isAdult(this.applicant.birthday, this.summary.applystart);
+    },
+
+    // 檢驗領隊是否已滿 18 歲（法定成年人）
+    isLeaderAdult() {
+      const l = this.activeLeader;
+      if (!l.birthday) return true;
+      return isAdult(l.birthday, this.summary.applystart);
+    },
+
+    // 各區塊完成度驗證（補齊性別、生日、成年18歲、Email、手機格式檢核）
     secSummaryOk() {
       return !!this.summary.applystart && !!this.summary.teams_name;
     },
 
     secApplyOk() {
       if (!this.applyConsent) return false;
-      return this.isPersonValid(this.applicant);
+      return this.isPersonValid(this.applicant) && isAdult(this.applicant.birthday, this.summary.applystart);
     },
 
     secLeaderOk() {
-      if (this.leaderSame) {
-        return this.secApplyOk;
-      }
-      return this.isPersonValid(this.leader);
+      const leader = this.activeLeader;
+      return this.isPersonValid(leader) && isAdult(leader.birthday, this.summary.applystart);
     },
 
     secMemberOk() {
@@ -305,15 +434,15 @@ thPage({
       );
     },
 
-    // 側欄完成總數（精準 6 項，計數上限 6）
+    // 側欄完成總數（排除行程計畫，純填寫卡片共 6 項）
     completedSectionsCount() {
       let c = 0;
-      if (this.secSummaryOk) c++;
       if (this.secApplyOk) c++;
       if (this.secLeaderOk) c++;
       if (this.secMemberOk) c++;
       if (this.secStayOk) c++;
       if (this.secQueueOk) c++;
+      if (this.secCaptchaOk) c++;
       return c;
     },
 
@@ -331,8 +460,8 @@ thPage({
   },
 
   mounted() {
-    this.refreshCaptcha();
-    this.checkExistingDraft();
+    this.initFromStep3();
+    this.restorePersonnelFromSession();
   },
 
   methods: {
@@ -543,6 +672,87 @@ thPage({
       }
     },
 
+    // 從 sessionStorage 載入步驟三資料並對齊行程與宿營地
+    initFromStep3() {
+      try {
+        const raw = sessionStorage.getItem("th_apply_step3_payload");
+        if (raw) {
+          const step3 = JSON.parse(raw);
+          this.step3Data = step3;
+          if (step3.applystart) this.summary.applystart = step3.applystart;
+          if (step3.sumday) this.summary.sumday = String(step3.sumday);
+          if (step3.teams_name) this.summary.teams_name = step3.teams_name;
+          if (step3.climblinemain) this.summary.climblinemain = step3.climblinemain;
+          if (step3.climbline) this.summary.climbline = step3.climbline;
+          if (step3.mainRouteName) this.summary.mainRoute = step3.mainRouteName;
+          if (step3.subRouteName) this.summary.subRoute = step3.subRouteName;
+          this.summary.applyend = addDaysToDate(this.summary.applystart, Math.max(0, Number(this.summary.sumday) - 1));
+          this.isSingleDay = !!step3.isSingleDay || String(this.summary.sumday) === "1";
+
+          // 動態產生逐日宿營地列
+          this.queueRows = createQueueRows(
+            this.summary.applystart,
+            this.summary.sumday,
+            this.isSingleDay,
+            step3.planDays
+          );
+        }
+      } catch (e) {
+        console.error("載入步驟三資料失敗", e);
+      }
+    },
+
+    // 暫存人員資料到 session（返回上一步或進入下一步皆自動保留）
+    savePersonnelToSession() {
+      try {
+        const payload = {
+          applyConsent: this.applyConsent,
+          applicant: this.applicant,
+          leaderSame: this.leaderSame,
+          leader: this.leader,
+          members: this.members,
+          soloChecked: this.soloChecked,
+          staySame: this.staySame,
+          stay: this.stay
+        };
+        sessionStorage.setItem("th_apply_temp_personnel", JSON.stringify(payload));
+      } catch (e) {
+        console.error("儲存人員暫存失敗", e);
+      }
+    },
+
+    // 自動恢復人員資料（4→5→4、4→3→4 完整保留無縫恢復）
+    restorePersonnelFromSession() {
+      try {
+        let raw = sessionStorage.getItem("th_apply_temp_personnel");
+        if (!raw) {
+          raw = sessionStorage.getItem("th_apply_confirmed_payload");
+        }
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.applyConsent !== undefined) this.applyConsent = data.applyConsent;
+          if (data.applicant && (data.applicant.name || data.applicant.sid)) {
+            this.applicant = data.applicant;
+          }
+          if (data.leaderSame !== undefined) this.leaderSame = data.leaderSame;
+          if (data.leader && (data.leader.name || data.leader.sid)) {
+            this.leader = data.leader;
+          }
+          if (Array.isArray(data.members) && data.members.length > 0) {
+            this.members = data.members;
+            this.memberOpenStates = data.members.map(() => true);
+          }
+          if (data.soloChecked !== undefined) this.soloChecked = data.soloChecked;
+          if (data.staySame !== undefined) this.staySame = data.staySame;
+          if (data.stay && (data.stay.name || data.stay.mobile)) {
+            this.stay = data.stay;
+          }
+        }
+      } catch (e) {
+        console.error("恢復人員暫存失敗", e);
+      }
+    },
+
     // 儲存草稿機制（存入 localStorage 並提示可隨時恢復）
     saveDraft() {
       try {
@@ -557,6 +767,7 @@ thPage({
         const draftData = {
           savedAt: timeStr,
           summary: this.summary,
+          step3: this.step3Data,
           applyConsent: this.applyConsent,
           applicant: this.applicant,
           leaderSame: this.leaderSame,
@@ -576,7 +787,7 @@ thPage({
       }
     },
 
-    // 恢復草稿
+    // 恢復草稿（僅恢復人員資料，絕不覆蓋當前申請的行程日期與宿營地點）
     restoreDraft() {
       try {
         const raw = localStorage.getItem("th_apply4_yushan_draft");
@@ -585,21 +796,33 @@ thPage({
           return;
         }
         const draft = JSON.parse(raw);
+
+        // 恢復人員資料
         if (draft.applicant) this.applicant = draft.applicant;
         if (draft.applyConsent !== undefined) this.applyConsent = draft.applyConsent;
         if (draft.leaderSame !== undefined) this.leaderSame = draft.leaderSame;
         if (draft.leader) this.leader = draft.leader;
-        if (draft.members) {
+        if (Array.isArray(draft.members)) {
           this.members = draft.members;
           this.memberOpenStates = this.members.map(() => true);
         }
         if (draft.soloChecked !== undefined) this.soloChecked = draft.soloChecked;
         if (draft.staySame !== undefined) this.staySame = draft.staySame;
         if (draft.stay) this.stay = draft.stay;
-        if (draft.queueRows) this.queueRows = draft.queueRows;
+
+        // 若草稿中有宿營地偏好設定，保留其偏好選項，但日期與營地維持當前行程
+        if (Array.isArray(draft.queueRows) && this.queueRows && this.queueRows.length > 0) {
+          this.queueRows.forEach((r, idx) => {
+            const match = draft.queueRows.find(d => d.camp === r.camp) || draft.queueRows[idx];
+            if (match && match.pref) {
+              r.pref = match.pref;
+            }
+          });
+        }
 
         this.hasDraftNotice = false;
-        alert(`已成功恢復於 ${draft.savedAt} 儲存的草稿資料！`);
+        this.savePersonnelToSession();
+        alert(`已成功恢復草稿中的人員資料（儲存時間：${draft.savedAt}）！\n注意：行程日期與宿營地依當前申請行程為準。`);
       } catch (e) {
         alert("恢復草稿失敗：" + e.message);
       }
@@ -611,24 +834,14 @@ thPage({
 
     // 上一步（保留已填資料並導回 apply-3）
     goPrev() {
+      this.savePersonnelToSession();
+
       const q = new URLSearchParams(window.location.search);
       if (this.summary.applystart) q.set("applystart", this.summary.applystart);
       if (this.summary.sumday) q.set("sumday", this.summary.sumday);
       if (this.summary.teams_name) q.set("teams_name", this.summary.teams_name);
       if (this.summary.climblinemain) q.set("climblinemain", this.summary.climblinemain);
       if (this.summary.climbline) q.set("climbline", this.summary.climbline);
-
-      // 同時寫入暫存供返回時無縫載入
-      sessionStorage.setItem("th_apply_temp_personnel", JSON.stringify({
-        applicant: this.applicant,
-        leaderSame: this.leaderSame,
-        leader: this.leader,
-        members: this.members,
-        staySame: this.staySame,
-        stay: this.stay,
-        applyConsent: this.applyConsent,
-        soloChecked: this.soloChecked
-      }));
 
       window.location.href = `apply-3.html?${q.toString()}`;
     },
@@ -641,6 +854,11 @@ thPage({
         this.scrollToSection("sec-apply", 1);
         return;
       }
+      if (!isAdult(this.applicant.birthday, this.summary.applystart)) {
+        alert("申請人須年滿 18 歲（法定成年人），請確認出生日期。");
+        this.scrollToSection("sec-apply", 1);
+        return;
+      }
       if (!this.secApplyOk) {
         alert("申請人資料尚未完整填寫或格式有誤，請確認必填欄位、Email 與手機格式。");
         this.scrollToSection("sec-apply", 1);
@@ -648,6 +866,11 @@ thPage({
       }
 
       // 2. 檢核領隊
+      if (!isAdult(this.activeLeader.birthday, this.summary.applystart)) {
+        alert("領隊須年滿 18 歲，請確認領隊出生日期。");
+        this.scrollToSection("sec-leader", 2);
+        return;
+      }
       if (!this.secLeaderOk) {
         alert("領隊資料尚未完整填寫或格式有誤，請確認領隊各欄位、Email 與手機格式。");
         this.scrollToSection("sec-leader", 2);
@@ -657,7 +880,7 @@ thPage({
       // 3. 檢核隊員與單人獨攀
       if (this.isSolo) {
         if (!this.soloChecked) {
-          alert("請勾選單人獨攀注意事項");
+          alert("請勾選單人獨攀注意事項。");
           this.scrollToSection("sec-member", 3);
           return;
         }
@@ -679,13 +902,17 @@ thPage({
       // 5. 檢核驗證碼
       if (!this.secCaptchaOk) {
         alert("請輸入正確的送件驗證碼。");
-        this.scrollToSection("sec-captcha", 5);
+        this.scrollToSection("sec-captcha", 6);
         return;
       }
+
+      // 暫存人員資料
+      this.savePersonnelToSession();
 
       // 儲存至 sessionStorage 供步驟五確認頁（apply-5.html）渲染
       const payload = {
         summary: this.summary,
+        step3: this.step3Data,
         applicant: this.applicant,
         leader: this.activeLeader,
         leaderSame: this.leaderSame,

@@ -41,67 +41,27 @@
       ]"></th-stepper>
     </template>
 
-    <!-- 頂部操作工具列：展示情境載入與草稿提醒 -->
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pt-2">
-      <!-- 草稿恢復提醒 -->
-      <div v-if="hasDraftNotice" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-md text-sm">
-        <i class="fa-solid fa-clock-rotate-left text-emerald-600" aria-hidden="true"></i>
-        <span>發現您於 {{ draftTime }} 儲存的未完成草稿</span>
-        <button type="button" class="th-btn th-btn-primary th-btn-sm ml-2 py-0.5" @click="restoreDraft">恢復草稿</button>
-        <button type="button" class="text-emerald-700 hover:text-emerald-900 text-xs ml-1" @click="dismissDraftNotice">略過</button>
-      </div>
-      <div v-else></div>
-
-      <!-- 示範情境快速操作 -->
-      <div class="flex items-center gap-2 ml-auto">
-        <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="loadDemoData" title="一鍵載入示範資料（含申請人、領隊、2隊員、留守人）">
-          <i class="fa-solid fa-wand-magic-sparkles mr-1 text-national-700" aria-hidden="true"></i>載入示範資料
-        </button>
-        <button type="button" class="th-btn th-btn-ghost th-btn-sm text-slate-500" @click="clearAllData" title="清空所有欄位重設為空白初始狀態">
-          <i class="fa-solid fa-rotate-left mr-1" aria-hidden="true"></i>清空表單
-        </button>
-      </div>
-    </div>
-
-    <div class="p-apply4-layout">
+    <div class="p-apply4-layout mt-6">
       <!-- 左側主要表單內容 -->
       <main class="p-apply4-main" role="main">
 
-        <!-- 區塊 1：行程計畫 -->
-        <section id="sec-summary" class="th-card" aria-labelledby="heading-summary">
-          <div class="th-card-head">
-            <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('summary')">
-              <h2 id="heading-summary" class="th-card-title">行程計畫</h2>
-              <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.summary }" aria-hidden="true"></i>
-            </button>
-          </div>
-          <div class="th-card-body" v-show="accordionOpen.summary">
-            <dl class="p-apply4-summary-dl">
-              <div class="p-apply4-summary-item">
-                <dt class="p-apply4-summary-dt">入園日期 — 離園日期</dt>
-                <dd class="p-apply4-summary-dd">{{ summary.applystart }} 至 {{ summary.applyend }}（共 {{ summary.sumday }} 天）</dd>
+        <!-- 頂部行程計畫條件摘要（查詢條件方式呈現，單列平鋪） -->
+        <div id="sec-summary" class="th-filter p-apply4-filter-summary" role="region" aria-label="申請行程條件">
+          <div class="th-filter-grid p-apply4-filter-grid">
+            <div class="th-filter-field p-apply4-filter-field">
+              <span class="th-filter-label">入園期間</span>
+              <div class="p-apply4-filter-val">
+                {{ summary.applystart }}<span class="p-apply4-to-sep">至</span>{{ summary.applyend }}<span class="p-apply4-days-tag">（共 {{ summary.sumday }} 天）</span>
               </div>
-              <div class="p-apply4-summary-item">
-                <dt class="p-apply4-summary-dt">登山主路線</dt>
-                <dd class="p-apply4-summary-dd">{{ summary.mainRoute }}</dd>
-              </div>
-              <div class="p-apply4-summary-item">
-                <dt class="p-apply4-summary-dt">次路線</dt>
-                <dd class="p-apply4-summary-dd">{{ summary.subRoute }}</dd>
-              </div>
-              <div class="p-apply4-summary-item">
-                <dt class="p-apply4-summary-dt">隊名</dt>
-                <dd class="p-apply4-summary-dd">{{ summary.teams_name }}</dd>
-              </div>
-            </dl>
-          </div>
-        </section>
-
-        <!-- 基本資料填寫提示（統一使用 .th-callout 淡綠色） -->
-        <div class="th-callout">
-          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          <div>
-            <strong>基本資料填寫提醒：</strong>人員資料必須有：申請人、領隊、隊員（如無則免）、留守人。
+            </div>
+            <div class="th-filter-field p-apply4-filter-field">
+              <span class="th-filter-label">登山主路線</span>
+              <div class="p-apply4-filter-val">{{ summary.mainRoute }}</div>
+            </div>
+            <div class="th-filter-field p-apply4-filter-field">
+              <span class="th-filter-label">次路線</span>
+              <div class="p-apply4-filter-val">{{ summary.subRoute }}</div>
+            </div>
           </div>
         </div>
 
@@ -109,31 +69,29 @@
         <section id="sec-apply" class="th-card" aria-labelledby="heading-apply">
           <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('apply')">
-              <h2 id="heading-apply" class="th-card-title">申請人資料</h2>
+              <h2 id="heading-apply" class="th-card-title"><span class="req text-rose-600 mr-1">*</span>申請人資料</h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.apply }" aria-hidden="true"></i>
             </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.apply">
-            <!-- 未成年不得擔任申請人警示（保留語意紅） -->
-            <div class="flex items-center gap-2 text-rose-600 font-semibold text-sm">
+            <!-- 未成年不得擔任申請人警示（紅色 callout） -->
+            <div class="th-callout is-danger">
               <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-              <span>未成年者不得擔任申請人</span>
+              <div>
+                <strong>未成年者不得擔任申請人</strong>
+              </div>
             </div>
 
             <!-- 委託代理同意書核取方塊（預設未勾選） -->
             <label class="p-apply4-check-row">
               <input type="checkbox" v-model="applyConsent" id="cbApplyConsent" />
               <span>
-                <strong>委託代理同意書：</strong>請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。<span class="req">*</span>
+                <strong>委託代理同意書：</strong>請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。
               </span>
             </label>
 
-            <!-- 依規格：勾選同意後才顯示申請人輸入欄位 -->
-            <div v-if="!applyConsent" class="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-md text-center text-slate-500 text-sm">
-              <i class="fa-solid fa-lock mr-1" aria-hidden="true"></i>請先確認並勾選上方「委託代理同意書」，以展開填寫申請人基本資料。
-            </div>
-
-            <div v-else class="p-apply4-grid">
+            <!-- 勾選同意後直接出現欄位（無多餘提示框） -->
+            <div v-if="applyConsent" class="p-apply4-grid">
               <!-- 姓名 -->
               <div class="th-field">
                 <label class="th-label" for="con_apply_name">
@@ -225,6 +183,9 @@
                   <span class="p-apply4-label-en">Birthday</span>
                 </label>
                 <input id="con_apply_birthday" type="date" class="th-input" v-model="applicant.birthday" placeholder="格式：YYYY-MM-DD" required />
+                <p v-if="applicant.birthday && !isApplicantAdult" class="text-xs text-rose-600 font-bold mt-1">
+                  <i class="fa-solid fa-circle-exclamation mr-1" aria-hidden="true"></i>申請人須年滿 18 歲（法定成年人）
+                </p>
               </div>
 
               <!-- 地址（全寬複合） -->
@@ -275,7 +236,7 @@
         <section id="sec-leader" class="th-card" aria-labelledby="heading-leader">
           <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('leader')">
-              <h2 id="heading-leader" class="th-card-title">領隊資料</h2>
+              <h2 id="heading-leader" class="th-card-title"><span class="req text-rose-600 mr-1">*</span>領隊資料</h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.leader }" aria-hidden="true"></i>
             </button>
           </div>
@@ -401,6 +362,9 @@
                   <span class="p-apply4-label-en">Birthday</span>
                 </label>
                 <input id="con_leader_birthday" type="date" class="th-input" v-model="leader.birthday" placeholder="格式：YYYY-MM-DD" required />
+                <p v-if="leader.birthday && !isLeaderAdult" class="text-xs text-rose-600 font-bold mt-1">
+                  <i class="fa-solid fa-circle-exclamation mr-1" aria-hidden="true"></i>領隊須年滿 18 歲（法定成年人）
+                </p>
               </div>
 
               <div class="th-field p-apply4-grid-full">
@@ -448,10 +412,7 @@
         <section id="sec-member" class="th-card" aria-labelledby="heading-member">
           <div class="th-card-head flex items-center justify-between">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('member')">
-              <h2 id="heading-member" class="th-card-title">隊員資料</h2>
-              <span class="text-sm text-slate-500 font-normal ml-3">
-                隊員 {{ members.length }} 人（隊伍總人數：{{ teamsCount }} / {{ teamMax }}）
-              </span>
+              <h2 id="heading-member" class="th-card-title">隊員資料<span class="text-xs font-normal text-slate-500 ml-1.5">（如無則免）</span></h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.member }" aria-hidden="true"></i>
             </button>
           </div>
@@ -465,28 +426,21 @@
               </div>
             </div>
 
-            <!-- 隊員全部展開/收合操作工具列 -->
-            <div v-if="members.length > 0" class="flex items-center justify-between py-1">
-              <span class="text-xs text-slate-600 font-medium">共 {{ members.length }} 位隊員</span>
-              <button type="button" class="th-btn th-btn-ghost th-btn-sm text-xs" @click="toggleAllMembers">
-                <i :class="['fa-solid', allMembersExpanded ? 'fa-angles-up' : 'fa-angles-down', 'mr-1']" aria-hidden="true"></i>
-                {{ allMembersExpanded ? '全部收合' : '全部展開' }}
-              </button>
-            </div>
-
             <!-- 隊員卡片清單 -->
             <div v-if="members.length > 0" class="grid gap-3">
               <div v-for="(m, idx) in members" :key="idx" class="p-apply4-member-card">
-                <div class="p-apply4-member-head">
-                  <h3 class="p-apply4-member-title" @click="toggleMember(idx)">
+                <div class="p-apply4-member-head flex items-center justify-between cursor-pointer" @click="toggleMember(idx)">
+                  <h3 class="p-apply4-member-title">
                     <i class="fa-solid fa-user text-national-700" aria-hidden="true"></i>
-                    No.{{ idx + 1 }} 隊員資料
+                    <span>No.{{ idx + 1 }} 隊員資料</span>
                     <span v-if="m.name" class="text-slate-500 font-normal text-xs">（{{ m.name }}）</span>
-                    <i :class="['fa-solid', isMemberOpen(idx) ? 'fa-chevron-up' : 'fa-chevron-down', 'text-xs text-slate-400 ml-2']" aria-hidden="true"></i>
                   </h3>
-                  <button type="button" class="th-btn th-btn-ghost th-btn-sm text-rose-600 hover:text-rose-700" @click="removeMember(idx)" title="移除此隊員">
-                    <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i>刪除
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button type="button" class="p-apply4-member-del" @click.stop="removeMember(idx)" title="移除此隊員">
+                      <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i>刪除
+                    </button>
+                    <i :class="['fa-solid', isMemberOpen(idx) ? 'fa-chevron-up' : 'fa-chevron-down', 'text-xs text-slate-400 ml-1']" aria-hidden="true"></i>
+                  </div>
                 </div>
 
                 <div class="p-apply4-member-body" v-show="isMemberOpen(idx)">
@@ -630,7 +584,7 @@
             <div class="flex items-center justify-between pt-2">
               <button
                 type="button"
-                class="th-btn th-btn-outline"
+                class="th-btn th-btn-secondary"
                 :disabled="teamsCount >= teamMax"
                 @click="addMember">
                 <i class="fa-solid fa-plus mr-1" aria-hidden="true"></i>新增隊員
@@ -682,7 +636,7 @@
         <section id="sec-stay" class="th-card" aria-labelledby="heading-stay">
           <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('stay')">
-              <h2 id="heading-stay" class="th-card-title">留守人資料</h2>
+              <h2 id="heading-stay" class="th-card-title"><span class="req text-rose-600 mr-1">*</span>留守人資料</h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.stay }" aria-hidden="true"></i>
             </button>
           </div>
@@ -805,29 +759,31 @@
 
         <!-- 區塊 6：宿營地預約查詢排隊狀況 -->
         <section id="sec-queue" class="th-card" aria-labelledby="heading-queue">
-          <div class="th-card-head flex flex-wrap items-center justify-between gap-3">
+          <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('queue')">
               <h2 id="heading-queue" class="th-card-title">宿營地預約查詢排隊狀況</h2>
-              <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.queue }" aria-hidden="true"></i>
+              <div class="p-apply4-head-actions ml-auto flex items-center gap-2">
+                <a
+                  href="bed_7.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="th-btn th-btn-ghost th-btn-sm"
+                  title="玉山單日往返路線查詢（另開新視窗）"
+                  @click.stop>
+                  <i class="fa-solid fa-person-walking mr-1" aria-hidden="true"></i>玉山單日往返路線
+                </a>
+                <a
+                  href="bed_6.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="th-btn th-btn-brown th-btn-sm"
+                  title="玉山宿營地查詢（另開新視窗）"
+                  @click.stop>
+                  <i class="fa-solid fa-mountain-sun mr-1" aria-hidden="true"></i>玉山宿營地
+                </a>
+                <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.queue }" aria-hidden="true"></i>
+              </div>
             </button>
-            <div class="flex items-center gap-2">
-              <a
-                href="bed_6.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="th-btn th-btn-outline th-btn-sm"
-                title="玉山宿營地查詢（另開新視窗）">
-                <i class="fa-solid fa-mountain-sun mr-1" aria-hidden="true"></i>玉山宿營地
-              </a>
-              <a
-                href="bed_7.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="th-btn th-btn-outline th-btn-sm"
-                title="玉山單日往返路線查詢（另開新視窗）">
-                <i class="fa-solid fa-person-walking mr-1" aria-hidden="true"></i>玉山單日往返路線
-              </a>
-            </div>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.queue">
             <div class="p-apply4-queue-table-wrap">
@@ -938,39 +894,39 @@
           </div>
 
           <ol class="p-apply4-side-list">
-            <li :class="{ 'is-acked': secSummaryOk, 'is-active': activeNavIndex === 0 }">
-              <button type="button" @click="scrollToSection('sec-summary', 0)">
-                <span class="p-apply4-side-text">1. 行程計畫</span>
+            <li :class="{ 'is-acked': secApplyOk, 'is-active': activeNavIndex === 0 }">
+              <button type="button" @click="scrollToSection('sec-apply', 0)">
+                <span class="p-apply4-side-text">1. 申請人資料</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secApplyOk, 'is-active': activeNavIndex === 1 }">
-              <button type="button" @click="scrollToSection('sec-apply', 1)">
-                <span class="p-apply4-side-text">2. 申請人資料</span>
+            <li :class="{ 'is-acked': secLeaderOk, 'is-active': activeNavIndex === 1 }">
+              <button type="button" @click="scrollToSection('sec-leader', 1)">
+                <span class="p-apply4-side-text">2. 領隊資料</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secLeaderOk, 'is-active': activeNavIndex === 2 }">
-              <button type="button" @click="scrollToSection('sec-leader', 2)">
-                <span class="p-apply4-side-text">3. 領隊資料</span>
+            <li :class="{ 'is-acked': secMemberOk, 'is-active': activeNavIndex === 2 }">
+              <button type="button" @click="scrollToSection('sec-member', 2)">
+                <span class="p-apply4-side-text">3. 隊員資料（如無則免）</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secMemberOk, 'is-active': activeNavIndex === 3 }">
-              <button type="button" @click="scrollToSection('sec-member', 3)">
-                <span class="p-apply4-side-text">4. 隊員與隊伍人數</span>
+            <li :class="{ 'is-acked': secStayOk, 'is-active': activeNavIndex === 3 }">
+              <button type="button" @click="scrollToSection('sec-stay', 3)">
+                <span class="p-apply4-side-text">4. 留守人資料</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secStayOk, 'is-active': activeNavIndex === 4 }">
-              <button type="button" @click="scrollToSection('sec-stay', 4)">
-                <span class="p-apply4-side-text">5. 留守人資料</span>
+            <li :class="{ 'is-acked': secQueueOk, 'is-active': activeNavIndex === 4 }">
+              <button type="button" @click="scrollToSection('sec-queue', 4)">
+                <span class="p-apply4-side-text">5. 宿營地排隊狀況</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secQueueOk, 'is-active': activeNavIndex === 5 }">
-              <button type="button" @click="scrollToSection('sec-queue', 5)">
-                <span class="p-apply4-side-text">6. 宿營地排隊狀況</span>
+            <li :class="{ 'is-acked': secCaptchaOk, 'is-active': activeNavIndex === 5 }">
+              <button type="button" @click="scrollToSection('sec-captcha', 5)">
+                <span class="p-apply4-side-text">6. 送件驗證碼</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
@@ -981,10 +937,14 @@
 
     <!-- 置底操作按鈕 -->
     <div class="p-apply4-actions">
+      <div v-if="completedSectionsCount === 5 && !secCaptchaOk" class="mr-auto text-xs text-rose-600 font-bold flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+        <span>前 5 項已填妥，請至下方輸入「送件驗證碼」即可前往下一步</span>
+      </div>
       <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
         <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
       </button>
-      <button type="button" class="th-btn th-btn-outline" @click="saveDraft" id="con_btnbak">
+      <button type="button" class="th-btn th-btn-secondary" @click="saveDraft" id="con_btnbak">
         <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
       </button>
       <button type="button" class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext" id="con_btnToStep31">

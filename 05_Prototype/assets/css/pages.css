@@ -6870,8 +6870,10 @@ body:where(.p-indexb-body):before {
 }
 
 .p-apply3-main a.th-btn-brown,
-.p-apply3-main a.th-btn-brown i {
-  color: #fff;
+.p-apply3-main a.th-btn-brown i,
+.p-apply4-main a.th-btn-brown,
+.p-apply4-main a.th-btn-brown i {
+  color: #fff !important;
 }
 
 /* Badge 上的 close 按鈕：點擊即可移除最後一個地點（取代返回上個地點） */
@@ -7505,6 +7507,32 @@ body:where(.p-indexb-body):before {
   color: var(--fg-1);
 }
 
+/* ---------- 卡片手風琴標題開關 ---------- */
+.p-apply3-accordion-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.p-apply3-accordion-icon {
+  margin-left: auto;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+  transition: transform .2s ease;
+}
+
+.p-apply3-accordion-icon.is-open {
+  transform: rotate(180deg);
+}
+
 /* ############################################################
    apply-4-v2.html — 步驟四「人員資料」
    ############################################################
@@ -7532,11 +7560,11 @@ body:where(.p-indexb-body):before {
   gap: 40px;
 }
 
-/* ---------- 表單欄位格線（統一 16px 24px） ---------- */
+/* ---------- 表單欄位格線（統一對齊 apply-3 為 20px 24px） ---------- */
 .p-apply4-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px 24px;
+  gap: 20px 24px;
 }
 
 .p-apply4-grid-full {
@@ -7553,10 +7581,9 @@ body:where(.p-indexb-body):before {
   margin-left: 4px;
 }
 
-/* ---------- 摘要唯讀卡片 ---------- */
 .p-apply4-summary-dl {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 16px 24px;
   margin: 0;
   padding: 0;
@@ -7566,6 +7593,20 @@ body:where(.p-indexb-body):before {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.p-apply4-summary-item.col-span-6 {
+  grid-column: span 6 / span 6;
+}
+
+.p-apply4-summary-item.col-span-12 {
+  grid-column: span 12 / span 12;
+}
+
+@media (max-width: 640px) {
+  .p-apply4-summary-item.col-span-6 {
+    grid-column: span 12 / span 12;
+  }
 }
 
 .p-apply4-summary-dt {
@@ -7579,6 +7620,57 @@ body:where(.p-indexb-body):before {
   font-size: var(--fs-base);
   font-weight: 600;
   color: var(--slate-800);
+}
+
+.p-apply4-to-sep {
+  margin: 0 8px;
+  font-weight: 400;
+  color: var(--slate-500);
+}
+
+.p-apply4-days-tag {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--slate-500);
+  margin-left: 6px;
+}
+
+/* ---------- 頂部行程計畫查詢條件列（去底色、去邊框、直接平鋪攤開成一列） ---------- */
+.p-apply4-filter-summary {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.p-apply4-filter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px 36px;
+}
+
+.p-apply4-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.p-apply4-filter-val {
+  font-size: var(--fs-base, 15px);
+  font-weight: 600;
+  color: var(--slate-800, #1e293b);
+  line-height: var(--lh-snug, 1.4);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .p-apply4-filter-val {
+    white-space: normal;
+  }
 }
 
 /* ---------- 快捷核取列（委託同意、同申請人） ---------- */
@@ -7611,6 +7703,12 @@ body:where(.p-indexb-body):before {
 }
 
 /* ---------- 手風琴標題操作按鈕 ---------- */
+.th-card-title .req {
+  color: var(--danger-fg, #dc2626) !important;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
 .p-apply4-accordion-btn {
   display: flex;
   align-items: center;
@@ -7636,6 +7734,17 @@ body:where(.p-indexb-body):before {
   transform: rotate(180deg);
 }
 
+.p-apply4-head-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p-apply4-head-actions .p-apply4-accordion-icon {
+  margin-left: 0;
+}
+
 /* ---------- 隊員區塊卡片 ---------- */
 .p-apply4-member-card {
   border: 1px solid var(--slate-200);
@@ -7656,6 +7765,31 @@ body:where(.p-indexb-body):before {
   padding: 12px 16px;
   background: var(--slate-50);
   border-bottom: 1px solid var(--slate-200);
+}
+
+.p-apply4-member-del {
+  color: var(--danger-fg, #dc2626) !important;
+  border: 1px solid var(--danger-border, #fecaca) !important;
+  background: #ffffff !important;
+  padding: 2px 10px !important;
+  min-height: 28px !important;
+  font-size: var(--fs-xs) !important;
+  font-weight: 600 !important;
+  border-radius: var(--r-sm) !important;
+  line-height: 1.2 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+
+.p-apply4-member-del:hover,
+.p-apply4-member-del:focus {
+  color: var(--danger-fg-hover, #b91c1c) !important;
+  border-color: var(--danger-fg, #dc2626) !important;
+  background: var(--danger-bg, #fef2f2) !important;
 }
 
 .p-apply4-member-title {

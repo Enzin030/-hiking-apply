@@ -69,6 +69,14 @@ thPage({
     }
 
     return {
+      // 卡片展開/收合開關狀態
+      accordionOpen: {
+        route: true,
+        planner: true,
+        npa: true
+      },
+      allAccordionExpanded: true,
+
       // 1. 基本路線控制項
       teams_name: qTeamsName || "天眼1隊",
       climblinemain: qMainRoute || "1", // 1: 玉山線
@@ -578,6 +586,20 @@ thPage({
       this.addedPlaces = this.addedPlaces.filter(p => p.id !== id);
     },
 
+    // 卡片手風琴展開/收合開關
+    toggleSection(secKey) {
+      this.accordionOpen[secKey] = !this.accordionOpen[secKey];
+      const { route, planner, npa } = this.accordionOpen;
+      this.allAccordionExpanded = route && planner && npa;
+    },
+
+    toggleAllSections() {
+      this.allAccordionExpanded = !this.allAccordionExpanded;
+      this.accordionOpen.route = this.allAccordionExpanded;
+      this.accordionOpen.planner = this.allAccordionExpanded;
+      this.accordionOpen.npa = this.allAccordionExpanded;
+    },
+
     goPrev() {
       const q = new URLSearchParams(window.location.search);
       window.location.href = `apply-2.html?${q.toString()}`;
@@ -585,6 +607,66 @@ thPage({
 
     goNext() {
       if (!this.canSubmit) return;
+
+      // 取得路線名稱
+      const mObj = this.mainRoutes.find(r => r.value === this.climblinemain);
+      const sObj = this.subRoutes.find(r => r.value === this.climbline);
+      const mainRouteName = mObj ? mObj.text : "玉山線";
+      const subRouteName = sObj ? sObj.text : (this.isSingleDay ? "玉山前峰單日往返" : "2~5天(塔塔加 - 玉山線 - 塔塔加)");
+
+      // 取得逐日行程節點
+      let planDaysData = [];
+      if (this.isSingleDay) {
+        if (this.climbline === "3") {
+          planDaysData = [["排雲登山服務中心", "塔塔加登山口", "孟祿亭", "玉山前峰", "塔塔加登山口", "排雲登山服務中心"]];
+        } else {
+          planDaysData = [["排雲登山服務中心", "塔塔加登山口", "排雲山莊", "玉山主峰", "排雲山莊", "塔塔加登山口", "排雲登山服務中心"]];
+        }
+      } else {
+        planDaysData = this.planDays && this.planDays.length > 0 ? this.planDays : [
+          ["排雲登山服務中心", "塔塔加登山口", "排雲山莊"],
+          ["排雲山莊", "玉山主峰", "塔塔加登山口", "排雲登山服務中心"]
+        ];
+      }
+
+      // 入山證事由文字
+      const rObj = this.npaReasonsOptions.find(o => o.value === this.NpaReasons);
+      const npaReasonText = rObj ? rObj.text : "登山健行";
+      const npaPlacesText = this.addedPlaces.length > 0
+        ? this.addedPlaces.map(p => p.customText || p.optionName).join("、")
+        : (this.NpaPlacesInfo || "玉山群峰(嘉義縣-阿里山鄉)");
+
+      const step3Payload = {
+        applystart: this.applystart,
+        sumday: this.sumday,
+        teams_name: this.teams_name,
+        climblinemain: this.climblinemain,
+        climbline: this.climbline,
+        mainRouteName: mainRouteName,
+        subRouteName: subRouteName,
+        isSingleDay: this.isSingleDay,
+        planDays: planDaysData,
+        seminar: this.seminar === "1" ? "網路線上學習" : "團體自行辦理講習",
+        equipment: {
+          gps: this.gps === "1" ? "有" : "無",
+          satellitephone: this.satellitephone ? this.satellitephone : "無",
+          frequency: this.frequency ? this.frequency : "無",
+          note_user: this.note_user ? this.note_user : "無"
+        },
+        npa: {
+          reason: npaReasonText,
+          places: npaPlacesText,
+          routeMap: this.RouteMap_V || "上河文化台灣百岳導遊圖",
+          plan: this.NpaPlan || (this.isSingleDay ? "單日往返固定行程。" : planDaysData.map((d, i) => `D${i + 1}:${d.join("→")}。`).join("\n"))
+        }
+      };
+
+      try {
+        sessionStorage.setItem("th_apply_step3_payload", JSON.stringify(step3Payload));
+      } catch (e) {
+        console.error("儲存步驟三資料至 sessionStorage 失敗", e);
+      }
+
       const q = new URLSearchParams(window.location.search);
       if (this.applystart) q.set("applystart", this.applystart);
       if (this.sumday) q.set("sumday", this.sumday);

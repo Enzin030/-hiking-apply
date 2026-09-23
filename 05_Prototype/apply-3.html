@@ -53,9 +53,12 @@
         <!-- 區塊 1：路線與基本資料 -->
         <section id="sec-route" class="th-card">
           <div class="th-card-head">
-            <h2 class="th-card-title">路線與基本資料</h2>
+            <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('route')">
+              <h2 class="th-card-title">路線與基本資料</h2>
+              <i class="fa-solid fa-chevron-down p-apply3-accordion-icon" :class="{ 'is-open': accordionOpen.route }" aria-hidden="true"></i>
+            </button>
           </div>
-          <div class="th-card-body grid gap-4">
+          <div class="th-card-body grid gap-4" v-show="accordionOpen.route">
 
           <!-- 系統受理時段與草稿提醒 -->
           <div class="th-callout">
@@ -205,18 +208,23 @@
 
         <!-- 區塊 2：路線規劃 -->
         <section id="sec-planner" class="th-card">
-          <div class="th-card-head flex items-center justify-between">
-            <h2 class="th-card-title flex items-center">
-              <span>路線規劃</span>
-              <a class="p-apply3-help" href="news_7.html" target="_blank" rel="noopener noreferrer" title="路線規劃操作說明（另開新視窗）">
-                <i class="fa-solid fa-circle-question" aria-hidden="true"></i>操作說明
-              </a>
-            </h2>
-            <a class="th-btn th-btn-brown th-btn-sm" href="https://hike.taiwan.gov.tw/bed_6.aspx" target="_blank" rel="noopener noreferrer" title="查看宿營地部份關閉日期（另開新視窗）">
-              <i class="fa-regular fa-calendar-xmark mr-1 text-white" aria-hidden="true"></i>查看宿營地部份關閉日期
-            </a>
+          <div class="th-card-head">
+            <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('planner')">
+              <h2 class="th-card-title flex items-center">
+                <span>路線規劃</span>
+                <a class="p-apply3-help" href="news_7.html" target="_blank" rel="noopener noreferrer" title="路線規劃操作說明（另開新視窗）" @click.stop>
+                  <i class="fa-solid fa-circle-question" aria-hidden="true"></i>操作說明
+                </a>
+              </h2>
+              <div class="ml-auto flex items-center gap-3">
+                <a class="th-btn th-btn-brown th-btn-sm" href="https://hike.taiwan.gov.tw/bed_6.aspx" target="_blank" rel="noopener noreferrer" title="查看宿營地（另開新視窗）" @click.stop>
+                  <i class="fa-solid fa-mountain-sun mr-1 text-white" aria-hidden="true"></i>查看宿營地
+                </a>
+                <i class="fa-solid fa-chevron-down p-apply3-accordion-icon" :class="{ 'is-open': accordionOpen.planner }" aria-hidden="true"></i>
+              </div>
+            </button>
           </div>
-          <div class="th-card-body grid gap-4">
+          <div class="th-card-body grid gap-4" v-show="accordionOpen.planner">
 
           <div class="p-apply3-planner-box">
             <!-- 單日往返模式：自動帶入固定行程 -->
@@ -373,15 +381,16 @@
           </div>
         </section>
 
-        <!-- 區塊 4：警政署入山證申請（入山事由與前往地點並排） -->
+        <!-- 區塊 3：警政署入山證申請（入山事由與前往地點並排） -->
         <section id="sec-npa" class="th-card">
           <div class="th-card-head">
-            <h2 class="th-card-title">
-              警政署入山證申請
-            </h2>
+            <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('npa')">
+              <h2 class="th-card-title">警政署入山證申請</h2>
+              <i class="fa-solid fa-chevron-down p-apply3-accordion-icon" :class="{ 'is-open': accordionOpen.npa }" aria-hidden="true"></i>
+            </button>
           </div>
 
-          <div class="th-card-body">
+          <div class="th-card-body" v-show="accordionOpen.npa">
           <div class="p-apply3-grid">
             <div class="th-field">
               <label class="th-label" for="con_NpaReasons">

@@ -137,14 +137,18 @@
 .th-btn-secondary,
 .th-btn-secondary:visited {
   background: var(--btn-blue);
+  border-color: var(--btn-blue);
   color: var(--fg-on-dark);
+  box-shadow: var(--sh-sm);
 }
 
 .th-btn-secondary:hover,
 .th-btn-secondary:active,
 .th-btn-secondary:focus {
   background: #2f4a72;
+  border-color: #2f4a72;
   color: var(--fg-on-dark);
+  box-shadow: var(--sh-md);
 }
 
 .th-btn-ghost {
@@ -1482,9 +1486,12 @@
   align-items: center;
   gap: 6px;
 }
-.th-label .req {
-  color: var(--danger-fg);
+.req,
+.th-label .req,
+.th-card-title .req {
+  color: var(--danger-fg, #dc2626) !important;
   margin-right: 2px;
+  font-weight: 700;
 }
 .th-label-en {
   font-weight: 500;
@@ -4039,6 +4046,17 @@ a.th-linkrow:hover .th-linkrow-icon {
 }
 .th-callout.is-warning>i {
   color: var(--warning-fg);
+}
+.th-callout.is-danger {
+  background: var(--danger-bg, #fef2f2);
+  border-color: var(--danger-border, #fecaca);
+  color: var(--danger-fg, #dc2626);
+}
+.th-callout.is-danger>i {
+  color: var(--danger-fg, #dc2626);
+}
+.th-callout.is-danger strong {
+  color: var(--danger-fg, #b91c1c);
 }
 .th-callout strong {
   color: var(--fg-1);

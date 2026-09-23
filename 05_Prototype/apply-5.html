@@ -54,33 +54,85 @@
         <div class="th-card-head">
           <h2 class="th-card-title">行程計畫</h2>
         </div>
-        <div class="th-card-body">
-          <dl class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div>
+        <div class="th-card-body grid gap-6">
+          <dl class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+            <div class="sm:col-span-6">
               <dt class="text-xs text-slate-500 font-medium">隊名</dt>
               <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.teams_name }}</dd>
             </div>
-            <div>
-              <dt class="text-xs text-slate-500 font-medium">出發人數</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">{{ teamsCount }} 人</dd>
+            <div class="sm:col-span-6">
+              <dt class="text-xs text-slate-500 font-medium">入園期間</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">
+                {{ summary.applystart }}<span class="mx-2 font-normal text-slate-500">至</span>{{ summary.applyend }}<span class="text-xs font-normal text-slate-500 ml-1.5">（共 {{ summary.sumday }} 天）</span>
+              </dd>
             </div>
-            <div>
-              <dt class="text-xs text-slate-500 font-medium">行程天數</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">共 {{ summary.sumday }} 天</dd>
-            </div>
-            <div>
-              <dt class="text-xs text-slate-500 font-medium">入園日期 — 離園日期</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.applystart }} 至 {{ summary.applyend }}</dd>
-            </div>
-            <div>
+            <div class="sm:col-span-6">
               <dt class="text-xs text-slate-500 font-medium">登山主路線</dt>
               <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.mainRoute }}</dd>
             </div>
-            <div>
+            <div class="sm:col-span-6">
               <dt class="text-xs text-slate-500 font-medium">次路線</dt>
               <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.subRoute }}</dd>
             </div>
           </dl>
+
+          <!-- 逐日行程 -->
+          <div class="border-t border-slate-100 pt-4">
+            <h3 class="text-xs font-bold text-slate-700 tracking-wider mb-2">逐日行程規劃</h3>
+            <ul class="space-y-1.5 bg-slate-50 p-3 rounded border border-slate-200 text-xs text-slate-800 font-mono">
+              <li v-for="d in formattedPlanDays" :key="d.day" class="flex items-start gap-2">
+                <span class="inline-block px-1.5 py-0.5 rounded bg-national-100 text-national-900 font-bold text-[11px] shrink-0">第 {{ d.day }} 天</span>
+                <span class="pt-0.5">{{ d.text }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 宿營地清單 -->
+          <div class="border-t border-slate-100 pt-4">
+            <h3 class="text-xs font-bold text-slate-700 tracking-wider mb-2">預約宿營地與住宿需求</h3>
+            <div class="overflow-x-auto border border-slate-200 rounded-md">
+              <table class="th-table w-full text-xs">
+                <thead class="bg-slate-50 text-slate-700">
+                  <tr>
+                    <th class="py-2 px-3 text-left">宿營日期</th>
+                    <th class="py-2 px-3 text-left">宿營地點</th>
+                    <th class="py-2 px-3 text-left">住宿調查偏好</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  <tr v-for="c in campRows" :key="c.date + c.camp">
+                    <td class="py-2 px-3 font-mono font-medium">{{ c.date }}</td>
+                    <td class="py-2 px-3 font-bold text-slate-900">{{ c.camp }}</td>
+                    <td class="py-2 px-3 text-slate-700">{{ c.prefLabel }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 行前講習與通訊設備 -->
+          <div class="border-t border-slate-100 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">行前講習方式</dt>
+              <dd class="text-sm font-semibold text-slate-800 mt-1">{{ step3.seminar }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">攜帶 GPS / 衛星定位設備</dt>
+              <dd class="text-sm font-semibold text-slate-800 mt-1">{{ step3.equipment ? step3.equipment.gps : '有' }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">衛星電話號碼</dt>
+              <dd class="text-sm text-slate-800 mt-1">{{ step3.equipment && step3.equipment.satellitephone ? step3.equipment.satellitephone : '無' }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">無線電頻率</dt>
+              <dd class="text-sm text-slate-800 mt-1">{{ step3.equipment && step3.equipment.frequency ? step3.equipment.frequency : '無' }}</dd>
+            </div>
+            <div class="sm:col-span-2" v-if="step3.equipment && step3.equipment.note_user && step3.equipment.note_user !== '無'">
+              <dt class="text-xs text-slate-500 font-medium">其他通訊裝備與備註</dt>
+              <dd class="text-sm text-slate-800 mt-1">{{ step3.equipment.note_user }}</dd>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -238,7 +290,7 @@
               <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
                 <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
               </button>
-              <button type="button" class="th-btn th-btn-outline" @click="saveDraft">
+              <button type="button" class="th-btn th-btn-secondary" @click="saveDraft">
                 <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
               </button>
               <button type="button" class="th-btn th-btn-primary" @click="submitApply">

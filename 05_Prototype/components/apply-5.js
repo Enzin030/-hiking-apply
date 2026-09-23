@@ -3,11 +3,17 @@
    ------------------------------------------------------------
    對應 02_Spec/05a 第五節「步驟 5：確認資料（apply_1_4.aspx 步驟三）」
    唯讀彙整呈現行程計畫、隊伍資料、申請人與留守人資料、入山證資料，
-   並提供送件驗證碼與送出按鈕。
+   並提供真實草稿儲存、送件驗證碼與送出按鈕。
    ============================================================ */
 
 function getParam(key) {
   return new URLSearchParams(window.location.search).get(key) || "";
+}
+
+function prefText(p) {
+  if (p === "bed") return "床位";
+  if (p === "camp") return "營地";
+  return "不限";
 }
 
 thPage({
@@ -39,6 +45,28 @@ thPage({
       climbline: qDays === "1" ? "3" : "2"
     };
 
+    const step3 = (payload && payload.step3) || {
+      planDays: qDays === "1"
+        ? [["排雲登山服務中心", "塔塔加登山口", "孟祿亭", "玉山前峰", "塔塔加登山口", "排雲登山服務中心"]]
+        : [
+            ["排雲登山服務中心", "塔塔加登山口", "排雲山莊"],
+            ["排雲山莊", "玉山主峰", "塔塔加登山口", "排雲登山服務中心"]
+          ],
+      seminar: "網路線上學習",
+      equipment: {
+        gps: "有",
+        satellitephone: "無",
+        frequency: "無",
+        note_user: "無"
+      },
+      npa: {
+        reason: "登山健行",
+        places: summary.subRoute && summary.subRoute.includes("前峰") ? "玉山前峰(嘉義縣-阿里山鄉)" : "玉山群峰(嘉義縣-阿里山鄉)",
+        routeMap: "上河文化台灣百岳導遊圖",
+        plan: "D1:排雲登山服務中心→塔塔加登山口→排雲山莊。\nD2:排雲山莊→玉山主峰→塔塔加登山口→排雲登山服務中心。"
+      }
+    };
+
     const applicant = (payload && payload.applicant) || {
       name: "王小明",
       tel: "02-23456789",
@@ -67,19 +95,36 @@ thPage({
       sid: "E123456787"
     };
 
+    const queueRows = (payload && Array.isArray(payload.queueRows) && payload.queueRows.length > 0)
+      ? payload.queueRows
+      : [
+          {
+            date: summary.applystart,
+            camp: "排雲山莊",
+            capacity: 136,
+            queueNum: 61,
+            reviewNum: 29,
+            approvedNum: 98,
+            pref: "none",
+            isSingle: false
+          }
+        ];
+
     return {
       summary: summary,
+      step3: step3,
       applicant: applicant,
       leader: leader,
       members: members,
       stay: stay,
+      queueRows: queueRows,
 
-      // 警政署入山證預設資訊
-      npa: {
+      // 警政署入山證資訊
+      npa: step3.npa || {
         reason: "登山健行",
-        places: summary.subRoute.includes("前峰") ? "玉山前峰(嘉義縣-阿里山鄉)" : "玉山群峰(嘉義縣-阿里山鄉)",
+        places: "玉山群峰(嘉義縣-阿里山鄉)",
         routeMap: "上河文化台灣百岳導遊圖",
-        plan: "D1：塔塔加登山口→排雲山莊。\nD2：排雲山莊→玉山主峰→塔塔加登山口。"
+        plan: "D1:排雲登山服務中心→塔塔加登山口→排雲山莊。\nD2:排雲山莊→玉山主峰→塔塔加登山口→排雲登山服務中心。"
       },
 
       // 送件驗證碼
@@ -96,6 +141,27 @@ thPage({
 
     teamsCount() {
       return 1 + this.members.length;
+    },
+
+    // 格式化逐日行程清單
+    formattedPlanDays() {
+      if (!this.step3 || !this.step3.planDays || !Array.isArray(this.step3.planDays)) {
+        return [];
+      }
+      return this.step3.planDays.map((nodes, idx) => ({
+        day: idx + 1,
+        text: Array.isArray(nodes) ? nodes.join(" → ") : String(nodes)
+      }));
+    },
+
+    // 宿營地清單檢視
+    campRows() {
+      if (!this.queueRows || !Array.isArray(this.queueRows)) return [];
+      return this.queueRows.map(r => ({
+        date: r.date,
+        camp: r.camp,
+        prefLabel: r.isSingle ? "當日往返（無須床位）" : `需求偏好：${prefText(r.pref)}`
+      }));
     },
 
     // 隊伍資料表格整合（領隊 + 隊員）
@@ -186,11 +252,45 @@ thPage({
 
     goPrev() {
       const q = new URLSearchParams(window.location.search);
+      if (this.summary.applystart) q.set("applystart", this.summary.applystart);
+      if (this.summary.sumday) q.set("sumday", this.summary.sumday);
+      if (this.summary.teams_name) q.set("teams_name", this.summary.teams_name);
+      if (this.summary.climblinemain) q.set("climblinemain", this.summary.climblinemain);
+      if (this.summary.climbline) q.set("climbline", this.summary.climbline);
       window.location.href = `apply-4-v2.html?${q.toString()}`;
     },
 
+    // 真實儲存草稿機制（寫入 localStorage）
     saveDraft() {
-      alert("草稿已成功儲存！");
+      try {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const d = String(now.getDate()).padStart(2, "0");
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mm = String(now.getMinutes()).padStart(2, "0");
+        const timeStr = `${y}-${m}-${d} ${hh}:${mm}`;
+
+        const draftData = {
+          savedAt: timeStr,
+          summary: this.summary,
+          step3: this.step3,
+          applyConsent: true,
+          applicant: this.applicant,
+          leaderSame: this.leader.sid === this.applicant.sid,
+          leader: this.leader,
+          members: this.members,
+          soloChecked: this.teamsCount === 1,
+          staySame: this.stay.name === this.applicant.name,
+          stay: this.stay,
+          queueRows: this.queueRows
+        };
+
+        localStorage.setItem("th_apply4_yushan_draft", JSON.stringify(draftData));
+        alert(`草稿已成功儲存（儲存時間：${timeStr}）！\n您可隨時至「草稿編輯」或於申請流程中恢復填寫進度。`);
+      } catch (e) {
+        alert("儲存草稿時發生錯誤：" + e.message);
+      }
     },
 
     submitApply() {
