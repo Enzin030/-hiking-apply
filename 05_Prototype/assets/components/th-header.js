@@ -17,8 +17,7 @@
    - 補 aria-controls／aria-current、語系項目的 lang 屬性、外連的「另開新視窗」報讀文字。
 
    水平導覽在 ≥901px 呈現（2026-09-14 由 1280 下修，與設計檔同斷點）。
-   901–1280 之間主導覽會**換行**成兩到三列、頁首因此變高，與設計檔行為相同
-   （實測設計檔 1100 時頁首 110px、901 時 136px，兩者皆無水平溢位）。
+   901–1280 之間站名與各項導覽文字可折行，六個導覽項目保持橫排，對齊刻板。
    導覽字級（--fs-nav = 16px）不可改大：18px 在 1280 容器內塞不下同一行。
 
    ------------------------------------------------------------
@@ -204,11 +203,11 @@ window.thComponents["th-header"] = {
     this._onHoverMq = function (e) { self.canHover = e.matches; self.navOpen = ""; };
     this._hoverMq.addEventListener("change", this._onHoverMq);
 
-    /* 窄版斷點與 CSS 的 1280px 同一個值：跨過斷點時把展開狀態清乾淨，
+    /* 窄版斷點與 CSS 的 900px 同一個值：跨過斷點時把展開狀態清乾淨，
        否則桌機留下的 navOpen 會在窄版變成一個已展開的手風琴。
        **改這裡要連 components.css 的三個 @media 一起改**（選單鈕、頁首版面、
        子選單手風琴），兩邊不同步會出現「已收進選單鈕但樣式還是桌機」的狀態。 */
-    this._narrowMq = window.matchMedia("(max-width: 1280px)");
+    this._narrowMq = window.matchMedia("(max-width: 900px)");
     this._onNarrowMq = function () { self.navOpen = ""; self.menuOpen = false; };
     this._narrowMq.addEventListener("change", this._onNarrowMq);
   },
@@ -396,7 +395,7 @@ window.thComponents["th-header"] = {
           <span class="th-wordmark"><span class="th-wordmark-lead">臺灣<span class="th-accent">登山申請</span></span>一站式服務網</span>
         </a>
 
-        <!-- 窄版（≤1280px）：就地展開／收合，不是抽屜，所以沒有 aria-haspopup="dialog" -->
+        <!-- 窄版（≤900px）：就地展開／收合，不是抽屜，所以沒有 aria-haspopup="dialog" -->
         <button type="button" class="th-menubtn" ref="menuBtn"
                 :aria-expanded="menuOpen ? 'true' : 'false'" aria-controls="th-header-nav"
                 :aria-label="menuOpen ? '收合選單' : '展開選單'" @click="toggleMenu">
