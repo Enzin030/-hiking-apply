@@ -2247,6 +2247,9 @@ ul.th-doc-list {
 .th-brand {
   display: flex;
   align-items: center;
+  /* 標誌與站名的間距用 gap（設計檔的機制），窄版才能靠斷點逐階收窄
+     12 → 10（≤900）→ 8（≤600）；原本寫在 .th-logo 的 margin-right 無法這樣分階 */
+  gap: 12px;
   min-width: 0;
   flex-shrink: 1;
   transition: opacity 0.15s ease;
@@ -2260,7 +2263,6 @@ ul.th-doc-list {
   height: 56px;
   width: auto;
   flex-shrink: 0;
-  margin-right: 12px;
 }
 
 .th-wordmark {
@@ -2379,11 +2381,10 @@ ul.th-doc-list {
 
 /* ── 窄版（≤900px）：頁首往下就地展開 ───────────────────────── */
 @media (max-width: 900px) {
-  .th-header-inner { padding: 0 1rem; }
-  .th-header-inner { flex-wrap: wrap; }
-  .th-brand { flex: 1 1 auto; min-width: 0; }
-  .th-logo { height: 44px; margin-right: 10px; }
-  .th-wordmark { font-size: var(--fs-h3); }
+  .th-header-inner { flex-wrap: wrap; gap: 10px; padding: 0 16px; }
+  /* 品牌與標誌的間距用 gap（設計檔的機制），不用 .th-logo 的 margin-right */
+  .th-brand { flex: 1 1 auto; min-width: 0; gap: 10px; }
+  .th-logo { height: 44px; }
 
   .th-header-right {
     display: none;
@@ -2406,13 +2407,18 @@ ul.th-doc-list {
     gap: 2px;
   }
   .th-navlink { width: 100%; padding: 8px 0; }
+  /* 子選單按鈕滿版、標題與箭頭分置兩端（設計檔 .th-navbtn 的窄版行為） */
+  .th-navsub { width: 100%; }
+  .th-navsub-btn { width: 100%; justify-content: space-between; padding: 6px 0; }
   /* 窄版主選單換行後不再是頁首最後一列，底線改貼齊連結本身 */
   .th-navlink.is-current::after,
   .th-navsub.is-active > .th-navsub-btn::after { bottom: -2px; }
 }
 
 @media (max-width: 600px) {
-  .th-logo { height: 36px; margin-right: 8px; }
+  .th-header-right { align-items: flex-start; width: 100%; }
+  .th-brand { gap: 8px; }
+  .th-logo { height: 36px; }
   .th-wordmark { font-size: var(--fs-lg); }
 }
 /* 極窄螢幕：再降一階，確保站名 12 字維持單行（設計檔同樣的處理） */
