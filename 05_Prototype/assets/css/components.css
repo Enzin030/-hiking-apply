@@ -2318,7 +2318,10 @@ ul.th-doc-list {
 
 .th-caret { font-size: var(--fs-3xs); transition: transform 0.15s ease; }
 
-/* 主導覽：901–1280 之間會換行（與設計檔相同），不擠壓站名 */
+/* 主導覽：≥1281 單行排在站名右側。
+   1280 以下收進選單鈕——六個項目（含「登山路線開放狀態」「宿營地與床位查詢」
+   各 8 字）單行需約 712px，1280px 視窗扣掉品牌區只剩約 884px 勉強放下，
+   再窄就會折成兩列（2026-09-23 實測 960px 破版）。 */
 .th-nav {
   display: flex;
   align-items: center;
@@ -2357,7 +2360,7 @@ ul.th-doc-list {
 
 /* 窄版開合鈕：斷點由 1279 下修為 900，與設計檔一致 */
 .th-menubtn { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 1280px) {
   .th-menubtn {
     display: inline-flex;
     align-items: center;
@@ -2379,8 +2382,8 @@ ul.th-doc-list {
   .th-menubtn i { font-size: var(--fs-lg); }
 }
 
-/* ── 窄版（≤900px）：頁首往下就地展開 ───────────────────────── */
-@media (max-width: 900px) {
+/* ── 窄版（≤1280px）：頁首往下就地展開 ─────────────────────── */
+@media (max-width: 1280px) {
   .th-header-inner { flex-wrap: wrap; gap: 10px; padding: 0 16px; }
   /* 品牌與標誌的間距用 gap（設計檔的機制），不用 .th-logo 的 margin-right */
   .th-brand { flex: 1 1 auto; min-width: 0; gap: 10px; }
@@ -2443,6 +2446,10 @@ ul.th-doc-list {
   font-weight: 500;
   color: var(--fg-2);
   cursor: default;   /* 滑鼠裝置靠移入展開，父項不可點，不給手指游標 */
+  /* 與 .th-navlink 同：項目名稱不可斷行。「登山路線開放狀態」「宿營地與床位查詢」
+     各 8 字，901–1280 之間空間不足時會被折成兩行（實測 960px 破版）。
+     設計檔這裡沒有 nowrap，但它的選單沒有在這個寬度被檢查過。 */
+  white-space: nowrap;
   transition: color 0.15s ease;
 }
 .th-navsub-btn:hover,
@@ -2487,7 +2494,7 @@ ul.th-doc-list {
   font-weight: 700;
 }
 /* 窄版：下拉改為就地展開的手風琴，不做浮動定位 */
-@media (max-width: 900px) {
+@media (max-width: 1280px) {
   .th-navsub { width: 100%; }
   .th-navsub-btn { width: 100%; justify-content: space-between; padding: 8px 0; }
   .th-navsub-dropdown {
