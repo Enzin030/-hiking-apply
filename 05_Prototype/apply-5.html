@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜確認資料 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply-5.html — 步驟五「確認資料」
+  ------------------------------------------------------------
+  依據 02_Spec/05a_國家公園入園線上申請_玉山線.md 第五節：
+    - 唯讀彙整頁，只有一個可編輯欄位（送件驗證碼）。
+    - 區塊組成：
+      1. 行程計畫：隊名、出發人數、入園/離園日、主次路線、逐日行程等。
+      2. 隊伍資料：11 欄表格（No./身分/姓名/性別/國籍/證號/生日/電話-手機/聯絡地址/緊急聯絡人/電話）。
+      3. 申請人／留守人資料：同 11 欄表格（留守人僅姓名與手機）。
+      4. 警政署入山證：入山事由、前往地點、路線圖、登山計畫書。
+      5. 底部：儲存草稿、送件驗證碼、上一步、確認送出。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply-5.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="05 確認資料">
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, '確認資料']" title="確認資料" :bare="true">
+    <template #stepper>
+      <th-stepper :current="5" :steps="[
+        { n: 1, title: '選擇路線' },
+        { n: 2, title: '閱讀同意書' },
+        { n: 3, title: '行程規劃' },
+        { n: 4, title: '人員資料' },
+        { n: 5, title: '確認資料' },
+        { n: 6, title: '申請完成' }
+      ]"></th-stepper>
+    </template>
+
+    <div class="grid gap-8 max-w-5xl mx-auto mt-6">
+
+      <!-- 提示條 -->
+      <div class="th-callout">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <div>
+          <strong>請核對您的申請資料：</strong>資料確認無誤後，請於頁面底部輸入驗證碼並點擊「確認送出」。如需修改，請點擊「上一步」返回修改。
+        </div>
+      </div>
+
+      <!-- 1. 行程計畫摘要 -->
+      <section class="th-card" id="sec-summary">
+        <div class="th-card-head">
+          <h2 class="th-card-title">行程計畫</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">隊名</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.teams_name }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">出發人數</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">{{ teamsCount }} 人</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">行程天數</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">共 {{ summary.sumday }} 天</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">入園日期 — 離園日期</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.applystart }} 至 {{ summary.applyend }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">登山主路線</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.mainRoute }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">次路線</dt>
+              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.subRoute }}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 2. 隊伍資料表格（11欄） -->
+      <section class="th-card" id="sec-team">
+        <div class="th-card-head">
+          <h2 class="th-card-title">隊伍資料（領隊與隊員）</h2>
+        </div>
+        <div class="th-card-body">
+          <div class="overflow-x-auto border border-slate-200 rounded-md">
+            <table class="th-table w-full text-xs">
+              <thead class="bg-slate-50 text-slate-700">
+                <tr>
+                  <th class="py-2.5 px-3">No.</th>
+                  <th class="py-2.5 px-3">身分</th>
+                  <th class="py-2.5 px-3">姓名</th>
+                  <th class="py-2.5 px-3">性別</th>
+                  <th class="py-2.5 px-3">國籍</th>
+                  <th class="py-2.5 px-3">證號</th>
+                  <th class="py-2.5 px-3">生日</th>
+                  <th class="py-2.5 px-3">電話 / 手機</th>
+                  <th class="py-2.5 px-3">聯絡地址</th>
+                  <th class="py-2.5 px-3">緊急聯絡人</th>
+                  <th class="py-2.5 px-3">緊急聯絡電話</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr v-for="r in teamRows" :key="r.no">
+                  <td class="py-2.5 px-3 text-center font-medium">{{ r.no }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">
+                    <span :class="['px-2 py-0.5 rounded text-[11px] font-bold', r.role === '領隊' ? 'bg-national-100 text-national-800' : 'bg-slate-100 text-slate-700']">
+                      {{ r.role }}
+                    </span>
+                  </td>
+                  <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">{{ r.name }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.sex }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.nation }}</td>
+                  <td class="py-2.5 px-3 font-mono whitespace-nowrap">{{ r.sid }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.birthday }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.tel }}</td>
+                  <td class="py-2.5 px-3 max-w-[180px] truncate" :title="r.address">{{ r.address }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contact }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contactTel }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 申請人／留守人資料表格（11欄） -->
+      <section class="th-card" id="sec-contacts">
+        <div class="th-card-head">
+          <h2 class="th-card-title">申請人與留守人資料</h2>
+        </div>
+        <div class="th-card-body">
+          <div class="overflow-x-auto border border-slate-200 rounded-md">
+            <table class="th-table w-full text-xs">
+              <thead class="bg-slate-50 text-slate-700">
+                <tr>
+                  <th class="py-2.5 px-3">No.</th>
+                  <th class="py-2.5 px-3">身分</th>
+                  <th class="py-2.5 px-3">姓名</th>
+                  <th class="py-2.5 px-3">性別</th>
+                  <th class="py-2.5 px-3">國籍</th>
+                  <th class="py-2.5 px-3">證號</th>
+                  <th class="py-2.5 px-3">生日</th>
+                  <th class="py-2.5 px-3">電話 / 手機</th>
+                  <th class="py-2.5 px-3">聯絡地址</th>
+                  <th class="py-2.5 px-3">緊急聯絡人</th>
+                  <th class="py-2.5 px-3">緊急聯絡電話</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr v-for="r in contactRows" :key="r.no">
+                  <td class="py-2.5 px-3 text-center font-medium">{{ r.no }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">
+                    <span :class="['px-2 py-0.5 rounded text-[11px] font-bold', r.role === '申請人' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800']">
+                      {{ r.role }}
+                    </span>
+                  </td>
+                  <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">{{ r.name }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.sex }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.nation }}</td>
+                  <td class="py-2.5 px-3 font-mono whitespace-nowrap">{{ r.sid }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.birthday }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.tel }}</td>
+                  <td class="py-2.5 px-3 max-w-[180px] truncate" :title="r.address">{{ r.address }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contact }}</td>
+                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contactTel }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 警政署入山證申請資訊 -->
+      <section class="th-card" id="sec-npa">
+        <div class="th-card-head">
+          <h2 class="th-card-title">警政署入山證申請資訊</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">入山事由</dt>
+              <dd class="text-sm font-semibold text-slate-900 mt-1">{{ npa.reason }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-medium">前往地點</dt>
+              <dd class="text-sm font-semibold text-slate-900 mt-1">{{ npa.places }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-xs text-slate-500 font-medium">登山路線圖</dt>
+              <dd class="text-sm font-semibold text-slate-900 mt-1">{{ npa.routeMap }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-xs text-slate-500 font-medium">登山計畫書</dt>
+              <dd class="text-sm font-mono whitespace-pre-line bg-slate-50 p-3 rounded border border-slate-200 text-slate-800 mt-1">{{ npa.plan }}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 5. 底部送件驗證碼與按鈕 -->
+      <section class="th-card" id="sec-submit">
+        <div class="th-card-body">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div class="th-field mb-0">
+                <label class="th-label" for="con_captcha_submit">
+                  <span><span class="req">*</span>送件驗證碼</span>
+                </label>
+                <input
+                  id="con_captcha_submit"
+                  type="text"
+                  class="th-input w-48 uppercase tracking-widest font-mono font-bold"
+                  v-model="captchaInput"
+                  placeholder="請輸入驗證碼"
+                  maxlength="6" />
+              </div>
+              <div class="flex items-center gap-3 pt-2 sm:pt-6">
+                <div class="p-apply4-captcha-box" @click="refreshCaptcha" title="點擊更換驗證碼">
+                  <span class="p-apply4-captcha-text">{{ captchaCode }}</span>
+                  <div class="p-apply4-captcha-noise"></div>
+                </div>
+                <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="refreshCaptcha" title="重新產生驗證碼">
+                  <i class="fa-solid fa-rotate-right mr-1" aria-hidden="true"></i>重新整理
+                </button>
+              </div>
+            </div>
+
+            <!-- 操作按鈕 -->
+            <div class="flex items-center gap-3 pt-4 sm:pt-0">
+              <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
+                <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
+              </button>
+              <button type="button" class="th-btn th-btn-outline" @click="saveDraft">
+                <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
+              </button>
+              <button type="button" class="th-btn th-btn-primary" @click="submitApply">
+                <i class="fa-solid fa-check mr-1" aria-hidden="true"></i>確認送出
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </th-page-shell>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+</div>
+
+</body>
+</html>

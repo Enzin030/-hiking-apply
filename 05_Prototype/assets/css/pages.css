@@ -7505,3 +7505,419 @@ body:where(.p-indexb-body):before {
   color: var(--fg-1);
 }
 
+/* ############################################################
+   apply-4-v2.html — 步驟四「人員資料」
+   ############################################################
+   依據正式站實際欄位與 apply-3 視覺規範對齊：
+     1. 兩欄版面與側欄導覽：比照 apply-3（.p-apply4-layout / .p-apply4-side）
+     2. 表單密度：主要內容間距 16px（.p-apply4-grid 16px 24px）
+     3. 標籤與必填星號：沿用既有 .th-label（14px, 700）與 .req（紅色緊接）
+     4. 一般提醒：統一使用共用 .th-callout（淡綠色）
+     5. 手風琴收合與展開支援
+   ############################################################ */
+
+/* ---------- 兩欄版面：主欄 + 側欄導覽 ---------- */
+.p-apply4-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 56px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.p-apply4-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ---------- 表單欄位格線（統一 16px 24px） ---------- */
+.p-apply4-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+}
+
+.p-apply4-grid-full {
+  grid-column: 1 / -1;
+}
+
+/* 英文副標籤 */
+.p-apply4-label-en {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--fg-3);
+  line-height: var(--lh-snug);
+  margin-left: 4px;
+}
+
+/* ---------- 摘要唯讀卡片 ---------- */
+.p-apply4-summary-dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.p-apply4-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.p-apply4-summary-dt {
+  font-size: var(--fs-xs);
+  color: var(--slate-500);
+  font-weight: 500;
+}
+
+.p-apply4-summary-dd {
+  margin: 0;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--slate-800);
+}
+
+/* ---------- 快捷核取列（委託同意、同申請人） ---------- */
+.p-apply4-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  color: var(--slate-800);
+  line-height: var(--lh-loose);
+  cursor: pointer;
+  user-select: none;
+  transition: all .15s ease;
+}
+
+.p-apply4-check-row:hover {
+  background: var(--bg-1);
+  border-color: var(--national-300);
+}
+
+.p-apply4-check-row input[type="checkbox"] {
+  margin-top: 4px;
+  flex-shrink: 0;
+  accent-color: var(--national-700);
+  cursor: pointer;
+}
+
+/* ---------- 手風琴標題操作按鈕 ---------- */
+.p-apply4-accordion-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.p-apply4-accordion-icon {
+  margin-left: auto;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+  transition: transform .2s ease;
+}
+
+.p-apply4-accordion-icon.is-open {
+  transform: rotate(180deg);
+}
+
+/* ---------- 隊員區塊卡片 ---------- */
+.p-apply4-member-card {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  overflow: hidden;
+  transition: border-color .15s ease;
+}
+
+.p-apply4-member-card:hover {
+  border-color: var(--slate-300);
+}
+
+.p-apply4-member-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.p-apply4-member-title {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--slate-800);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.p-apply4-member-body {
+  padding: 16px;
+}
+
+/* ---------- 隊伍人數資訊列 ---------- */
+.p-apply4-team-count-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--national-50);
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-md);
+  color: var(--national-900);
+}
+
+/* ---------- 宿營地排隊表格 ---------- */
+.p-apply4-queue-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+}
+
+.p-apply4-queue-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  text-align: left;
+}
+
+.p-apply4-queue-table th {
+  background: var(--slate-50);
+  padding: 12px 16px;
+  font-weight: 700;
+  color: var(--slate-700);
+  border-bottom: 1px solid var(--slate-200);
+  white-space: nowrap;
+}
+
+.p-apply4-queue-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--slate-200);
+  color: var(--slate-800);
+  vertical-align: middle;
+}
+
+.p-apply4-queue-table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ---------- 驗證碼區塊 ---------- */
+.p-apply4-captcha-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 130px;
+  height: 40px;
+  background: linear-gradient(135deg, #eef2f6 0%, #dce4ec 100%);
+  border: 1px solid var(--slate-300);
+  border-radius: var(--r-md);
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.p-apply4-captcha-text {
+  font-family: monospace, Courier, sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: var(--national-900);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+  transform: skew(-6deg);
+  z-index: 1;
+}
+
+.p-apply4-captcha-noise {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 6px,
+    rgba(0, 0, 0, 0.04) 6px,
+    rgba(0, 0, 0, 0.04) 12px
+  );
+  pointer-events: none;
+}
+
+/* ---------- 側欄頁內目錄（統一比照 apply-3） ---------- */
+.p-apply4-side {
+  min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: 132px;
+}
+
+.p-apply4-side-inner {
+  border-left: 2px solid var(--slate-200);
+  padding-left: 16px;
+  max-height: calc(100vh - 160px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.p-apply4-side-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  letter-spacing: var(--tracking-wide);
+}
+
+.p-apply4-side-count {
+  color: var(--fg-1);
+  font-weight: 400;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.p-apply4-side-count .num {
+  color: var(--danger-fg);
+}
+
+.p-apply4-side-count.is-done,
+.p-apply4-side-count.is-done .num {
+  color: var(--national-700);
+}
+
+.p-apply4-side-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.p-apply4-side-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  transition: color .15s ease;
+}
+
+.p-apply4-side-list button:hover {
+  color: var(--national-700);
+}
+
+.p-apply4-side-tick {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--r-xs);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .15s ease;
+}
+
+.p-apply4-side-tick::before {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 8px;
+  line-height: 1;
+  color: transparent;
+  transition: color .15s ease;
+}
+
+.p-apply4-side-list li.is-acked .p-apply4-side-tick {
+  background: var(--national-700);
+  border-color: var(--national-700);
+}
+
+.p-apply4-side-list li.is-acked .p-apply4-side-tick::before {
+  color: var(--fg-on-dark);
+}
+
+.p-apply4-side-list li.is-acked button {
+  color: var(--slate-400);
+}
+
+.p-apply4-side-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- 置底列 ---------- */
+.p-apply4-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 48px;
+}
+
+.p-apply4-actions .th-btn-primary:enabled {
+  border: 1px solid var(--national-700);
+}
+
+.p-apply4-actions .th-btn-primary:disabled {
+  background: transparent;
+  border: 1px dashed var(--slate-300);
+  color: var(--slate-400);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ---------- 響應式 ---------- */
+@media (max-width: 1024px) {
+  .p-apply4-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .p-apply4-side {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .p-apply4-grid,
+  .p-apply4-summary-dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+

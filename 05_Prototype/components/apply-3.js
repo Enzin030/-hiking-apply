@@ -55,19 +55,26 @@ thPage({
   data() {
     const qRoute = getParam("route");
     const qCid = getParam("cid");
+    const qTeamsName = getParam("teams_name");
+    const qMainRoute = getParam("climblinemain");
+    const qClimb = getParam("climbline");
+    const qStart = getParam("applystart");
+    const qSumday = getParam("sumday");
 
-    let defaultClimb = "2"; // 當 route=np-2 或 cid=2 時為 2~5天
-    if (qRoute === "np-3" || qCid === "3") defaultClimb = "3";
-    else if (qRoute === "np-4" || qCid === "4") defaultClimb = "4";
-    else if (qRoute === "np-2" || qCid === "2") defaultClimb = "2";
+    let defaultClimb = qClimb || "2"; // 當 route=np-2 或 cid=2 時為 2~5天
+    if (!qClimb) {
+      if (qRoute === "np-3" || qCid === "3") defaultClimb = "3";
+      else if (qRoute === "np-4" || qCid === "4") defaultClimb = "4";
+      else if (qRoute === "np-2" || qCid === "2") defaultClimb = "2";
+    }
 
     return {
       // 1. 基本路線控制項
-      teams_name: "天眼1隊",
-      climblinemain: "1", // 1: 玉山線
+      teams_name: qTeamsName || "天眼1隊",
+      climblinemain: qMainRoute || "1", // 1: 玉山線
       climbline: defaultClimb,
-      sumday: defaultClimb === "2" ? "2" : "1",
-      applystart: "2026-10-15",
+      sumday: qSumday || (defaultClimb === "2" ? "2" : "1"),
+      applystart: qStart || "2026-10-15",
       dateOptions: generateDateOptions(),
 
       mainRoutes: [
@@ -579,8 +586,11 @@ thPage({
     goNext() {
       if (!this.canSubmit) return;
       const q = new URLSearchParams(window.location.search);
-      if (this.applyStart) q.set("applystart", this.applyStart);
-      if (this.daysCount) q.set("sumday", this.daysCount);
+      if (this.applystart) q.set("applystart", this.applystart);
+      if (this.sumday) q.set("sumday", this.sumday);
+      if (this.teams_name) q.set("teams_name", this.teams_name);
+      if (this.climblinemain) q.set("climblinemain", this.climblinemain);
+      if (this.climbline) q.set("climbline", this.climbline);
       window.location.href = `apply-4-v2.html?${q.toString()}`;
     }
   }
