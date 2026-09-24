@@ -374,16 +374,19 @@ thPage({
       return this.planDays.length - 1;
     },
     today() {
-      return this.planDays[this.dayIndex] || ["排雲登山服務中心"];
+      return this.planDays[this.dayIndex] || [];
     },
+    // 目前所在節點；第 1 天還沒選起點時為空字串
     here() {
-      return this.today[this.today.length - 1] || "排雲登山服務中心";
+      return this.today[this.today.length - 1] || "";
     },
     isLastDay() {
       return this.dayIndex === Number(this.sumday) - 1;
     },
     options() {
       const here = this.here;
+      // 正式站第一步是「請選擇起點：」，只給起點一個選項，由使用者自己點（玉山、雪霸實走皆同）
+      if (!here) return [this.graph.start];
       const out = [];
       this.graph.edges.forEach(e => {
         if (e[0] === here) out.push(e[1]);
@@ -494,7 +497,8 @@ thPage({
       const dayNodes = this.planDays[dayIdx];
       const isLastNode = nodeIdx === dayNodes.length - 1;
       if (!isCurrentDay || !isLastNode) return false;
-      if (dayIdx === 0 && dayNodes.length <= 1) return false;
+      // 第 1 天的起點也可以退掉，回到「請選擇起點」；第 2 天起的首點是前一晚宿營地，不可單獨移除
+      if (dayIdx > 0 && dayNodes.length <= 1) return false;
       return true;
     },
 
@@ -513,7 +517,9 @@ thPage({
     backNode() {
       this.plannerMsg = "";
       const copy = this.planDays.map(d => [...d]);
-      if (copy[this.dayIndex].length > 1) {
+      // 第 1 天可退到空白（重新選起點）；第 2 天起至少保留前一晚宿營地
+      const keep = this.dayIndex === 0 ? 0 : 1;
+      if (copy[this.dayIndex].length > keep) {
         copy[this.dayIndex].pop();
       } else if (this.dayIndex > 0) {
         copy.pop();
@@ -525,7 +531,8 @@ thPage({
 
     resetPlanner() {
       this.plannerMsg = "";
-      this.planDays = [[this.graph.start]];
+      // 從空白開始，第一步由使用者點選起點（對應正式站「請選擇起點：」）
+      this.planDays = [[]];
       this.plannerFinished = false;
       this.syncPlanText();
     },
