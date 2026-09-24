@@ -36,7 +36,7 @@ thPage({
     // 若無 sessionStorage 則 fallback 到預設或 URL
     const summary = (payload && payload.summary) || {
       applystart: qStart,
-      applyend: qStart,
+      applyend: "",
       sumday: qDays,
       mainRoute: "玉山線",
       subRoute: qDays === "1" ? "單日往返(塔塔加 - 玉山前峰 - 塔塔加)" : "2~5天(塔塔加 - 玉山線 - 塔塔加)",
@@ -44,6 +44,12 @@ thPage({
       climblinemain: "1",
       climbline: qDays === "1" ? "3" : "2"
     };
+
+    // 離園日一律由「入園日＋天數−1」推算，不沿用傳入值。
+    // 原本後備資料寫成 applyend: qStart，兩天行程會顯示「10-15 至 10-15（共 2 天）」（2026-09-24 修）
+    if (summary.applystart && summary.sumday) {
+      summary.applyend = window.thAddDaysToDateValue(summary.applystart, Math.max(0, Number(summary.sumday) - 1));
+    }
 
     const step3 = (payload && payload.step3) || {
       planDays: qDays === "1"
