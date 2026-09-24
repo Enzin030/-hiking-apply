@@ -8515,3 +8515,14 @@ body:where(.p-indexb-body):before {
 .th-card-body > .th-callout {
   margin-bottom: 0 !important;
 }
+
+/* ---------- apply-5 確認頁：申請人／留守人區塊小標題 ----------
+   2026-09-24：申請人與留守人由合併表改為同卡片內兩個區塊，需要卡片內的小標題。
+   .th-section-title 是頁面層級（22px、左側色條），放在卡片內太重，故另立頁面專用樣式。 */
+.p-apply5-sub-title {
+  margin: 0 0 12px;
+  /* 比欄位名（dt，16px 粗體）大一級並用主色，否則區塊標題與欄位名分不出層級 */
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--national-800);
+}

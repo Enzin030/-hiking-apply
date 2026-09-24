@@ -185,53 +185,31 @@
     </section>
 
     <!-- 3. 申請人／留守人資料表格（11欄，滿版自適應不滾動，字級維持原版） -->
+    <!-- 申請人與留守人：同一張卡片、各自一個區塊（2026-09-24 裁示）。
+         兩者欄位不同，合成一張表時留守人列固定空白 4 欄，且原表漏列 Email、傳真。
+         欄位集比照正式站確認頁（雪霸），呈現沿用本頁警政署區的欄位格線寫法。 -->
     <section class="th-card" id="sec-contacts">
       <div class="th-card-head">
         <h2 class="th-card-title">申請人與留守人資料</h2>
       </div>
-      <div class="th-card-body">
-        <div class="border border-slate-200 rounded-md overflow-hidden">
-          <table class="th-table w-full">
-            <thead class="bg-slate-50 text-slate-800">
-              <tr>
-                <th class="py-2.5 px-1 text-center w-10 font-bold">No.</th>
-                <th class="py-2.5 px-2 text-center w-20 font-bold">身分</th>
-                <th class="py-2.5 px-2 w-20 font-bold">姓名</th>
-                <th class="py-2.5 px-2 text-center w-12 font-bold">性別</th>
-                <th class="py-2.5 px-2 text-center w-16 font-bold">國籍</th>
-                <th class="py-2.5 px-2 w-28 font-bold">證號</th>
-                <th class="py-2.5 px-2 w-24 font-bold">生日</th>
-                <th class="py-2.5 px-2 w-28 font-bold">電話 / 手機</th>
-                <th class="py-2.5 px-2 min-w-[140px] font-bold">聯絡地址</th>
-                <th class="py-2.5 px-2 w-20 font-bold">緊急聯絡人</th>
-                <th class="py-2.5 px-2 w-28 font-bold">緊急聯絡電話</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              <tr v-for="r in contactRows" :key="r.no">
-                <td class="py-2.5 px-1 text-center font-medium text-slate-600">{{ r.no }}</td>
-                <td class="py-2.5 px-2 text-center">
-                  <!-- 申請人 → 淡色／outline badge -->
-                  <span v-if="r.role === '申請人'" class="px-2.5 py-0.5 rounded text-xs font-medium inline-block" style="background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd;">
-                    申請人
-                  </span>
-                  <!-- 留守人 → 淡色／outline badge -->
-                  <span v-else class="px-2.5 py-0.5 rounded text-xs font-medium inline-block" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">
-                    {{ r.role }}
-                  </span>
-                </td>
-                <td class="py-2.5 px-2 text-slate-900 font-normal">{{ r.name }}</td>
-                <td class="py-2.5 px-2 text-center text-slate-800">{{ r.sex }}</td>
-                <td class="py-2.5 px-2 text-center text-slate-800">{{ r.nation }}</td>
-                <td class="py-2.5 px-2 text-slate-800">{{ r.sid }}</td>
-                <td class="py-2.5 px-2 text-slate-800">{{ r.birthday }}</td>
-                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.tel }}</td>
-                <td class="py-2.5 px-2 text-slate-800 break-words leading-relaxed">{{ r.address }}</td>
-                <td class="py-2.5 px-2 text-slate-800">{{ r.contact }}</td>
-                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.contactTel }}</td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="th-card-body grid gap-6">
+        <div>
+          <h3 class="p-apply5-sub-title">申請人</h3>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-base">
+            <div v-for="f in applicantFields" :key="'a-' + f.label" :class="{ 'sm:col-span-2 lg:col-span-3': f.wide }">
+              <dt class="text-base text-slate-700 font-bold">{{ f.label }}</dt>
+              <dd class="text-base text-slate-900 mt-1 break-words">{{ f.value || '—' }}</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="border-t border-slate-200 pt-6">
+          <h3 class="p-apply5-sub-title">留守人</h3>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-base">
+            <div v-for="f in stayFields" :key="'s-' + f.label">
+              <dt class="text-base text-slate-700 font-bold">{{ f.label }}</dt>
+              <dd class="text-base text-slate-900 mt-1 break-words">{{ f.value || '—' }}</dd>
+            </div>
+          </dl>
         </div>
       </div>
     </section>

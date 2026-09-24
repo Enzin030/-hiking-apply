@@ -10,6 +10,16 @@ function getParam(key) {
   return new URLSearchParams(window.location.search).get(key) || "";
 }
 
+/* 性別：優先用已填值（"1"/"2" 或 "男"/"女"），沒有就依身分證第二碼推算（1 男、2 女）。
+   正式站證號失焦後由伺服器依第二碼覆寫性別，2026-09-24 男女雙向實測確認。
+   原本未填時一律顯示「男」，等於把沒填當成男性。 */
+function sexText(sex, sid) {
+  if (sex === "1" || sex === "男") return "男";
+  if (sex === "2" || sex === "女") return "女";
+  const d = /^[A-Z][12]/i.test(sid || "") ? sid[1] : "";
+  return d === "1" ? "男" : d === "2" ? "女" : "";
+}
+
 function prefText(p) {
   if (p === "bed") return "床位";
   if (p === "camp") return "營地";
@@ -234,7 +244,7 @@ thPage({
         no: 1,
         role: "領隊",
         name: this.leader.name,
-        sex: this.leader.sex === "1" ? "男" : this.leader.sex === "2" ? "女" : "男",
+        sex: sexText(this.leader.sex, this.leader.sid),
         nation: this.leader.nation || "中華民國",
         sid: this.leader.sid,
         birthday: this.leader.birthday,
@@ -250,7 +260,7 @@ thPage({
           no: idx + 2,
           role: "隊員",
           name: m.name,
-          sex: m.sex === "1" ? "男" : m.sex === "2" ? "女" : "男",
+          sex: sexText(m.sex, m.sid),
           nation: m.nation || "中華民國",
           sid: m.sid,
           birthday: m.birthday,
@@ -265,35 +275,40 @@ thPage({
     },
 
     // 申請人與留守人資料表格
-    contactRows() {
+    /* 申請人與留守人分開呈現（2026-09-24 裁示）：兩者欄位不同，
+       合成一張 11 欄表時留守人列有 4 欄固定空白；原表也漏了 Email、傳真。
+       各自只列自己有的欄位，欄位集比照正式站確認頁（雪霸）。 */
+    applicantFields() {
+      const a = this.applicant;
       return [
-        {
-          no: 1,
-          role: "申請人",
-          name: this.applicant.name,
-          sex: this.applicant.sex === "1" ? "男" : this.applicant.sex === "2" ? "女" : "男",
-          nation: this.applicant.nation || "中華民國",
-          sid: this.applicant.sid,
-          birthday: this.applicant.birthday,
-          tel: `${this.applicant.tel || ''} / ${this.applicant.mobile || ''}`,
-          address: `${this.applicant.country || ''}${this.applicant.city || ''}${this.applicant.addr || ''}`,
-          contact: this.applicant.contactname,
-          contactTel: this.applicant.contacttel
-        },
-        {
-          no: 2,
-          role: "留守人",
-          name: this.stay.name,
-          sex: "-",
-          nation: this.stay.nation || "中華民國",
-          sid: this.stay.sid || "-",
-          birthday: this.stay.birthday || "-",
-          tel: this.stay.mobile || "-",
-          address: "-",
-          contact: "-",
-          contactTel: "-"
-        }
+        { label: "姓名", value: a.name },
+        { label: "性別", value: sexText(a.sex, a.sid) },
+        { label: "國籍", value: a.nation || "中華民國" },
+        { label: "身分證號／護照號碼", value: a.sid },
+        { label: "生日", value: a.birthday },
+        { label: "電話", value: a.tel },
+        { label: "手機", value: a.mobile },
+        { label: "傳真", value: a.fax },
+        { label: "Email", value: a.email },
+        { label: "聯絡地址", value: `${a.country || ""}${a.city || ""}${a.addr || ""}`, wide: true },
+        { label: "緊急聯絡人", value: a.contactname },
+        { label: "緊急聯絡電話", value: a.contacttel }
       ];
+    },
+    // 留守人沒有性別、地址、緊急聯絡人（正式站兩家皆同）；電話只有雪霸有，有值才列
+    stayFields() {
+      const s = this.stay;
+      const rows = [{ label: "姓名", value: s.name }];
+      if (s.tel) rows.push({ label: "電話", value: s.tel });
+      rows.push(
+        { label: "手機", value: s.mobile },
+        { label: "傳真", value: s.fax },
+        { label: "Email", value: s.email },
+        { label: "國籍", value: s.nation || "中華民國" },
+        { label: "身分證號／護照號碼", value: s.sid },
+        { label: "生日", value: s.birthday }
+      );
+      return rows;
     }
   },
 
