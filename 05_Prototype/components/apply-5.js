@@ -128,7 +128,7 @@ thPage({
       },
 
       // 送件驗證碼
-      captchaInput: "",
+      captchaInput: "4N8P",
       captchaCode: "4N8P",
       isSubmitted: false
     };
@@ -235,19 +235,12 @@ thPage({
     }
   },
 
-  mounted() {
-    this.refreshCaptcha();
-  },
-
   methods: {
     refreshCaptcha() {
-      const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-      let code = "";
-      for (let i = 0; i < 4; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      const captcha = this.$refs.captchaField;
+      if (captcha && typeof captcha.refresh === "function") {
+        captcha.refresh();
       }
-      this.captchaCode = code;
-      this.captchaInput = "";
     },
 
     goPrev() {
@@ -257,7 +250,7 @@ thPage({
       if (this.summary.teams_name) q.set("teams_name", this.summary.teams_name);
       if (this.summary.climblinemain) q.set("climblinemain", this.summary.climblinemain);
       if (this.summary.climbline) q.set("climbline", this.summary.climbline);
-      window.location.href = `apply-4-v2.html?${q.toString()}`;
+      window.location.href = `apply-4.html?${q.toString()}`;
     },
 
     // 真實儲存草稿機制（寫入 localStorage）

@@ -5,7 +5,7 @@
 <title>登山線上申請｜人員資料 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  apply-4-v2.html — 步驟四「人員資料」
+  apply-4.html — 步驟四「人員資料」
   ------------------------------------------------------------
   依據正式站實際截圖與 02_Spec/05a_國家公園入園線上申請_玉山線.md 對齊：
     1. 行程計畫：承接前一步主次路線、隊名、日期與天數。
@@ -22,7 +22,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="assets/css/index.css" />
-<script src="assets/includes/head-loader.js" data-page-init="components/apply-4-v2.js"></script>
+<script src="assets/includes/head-loader.js" data-page-init="components/apply-4.js"></script>
 </head>
 <body>
 
@@ -45,22 +45,35 @@
       <!-- 左側主要表單內容 -->
       <main class="p-apply4-main" role="main">
 
-        <!-- 頂部行程計畫條件摘要（查詢條件方式呈現，單列平鋪） -->
-        <div id="sec-summary" class="th-filter p-apply4-filter-summary" role="region" aria-label="申請行程條件">
-          <div class="th-filter-grid p-apply4-filter-grid">
-            <div class="th-filter-field p-apply4-filter-field">
-              <span class="th-filter-label">入園期間</span>
-              <div class="p-apply4-filter-val">
-                {{ summary.applystart }}<span class="p-apply4-to-sep">至</span>{{ summary.applyend }}<span class="p-apply4-days-tag">（共 {{ summary.sumday }} 天）</span>
-              </div>
-            </div>
-            <div class="th-filter-field p-apply4-filter-field">
-              <span class="th-filter-label">登山主路線</span>
-              <div class="p-apply4-filter-val">{{ summary.mainRoute }}</div>
-            </div>
-            <div class="th-filter-field p-apply4-filter-field">
-              <span class="th-filter-label">次路線</span>
-              <div class="p-apply4-filter-val">{{ summary.subRoute }}</div>
+        <!-- 行程摘要卡片（第 4 級在照片，主要路線在卡片右側，入園期間全新排版） -->
+        <div class="p-apply4-summary-card">
+          <div class="summary-thumb-box">
+            <img src="assets/route-yushan.png" alt="" />
+            <div class="summary-thumb-overlay"></div>
+            <!-- 第 4 級放回照片 -->
+            <span class="summary-diff-tag">第 4 級</span>
+          </div>
+
+          <div class="summary-info-box">
+            <!-- 次路線名稱 -->
+            <h2 class="p-fc1-cabin-name">{{ summary.subRoute }}</h2>
+
+            <!-- 線下面：主要路線（同入園期間格式）與入園期間 -->
+            <div class="summary-date-row">
+              <span class="date-item">
+                <span class="date-title">登山主路線：</span>
+                <span class="date-value">{{ summary.mainRoute }}</span>
+              </span>
+              <span class="summary-meta-sep" aria-hidden="true">|</span>
+              <span class="date-item">
+                <span class="date-title">入園期間：</span>
+                <span class="date-range-text">
+                  <span>{{ summary.applystart }}</span>
+                  <span class="date-sep">至</span>
+                  <span>{{ summary.applyend }}</span>
+                </span>
+                <span class="date-days-text">（共 {{ summary.sumday }} 天）</span>
+              </span>
             </div>
           </div>
         </div>
@@ -69,26 +82,28 @@
         <section id="sec-apply" class="th-card" aria-labelledby="heading-apply">
           <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('apply')">
-              <h2 id="heading-apply" class="th-card-title"><span class="req text-rose-600 mr-1">*</span>申請人資料</h2>
+              <h2 id="heading-apply" class="th-card-title">
+                申請人資料<span class="req text-rose-600 ml-1">*</span>
+                <span class="text-rose-600 font-medium text-sm sm:text-base">（未成年者不得擔任申請人）</span>
+              </h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.apply }" aria-hidden="true"></i>
             </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.apply">
-            <!-- 未成年不得擔任申請人警示（紅色 callout） -->
-            <div class="th-callout is-danger">
-              <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-              <div>
-                <strong>未成年者不得擔任申請人</strong>
-              </div>
-            </div>
 
-            <!-- 委託代理同意書核取方塊（預設未勾選） -->
-            <label class="p-apply4-check-row">
-              <input type="checkbox" v-model="applyConsent" id="cbApplyConsent" />
-              <span>
-                <strong>委託代理同意書：</strong>請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。
+            <!-- 委託代理同意書條文（同意書樣式：非卡片、平鋪、自訂勾選框） -->
+            <label class="p-apply4-consent-clause" :class="{ 'is-acked': applyConsent }">
+              <span class="p-apply4-consent-box" aria-hidden="true">
+                <i class="fa-solid fa-check" v-show="applyConsent"></i>
+              </span>
+              <input type="checkbox" v-model="applyConsent" id="cbApplyConsent" class="p-apply4-consent-native-cb" />
+              <span class="p-apply4-consent-text">
+                請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。
               </span>
             </label>
+
+            <!-- 如果欄位出現才有 hr -->
+            <hr v-if="applyConsent" class="p-apply4-consent-divider" />
 
             <!-- 勾選同意後直接出現欄位（無多餘提示框） -->
             <div v-if="applyConsent" class="p-apply4-grid">
@@ -96,7 +111,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_name">
                   <span><span class="req">*</span>姓名</span>
-                  <span class="p-apply4-label-en">Name</span>
                 </label>
                 <input id="con_apply_name" type="text" class="th-input" v-model="applicant.name" placeholder="請輸入姓名" required />
               </div>
@@ -105,7 +119,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_tel">
                   <span><span class="req">*</span>電話</span>
-                  <span class="p-apply4-label-en">Telephone</span>
                 </label>
                 <input id="con_apply_tel" type="tel" class="th-input" v-model="applicant.tel" placeholder="例：02-12345678" required />
               </div>
@@ -114,7 +127,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_mobile">
                   <span><span class="req">*</span>手機</span>
-                  <span class="p-apply4-label-en">Mobile Phone</span>
                 </label>
                 <input id="con_apply_mobile" type="tel" class="th-input" v-model="applicant.mobile" placeholder="格式：0912345678" required />
               </div>
@@ -123,7 +135,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_fax">
                   <span>傳真</span>
-                  <span class="p-apply4-label-en">Fax</span>
                 </label>
                 <input id="con_apply_fax" type="text" class="th-input" v-model="applicant.fax" placeholder="請輸入傳真" />
               </div>
@@ -132,7 +143,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_email">
                   <span><span class="req">*</span>Email</span>
-                  <span class="p-apply4-label-en">E-mail</span>
                 </label>
                 <input id="con_apply_email" type="email" class="th-input" v-model="applicant.email" placeholder="接收審核通知信箱" required />
               </div>
@@ -141,7 +151,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_sid">
                   <span><span class="req">*</span>身分證號 / 護照號碼(或居留證)</span>
-                  <span class="p-apply4-label-en">ID / Passport</span>
                 </label>
                 <div class="grid grid-cols-[130px_1fr] gap-2">
                   <th-hybrid-select>
@@ -165,7 +174,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_sex">
                   <span><span class="req">*</span>性別</span>
-                  <span class="p-apply4-label-en">Sex</span>
                 </label>
                 <th-hybrid-select>
                   <select id="con_apply_sex" class="th-select" v-model="applicant.sex" required>
@@ -180,7 +188,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_birthday">
                   <span><span class="req">*</span>生日</span>
-                  <span class="p-apply4-label-en">Birthday</span>
                 </label>
                 <input id="con_apply_birthday" type="date" class="th-input" v-model="applicant.birthday" placeholder="格式：YYYY-MM-DD" required />
                 <p v-if="applicant.birthday && !isApplicantAdult" class="text-xs text-rose-600 font-bold mt-1">
@@ -192,7 +199,6 @@
               <div class="th-field p-apply4-grid-full">
                 <label class="th-label">
                   <span><span class="req">*</span>地址</span>
-                  <span class="p-apply4-label-en">Address</span>
                 </label>
                 <div class="grid grid-cols-1 md:grid-cols-[140px_140px_1fr] gap-2">
                   <th-hybrid-select>
@@ -215,7 +221,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_contactname">
                   <span><span class="req">*</span>緊急連絡人</span>
-                  <span class="p-apply4-label-en">Emergency Contact</span>
                 </label>
                 <input id="con_apply_contactname" type="text" class="th-input" v-model="applicant.contactname" placeholder="緊急連絡人姓名（不上山人員）" required />
               </div>
@@ -224,7 +229,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_apply_contacttel">
                   <span><span class="req">*</span>緊急連絡電話</span>
-                  <span class="p-apply4-label-en">Emergency Contact Phone</span>
                 </label>
                 <input id="con_apply_contacttel" type="tel" class="th-input" v-model="applicant.contacttel" placeholder="緊急連絡電話或手機" required />
               </div>
@@ -236,53 +240,28 @@
         <section id="sec-leader" class="th-card" aria-labelledby="heading-leader">
           <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('leader')">
-              <h2 id="heading-leader" class="th-card-title"><span class="req text-rose-600 mr-1">*</span>領隊資料</h2>
+              <h2 id="heading-leader" class="th-card-title">
+                領隊資料<span class="req text-rose-600 ml-1">*</span>
+                <span class="text-rose-600 font-medium text-sm sm:text-base">（未成年者不得擔任領隊）</span>
+              </h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.leader }" aria-hidden="true"></i>
             </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.leader">
-            <!-- 同申請人核取方塊 -->
+            <!-- 同申請人核取方塊（原本框限樣式） -->
             <label class="p-apply4-check-row">
-              <input type="checkbox" v-model="leaderSame" id="cbLeaderSame" />
-              <span><strong>同申請人</strong>（勾選後直接帶入申請人資料作為領隊；領隊須年滿 18 歲）</span>
+              <input
+                type="checkbox"
+                v-model="leaderSame"
+                id="cbLeaderSame" />
+              <span><strong>同申請人</strong></span>
             </label>
 
-            <!-- 勾選同申請人時：唯讀預覽 -->
-            <div v-if="leaderSame" class="p-4 bg-slate-50 border border-slate-200 rounded-md">
-              <dl class="p-apply4-summary-dl">
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">領隊姓名 / 國籍證號</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.name || '（尚未填寫申請人姓名）' }}（{{ applicant.nation }} / {{ applicant.sid || '無證號' }}）</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">電話 / 手機</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.tel || '無' }} / {{ applicant.mobile || '無' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">Email / 傳真</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.email || '無' }} / {{ applicant.fax || '無' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">性別 / 生日</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.sex === '1' ? '男' : applicant.sex === '2' ? '女' : '未選擇' }} / {{ applicant.birthday || '未填寫' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item p-apply4-grid-full">
-                  <dt class="p-apply4-summary-dt">地址</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.country }}{{ applicant.city }}{{ applicant.addr || '（尚未填寫地址）' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">緊急連絡人 / 電話</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.contactname || '無' }}（{{ applicant.contacttel || '無' }}）</dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- 未勾選同申請人時：完整編輯表單 -->
-            <div v-else class="p-apply4-grid">
+            <!-- 領隊完整編輯表單（始終呈現輸入欄位，勾選「同申請人」自動帶入資料） -->
+            <div class="p-apply4-grid">
               <div class="th-field">
                 <label class="th-label" for="con_leader_name">
                   <span><span class="req">*</span>姓名</span>
-                  <span class="p-apply4-label-en">Leader Name</span>
                 </label>
                 <input id="con_leader_name" type="text" class="th-input" v-model="leader.name" placeholder="請輸入姓名" required />
               </div>
@@ -290,7 +269,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_tel">
                   <span><span class="req">*</span>電話</span>
-                  <span class="p-apply4-label-en">Telephone</span>
                 </label>
                 <input id="con_leader_tel" type="tel" class="th-input" v-model="leader.tel" placeholder="例：02-12345678" required />
               </div>
@@ -298,7 +276,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_mobile">
                   <span><span class="req">*</span>手機</span>
-                  <span class="p-apply4-label-en">Mobile Phone</span>
                 </label>
                 <input id="con_leader_mobile" type="tel" class="th-input" v-model="leader.mobile" placeholder="格式：0912345678" required />
               </div>
@@ -306,7 +283,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_fax">
                   <span>傳真</span>
-                  <span class="p-apply4-label-en">Fax</span>
                 </label>
                 <input id="con_leader_fax" type="text" class="th-input" v-model="leader.fax" placeholder="請輸入傳真" />
               </div>
@@ -314,7 +290,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_email">
                   <span><span class="req">*</span>Email</span>
-                  <span class="p-apply4-label-en">E-mail</span>
                 </label>
                 <input id="con_leader_email" type="email" class="th-input" v-model="leader.email" placeholder="電子信箱" required />
               </div>
@@ -322,7 +297,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_sid">
                   <span><span class="req">*</span>身分證號 / 護照號碼(或居留證)</span>
-                  <span class="p-apply4-label-en">ID / Passport</span>
                 </label>
                 <div class="grid grid-cols-[130px_1fr] gap-2">
                   <th-hybrid-select>
@@ -345,7 +319,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_sex">
                   <span><span class="req">*</span>性別</span>
-                  <span class="p-apply4-label-en">Sex</span>
                 </label>
                 <th-hybrid-select>
                   <select id="con_leader_sex" class="th-select" v-model="leader.sex" required>
@@ -359,7 +332,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_birthday">
                   <span><span class="req">*</span>生日</span>
-                  <span class="p-apply4-label-en">Birthday</span>
                 </label>
                 <input id="con_leader_birthday" type="date" class="th-input" v-model="leader.birthday" placeholder="格式：YYYY-MM-DD" required />
                 <p v-if="leader.birthday && !isLeaderAdult" class="text-xs text-rose-600 font-bold mt-1">
@@ -370,7 +342,6 @@
               <div class="th-field p-apply4-grid-full">
                 <label class="th-label">
                   <span><span class="req">*</span>地址</span>
-                  <span class="p-apply4-label-en">Address</span>
                 </label>
                 <div class="grid grid-cols-1 md:grid-cols-[140px_140px_1fr] gap-2">
                   <th-hybrid-select>
@@ -392,7 +363,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_contactname">
                   <span><span class="req">*</span>緊急連絡人</span>
-                  <span class="p-apply4-label-en">Emergency Contact</span>
                 </label>
                 <input id="con_leader_contactname" type="text" class="th-input" v-model="leader.contactname" placeholder="緊急連絡人姓名（不上山人員）" required />
               </div>
@@ -400,7 +370,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_leader_contacttel">
                   <span><span class="req">*</span>緊急連絡電話</span>
-                  <span class="p-apply4-label-en">Emergency Contact Phone</span>
                 </label>
                 <input id="con_leader_contacttel" type="tel" class="th-input" v-model="leader.contacttel" placeholder="緊急連絡電話或手機" required />
               </div>
@@ -412,17 +381,17 @@
         <section id="sec-member" class="th-card" aria-labelledby="heading-member">
           <div class="th-card-head flex items-center justify-between">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('member')">
-              <h2 id="heading-member" class="th-card-title">隊員資料<span class="text-xs font-normal text-slate-500 ml-1.5">（如無則免）</span></h2>
+              <h2 id="heading-member" class="th-card-title">隊員資料<span class="text-slate-500 font-medium text-sm sm:text-base">（如無則免）</span></h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.member }" aria-hidden="true"></i>
             </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.member">
 
-            <!-- 隊員填寫提醒（補回勿共用手機、非同住家人勿重複等說明，前端不做硬性阻擋） -->
-            <div class="th-callout">
-              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <!-- 隊員填寫提醒（紅色 Callout 現有樣式） -->
+            <div class="th-callout is-danger">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
               <div>
-                <strong>隊員資料填寫提醒：</strong>請填個人手機號碼（勿共用）。隊員如非同住家人，Email、地址、緊急聯絡人請勿重複；如填寫資料重複將由審核人員通知修改，可能耽誤等候審核時間。
+                請填個人手機號碼（勿共用）。隊員如非同住家人，Email、地址、緊急聯絡人請勿重複；如填寫資料重複將由審核人員通知修改，可能耽誤等候審核時間。
               </div>
             </div>
 
@@ -430,10 +399,10 @@
             <div v-if="members.length > 0" class="grid gap-3">
               <div v-for="(m, idx) in members" :key="idx" class="p-apply4-member-card">
                 <div class="p-apply4-member-head flex items-center justify-between cursor-pointer" @click="toggleMember(idx)">
-                  <h3 class="p-apply4-member-title">
-                    <i class="fa-solid fa-user text-national-700" aria-hidden="true"></i>
+                  <h3 class="p-apply4-member-title flex items-center">
+                    <i class="fa-solid fa-user text-national-700 mr-1.5" aria-hidden="true"></i>
                     <span>No.{{ idx + 1 }} 隊員資料</span>
-                    <span v-if="m.name" class="text-slate-500 font-normal text-xs">（{{ m.name }}）</span>
+                    <span v-if="m.name" class="text-slate-500 font-normal text-xs sm:text-sm">（{{ m.name }}）</span>
                   </h3>
                   <div class="flex items-center gap-2">
                     <button type="button" class="p-apply4-member-del" @click.stop="removeMember(idx)" title="移除此隊員">
@@ -449,7 +418,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_name_' + idx">
                         <span><span class="req">*</span>姓名</span>
-                        <span class="p-apply4-label-en">Name</span>
                       </label>
                       <input :id="'con_lisMem_member_name_' + idx" type="text" class="th-input" v-model="m.name" placeholder="請輸入隊員姓名" required />
                     </div>
@@ -458,7 +426,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_tel_' + idx">
                         <span><span class="req">*</span>電話</span>
-                        <span class="p-apply4-label-en">Telephone</span>
                       </label>
                       <input :id="'con_lisMem_member_tel_' + idx" type="tel" class="th-input" v-model="m.tel" placeholder="例：02-12345678" required />
                     </div>
@@ -467,7 +434,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_mobile_' + idx">
                         <span><span class="req">*</span>手機</span>
-                        <span class="p-apply4-label-en">Mobile Phone</span>
                       </label>
                       <input :id="'con_lisMem_member_mobile_' + idx" type="tel" class="th-input" v-model="m.mobile" placeholder="格式：0912345678" required />
                     </div>
@@ -476,7 +442,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_email_' + idx">
                         <span><span class="req">*</span>Email</span>
-                        <span class="p-apply4-label-en">E-mail</span>
                       </label>
                       <input :id="'con_lisMem_member_email_' + idx" type="email" class="th-input" v-model="m.email" placeholder="電子信箱" required />
                     </div>
@@ -485,7 +450,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_sid_' + idx">
                         <span><span class="req">*</span>身分證號 / 護照號碼(或居留證)</span>
-                        <span class="p-apply4-label-en">ID / Passport</span>
                       </label>
                       <div class="grid grid-cols-[130px_1fr] gap-2">
                         <th-hybrid-select>
@@ -509,7 +473,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_sex_' + idx">
                         <span><span class="req">*</span>性別</span>
-                        <span class="p-apply4-label-en">Sex</span>
                       </label>
                       <th-hybrid-select>
                         <select :id="'con_lisMem_member_sex_' + idx" class="th-select" v-model="m.sex" required>
@@ -524,7 +487,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_birthday_' + idx">
                         <span><span class="req">*</span>生日</span>
-                        <span class="p-apply4-label-en">Birthday</span>
                       </label>
                       <input :id="'con_lisMem_member_birthday_' + idx" type="date" class="th-input" v-model="m.birthday" placeholder="格式：YYYY-MM-DD" required />
                     </div>
@@ -533,7 +495,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_contactname_' + idx">
                         <span><span class="req">*</span>緊急連絡人</span>
-                        <span class="p-apply4-label-en">Emergency Contact</span>
                       </label>
                       <input :id="'con_lisMem_member_contactname_' + idx" type="text" class="th-input" v-model="m.contactname" placeholder="緊急連絡人姓名（不上山人員）" required />
                     </div>
@@ -542,7 +503,6 @@
                     <div class="th-field">
                       <label class="th-label" :for="'con_lisMem_member_contacttel_' + idx">
                         <span><span class="req">*</span>緊急連絡電話</span>
-                        <span class="p-apply4-label-en">Emergency Contact Phone</span>
                       </label>
                       <input :id="'con_lisMem_member_contacttel_' + idx" type="tel" class="th-input" v-model="m.contacttel" placeholder="緊急連絡電話或手機" required />
                     </div>
@@ -551,7 +511,6 @@
                     <div class="th-field p-apply4-grid-full">
                       <label class="th-label">
                         <span><span class="req">*</span>地址</span>
-                        <span class="p-apply4-label-en">Address</span>
                       </label>
                       <div class="grid grid-cols-1 md:grid-cols-[140px_140px_1fr] gap-2">
                         <th-hybrid-select>
@@ -574,61 +533,37 @@
               </div>
             </div>
 
-            <!-- 無隊員時的空狀態提示 -->
-            <div v-else class="p-6 bg-slate-50 border border-dashed border-slate-300 rounded-md text-center text-slate-500 text-sm">
-              <i class="fa-solid fa-user-group text-slate-400 text-xl block mb-2" aria-hidden="true"></i>
-              目前尚無隊員資料（單人獨攀隊伍）。如有多人同行，請點擊下方「新增隊員」。
-            </div>
 
-            <!-- 新增隊員按鈕 -->
-            <div class="flex items-center justify-between pt-2">
-              <button
-                type="button"
-                class="th-btn th-btn-secondary"
-                :disabled="teamsCount >= teamMax"
-                @click="addMember">
-                <i class="fa-solid fa-plus mr-1" aria-hidden="true"></i>新增隊員
-              </button>
-              <span v-if="teamsCount >= teamMax" class="text-xs text-rose-600 font-medium">
-                已達申請人數上限（{{ teamMax }} 人）
-              </span>
-            </div>
 
-            <!-- 隊伍人數唯讀展示列 -->
-            <div class="pt-4 border-t border-slate-200">
-              <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div class="flex items-center gap-2">
-                  <label class="th-label mb-0" for="con_teams_count">
-                    <span><span class="req">*</span>隊伍人數(含領隊)</span>
-                  </label>
-                  <input
-                    id="con_teams_count"
-                    type="text"
-                    class="th-input w-24 text-center font-bold bg-slate-100 text-slate-800 cursor-not-allowed"
-                    :value="teamsCount"
-                    readonly />
-                </div>
-                <span class="text-sm text-sky-700 font-medium">
-                  申請上限 12 人，下限 1 人。
+            <!-- 新增隊員操作列（整合當前隊伍人數與人數規範） -->
+            <div class="pt-2 flex flex-col items-center justify-center gap-3 text-center">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+                <i class="fa-solid fa-user-group text-slate-500" aria-hidden="true"></i>
+                <span>隊伍人數（含領隊）：目前 <strong class="p-apply4-team-pill-count">{{ teamsCount }}</strong> 人（申請上限 <strong class="text-slate-900 font-bold">12</strong> 人，下限 <strong class="text-slate-900 font-bold">1</strong> 人）</span>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  class="th-btn th-btn-secondary px-5"
+                  :disabled="teamsCount >= teamMax"
+                  @click="addMember">
+                  <i class="fa-solid fa-plus mr-1.5" aria-hidden="true"></i>新增隊員
+                </button>
+                <span v-if="teamsCount >= teamMax" class="text-xs text-rose-600 font-medium">
+                  已達申請人數上限（{{ teamMax }} 人）
                 </span>
               </div>
-
-              <!-- 單人獨攀特有警示與勾選（1 人時出現，2 人以上完全從 DOM 移除） -->
-              <div v-if="isSolo" class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md text-amber-900 text-sm grid gap-3" role="alert">
-                <div class="flex items-start gap-2">
-                  <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-1 flex-shrink-0" aria-hidden="true"></i>
-                  <div>
-                    <strong>單人獨攀注意事項與風險評估：</strong>
-                    單人獨攀隊伍(者)應確實規劃登山計畫與風險評估，包含宿營地點. 時間. 糧食. 飲水與裝備等，並辦妥登山或旅遊保險，且攜帶衛星電話、GPS或有效之定位器材。另請依照路線地形審酌攜帶確保繩及安全頭盔等特殊裝備。獨攀者應定期向留守人作安全回報(留守人必須是有效留守)，如本人未依登山計畫時間下山，也已交代留守人於第一時間通知管理處或消防單位以確保救援時效。
-                  </div>
-                </div>
-                <label class="flex items-center gap-2 cursor-pointer font-bold text-amber-950 pl-6">
-                  <input type="checkbox" v-model="soloChecked" id="cbOneMan" class="accent-amber-700 w-4 h-4" />
-                  <span>本人已詳閱並同意上述單人獨攀注意事項<span class="req">*</span></span>
-                </label>
-              </div>
             </div>
 
+            <!-- 單人獨攀特有警示與勾選（嚴格僅在 1 人時出現，2 人以上完全不顯示） -->
+            <div v-if="isSolo" class="th-callout is-warning p-apply4-callout-align" role="alert">
+              <input type="checkbox" v-model="soloChecked" id="cbOneMan" class="accent-amber-700 w-4 h-4 flex-shrink-0 mt-1" />
+              <label for="cbOneMan" class="p-apply4-callout-text space-y-2 cursor-pointer">
+                <span class="block">單人獨攀隊伍(者)應確實規劃登山計畫與風險評估，包含宿營地點、時間、糧食、飲水與裝備等，並辦妥登山或旅遊保險，且攜帶衛星電話、GPS或有效之定位器材。</span>
+                <span class="block">另請依照路線地形審酌攜帶確保繩及安全頭盔等特殊裝備。</span>
+                <span class="block">獨攀者應定期向留守人作安全回報(留守人必須是有效留守)，如本人未依登山計畫時間下山，也已交代留守人於第一時間通知管理處或消防單位以確保救援時效。<span class="req">*</span></span>
+              </label>
+            </div>
           </div>
         </section>
 
@@ -636,62 +571,34 @@
         <section id="sec-stay" class="th-card" aria-labelledby="heading-stay">
           <div class="th-card-head">
             <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('stay')">
-              <h2 id="heading-stay" class="th-card-title"><span class="req text-rose-600 mr-1">*</span>留守人資料</h2>
+              <h2 id="heading-stay" class="th-card-title">留守人資料<span class="req text-rose-600 ml-1">*</span></h2>
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.stay }" aria-hidden="true"></i>
             </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.stay">
-            <!-- 同申請人核取方塊 -->
-            <label class="p-apply4-check-row">
-              <input type="checkbox" v-model="staySame" id="cbStaySame" />
-              <span><strong>同申請人</strong></span>
-            </label>
-
-            <!-- 守護天使溫馨提示（正式站逐字，統一使用 .th-callout） -->
-            <div class="th-callout">
-              <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
+            <!-- 留守人員說明（icon 維持 info，移除前綴標題） -->
+            <div class="th-callout mb-0">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
               <div>
-                <strong>留守人守護天使說明：</strong>留守人員是指<strong>不上山人員</strong>（家人或朋友等），每日不定時與山上隊伍聯繫，掌握山上人員行蹤，當隊伍發生狀況需協助、救援時，第一時間通報相關單位，是隊伍的守護天使。
+                留守人員是指不上山人員（家人或朋友等），每日不定時與山上隊伍聯繫，掌握山上人員行蹤，當隊伍發生狀況需協助、救援時，第一時間通報相關單位，是隊伍的守護天使。
               </div>
             </div>
 
-            <!-- 勾選同申請人時：唯讀預覽 -->
-            <div v-if="staySame" class="p-4 bg-slate-50 border border-slate-200 rounded-md">
-              <dl class="p-apply4-summary-dl">
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">留守人姓名</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.name || '（尚未填寫申請人姓名）' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">手機(或電話)</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.mobile || applicant.tel || '無' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">傳真</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.fax || '無' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">Email</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.email || '無' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">生日</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.birthday || '未填寫' }}</dd>
-                </div>
-                <div class="p-apply4-summary-item">
-                  <dt class="p-apply4-summary-dt">身分證號 / 護照號碼(或居留證)</dt>
-                  <dd class="p-apply4-summary-dd">{{ applicant.nation }} / {{ applicant.sid || '無證號' }}</dd>
-                </div>
-              </dl>
-            </div>
+            <!-- 同申請人核取方塊（原本框限樣式） -->
+            <label class="p-apply4-check-row">
+              <input
+                type="checkbox"
+                v-model="staySame"
+                id="cbStaySame" />
+              <span><strong>同申請人</strong></span>
+            </label>
 
-            <!-- 未勾選同申請人時：完整編輯表單 -->
-            <div v-else class="p-apply4-grid">
+            <!-- 留守人完整編輯表單（始終呈現輸入欄位，勾選「同申請人」自動帶入資料） -->
+            <div class="p-apply4-grid">
               <!-- 姓名 -->
               <div class="th-field">
                 <label class="th-label" for="con_stay_name">
                   <span><span class="req">*</span>姓名</span>
-                  <span class="p-apply4-label-en">Name</span>
                 </label>
                 <input id="con_stay_name" type="text" class="th-input" v-model="stay.name" placeholder="請輸入留守人姓名" required />
               </div>
@@ -700,7 +607,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_stay_mobile">
                   <span><span class="req">*</span>手機(或電話)</span>
-                  <span class="p-apply4-label-en">Mobile / Phone</span>
                 </label>
                 <input id="con_stay_mobile" type="tel" class="th-input" v-model="stay.mobile" placeholder="例：0912345678" required />
               </div>
@@ -709,7 +615,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_stay_fax">
                   <span>傳真</span>
-                  <span class="p-apply4-label-en">Fax</span>
                 </label>
                 <input id="con_stay_fax" type="text" class="th-input" v-model="stay.fax" placeholder="請輸入傳真" />
               </div>
@@ -718,7 +623,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_stay_email">
                   <span>Email</span>
-                  <span class="p-apply4-label-en">E-mail</span>
                 </label>
                 <input id="con_stay_email" type="email" class="th-input" v-model="stay.email" placeholder="電子信箱" />
               </div>
@@ -727,7 +631,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_stay_birthday">
                   <span>生日</span>
-                  <span class="p-apply4-label-en">Birthday</span>
                 </label>
                 <input id="con_stay_birthday" type="date" class="th-input" v-model="stay.birthday" placeholder="格式：YYYY-MM-DD" />
               </div>
@@ -736,7 +639,6 @@
               <div class="th-field">
                 <label class="th-label" for="con_stay_sid">
                   <span>身分證號 / 護照號碼(或居留證)</span>
-                  <span class="p-apply4-label-en">ID / Passport</span>
                 </label>
                 <div class="grid grid-cols-[130px_1fr] gap-2">
                   <th-hybrid-select>
@@ -760,30 +662,32 @@
         <!-- 區塊 6：宿營地預約查詢排隊狀況 -->
         <section id="sec-queue" class="th-card" aria-labelledby="heading-queue">
           <div class="th-card-head">
-            <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('queue')">
+            <div class="p-apply4-accordion-btn flex items-center justify-between cursor-pointer w-full" @click="toggleSection('queue')">
               <h2 id="heading-queue" class="th-card-title">宿營地預約查詢排隊狀況</h2>
-              <div class="p-apply4-head-actions ml-auto flex items-center gap-2">
-                <a
-                  href="bed_7.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="th-btn th-btn-ghost th-btn-sm"
-                  title="玉山單日往返路線查詢（另開新視窗）"
-                  @click.stop>
-                  <i class="fa-solid fa-person-walking mr-1" aria-hidden="true"></i>玉山單日往返路線
-                </a>
+              <div class="p-apply4-head-actions flex items-center gap-2.5 ml-auto">
                 <a
                   href="bed_6.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="th-btn th-btn-brown th-btn-sm"
+                  class="th-btn th-btn-brown th-btn-sm text-white"
+                  style="color: #ffffff !important;"
                   title="玉山宿營地查詢（另開新視窗）"
                   @click.stop>
-                  <i class="fa-solid fa-mountain-sun mr-1" aria-hidden="true"></i>玉山宿營地
+                  <i class="fa-solid fa-mountain-sun mr-1 text-white" style="color: #ffffff !important;" aria-hidden="true"></i>玉山宿營地
                 </a>
-                <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.queue }" aria-hidden="true"></i>
+                <a
+                  href="bed_7.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="th-btn th-btn-primary th-btn-sm text-white"
+                  style="color: #ffffff !important;"
+                  title="玉山單日往返路線查詢（另開新視窗）"
+                  @click.stop>
+                  <i class="fa-solid fa-person-walking mr-1 text-white" style="color: #ffffff !important;" aria-hidden="true"></i>玉山單日往返路線
+                </a>
+                <i class="fa-solid fa-chevron-down p-apply4-accordion-icon ml-1.5" :class="{ 'is-open': accordionOpen.queue }" aria-hidden="true"></i>
               </div>
-            </button>
+            </div>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.queue">
             <div class="p-apply4-queue-table-wrap">
@@ -800,28 +704,29 @@
                 <tbody>
                   <tr v-for="(q, idx) in queueRows" :key="idx">
                     <td class="font-medium whitespace-nowrap">{{ q.date }}</td>
-                    <td class="font-bold text-slate-900 whitespace-nowrap">{{ q.camp }}</td>
+                    <!-- 宿營地點（不要粗體） -->
+                    <td class="text-slate-800 whitespace-nowrap">{{ q.camp }}</td>
                     <td class="whitespace-nowrap">{{ teamsCount }}</td>
                     <td>
-                      <div class="grid gap-1">
-                        <!-- 單日往返呈現當日承載量（無床位） -->
-                        <div v-if="q.isSingle">
-                          承載量：當日入園人數上限 {{ q.capacity }} 位
+                      <!-- 說明改條列，不要同列 -->
+                      <div class="space-y-1 text-slate-700 text-sm">
+                        <div>
+                          承載量：{{ q.isSingle ? '當日入園人數上限 ' + q.capacity + ' 位' : '床位 ' + q.capacity + ' 位' }}
                         </div>
-                        <div v-else>
-                          承載量：床位{{ q.capacity }}位
-                        </div>
-
                         <div>
                           排隊預約：<span class="text-rose-600 font-bold">{{ q.queueNum }}</span> 位。(實際順位以送出為準)
-                          <span class="text-slate-400 mx-1">|</span>
+                        </div>
+                        <div>
                           審核中：{{ q.reviewNum }} 位
-                          <span class="text-slate-400 mx-1">|</span>
+                        </div>
+                        <div>
                           核准入園：{{ q.approvedNum }} 位
                         </div>
-                        <!-- 超過 60 人時顯示遞補機率低警示 -->
-                        <div v-if="!q.isSingle && q.queueNum > 60" class="text-rose-600 text-xs font-semibold mt-1">
-                          排隊遞補人數已超過60人，遞補上機率不高，建請另擇期申請參加抽籤或排隊遞補。
+
+                        <!-- 超過 60 人時顯示紅色 callout（字體正常大小，清晰醒目） -->
+                        <div v-if="!q.isSingle && q.queueNum > 60" class="mt-2 p-2.5 bg-rose-50 border border-rose-200 rounded text-rose-700 text-sm flex items-start gap-2">
+                          <i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+                          <span>排隊遞補人數已超過 60 人，遞補上機率不高，建請另擇期申請參加抽籤或排隊遞補。</span>
                         </div>
                       </div>
                     </td>
@@ -846,38 +751,21 @@
           </div>
         </section>
 
-        <!-- 區塊 7：送件驗證碼（補齊整區） -->
-        <section id="sec-captcha" class="th-card" aria-labelledby="heading-captcha">
+        <!-- 區塊 7：送件驗證碼（送件前確認，精簡呈現） -->
+        <section class="th-card" id="sec-captcha" aria-labelledby="heading-captcha">
           <div class="th-card-head">
             <h2 id="heading-captcha" class="th-card-title">送件驗證碼</h2>
           </div>
           <div class="th-card-body">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div class="th-field mb-0">
-                <label class="th-label" for="con_captcha">
-                  <span><span class="req">*</span>驗證碼</span>
-                  <span class="p-apply4-label-en">Captcha</span>
-                </label>
-                <input
-                  id="con_captcha"
-                  type="text"
-                  class="th-input w-48 uppercase tracking-widest font-mono font-bold"
-                  v-model="captchaInput"
-                  placeholder="請輸入4碼驗證碼"
-                  maxlength="6"
-                  required />
-              </div>
-              <div class="flex items-center gap-3 pt-2 sm:pt-6">
-                <!-- 驗證碼展示框（點擊可切換） -->
-                <div class="p-apply4-captcha-box" @click="refreshCaptcha" title="點擊更換驗證碼">
-                  <span class="p-apply4-captcha-text">{{ captchaCode }}</span>
-                  <div class="p-apply4-captcha-noise"></div>
-                </div>
-                <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="refreshCaptcha" title="重新產生驗證碼">
-                  <i class="fa-solid fa-rotate-right mr-1" aria-hidden="true"></i>重新整理
-                </button>
-              </div>
-            </div>
+            <th-captcha
+              v-model="captchaInput"
+              v-model:code="captchaCode"
+              :refreshable="true"
+              input-id="con_captcha"
+              label="驗證碼"
+              layout="stack"
+              hide-hint
+              ref="captchaField" class="w-full sm:w-1/2"></th-captcha>
           </div>
         </section>
 
@@ -937,10 +825,6 @@
 
     <!-- 置底操作按鈕 -->
     <div class="p-apply4-actions">
-      <div v-if="completedSectionsCount === 5 && !secCaptchaOk" class="mr-auto text-xs text-rose-600 font-bold flex items-center gap-1.5">
-        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-        <span>前 5 項已填妥，請至下方輸入「送件驗證碼」即可前往下一步</span>
-      </div>
       <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
         <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
       </button>

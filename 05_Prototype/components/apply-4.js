@@ -1,5 +1,5 @@
 /* ============================================================
-   apply-4-v2.js — 步驟四「人員資料」頁面腳本
+   apply-4.js — 步驟四「人員資料」頁面腳本
    ------------------------------------------------------------
    2026-09-23 依修改清單全量調整：
      1. 規格與功能對齊：
@@ -64,7 +64,7 @@ const MAIN_ROUTE_NAMES = {
 const SUB_ROUTE_NAMES = {
   "2": "2~5天(塔塔加 - 玉山線 - 塔塔加)",
   "3": "單日往返(塔塔加 - 玉山前峰 - 塔塔加)",
-  "4": "單日往返(塔塔加 - 玉山西峰 - 塔塔加)"
+  "4": "單日往返(塔塔加 - 玉山線 - 塔塔加)"
 };
 
 function createPerson(defaultData = {}) {
@@ -214,10 +214,10 @@ thPage({
     const qMain = getParam("climblinemain");
     const qClimb = getParam("climbline");
     const qStart = getParam("applystart") || "2026-10-15";
-    const qDays = getParam("sumday") || (qClimb === "3" || qClimb === "4" ? "1" : "2");
+    const qDays = getParam("sumday") || "1";
 
     const mainName = MAIN_ROUTE_NAMES[qMain] || "玉山線";
-    const subName = SUB_ROUTE_NAMES[qClimb] || (qDays === "1" ? "單日往返(塔塔加 - 玉山前峰 - 塔塔加)" : "2~5天(塔塔加 - 玉山線 - 塔塔加)");
+    const subName = SUB_ROUTE_NAMES[qClimb] || (qDays === "1" ? "單日往返(塔塔加 - 玉山線 - 塔塔加)" : "2~5天(塔塔加 - 玉山線 - 塔塔加)");
     const teamName = qTeams || "天眼1隊";
 
     // 計算離園日期
@@ -241,6 +241,7 @@ thPage({
       // 隊員個別折疊狀態
       memberOpenStates: [],
       allMembersExpanded: true,
+      memberNoticeOpen: true,
 
       // 1. 行程計畫摘要
       summary: {
@@ -276,9 +277,24 @@ thPage({
         contacttel: "0911000111"
       }),
 
-      // 3. 領隊資料（預設勾選同申請人）
+      // 3. 領隊資料（預設勾選同申請人，預先帶入申請人資料）
       leaderSame: true,
-      leader: createPerson(),
+      leader: createPerson({
+        name: "王小明",
+        tel: "02-23456789",
+        country: "臺北市",
+        city: "中正區",
+        addr: "公園路1號",
+        mobile: "0912345678",
+        fax: "",
+        email: "wang.sample@example.com",
+        nation: "中華民國",
+        sid: "A123456789",
+        sex: "1",
+        birthday: "1990-05-15",
+        contactname: "王大同",
+        contacttel: "0911000111"
+      }),
 
       // 4. 隊員資料（預先帶入 2 名示範隊員）
       members: [
@@ -358,22 +374,11 @@ thPage({
 
     // 取得當前作用中的領隊資料
     activeLeader() {
-      return this.leaderSame ? this.applicant : this.leader;
+      return this.leader;
     },
 
     // 取得當前作用中的留守人資料
     activeStay() {
-      if (this.staySame) {
-        return {
-          name: this.applicant.name,
-          mobile: this.applicant.mobile,
-          fax: this.applicant.fax,
-          email: this.applicant.email,
-          birthday: this.applicant.birthday,
-          nation: this.applicant.nation,
-          sid: this.applicant.sid
-        };
-      }
       return this.stay;
     },
 
@@ -416,9 +421,6 @@ thPage({
     },
 
     secStayOk() {
-      if (this.staySame) {
-        return this.secApplyOk;
-      }
       const s = this.stay;
       return !!s.name.trim() && isValidMobile(s.mobile);
     },
@@ -459,9 +461,40 @@ thPage({
     }
   },
 
+  watch: {
+    leaderSame(newVal) {
+      if (newVal) {
+        this.syncApplicantToLeader();
+      }
+    },
+    staySame(newVal) {
+      if (newVal) {
+        this.syncApplicantToStay();
+      }
+    },
+    applicant: {
+      deep: true,
+      handler() {
+        if (this.leaderSame) {
+          this.syncApplicantToLeader();
+        }
+        if (this.staySame) {
+          this.syncApplicantToStay();
+        }
+      }
+    }
+  },
+
   mounted() {
     this.initFromStep3();
     this.restorePersonnelFromSession();
+    this.applyConsent = true; // 預先勾選委託代理同意書
+    if (this.leaderSame) {
+      this.syncApplicantToLeader();
+    }
+    if (this.staySame) {
+      this.syncApplicantToStay();
+    }
   },
 
   methods: {
@@ -483,6 +516,39 @@ thPage({
         !!p.contactname && !!p.contactname.trim() &&
         !!p.contacttel && !!p.contacttel.trim()
       );
+    },
+
+    // 同申請人：同步申請人資料至領隊輸入欄位
+    syncApplicantToLeader() {
+      const a = this.applicant;
+      if (!a) return;
+      this.leader.name = a.name;
+      this.leader.tel = a.tel;
+      this.leader.country = a.country;
+      this.leader.city = a.city;
+      this.leader.addr = a.addr;
+      this.leader.mobile = a.mobile;
+      this.leader.fax = a.fax;
+      this.leader.email = a.email;
+      this.leader.nation = a.nation;
+      this.leader.sid = a.sid;
+      this.leader.sex = a.sex;
+      this.leader.birthday = a.birthday;
+      this.leader.contactname = a.contactname;
+      this.leader.contacttel = a.contacttel;
+    },
+
+    // 同申請人：同步申請人資料至留守人輸入欄位
+    syncApplicantToStay() {
+      const a = this.applicant;
+      if (!a) return;
+      this.stay.name = a.name;
+      this.stay.mobile = a.mobile || a.tel;
+      this.stay.fax = a.fax;
+      this.stay.email = a.email;
+      this.stay.birthday = a.birthday;
+      this.stay.nation = a.nation;
+      this.stay.sid = a.sid;
     },
 
     // 手風琴展開/收合
@@ -509,13 +575,10 @@ thPage({
 
     // 重新產生 4 碼驗證碼
     refreshCaptcha() {
-      const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-      let code = "";
-      for (let i = 0; i < 4; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      const captcha = this.$refs.captchaField;
+      if (captcha && typeof captcha.refresh === "function") {
+        captcha.refresh();
       }
-      this.captchaCode = code;
-      this.captchaInput = "";
     },
 
     // 縣市變更時連動第一個鄉鎮市區

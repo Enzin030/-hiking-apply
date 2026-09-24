@@ -12,79 +12,129 @@
    與 Tailwind utility，組合與提升前的 applySearch.html 逐字相同。
 
    ------------------------------------------------------------
-   雛形不做真實驗證
+   靜態與可換碼模式
    ------------------------------------------------------------
-   驗證碼是靜態字樣，「換一組」按鈕 disabled。這是刻意的：做成看似會換的按鈕
-   會讓驗收的人以為功能已接上。真實驗證碼圖由後端 `CheckImageCode.aspx` 產生，
-   雛形階段沒有後端。
+   預設為靜態示意碼，換碼按鈕停用並顯示提示。送件流程可啟用 refreshable 模式，
+   按鈕透過 update:code / update:modelValue 更新顯示碼並清空輸入值。這仍是前端示意，
+   不代表已連接後端驗證碼服務。
 
    ------------------------------------------------------------
    用法
    ------------------------------------------------------------
+   靜態頁：
        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
 
-   input-id 要逐頁給不同值：同一頁若出現兩個驗證碼欄位，id 重複會讓
-   <label for> 指到錯的輸入框（無障礙檢查會抓到，畫面上看不出來）。
+   可換碼送件頁（由共用元件產碼、輸入與顯示值保持連動）：
+       <th-captcha v-model="captchaInput" v-model:code="captchaCode" :refreshable="true"
+         input-id="f-captcha" label="送件驗證碼" layout="stack" hide-hint
+         ref="captchaField"></th-captcha>
+
+   input-id 要逐頁給不同值，避免 label 指到錯的輸入框。
    ============================================================ */
 window.thComponents = window.thComponents || {};
 window.thComponents["th-captcha"] = {
   props: {
     modelValue: { type: String, default: "" },
-    /* 靜態示意字樣。要換成別組字時給 code，不要改元件預設值 */
+    /* 靜態示意字樣；可換碼模式由父頁以 v-model:code 綁定最新值 */
     code: { type: String, default: "7K4M" },
     inputId: { type: String, default: "f-vcode" },
+    label: { type: String, default: "請輸入驗證碼" },
     hideHint: { type: Boolean, default: false },
     layout: { type: String, default: "stack" },
+    refreshable: { type: Boolean, default: false },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "update:code"],
+
+  methods: {
+    refresh() {
+      if (!this.refreshable) return;
+      const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+      let nextCode = "";
+      do {
+        nextCode = "";
+        for (let i = 0; i < 4; i++) {
+          nextCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+      } while (nextCode === this.code);
+      this.$emit("update:code", nextCode);
+      this.$emit("update:modelValue", "");
+    },
+  },
+
   template: `
     <div v-if="layout === 'col12'" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start sm:items-center">
       <label class="sm:col-span-3 lg:col-span-2 text-[length:var(--fs-sm)] font-bold text-slate-700 text-left" :for="inputId">
-        <span class="text-red-500 mr-1 req">*</span>請輸入驗證碼
+        <span class="text-red-500 mr-1 req">*</span>{{ label }}
       </label>
       <div class="sm:col-span-9 lg:col-span-10">
-        <div class="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+        <div class="flex items-center gap-2 max-w-md">
           <input
             :id="inputId"
             name="vcode"
             type="text"
-            class="th-input w-full sm:w-44"
+            class="th-input flex-1 min-w-0"
             autocomplete="off"
             placeholder="請輸入驗證碼"
+            maxlength="6"
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)" />
-          <span class="th-input th-input-readonly w-full sm:w-32 text-center tracking-[0.3em]">{{ code }}</span>
-          <button type="button" class="th-btn th-btn-ghost shrink-0" disabled>
-            <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
+          <span
+            :class="refreshable
+              ? 'flex items-center justify-center shrink-0 w-28 h-[42px] text-center font-mono font-bold tracking-[0.25em] text-blue-900 bg-indigo-50 border border-indigo-200 rounded-md select-none text-base'
+              : 'th-input th-input-readonly w-28 h-[42px] text-center tracking-[0.3em]'">{{ code }}</span>
+          <button
+            type="button"
+            :class="refreshable
+              ? 'th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity'
+              : 'th-btn th-btn-ghost shrink-0'"
+            :disabled="!refreshable"
+            :title="refreshable ? '換一組驗證碼' : '雛形驗證碼不提供更換'"
+            :aria-label="refreshable ? '換一組驗證碼' : null"
+            @click="refresh">
+            <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+            <span v-if="!refreshable" class="ml-1">換一組</span>
           </button>
         </div>
         <div v-if="!hideHint" class="th-field-hint">
-          雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。
+          {{ refreshable ? '原型示意碼由前端更新，尚未連接後端驗證。' : '雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。' }}
         </div>
       </div>
     </div>
 
     <div v-else class="th-field">
       <label class="th-label" :for="inputId">
-        <span class="req">*</span>請輸入驗證碼
+        <span class="req">*</span>{{ label }}
       </label>
-      <div class="flex flex-col sm:flex-row gap-2 items-start">
+      <div class="flex items-center gap-2">
         <input
           :id="inputId"
           name="vcode"
           type="text"
-          class="th-input sm:w-44"
+          class="th-input flex-1 min-w-0"
           autocomplete="off"
           placeholder="請輸入驗證碼"
+          maxlength="6"
           :value="modelValue"
           @input="$emit('update:modelValue', $event.target.value)" />
-        <span class="th-input th-input-readonly sm:w-32 text-center tracking-[0.3em]">{{ code }}</span>
-        <button type="button" class="th-btn th-btn-ghost" disabled>
-          <i class="fa-solid fa-rotate" aria-hidden="true"></i>換一組
+        <span
+          :class="refreshable
+            ? 'flex items-center justify-center shrink-0 w-28 h-[42px] text-center font-mono font-bold tracking-[0.25em] text-blue-900 bg-indigo-50 border border-indigo-200 rounded-md select-none text-base'
+            : 'th-input th-input-readonly w-28 h-[42px] text-center tracking-[0.3em]'">{{ code }}</span>
+        <button
+          type="button"
+          :class="refreshable
+            ? 'th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity'
+            : 'th-btn th-btn-ghost shrink-0'"
+          :disabled="!refreshable"
+          :title="refreshable ? '換一組驗證碼' : '雛形驗證碼不提供更換'"
+          :aria-label="refreshable ? '換一組驗證碼' : null"
+          @click="refresh">
+          <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+          <span v-if="!refreshable" class="ml-1">換一組</span>
         </button>
       </div>
       <div v-if="!hideHint" class="th-field-hint">
-        雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。
+        {{ refreshable ? '原型示意碼由前端更新，尚未連接後端驗證。' : '雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。' }}
       </div>
     </div>
   `,

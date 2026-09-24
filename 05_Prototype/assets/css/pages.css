@@ -7560,7 +7560,7 @@ body:where(.p-indexb-body):before {
 }
 
 /* ############################################################
-   apply-4-v2.html — 步驟四「人員資料」
+   apply-4.html — 步驟四「人員資料」
    ############################################################
    依據正式站實際欄位與 apply-3 視覺規範對齊：
      1. 兩欄版面與側欄導覽：比照 apply-3（.p-apply4-layout / .p-apply4-side）
@@ -7573,8 +7573,8 @@ body:where(.p-indexb-body):before {
 /* ---------- 兩欄版面：主欄 + 側欄導覽 ---------- */
 .p-apply4-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 240px;
-  gap: 56px;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 40px;
   align-items: start;
   margin-top: 24px;
 }
@@ -7661,20 +7661,21 @@ body:where(.p-indexb-body):before {
   margin-left: 6px;
 }
 
-/* ---------- 頂部行程計畫查詢條件列（去底色、去邊框、直接平鋪攤開成一列） ---------- */
+/* ---------- 頂部行程計畫查詢條件列（12 欄格線：6 / 6，共用登山路線標題） ---------- */
 .p-apply4-filter-summary {
   background: transparent;
   border: none;
   border-radius: 0;
   padding: 0;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .p-apply4-filter-grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 16px 36px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px 24px;
+  align-items: start;
 }
 
 .p-apply4-filter-field {
@@ -7682,7 +7683,16 @@ body:where(.p-indexb-body):before {
   flex-direction: column;
   gap: 4px;
   min-width: 0;
-  flex: 0 0 auto;
+}
+
+.p-apply4-filter-field.col-span-6 {
+  grid-column: span 6 / span 6;
+}
+
+@media (max-width: 768px) {
+  .p-apply4-filter-field.col-span-6 {
+    grid-column: span 12 / span 12;
+  }
 }
 
 .p-apply4-filter-val {
@@ -7690,13 +7700,115 @@ body:where(.p-indexb-body):before {
   font-weight: 600;
   color: var(--slate-800, #1e293b);
   line-height: var(--lh-snug, 1.4);
-  white-space: nowrap;
+  word-break: break-word;
 }
 
-@media (max-width: 768px) {
-  .p-apply4-filter-val {
-    white-space: normal;
-  }
+.p-apply4-filter-val {
+  font-size: var(--fs-base, 15px);
+  font-weight: 600;
+  color: var(--slate-800, #1e293b);
+  line-height: var(--lh-snug, 1.4);
+  word-break: break-word;
+}
+
+/* 參考 apply1 頂部路線卡片樣式 */
+.p-apply4-route-card {
+  cursor: default !important;
+  background: var(--bg-1, #ffffff);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--sh-sm);
+  border-radius: var(--r-xl);
+}
+
+.p-apply4-route-card:hover {
+  transform: none !important;
+  box-shadow: var(--sh-sm) !important;
+  border-color: var(--national-400) !important;
+}
+
+/* 提示框圖示與第一列文字居中對齊 */
+.p-apply4-callout-align {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px;
+}
+
+.p-apply4-callout-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 1.6em !important;
+  margin-top: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0;
+  font-size: var(--fs-base, 16px);
+}
+
+.p-apply4-callout-text {
+  line-height: 1.6;
+  flex: 1;
+}
+
+/* ---------- 頂部路線卡片（主子路線互換、主路線主色填滿） ---------- */
+.p-apply4-main .p-apply1-route-meta {
+  font-size: var(--fs-base, 15px);
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.p-apply4-main .p-apply1-route-badge-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--national-700) !important;
+  color: #ffffff !important;
+  padding: 3px 10px;
+  border-radius: var(--r-xs, 4px);
+  font-size: var(--fs-sm, 14px);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.p-apply4-main .p-apply1-route-badge-main i {
+  color: #ffffff !important;
+  font-size: 15px;
+}
+
+.p-apply4-main .p-apply1-route-meta-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-base, 15px);
+  color: var(--slate-700);
+  font-weight: 500;
+}
+
+.p-apply4-main .p-apply1-route-meta-date i {
+  color: var(--national-700);
+  font-size: 16px;
+}
+
+/* ---------- 隊員提醒紅色可折疊 Callout ---------- */
+.p-apply4-callout-toggle {
+  cursor: pointer;
+  user-select: none;
+  transition: all .2s ease;
+}
+
+.p-apply4-callout-toggle:hover {
+  filter: brightness(0.97);
+}
+
+.p-apply4-callout-chevron {
+  transition: transform .2s ease;
+  font-size: var(--fs-xs, 12px);
+  margin-left: auto;
+}
+
+.p-apply4-callout-chevron.is-open {
+  transform: rotate(180deg);
 }
 
 /* ---------- 快捷核取列（委託同意、同申請人） ---------- */
@@ -7710,7 +7822,7 @@ body:where(.p-indexb-body):before {
   border-radius: var(--r-md);
   font-size: var(--fs-sm);
   color: var(--slate-800);
-  line-height: var(--lh-loose);
+  line-height: 1.6;
   cursor: pointer;
   user-select: none;
   transition: all .15s ease;
@@ -7722,10 +7834,77 @@ body:where(.p-indexb-body):before {
 }
 
 .p-apply4-check-row input[type="checkbox"] {
-  margin-top: 4px;
+  width: 17px;
+  height: 17px;
+  margin: 3px 0 0 0;
   flex-shrink: 0;
   accent-color: var(--national-700);
   cursor: pointer;
+}
+
+/* ---------- 委託代理同意條文（同意書樣式：非卡片、平鋪、自訂勾選框） ---------- */
+.p-apply4-consent-clause {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 4px 0;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  border: none;
+}
+
+.p-apply4-consent-box {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-xs, 4px);
+  border: 2px solid var(--slate-300);
+  background: var(--bg-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.p-apply4-consent-box i {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.p-apply4-consent-clause:hover .p-apply4-consent-box {
+  border-color: var(--national-700);
+}
+
+.p-apply4-consent-clause.is-acked .p-apply4-consent-box {
+  background: var(--national-700);
+  border-color: var(--national-700);
+}
+
+.p-apply4-consent-native-cb {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.p-apply4-consent-text {
+  font-size: var(--fs-base, 16px);
+  color: var(--slate-800);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.p-apply4-consent-divider {
+  border: 0;
+  border-top: 1px solid var(--slate-200);
+  margin: 8px 0 16px 0;
 }
 
 /* ---------- 手風琴標題操作按鈕 ---------- */
@@ -7879,45 +8058,9 @@ body:where(.p-indexb-body):before {
   border-bottom: 0;
 }
 
-/* ---------- 驗證碼區塊 ---------- */
-.p-apply4-captcha-box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 130px;
-  height: 40px;
-  background: linear-gradient(135deg, #eef2f6 0%, #dce4ec 100%);
-  border: 1px solid var(--slate-300);
-  border-radius: var(--r-md);
-  user-select: none;
-  cursor: pointer;
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
-}
-
-.p-apply4-captcha-text {
-  font-family: monospace, Courier, sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 6px;
-  color: var(--national-900);
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
-  transform: skew(-6deg);
-  z-index: 1;
-}
-
-.p-apply4-captcha-noise {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 6px,
-    rgba(0, 0, 0, 0.04) 6px,
-    rgba(0, 0, 0, 0.04) 12px
-  );
-  pointer-events: none;
+/* 住宿調查清單依選項內容寬度展開，避免文字折行 */
+.p-apply4-queue-table .th-hsel-panel {
+  min-width: max-content;
 }
 
 /* ---------- 側欄頁內目錄（統一比照 apply-3） ---------- */
@@ -7935,6 +8078,142 @@ body:where(.p-indexb-body):before {
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+/* ---------- 側欄頂部行程與人數小卡片（重新精緻設計） ---------- */
+.p-apply4-side-card {
+  background: var(--bg-1, #ffffff);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl, 12px);
+  overflow: hidden;
+  box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
+}
+
+.p-apply4-side-card .card-thumb-banner {
+  position: relative;
+  height: 88px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.p-apply4-side-card .card-thumb-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.p-apply4-side-card .card-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.25) 0%, rgba(15, 23, 42, 0.7) 100%);
+}
+
+.p-apply4-side-card .card-banner-top {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.p-apply4-side-card .card-main-badge {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--national-800);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.02em;
+}
+
+.p-apply4-side-card .card-diff-tag {
+  background: rgba(15, 23, 42, 0.82);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.p-apply4-side-card .card-body-content {
+  padding: 14px 14px 12px;
+}
+
+.p-apply4-side-card .card-route-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--slate-800);
+  line-height: 1.4;
+  margin: 0 0 10px 0;
+}
+
+/* 入園期間獨立精緻面板（字體加大至 15px，清晰加粗） */
+.p-apply4-side-card .card-date-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 9px 11px;
+  margin-bottom: 0;
+}
+
+.p-apply4-side-card .date-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.p-apply4-side-card .date-panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate-600);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.p-apply4-side-card .date-panel-badge {
+  background: var(--national-50);
+  color: var(--national-800);
+  border: 1px solid var(--national-200);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  line-height: 1.4;
+}
+
+.p-apply4-side-card .date-panel-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.p-apply4-side-card .date-num {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--slate-900);
+  letter-spacing: -0.01em;
+}
+
+.p-apply4-side-card .date-arrow {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--slate-400);
+  flex-shrink: 0;
 }
 
 .p-apply4-side-head {
@@ -8046,7 +8325,7 @@ body:where(.p-indexb-body):before {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-top: 48px;
+  margin-top: 24px;
 }
 
 .p-apply4-actions .th-btn-primary:enabled {
@@ -8081,3 +8360,154 @@ body:where(.p-indexb-body):before {
 }
 
 
+
+.p-apply4-head-actions a, .p-apply4-head-actions a i { color: #ffffff !important; }
+.p-apply4-team-pill-count {
+  color: var(--national-800);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* ---------- 行程摘要卡片（置於申請人上方） ---------- */
+.p-apply4-summary-card {
+  background: var(--bg-1, #ffffff);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl, 12px);
+  overflow: hidden;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .p-apply4-summary-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+.p-apply4-summary-card .summary-thumb-box {
+  position: relative;
+  min-height: 84px;
+  overflow: hidden;
+}
+
+.p-apply4-summary-card .summary-thumb-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.p-apply4-summary-card .summary-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.4) 100%);
+}
+
+.p-apply4-summary-card .summary-info-box {
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+}
+
+.p-apply4-summary-card .summary-main-tag {
+  background: var(--national-50, #f2fbf5);
+  color: var(--national-800, #166534);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2.5px 9px;
+  border-radius: 9999px;
+  border: 1px solid var(--national-200, #c4ead0);
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.p-apply4-summary-card .summary-diff-tag {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+
+.p-apply4-summary-card .summary-sub-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--slate-900);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.p-apply4-summary-card .summary-date-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--slate-700);
+}
+
+.p-apply4-summary-card .summary-date-row .date-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.p-apply4-summary-card .summary-date-row .date-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--slate-600);
+}
+
+.p-apply4-summary-card .summary-date-row .date-value {
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--slate-800);
+}
+
+.p-apply4-summary-card .summary-date-row .summary-meta-sep {
+  color: var(--slate-300);
+  margin: 0 2px;
+  font-size: 13px;
+}
+
+.p-apply4-summary-card .summary-date-row .date-range-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--slate-700);
+  font-size: 14px;
+  font-weight: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.p-apply4-summary-card .summary-date-row .date-sep {
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--slate-500);
+}
+
+.p-apply4-summary-card .summary-date-row .date-days-text {
+  color: var(--slate-500);
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.th-callout,
+.th-card-body > .th-callout {
+  margin-bottom: 0 !important;
+}

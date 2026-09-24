@@ -673,7 +673,7 @@ thPage({
       if (this.teams_name) q.set("teams_name", this.teams_name);
       if (this.climblinemain) q.set("climblinemain", this.climblinemain);
       if (this.climbline) q.set("climbline", this.climbline);
-      window.location.href = `apply-4-v2.html?${q.toString()}`;
+      window.location.href = `apply-4.html?${q.toString()}`;
     }
   }
 });
