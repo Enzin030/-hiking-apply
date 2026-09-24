@@ -282,7 +282,11 @@ R2 的其餘部分不變：**路徑層級的 `git checkout`／`clean`／`reset -
 - **不要引入 npm 或打包工具**，本專案刻意維持零 build。
 - `01_Raw_Input/raw/*.csv` 是 `05_Prototype/components/RouteData.js`、`ConsentData.generated.js` 的生成來源
   （見兩檔開頭註解），改資料要連帶更新對應 `.js`，不要只改一邊。
-  **這兩支目前沒有生成腳本**，產生方式待確認；補上腳本時請放 `scripts/`。
+  **`RouteData.js` 自 2026-09-24 起由腳本產生**：`python scripts/fetch-live-routes.py`
+  擷取正式站 `apply_1.aspx` → `01_Raw_Input/raw/正式站路線清單.csv`，再
+  `node scripts/sync-route-data.js` 合併（清單以正式站為準，正式站沒有的欄位沿用既有值）。
+  依 R1，重跑 `sync-route-data.js` 後 `git diff` 必須是空的。
+  `ConsentData.generated.js` 仍沒有生成腳本，產生方式待確認；補上腳本時請放 `scripts/`。
 - `scripts/gen-schema-from-csv.js` 是**另一條產線**，與上面兩支無關：
   由 `01_Raw_Input/現行tableSchema.csv` 產生 `03_Schema/`（一表一份 md ＋ `_fields/`）。
   合併式產生而非重建——CSV 覆寫 DB 事實欄位，人工欄位與正文保留，絕不刪檔。

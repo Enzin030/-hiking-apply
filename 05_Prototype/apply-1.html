@@ -38,11 +38,6 @@
       <th-stepper :current="1"></th-stepper>
     </template>
 
-    <h2 class="th-section-title">
-      登山路線選擇
-      <span class="th-section-title-sub"></span>
-    </h2>
-
     <div class="p-apply1-layout">
       <!-- SIDEBAR -->
       <aside class="p-apply1-filters">
@@ -102,7 +97,7 @@
             <div class="th-search">
               <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>
               <input type="text" class="th-input"
-                     placeholder="搜尋路線名稱、山名或關鍵字（例：玉山主峰、嘉明湖）"
+                     placeholder="搜尋路線名稱、山名或關鍵字（例：玉山線、嘉明湖）"
                      v-model="search" />
             </div>
             <!-- 原碼這顆按鈕沒有 onClick：搜尋是即時的，按鈕只是視覺對稱。不要補上行為 -->
@@ -111,14 +106,14 @@
             </button>
           </div>
           <div class="p-apply1-search-hint">
-            <span class="lbl">熱門：</span>
+            <span class="lbl">熱門搜尋：</span>
             <span v-for="t in hotTags" :key="t" class="tag" @click="search = t">{{ t }}</span>
           </div>
         </div>
 
         <div class="p-apply1-results-head">
           <div class="p-apply1-results-count">
-            共 <strong>{{ filtered.length }}</strong> 條路線<span v-if="totalActive > 0" class="p-apply1-results-note">（已套用 {{ totalActive }} 項篩選）</span>
+            共 <strong>{{ filtered.length }}</strong> 條路線
           </div>
           <div class="p-apply1-sort">
             <span>排序：</span>
@@ -133,7 +128,7 @@
 
         <div v-if="grouped.length === 0" class="th-empty">
           <i class="ph-bold ph-binoculars p-apply1-empty-icon" aria-hidden="true"></i>
-          找不到符合條件的路線，請調整篩選條件再試試。
+          找不到符合條件的路線
         </div>
 
         <div v-for="g in grouped" :key="g.agency" class="p-apply1-group">
@@ -142,7 +137,7 @@
               <span :class="['p-apply1-group-tag', 'tag-' + g.agency]">
                 <i :class="groupIcon(g.agency)" aria-hidden="true"></i>{{ g.name }}
               </span>
-              <span class="p-apply1-group-meta">{{ g.items.length }} 條路線 · {{ agencyDesc[g.agency] }}</span>
+              <span class="p-apply1-group-meta">{{ g.items.length }} 條路線</span>
             </div>
           </div>
           <div class="p-apply1-route-list">
@@ -160,7 +155,7 @@
 
 </div>
 
-<!-- 資料檔：階段 0 已改為一般 <script>（window.ROUTE_DATA／AGENCIES／AGENCY_DESC） -->
+<!-- 資料檔：一般 <script>（window.ROUTE_DATA／AGENCIES），由 scripts/sync-route-data.js 產生 -->
 <script src="components/RouteData.js"></script>
 
 <!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->

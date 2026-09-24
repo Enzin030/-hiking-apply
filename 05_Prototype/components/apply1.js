@@ -37,13 +37,31 @@
        污染全域資料（React 版當初也是靠 slice 避開）。
 
    ------------------------------------------------------------
-   ROUTE_DATA／AGENCIES／AGENCY_DESC 刻意不放進 data()
+   ROUTE_DATA／AGENCIES 刻意不放進 data()
    ------------------------------------------------------------
    放進 data() 會被 Vue 深度轉成 reactive proxy——ROUTE_DATA 是 112KB、數百個
    路線物件，包 proxy 既浪費也讓物件識別改變（RouteCard 的 :key 與 v-for 比對）。
    改用 computed 回傳原陣列：computed 的回傳值不會被再包一層 reactive，
-   而這三份資料在頁面生命週期內是唯讀的，不需要響應式。
+   而這兩份資料在頁面生命週期內是唯讀的，不需要響應式。
+
+   ------------------------------------------------------------
+   2026-09-24 資料改依正式站（RouteData.js 由 scripts/sync-route-data.js 產生）
+   ------------------------------------------------------------
+   · 機關由 5 類改為正式站的 6 類：林保署拆成 forestry-area（自然保護區域）與
+     forestry-camp（自然步道山屋）。grouped() 的 order 沒列到的機關會被**靜默丟掉**，
+     新增機關時這裡、AGENCIES、groupIcon、pages.css 的 .tag-<機關> 要一起改。
+   · 正式站沒有縮圖、林保署區域與警政署沒有難度與天數，所以路線卡對
+     image／diff／days 缺值各有退路（見 RouteCard 的 duration 與 template）。
+   · 分組標頭原本附機關說明（AGENCY_DESC），依使用者要求拿掉，資料一併移除。
    ============================================================ */
+
+/* 機關圖示：分組標頭與路線卡縮圖佔位共用 */
+const agencyIcon = agency => {
+  if (agency === "police") return "ph-bold ph-shield-check";
+  if (agency === "forestry-area") return "ph-bold ph-tree";
+  if (agency === "forestry-camp") return "ph-bold ph-house-line";
+  return "ph-bold ph-mountains";
+};
 
 // unit → 下一步目的地
 const buildApplyQuery = route => {
@@ -117,16 +135,27 @@ var pApply1RouteCard = {
     goLabel() { return this.isSuspended ? "查看原因" : "進入申請"; },
     goIcon() { return this.isSuspended ? "fa-solid fa-info-circle" : "fa-solid fa-arrow-right"; },
     title() { return this.r.displayName || this.r.name; },
-    routePath() { return this.r.routePath || this.r.subroute; },
+    /* 路線節點；沒有節點時才退回 subroute，且與標題或主路線同字就不重複顯示
+       （正式站林保署區域的主路線名＝路線名，不擋掉會同一串字出現三次） */
+    routePath() {
+      if (this.r.routePath) return this.r.routePath;
+      var s = this.r.subroute;
+      return s && s !== this.title && s !== this.r.routeGroup ? s : "";
+    },
+    /* 國家公園的主路線一律顯示，即使與路線名同字（例如大霸線）。
+       林保署兩類與警政署不顯示：正式站的主路線名就是路線名本身（使用者 2026-09-24 裁示）。 */
+    groupLabel() {
+      if (["forestry-area", "forestry-camp", "police"].indexOf(this.r.agency) >= 0) return "";
+      return this.r.routeGroup || this.r.peak;
+    },
+    /* 空字串＝不顯示。林保署區域與警政署沒有天數的概念；國家公園路線缺天數時
+       （正式站新出現、既有資料沒有的路線）明講待確認，不猜。 */
     duration() {
       if (this.r.durationLabel) return this.r.durationLabel;
-      return this.r.days === 1 ? "單日往返" : this.r.days + "天" + (this.r.days - 1) + "夜";
+      if (this.r.days) return this.r.days === 1 ? "單日往返" : this.r.days + "天" + (this.r.days - 1) + "夜";
+      return ["yushan", "shei-pa", "taroko"].indexOf(this.r.agency) >= 0 ? "天數待確認" : "";
     },
-    groupIcon() {
-      if (this.r.agency === "police") return "ph-bold ph-shield-check";
-      if (this.r.agency === "forestry") return "ph-bold ph-tree";
-      return "ph-bold ph-mountains";
-    },
+    groupIcon() { return agencyIcon(this.r.agency); },
   },
   methods: {
     handleClick() {
@@ -146,8 +175,11 @@ var pApply1RouteCard = {
   template: `
     <article :class="['p-apply1-route', { 'is-suspended': isSuspended }]" @click="handleClick">
       <div class="p-apply1-route-thumb">
-        <img :src="r.image" alt="" />
-        <span class="p-apply1-route-diff">第 {{ r.diff }} 級</span>
+        <img v-if="r.image" :src="r.image" alt="" />
+        <!-- 正式站路線卡沒有縮圖，RouteData 的 image 全是示意（來源見 scripts/sync-route-data.js）；
+             image 空值時的機關圖示佔位保留作退路 -->
+        <span v-else class="p-apply1-route-thumb-ph"><i :class="groupIcon" aria-hidden="true"></i></span>
+        <span v-if="r.diff" class="p-apply1-route-diff">第 {{ r.diff }} 級</span>
       </div>
       <div class="p-apply1-route-body">
         <div class="p-apply1-route-title-row">
@@ -158,10 +190,15 @@ var pApply1RouteCard = {
             <span v-if="isSuspended" class="badge-closed"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>暫停</span>
           </div>
         </div>
-        <div class="p-apply1-route-sub">{{ routePath }}</div>
+        <div v-if="routePath" class="p-apply1-route-sub">{{ routePath }}</div>
         <div class="p-apply1-route-meta">
-          <span><i class="ph-bold ph-map-trifold" aria-hidden="true"></i>{{ r.routeGroup || r.peak }}</span>
-          <span><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ duration }}</span>
+          <span v-if="groupLabel"><i class="ph-bold ph-map-trifold" aria-hidden="true"></i>{{ groupLabel }}</span>
+          <span v-if="duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ duration }}</span>
+          <!-- 正式站卡片的「地圖」鈕（2026-09-24 快照 53／95 條有）。外部連結沿用共用的 th-inline-link
+               （底線＋品牌色）；前面放圖示、不放外開圖示（使用者 2026-09-24 裁示）。
+               圖示的間距與不加底線由 .th-inline-link i 處理。@click.stop：點地圖不觸發卡片導頁 -->
+          <a v-if="r.mapUrl" class="th-inline-link" :href="r.mapUrl" target="_blank" rel="noopener noreferrer"
+             title="路線地圖（另開新視窗）" @click.stop><i class="ph-bold ph-image" aria-hidden="true"></i>路線地圖</a>
         </div>
         <div class="p-apply1-route-foot">
           <span :class="['p-apply1-status-pill', statusInfo.cls]">
@@ -199,14 +236,15 @@ thPage({
         { v: "4+", l: "4 天以上" },
       ],
       diffLevels: [1, 2, 3, 4, 5, 6],
-      hotTags: ["玉山主峰", "嘉明湖", "雪山主東", "奇萊南華", "南湖大山"],
+      /* 每個詞都要查得到路線（2026-09-24 改：原「玉山主峰」「雪山主東」「奇萊南華」
+         在正式站路線名中不存在，點下去是空結果） */
+      hotTags: ["玉山線", "嘉明湖", "雪山主峰", "奇萊", "南湖大山"],
     };
   },
 
   computed: {
     /* 唯讀資料以 computed 取得，避免被包成 reactive proxy（見檔頭） */
     agencies() { return AGENCIES; },
-    agencyDesc() { return AGENCY_DESC; },
 
     /* 原 useMemo filtered，過濾與排序邏輯逐字照搬 */
     filtered() {
@@ -215,9 +253,13 @@ thPage({
       if (agency !== "all") r = r.filter(function (x) { return x.agency === agency; });
       if (days !== "all") {
         r = r.filter(function (x) {
-          if (days === "1") return x.days === 1;
-          if (days === "2-3") return x.days >= 2 && x.days <= 3;
-          if (days === "4+") return x.days >= 4;
+          /* days／dayMax 是申請天數範圍：範圍與選項有交集就列出（例：可申請 1-5 天
+             在單日、2–3 天、4 天以上都會出現）。沒有天數的（林保署、警政署）不列。 */
+          if (!x.days) return false;
+          var lo = x.days, hi = x.dayMax || x.days;
+          if (days === "1") return lo <= 1;
+          if (days === "2-3") return lo <= 3 && hi >= 2;
+          if (days === "4+") return hi >= 4;
           return true;
         });
       }
@@ -235,13 +277,17 @@ thPage({
       }
       if (this.sort === "diff-asc") r.sort(function (a, b) { return a.diff - b.diff; });
       if (this.sort === "diff-desc") r.sort(function (a, b) { return b.diff - a.diff; });
-      if (this.sort === "days-asc") r.sort(function (a, b) { return a.days - b.days; });
+      /* 天數缺值（天數待確認、林保署區域、警政署）排最後，不當成 0 天排第一 */
+      if (this.sort === "days-asc") r.sort(function (a, b) {
+        return (a.days == null ? Infinity : a.days) - (b.days == null ? Infinity : b.days);
+      });
       return r;
     },
 
-    /* 原 useMemo grouped：依機關分組，順序固定 */
+    /* 原 useMemo grouped：依機關分組，順序固定。以正式站列表順序為底，
+       林保署山屋與自然保護區域對調、山屋在前（使用者 2026-09-24） */
     grouped() {
-      var order = ["yushan", "shei-pa", "taroko", "forestry", "police"];
+      var order = ["taroko", "shei-pa", "yushan", "forestry-camp", "forestry-area", "police"];
       var map = {};
       this.filtered.forEach(function (r) {
         if (!map[r.agency]) map[r.agency] = [];
@@ -275,10 +321,6 @@ thPage({
     pickDiff(n) {
       this.diff = this.diff === String(n) ? "all" : String(n);
     },
-    groupIcon(agency) {
-      if (agency === "police") return "ph-bold ph-shield-check";
-      if (agency === "forestry") return "ph-bold ph-tree";
-      return "ph-bold ph-mountains";
-    },
+    groupIcon(agency) { return agencyIcon(agency); },
   },
 });

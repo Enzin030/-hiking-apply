@@ -1433,6 +1433,16 @@
   font-size: var(--fs-xs);
   color: var(--slate-600);
 }
+/* th-hybrid-select 在本頁的微調：面板寬度由 JS 設成與欄位同寬，
+   「預設（依管理機關）」加上勾號後會折成兩行。min-width 大於 width 時以
+   min-width 為準，面板因此隨最長選項撐開（不短於欄位），項目不換行。
+   只作用在本頁的排序下拉，不動元件本身。 */
+.p-apply1-sort .th-hsel-panel {
+  min-width: max-content;
+}
+.p-apply1-sort .th-hsel-item {
+  white-space: nowrap;
+}
 .p-apply1-group {
   margin-bottom: 28px;
 }
@@ -1468,7 +1478,9 @@
 .p-apply1-group-tag.tag-taroko {
   background: var(--park-taroko);
 }
-.p-apply1-group-tag.tag-forestry {
+/* 林保署在正式站分成兩類（2026-09-24），同一機關用同一色，靠圖示區分 */
+.p-apply1-group-tag.tag-forestry-area,
+.p-apply1-group-tag.tag-forestry-camp {
   background: var(--park-forestry);
 }
 .p-apply1-group-tag.tag-police {
@@ -1509,6 +1521,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+/* 縮圖缺值時的退路：機關圖示佔位。2026-09-24 起 RouteData 每條都有示意圖，
+   正常不會出現，保留給之後新增、尚未配圖的路線 */
+.p-apply1-route-thumb-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  background: var(--bg-mist);
+  color: var(--fg-3);
+  font-size: var(--fs-h3);
 }
 .p-apply1-route-diff {
   position: absolute;
@@ -1601,6 +1626,11 @@
 .p-apply1-route-meta i {
   color: var(--slate-400);
   font-size: var(--fs-xxs);
+}
+/* 路線地圖連結裡的圖示跟著連結走（同色、hover 一起變），不要被上一條染成灰色——
+   使用者 2026-09-24：圖示是連結的一部分。0-2-1 蓋過 .p-apply1-route-meta i 的 0-1-1 */
+.p-apply1-route-meta .th-inline-link i {
+  color: inherit;
 }
 .p-apply1-route-foot {
   display: flex;
@@ -1804,10 +1834,6 @@
 
 .p-apply1-toggle-first {
   margin-bottom: 8px;
-}
-
-.p-apply1-results-note {
-  color: var(--fg-3);
 }
 
 .p-apply1-empty-icon {

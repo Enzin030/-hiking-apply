@@ -1,0 +1,99 @@
+﻿ord,agency,org_id,org_name,f_id,c_id,main_name,name,level,map_url,close_msg,source_guid,chk,listed,sumday_min,sumday_max
+1,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,37,150,屏風山線,屏風山線,4,,,,2,1,1,3
+2,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,15,665,奇萊,奇萊主、北峰線,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210200620241.jpg,,,2,1,1,5
+3,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,15,666,奇萊,奇萊連峰,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210201234353.jpg,,,2,1,1,4
+4,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,15,24,奇萊,奇萊東稜,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210201156073.jpg,,,2,1,1,30
+5,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,15,25,奇萊,奇萊南峰,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210201347172.jpg,,,2,1,1,1
+6,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,15,675,奇萊,奇萊北屏風山線,5,,,,2,1,1,4
+7,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,16,667,南湖(南湖大山、中央尖山、北一段),南湖大山線(因承載量異動，入園日期為114.7.1以後者適用),4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210202326571.jpg,,,2,1,1,30
+8,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,16,27,南湖(南湖大山、中央尖山、北一段),南湖中央尖 (北一段線),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210202509518.jpg,,,2,1,1,30
+9,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,17,28,北一段縱走北二段,北一段縱走北二段,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210201734164.jpg,,,2,1,3,30
+10,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,17,109,北一段縱走北二段,北一段縱走北二段(南往北),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210202219407.jpg,,,2,1,3,30
+11,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,18,29,北二段（鬼門關斷崖）,北二段（鬼門關斷崖）,5,,,,2,1,2,30
+12,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,19,30,閂山鈴鳴山,閂山鈴鳴山,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210201629965.jpg,,,2,1,1,6
+13,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,20,31,閂山單攻,閂山單攻,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210201440719.jpg,,,2,1,1,2
+14,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,21,32,畢祿縱走羊頭,畢祿縱走羊頭,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210202124472.jpg,,,2,1,1,3
+15,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,22,33,畢祿山,畢祿山,4,,,,2,1,1,3
+16,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,23,34,羊頭山單攻,羊頭山單攻,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260210202608221.jpg,,,2,1,1,1
+17,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,33,55,其他,其他（非傳統路線但進入區域屬生態保護區）,5,,,,2,1,1,30
+18,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,33,661,其他,其他路線_南湖大山線,5,,,,2,1,1,30
+19,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,33,662,其他,其他路線_奇萊群峰,5,,,,2,1,1,30
+20,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,97,雪山主峰線,(3級)  七卡、雪山東峰單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212103030729.jpg,,,2,1,,
+21,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,98,雪山主峰線,(3級)  七卡、雪山東峰,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212103044117.jpg,,,2,1,,
+22,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,99,雪山主峰線,(3級) 雪山主峰(多日行程),3,,,,2,1,,
+23,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,100,雪山主峰線,(4級) 雪山主峰(單日往返),4,,,,2,1,,
+24,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,102,雪山主峰線,(4級) 雪山北峰、翠池,4,,,,2,1,,
+25,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,103,雪山主峰線,雪地訓練申請案,6,,,,2,1,,
+26,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,4,133,雪山主峰線,(3級) 雪山主峰(多日行程)-<外籍提前>,3,,,,2,1,,
+27,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,8,112,武陵四秀線,(3級) 武陵一秀或二秀 (桃山、池有山) 單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212100426430.jpg,,,2,1,,
+28,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,8,113,武陵四秀線,(3級) 武陵三秀 (不包含品田山),3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212100453696.jpg,,,2,1,,
+29,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,8,114,武陵四秀線,(4級) 喀拉業山單日長程往返,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212100513982.jpg,,,2,1,,
+30,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,8,115,武陵四秀線,(4級) 品田山單日長程往返,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212100531276.jpg,,,2,1,,
+31,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,8,116,武陵四秀線,(4級) 武陵四秀線,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212100550782.jpg,,,2,1,,
+32,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,8,156,武陵四秀線,(4級) 秀霸線,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212100614880.jpg,,,2,1,,
+33,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,9,118,大霸線,(4級) 大霸線,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212101917290.jpg,,,2,1,,
+34,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,9,119,大霸線,(5級) 大霸線(首日住宿中霸山屋),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102001721.jpg,,,2,1,,
+35,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,9,155,大霸線,(2級) 馬達拉溪登山口宿營地,2,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102018653.jpg,,,2,1,,
+36,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,9,134,大霸線,(4級) 大霸線-<外籍提前>,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102339475.jpg,,,2,1,,
+37,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,5,104,志佳陽線,(3級) 志佳陽大山,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102056391.jpg,,,2,1,,
+38,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,5,105,志佳陽線,(4級) 志佳陽-雪山線,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102125421.jpg,,,2,1,,
+39,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,5,106,志佳陽線,(5級) 志佳陽-雪山北峰線,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102141518.jpg,,,2,1,,
+40,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,6,107,雪劍線,(3級) 推論山單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102427214.jpg,,,2,1,,
+41,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,6,108,雪劍線,(4級) 大劍線,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102454511.jpg,,,2,1,,
+42,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,6,110,雪劍線,(5級) 大小劍線,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102507684.jpg,,,2,1,,
+43,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,6,111,雪劍線,(5級) 雪劍線,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102520750.jpg,,,2,1,,
+44,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,7,153,雪山西稜線,(4級) 中雪山、大雪山,4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102553951.jpg,,,2,1,,
+45,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,7,125,雪山西稜線,(5級) 雪山西稜線,5,,,,2,1,,
+46,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,11,121,聖稜線,(5級) 聖稜線I型,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102814181.jpg,,,2,1,,
+47,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,11,122,聖稜線,(5級) 聖稜線O型,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102829026.jpg,,,2,1,,
+48,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,11,123,聖稜線,(5級) 聖稜線Y型,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102855814.jpg,,,2,1,,
+49,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,10,120,大霸北稜線,(5級) 大霸北稜線,5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260212102938288.jpg,,,2,1,,
+50,shei-pa,e6dd4652-2d37-4346-8f5d-6e538353e0c2,雪霸國家公園管理處,35,124,其他路線,(6級) 其他路線,6,,,,2,1,,
+51,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,1,3,玉山線,玉山前峰單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20210810161508437.png,,,2,1,,
+52,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,1,4,玉山線,玉山線單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20210809091009989.png,,,2,1,,
+53,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,1,2,玉山線,2~5天(塔塔加 - 玉山線 - 塔塔加),4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20210809091350388.png,,,2,1,,
+54,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,2,81,南橫三山-庫哈諾辛山/關山線,庫哈諾辛山/關山單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20220810122415367.png,,,2,1,,
+55,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,2,5,南橫三山-庫哈諾辛山/關山線,2~3天(進涇橋/南一段 - 庫哈諾辛山/關山 - 進涇橋/南一段),3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20240828175629098.png,,,2,1,,
+56,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,28,1,八通關線,乙女瀑布單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20210811144928438.png,,,2,1,,
+57,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,28,10,八通關線,2~3天(東埔 –八通關 – 東埔),4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515094929993.jpg,,,2,1,,
+58,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,28,130,八通關線,3~5天其他路線(東埔/塔塔加 - 八通關玉山線 - 塔塔加/東埔),4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515100034517.jpg,,,2,1,,
+59,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,29,89,南二段線,2~9天(向陽/東埔 - 南二段 – 東埔/向陽),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515101602407.jpg,,,2,1,,
+60,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,30,57,秀姑巒線,4~6天(東埔- 秀姑巒 – 東埔),4,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515101639515.jpg,,,2,1,,
+61,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,31,90,馬博拉斯橫斷線,2~9天(東埔/玉里林道–馬博拉斯橫斷–東埔/玉里林道),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515102513198.jpg,,,2,1,,
+62,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,27,61,新康山線,1~9天(向陽/南安 – 新康橫斷線 – 南安/向陽),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20230104155044693.png,,,2,1,,
+63,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,32,51,八通關越嶺線,3~8天(南安 - 八通關越嶺線東段 - 南安),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515102556779.jpg,,,2,1,,
+64,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,32,131,八通關越嶺線,4~9天其他路線(南安/東埔 - 八通關越嶺線 – 東埔/南安),5,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20260515102639318.jpg,,,2,1,,
+65,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,3,7,瓦拉米線,瓦拉米單日往返,3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20220810105023417.png,,,2,1,,
+66,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,3,6,瓦拉米線,2~3天 (南安 - 瓦拉米 - 南安),3,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20220810102224774.png,,,2,1,,
+67,yushan,c951cdcd-b75a-46b9-8002-8ef952ec95fd,玉山國家公園管理處,36,128,其他路線,1~15天(其他路線),6,https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20240807134155330.jpg,,,2,1,,
+68,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,513,632,鴛鴦湖自然保留區,鴛鴦湖自然保留區,,,,d7f3bb6b-de98-4c16-b72b-3ae43ddc9806,2,1,,
+69,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,490,609,苗栗三義火炎山自然保留區,苗栗三義火炎山自然保留區,,,,2ac9d4b6-4730-4129-8b9c-58815fff3558,2,1,,
+70,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,491,610,淡水河紅樹林自然保留區,淡水河紅樹林自然保留區,,,,8b8ae509-d102-4de4-b4b4-83fedd791d18,2,1,,
+71,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,492,611,坪林台灣油杉自然保留區,坪林台灣油杉自然保留區,,,,d6a5ea5e-bbf2-44ac-905e-c373c210a640,2,1,,
+72,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,493,612,烏石鼻海岸自然保留區,烏石鼻海岸自然保留區,,,,a0356fe4-1e62-4ee7-988d-dd0eb25ff1ef,2,1,,
+73,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,494,613,南澳闊葉樹林自然保留區,南澳闊葉樹林自然保留區,,,,27ccb11b-0384-4a71-a749-11c5245bc07c,2,1,,
+74,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,495,614,九九峰自然保留區,九九峰自然保留區,,,,dc4cde17-cda2-4b89-8ea4-305b90f04008,2,1,,
+75,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,496,615,臺灣一葉蘭自然保留區,臺灣一葉蘭自然保留區,,,,da405cf0-37c5-4af2-877c-bcbaedcc2021,2,1,,
+76,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,497,616,出雲山自然保留區,出雲山自然保留區,,,,afb4c8df-72d3-4951-af9a-ca1fefb7833e,2,1,,
+77,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,498,617,大武山自然保留區,大武山自然保留區,,,,27fc8462-1a24-4e24-9461-8c8a69063944,2,1,,
+78,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,499,618,大武事業區台灣穗花杉自然保留區,大武事業區台灣穗花杉自然保留區,,,,587d217c-0934-4ead-9d6f-b075a453aa8c,2,1,,
+79,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,500,619,台東紅葉村台東蘇鐵自然保留區,台東紅葉村台東蘇鐵自然保留區,,,,457df914-cc3e-47c3-b141-0074a7c547ab,2,1,,
+80,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,501,620,挖子尾自然保留區,挖子尾自然保留區,,,,78c51725-4059-4529-a2e1-0981c5825a46,2,1,,
+81,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,510,629,插天山自然保留區 - 福巴越嶺步道,插天山自然保留區 - 福巴越嶺步道,,,,12a9b22a-1bed-431c-927e-9efa88686bb3,2,1,,
+82,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,511,630,插天山自然保留區 - 北插天山步道及其支線,插天山自然保留區 - 北插天山步道及其支線,,,,a481b1eb-91fa-445c-b580-4fbf7d6aab36,2,1,,
+83,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a85,林業及自然保育署自然保護區域,512,631,插天山自然保留區 - 除北插天山步道及福巴越嶺步道外其他路線,插天山自然保留區 - 除北插天山步道及福巴越嶺步道外其他路線,,,,8eedc4c4-a816-4385-857b-bef307dbb2e1,2,1,,
+84,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a86,林業及自然保育署自然保護區域,503,622,甲仙四德化石自然保護區,甲仙四德化石自然保護區,,,,d75d0e06-75a9-49a2-ba95-a8b73ae1a293,2,1,,
+85,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a86,林業及自然保育署自然保護區域,504,623,十八羅漢山自然保護區,十八羅漢山自然保護區,,,,9bb1349f-c3e5-425d-af0a-01709a199b88,2,1,,
+86,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a86,林業及自然保育署自然保護區域,505,624,關山臺灣海棗自然保護區,關山臺灣海棗自然保護區,,,,a0dd484c-4de9-4918-b948-0a332acf6e83,2,1,,
+87,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a86,林業及自然保育署自然保護區域,506,625,大武臺灣油杉自然保護區,大武臺灣油杉自然保護區,,,,1a8afd51-0e52-4fb1-8a2b-16afa5423783,2,1,,
+88,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a86,林業及自然保育署自然保護區域,507,626,海岸山脈臺東蘇鐵自然保護區,海岸山脈臺東蘇鐵自然保護區,,,,8923f3ae-1d9b-4080-8e04-3489d619a17c,2,1,,
+89,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a87,林業及自然保育署自然保護區域,508,627,翡翠水庫食蛇龜野生動物保護區,翡翠水庫食蛇龜野生動物保護區,,,,17db3ff3-3ee8-4c1a-8fe9-b7d1f67b31fc,2,1,,
+90,forestry-area,7d0ed03d-e3ff-4482-8254-96f6434f5a87,林業及自然保育署自然保護區域,509,628,玉里野生動物保護區,玉里野生動物保護區,,,,a16daa9b-c5a9-49b3-a369-2e978cae0136,2,1,,
+91,forestry-camp,84bc7d2b-ad3e-4f39-b568-a96681087f74,林業及自然保育署自然步道山屋,39,158,向陽山屋,向陽山屋,4,,,C578142E-AE41-41B2-8169-39D8A8462F37,2,1,,
+92,forestry-camp,84bc7d2b-ad3e-4f39-b568-a96681087f74,林業及自然保育署自然步道山屋,40,159,嘉明湖山屋/營地,嘉明湖山屋/營地,4,,,60D5A789-676C-47D6-8F6D-2B991A5D730D,2,1,,
+93,forestry-camp,84bc7d2b-ad3e-4f39-b568-a96681087f74,林業及自然保育署自然步道山屋,41,160,檜谷山莊/營地,檜谷山莊/營地,5,,,A589B1FE-0296-478E-ADB5-99ACCF2DCC25,2,1,,
+94,forestry-camp,84bc7d2b-ad3e-4f39-b568-a96681087f74,林業及自然保育署自然步道山屋,42,161,天池山莊/營地,天池山莊/營地,4,,,B80BDDE7-8F9D-4008-9FA8-81B0D5F4492F,1,1,,
+95,police,8f7c09dc-afeb-4708-a7bb-b20da2a24648,警政署入山,38,157,入山證申請,入山證申請,,,,8F7C09DC-AFEB-4708-A7BB-B20DA2A24648,2,1,,
+96,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,,21,,,,,受地震、風災影響，本處錐麓古道路線有災損，故該路線持續封閉並暫停入園申請。,,,0,,
+97,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,,132,,,,,受地震、風災影響，本處錐麓古道路線有災損，故該路線持續封閉並暫停入園申請。,,,0,,
+98,taroko,105e956f-d8da-49f7-a9b7-3aefdda88a12,太魯閣國家公園管理處,,35,,,,,受地震、風災影響，本處清水山路線有災損，故該路線持續封閉並暫停入園申請。,,,0,,
