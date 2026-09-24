@@ -77,7 +77,8 @@
                       :aria-expanded="langOpen ? 'true' : 'false'" aria-haspopup="true"
                       aria-controls="home-lang-list">
                 <i class="fa-solid fa-globe" aria-hidden="true"></i>
-                <span>語言</span>
+                <!-- 2026-09-24 會議紀錄（一）2：外語人士看不懂「語言」二字，改附英文 -->
+                <span>語言(<span lang="en">Language</span>)</span>
                 <span class="th-sr-only">（目前：{{ currentLangLabel }}）</span>
                 <i :class="['fa-solid fa-angle-down th-caret', { 'rotate-180': langOpen }]" aria-hidden="true"></i>
               </button>

@@ -45,6 +45,7 @@
      stepper → slot（原本是直接給 element，Vue 改用具名 slot）
      nav     → slot（給了才會變兩欄；has-nav 由 slot 是否存在自動判定）
      children→ 預設 slot
+     actions → slot（全寬置底操作列）
    ============================================================ */
 window.thComponents = window.thComponents || {};
 window.thComponents["th-page-shell"] = {
@@ -83,6 +84,7 @@ window.thComponents["th-page-shell"] = {
           <div v-else class="th-page-main"><slot></slot></div>
           <slot name="nav"></slot>
         </div>
+        <slot name="actions"></slot>
       </div>
     </main>
   `,

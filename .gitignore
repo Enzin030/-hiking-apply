@@ -33,6 +33,8 @@ node_modules/
 # ── Agent 工具與暫存 ──
 .claude/
 .agent/
+.codex/
+.playwright-cli/
 temp/
 # .scratch 是 junction，指向 D:\scratch-dirs\登山一站式，不進版控
 .scratch/

@@ -27,263 +27,270 @@
 <div id="th-app" v-cloak data-screen-label="05 確認資料">
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, '確認資料']" title="確認資料" :bare="true">
+  <th-page-shell :trail="['登山申請', applyCrumb, '確認資料']" title="確認資料">
     <template #stepper>
-      <th-stepper :current="5" :steps="[
-        { n: 1, title: '選擇路線' },
-        { n: 2, title: '閱讀同意書' },
-        { n: 3, title: '行程規劃' },
-        { n: 4, title: '人員資料' },
-        { n: 5, title: '確認資料' },
-        { n: 6, title: '申請完成' }
-      ]"></th-stepper>
+      <th-apply-stepper :current="5"></th-apply-stepper>
     </template>
 
-    <div class="grid gap-8 max-w-5xl mx-auto mt-6">
+    <!-- 提示條（橘色警示，字體正常不加粗） -->
+    <th-callout type="warning">請確認資料正確無誤後，再確認送出！</th-callout>
 
-      <!-- 提示條 -->
-      <div class="th-callout">
-        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-        <div>
-          請確認資料正確無誤後，再確認送出！
-        </div>
+    <!-- 行程摘要卡片（步驟四卡片樣式） -->
+    <div class="p-apply4-summary-card" id="sec-summary">
+      <div class="summary-thumb-box">
+        <img src="assets/route-yushan.png" alt="" />
+        <div class="summary-thumb-overlay"></div>
+        <span class="summary-diff-tag">第 4 級</span>
       </div>
 
-      <!-- 1. 行程計畫摘要 -->
-      <section class="th-card" id="sec-summary">
-        <div class="th-card-head">
-          <h2 class="th-card-title">行程計畫</h2>
-        </div>
-        <div class="th-card-body grid gap-6">
-          <dl class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-            <div class="sm:col-span-6">
-              <dt class="text-sm text-slate-500 font-medium">隊名</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.teams_name }}</dd>
-            </div>
-            <div class="sm:col-span-6">
-              <dt class="text-sm text-slate-500 font-medium">入園期間</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">
-                {{ summary.applystart }}<span class="mx-2 font-normal text-slate-500">至</span>{{ summary.applyend }}<span class="text-sm font-normal text-slate-500 ml-1.5">（共 {{ summary.sumday }} 天）</span>
-              </dd>
-            </div>
-            <div class="sm:col-span-6">
-              <dt class="text-sm text-slate-500 font-medium">登山主路線</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.mainRoute }}</dd>
-            </div>
-            <div class="sm:col-span-6">
-              <dt class="text-sm text-slate-500 font-medium">次路線</dt>
-              <dd class="text-base font-bold text-slate-900 mt-1">{{ summary.subRoute }}</dd>
-            </div>
-          </dl>
+      <div class="summary-info-box">
+        <!-- 次路線名稱 -->
+        <h2 class="p-fc1-cabin-name">{{ summary.subRoute }}</h2>
 
-          <!-- 逐日行程 -->
-          <div class="border-t border-slate-100 pt-4">
-            <h3 class="text-sm font-bold text-slate-700 tracking-wider mb-2">逐日行程規劃</h3>
-            <ul class="space-y-1.5 bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-800">
-              <li v-for="d in formattedPlanDays" :key="d.day" class="flex items-start gap-2">
-                <span class="inline-block px-1.5 py-0.5 rounded bg-national-100 text-national-900 font-bold text-xs shrink-0">第 {{ d.day }} 天</span>
-                <span class="pt-0.5">{{ d.text }}</span>
+        <!-- 線下面：隊名、主要路線（同入園期間格式）與入園期間 -->
+        <div class="summary-date-row">
+          <span class="date-item">
+            <span class="date-title">隊名：</span>
+            <span class="date-value font-bold text-slate-900">{{ summary.teams_name }}</span>
+          </span>
+          <span class="summary-meta-sep" aria-hidden="true">|</span>
+          <span class="date-item">
+            <span class="date-title">登山主路線：</span>
+            <span class="date-value">{{ summary.mainRoute }}</span>
+          </span>
+          <span class="summary-meta-sep" aria-hidden="true">|</span>
+          <span class="date-item">
+            <span class="date-title">入園期間：</span>
+            <span class="date-range-text">
+              <span>{{ summary.applystart }}</span>
+              <span class="date-sep">至</span>
+              <span>{{ summary.applyend }}</span>
+            </span>
+            <span class="date-days-text">（共 {{ summary.sumday }} 天）</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 行程計畫詳細 -->
+    <section class="th-card">
+      <div class="th-card-head">
+        <h2 class="th-card-title">行程計畫</h2>
+      </div>
+      <div class="th-card-body grid gap-6">
+
+        <!-- 路線規劃（完整套用 apply-3 徽章樣式，無外框） -->
+        <div>
+          <dt class="text-base font-bold text-slate-800 mb-2">路線規劃</dt>
+          <dd>
+            <ul class="p-apply3-plan-days !mb-0">
+              <li v-for="(dayNodes, idx) in planDaysNodes" :key="idx" class="p-apply3-plan-day-item">
+                <span class="day-tag">第 {{ idx + 1 }} 天行程：</span>
+                <div class="p-apply3-plan-nodes">
+                  <template v-for="(node, nIdx) in dayNodes" :key="nIdx">
+                    <span :class="['p-apply3-node-badge', 'is-' + getNodeType(node)]">
+                      <i :class="getNodeIcon(node)" aria-hidden="true"></i>
+                      <span>{{ node }}</span>
+                    </span>
+                    <span v-if="nIdx < dayNodes.length - 1" class="p-apply3-node-arrow" aria-hidden="true">→</span>
+                  </template>
+                </div>
               </li>
             </ul>
-          </div>
+          </dd>
+        </div>
 
-          <!-- 宿營地清單 -->
-          <div class="border-t border-slate-100 pt-4">
-            <h3 class="text-sm font-bold text-slate-700 tracking-wider mb-2">預約宿營地與住宿需求</h3>
-            <div class="overflow-x-auto border border-slate-200 rounded-md">
-              <table class="th-table w-full">
-                <thead class="bg-slate-50 text-slate-700">
-                  <tr>
-                    <th class="py-2 px-3 text-left">宿營日期</th>
-                    <th class="py-2 px-3 text-left">宿營地點</th>
-                    <th class="py-2 px-3 text-left">住宿調查偏好</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                  <tr v-for="c in campRows" :key="c.date + c.camp">
-                    <td class="py-2 px-3 font-mono font-medium">{{ c.date }}</td>
-                    <td class="py-2 px-3 font-bold text-slate-900">{{ c.camp }}</td>
-                    <td class="py-2 px-3 text-slate-700">{{ c.prefLabel }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <!-- 行前講習與通訊設備（字體升級為 text-base，清楚易讀不加粗） -->
+        <div class="border-t border-slate-100 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-base">
+          <div>
+            <dt class="text-base font-bold text-slate-700">行前講習方式</dt>
+            <dd class="text-base text-slate-900 font-normal mt-1">{{ step3.seminar }}</dd>
           </div>
-
-          <!-- 行前講習與通訊設備 -->
-          <div class="border-t border-slate-100 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <dt class="text-sm text-slate-500 font-medium">行前講習方式</dt>
-              <dd class="text-sm font-semibold text-slate-800 mt-1">{{ step3.seminar }}</dd>
-            </div>
-            <div>
-              <dt class="text-sm text-slate-500 font-medium">攜帶 GPS / 衛星定位設備</dt>
-              <dd class="text-sm font-semibold text-slate-800 mt-1">{{ step3.equipment ? step3.equipment.gps : '有' }}</dd>
-            </div>
-            <div>
-              <dt class="text-sm text-slate-500 font-medium">衛星電話號碼</dt>
-              <dd class="text-sm text-slate-800 mt-1">{{ step3.equipment && step3.equipment.satellitephone ? step3.equipment.satellitephone : '無' }}</dd>
-            </div>
-            <div>
-              <dt class="text-sm text-slate-500 font-medium">無線電頻率</dt>
-              <dd class="text-sm text-slate-800 mt-1">{{ step3.equipment && step3.equipment.frequency ? step3.equipment.frequency : '無' }}</dd>
-            </div>
-            <div class="sm:col-span-2" v-if="step3.equipment && step3.equipment.note_user && step3.equipment.note_user !== '無'">
-              <dt class="text-sm text-slate-500 font-medium">其他通訊裝備與備註</dt>
-              <dd class="text-sm text-slate-800 mt-1">{{ step3.equipment.note_user }}</dd>
-            </div>
+          <div>
+            <dt class="text-base font-bold text-slate-700">攜帶 GPS / 衛星定位設備</dt>
+            <dd class="text-base text-slate-900 font-normal mt-1">{{ step3.equipment ? step3.equipment.gps : '有' }}</dd>
+          </div>
+          <div>
+            <dt class="text-base font-bold text-slate-700">衛星電話號碼</dt>
+            <dd class="text-base text-slate-900 font-normal mt-1">{{ step3.equipment && step3.equipment.satellitephone ? step3.equipment.satellitephone : '無' }}</dd>
+          </div>
+          <div>
+            <dt class="text-base font-bold text-slate-700">無線電頻率</dt>
+            <dd class="text-base text-slate-900 font-normal mt-1">{{ step3.equipment && step3.equipment.frequency ? step3.equipment.frequency : '無' }}</dd>
+          </div>
+          <div class="sm:col-span-2" v-if="step3.equipment && step3.equipment.note_user && step3.equipment.note_user !== '無'">
+            <dt class="text-base font-bold text-slate-700">其他通訊裝備與備註</dt>
+            <dd class="text-base text-slate-900 font-normal mt-1">{{ step3.equipment.note_user }}</dd>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 2. 隊伍資料表格（11欄） -->
-      <section class="th-card" id="sec-team">
-        <div class="th-card-head">
-          <h2 class="th-card-title">隊伍資料（領隊與隊員）</h2>
+    <!-- 2. 隊伍資料表格（11欄，滿版自適應不滾動，字級維持原版） -->
+    <section class="th-card" id="sec-team">
+      <div class="th-card-head">
+        <h2 class="th-card-title">隊伍資料</h2>
+      </div>
+      <div class="th-card-body">
+        <div class="border border-slate-200 rounded-md overflow-hidden">
+          <table class="th-table w-full">
+            <thead class="bg-slate-50 text-slate-800">
+              <tr>
+                <th class="py-2.5 px-1 text-center w-10 font-bold">No.</th>
+                <th class="py-2.5 px-2 text-center w-20 font-bold">身分</th>
+                <th class="py-2.5 px-2 w-20 font-bold">姓名</th>
+                <th class="py-2.5 px-2 text-center w-12 font-bold">性別</th>
+                <th class="py-2.5 px-2 text-center w-16 font-bold">國籍</th>
+                <th class="py-2.5 px-2 w-28 font-bold">證號</th>
+                <th class="py-2.5 px-2 w-24 font-bold">生日</th>
+                <th class="py-2.5 px-2 w-28 font-bold">電話 / 手機</th>
+                <th class="py-2.5 px-2 min-w-[140px] font-bold">聯絡地址</th>
+                <th class="py-2.5 px-2 w-20 font-bold">緊急聯絡人</th>
+                <th class="py-2.5 px-2 w-28 font-bold">緊急聯絡電話</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr v-for="r in teamRows" :key="r.no">
+                <td class="py-2.5 px-1 text-center font-medium text-slate-600">{{ r.no }}</td>
+                <td class="py-2.5 px-2 text-center">
+                  <!-- 領隊：比照留守人 badge -->
+                  <span v-if="r.role === '領隊'" class="px-2.5 py-0.5 rounded text-xs font-medium inline-block" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">
+                    領隊
+                  </span>
+                  <!-- 隊員：純文字，不用 badge -->
+                  <span v-else class="text-slate-700">
+                    {{ r.role }}
+                  </span>
+                </td>
+                <td class="py-2.5 px-2 text-slate-900 font-normal">{{ r.name }}</td>
+                <td class="py-2.5 px-2 text-center text-slate-800">{{ r.sex }}</td>
+                <td class="py-2.5 px-2 text-center text-slate-800">{{ r.nation }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.sid }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.birthday }}</td>
+                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.tel }}</td>
+                <td class="py-2.5 px-2 text-slate-800 break-words leading-relaxed">{{ r.address }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.contact }}</td>
+                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.contactTel }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="th-card-body">
-          <div class="overflow-x-auto border border-slate-200 rounded-md">
-            <table class="th-table w-full">
-              <thead class="bg-slate-50 text-slate-700">
-                <tr>
-                  <th class="py-2.5 px-3">No.</th>
-                  <th class="py-2.5 px-3">身分</th>
-                  <th class="py-2.5 px-3">姓名</th>
-                  <th class="py-2.5 px-3">性別</th>
-                  <th class="py-2.5 px-3">國籍</th>
-                  <th class="py-2.5 px-3">證號</th>
-                  <th class="py-2.5 px-3">生日</th>
-                  <th class="py-2.5 px-3">電話 / 手機</th>
-                  <th class="py-2.5 px-3">聯絡地址</th>
-                  <th class="py-2.5 px-3">緊急聯絡人</th>
-                  <th class="py-2.5 px-3">緊急聯絡電話</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                <tr v-for="r in teamRows" :key="r.no">
-                  <td class="py-2.5 px-3 text-center font-medium">{{ r.no }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">
-                    <span :class="['px-2 py-0.5 rounded text-xs font-bold', r.role === '領隊' ? 'bg-national-100 text-national-800' : 'bg-slate-100 text-slate-700']">
-                      {{ r.role }}
-                    </span>
-                  </td>
-                  <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">{{ r.name }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.sex }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.nation }}</td>
-                  <td class="py-2.5 px-3 font-mono whitespace-nowrap">{{ r.sid }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.birthday }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.tel }}</td>
-                  <td class="py-2.5 px-3 max-w-[180px] truncate" :title="r.address">{{ r.address }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contact }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contactTel }}</td>
-                </tr>
-              </tbody>
-            </table>
+      </div>
+    </section>
+
+    <!-- 3. 申請人／留守人資料表格（11欄，滿版自適應不滾動，字級維持原版） -->
+    <section class="th-card" id="sec-contacts">
+      <div class="th-card-head">
+        <h2 class="th-card-title">申請人與留守人資料</h2>
+      </div>
+      <div class="th-card-body">
+        <div class="border border-slate-200 rounded-md overflow-hidden">
+          <table class="th-table w-full">
+            <thead class="bg-slate-50 text-slate-800">
+              <tr>
+                <th class="py-2.5 px-1 text-center w-10 font-bold">No.</th>
+                <th class="py-2.5 px-2 text-center w-20 font-bold">身分</th>
+                <th class="py-2.5 px-2 w-20 font-bold">姓名</th>
+                <th class="py-2.5 px-2 text-center w-12 font-bold">性別</th>
+                <th class="py-2.5 px-2 text-center w-16 font-bold">國籍</th>
+                <th class="py-2.5 px-2 w-28 font-bold">證號</th>
+                <th class="py-2.5 px-2 w-24 font-bold">生日</th>
+                <th class="py-2.5 px-2 w-28 font-bold">電話 / 手機</th>
+                <th class="py-2.5 px-2 min-w-[140px] font-bold">聯絡地址</th>
+                <th class="py-2.5 px-2 w-20 font-bold">緊急聯絡人</th>
+                <th class="py-2.5 px-2 w-28 font-bold">緊急聯絡電話</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr v-for="r in contactRows" :key="r.no">
+                <td class="py-2.5 px-1 text-center font-medium text-slate-600">{{ r.no }}</td>
+                <td class="py-2.5 px-2 text-center">
+                  <!-- 申請人 → 淡色／outline badge -->
+                  <span v-if="r.role === '申請人'" class="px-2.5 py-0.5 rounded text-xs font-medium inline-block" style="background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd;">
+                    申請人
+                  </span>
+                  <!-- 留守人 → 淡色／outline badge -->
+                  <span v-else class="px-2.5 py-0.5 rounded text-xs font-medium inline-block" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">
+                    {{ r.role }}
+                  </span>
+                </td>
+                <td class="py-2.5 px-2 text-slate-900 font-normal">{{ r.name }}</td>
+                <td class="py-2.5 px-2 text-center text-slate-800">{{ r.sex }}</td>
+                <td class="py-2.5 px-2 text-center text-slate-800">{{ r.nation }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.sid }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.birthday }}</td>
+                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.tel }}</td>
+                <td class="py-2.5 px-2 text-slate-800 break-words leading-relaxed">{{ r.address }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.contact }}</td>
+                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.contactTel }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 警政署入山證申請資訊 -->
+    <section class="th-card" id="sec-npa">
+      <div class="th-card-head">
+        <h2 class="th-card-title">警政署入山證申請資訊</h2>
+      </div>
+      <div class="th-card-body">
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+          <div>
+            <dt class="text-base text-slate-700 font-bold">入山事由</dt>
+            <dd class="text-base text-slate-900 mt-1">{{ npa.reason }}</dd>
           </div>
-        </div>
-      </section>
-
-      <!-- 3. 申請人／留守人資料表格（11欄） -->
-      <section class="th-card" id="sec-contacts">
-        <div class="th-card-head">
-          <h2 class="th-card-title">申請人與留守人資料</h2>
-        </div>
-        <div class="th-card-body">
-          <div class="overflow-x-auto border border-slate-200 rounded-md">
-            <table class="th-table w-full">
-              <thead class="bg-slate-50 text-slate-700">
-                <tr>
-                  <th class="py-2.5 px-3">No.</th>
-                  <th class="py-2.5 px-3">身分</th>
-                  <th class="py-2.5 px-3">姓名</th>
-                  <th class="py-2.5 px-3">性別</th>
-                  <th class="py-2.5 px-3">國籍</th>
-                  <th class="py-2.5 px-3">證號</th>
-                  <th class="py-2.5 px-3">生日</th>
-                  <th class="py-2.5 px-3">電話 / 手機</th>
-                  <th class="py-2.5 px-3">聯絡地址</th>
-                  <th class="py-2.5 px-3">緊急聯絡人</th>
-                  <th class="py-2.5 px-3">緊急聯絡電話</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                <tr v-for="r in contactRows" :key="r.no">
-                  <td class="py-2.5 px-3 text-center font-medium">{{ r.no }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">
-                    <span :class="['px-2 py-0.5 rounded text-xs font-bold', r.role === '申請人' ? 'bg-sky-100 text-sky-800' : 'bg-emerald-100 text-emerald-800']">
-                      {{ r.role }}
-                    </span>
-                  </td>
-                  <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">{{ r.name }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.sex }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.nation }}</td>
-                  <td class="py-2.5 px-3 font-mono whitespace-nowrap">{{ r.sid }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.birthday }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.tel }}</td>
-                  <td class="py-2.5 px-3 max-w-[180px] truncate" :title="r.address">{{ r.address }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contact }}</td>
-                  <td class="py-2.5 px-3 whitespace-nowrap">{{ r.contactTel }}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div>
+            <dt class="text-base text-slate-700 font-bold">前往地點</dt>
+            <dd class="text-base text-slate-900 mt-1">{{ npa.places }}</dd>
           </div>
-        </div>
-      </section>
-
-      <!-- 4. 警政署入山證申請資訊 -->
-      <section class="th-card" id="sec-npa">
-        <div class="th-card-head">
-          <h2 class="th-card-title">警政署入山證申請資訊</h2>
-        </div>
-        <div class="th-card-body">
-          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <dt class="text-sm text-slate-500 font-medium">入山事由</dt>
-              <dd class="text-sm font-semibold text-slate-900 mt-1">{{ npa.reason }}</dd>
-            </div>
-            <div>
-              <dt class="text-sm text-slate-500 font-medium">前往地點</dt>
-              <dd class="text-sm font-semibold text-slate-900 mt-1">{{ npa.places }}</dd>
-            </div>
-            <div class="sm:col-span-2">
-              <dt class="text-sm text-slate-500 font-medium">登山路線圖</dt>
-              <dd class="text-sm font-semibold text-slate-900 mt-1">{{ npa.routeMap }}</dd>
-            </div>
-            <div class="sm:col-span-2">
-              <dt class="text-sm text-slate-500 font-medium">登山計畫書</dt>
-              <dd class="text-sm whitespace-pre-line bg-slate-50 p-3 rounded border border-slate-200 text-slate-800 mt-1">{{ npa.plan }}</dd>
-            </div>
-          </dl>
-        </div>
-      </section>
-
-      <!-- 5. 底部送件驗證碼與按鈕 -->
-      <section class="th-card" id="sec-submit">
-        <div class="th-card-body grid gap-4">
-          <th-captcha
-            v-model="captchaInput"
-            v-model:code="captchaCode"
-            :refreshable="true"
-            input-id="con_captcha_submit"
-            label="送件驗證碼"
-            layout="stack"
-            hide-hint
-            ref="captchaField" class="w-full sm:w-1/2"></th-captcha>
-          <div class="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
-              <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
-            </button>
-            <button type="button" class="th-btn th-btn-secondary" @click="saveDraft">
-              <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
-            </button>
-            <button type="button" class="th-btn th-btn-primary" @click="submitApply">
-              <i class="fa-solid fa-check mr-1" aria-hidden="true"></i>確認送出
-            </button>
+          <div class="sm:col-span-2">
+            <dt class="text-base text-slate-700 font-bold">登山路線圖</dt>
+            <dd class="text-base text-slate-900 mt-1">{{ npa.routeMap }}</dd>
           </div>
-        </div>
-      </section>
+          <div class="sm:col-span-2">
+            <dt class="text-base text-slate-700 font-bold">登山計畫書</dt>
+            <dd class="text-base whitespace-pre-line bg-slate-50 p-3 rounded border border-slate-200 text-slate-800 mt-1">{{ npa.plan }}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
 
-    </div>
+    <!-- 5. 送件驗證碼（參考 apply-4 獨立呈現） -->
+    <section class="th-card" id="sec-captcha">
+      <div class="th-card-head">
+        <h2 class="th-card-title">送件驗證碼</h2>
+      </div>
+      <div class="th-card-body">
+        <th-captcha
+          v-model="captchaInput"
+          v-model:code="captchaCode"
+          :refreshable="true"
+          input-id="con_captcha"
+          label="驗證碼"
+          layout="stack"
+          hide-hint
+          ref="captchaField"
+          class="w-full sm:w-1/2"></th-captcha>
+      </div>
+    </section>
+
+    <!-- 置底操作按鈕（參考 apply-4） -->
+    <template #actions>
+      <div class="p-apply4-actions">
+        <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
+          <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
+        </button>
+        <button type="button" class="th-btn th-btn-secondary" @click="saveDraft" id="con_btnbak">
+          <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
+        </button>
+        <button type="button" class="th-btn th-btn-primary" @click="submitApply" id="con_btnSubmit">
+          <i class="fa-solid fa-check mr-1.5" aria-hidden="true"></i>確認送出
+        </button>
+      </div>
+    </template>
+
   </th-page-shell>
 
   <th-quick-nav></th-quick-nav>

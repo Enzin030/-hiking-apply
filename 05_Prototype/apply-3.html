@@ -33,14 +33,7 @@
 
   <th-page-shell :trail="['登山申請', applyCrumb, '行程規劃']" title="行程規劃" :bare="true">
     <template #stepper>
-      <th-stepper :current="3" :steps="[
-        { n: 1, title: '選擇路線' },
-        { n: 2, title: '閱讀同意書' },
-        { n: 3, title: '行程規劃' },
-        { n: 4, title: '人員資料' },
-        { n: 5, title: '確認資料' },
-        { n: 6, title: '申請完成' }
-      ]"></th-stepper>
+      <th-apply-stepper :current="3"></th-apply-stepper>
     </template>
 
     <!-- 2026-09-21 移除路線資訊區：步驟一本身就有主/次路線下拉可修改，
@@ -226,7 +219,6 @@
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.planner">
 
-          <div class="p-apply3-planner-box">
             <!-- 單日往返模式：自動帶入固定行程 -->
             <template v-if="isSingleDay">
               <ul class="p-apply3-plan-days">
@@ -261,8 +253,8 @@
             </template>
 
             <!-- 多日模式（2~5天）：互動式逐點手選 -->
-            <template v-else>
-              <ul class="p-apply3-plan-days">
+            <div v-else class="space-y-0">
+              <ul class="p-apply3-plan-days !mb-0">
                 <li v-for="(dayNodes, idx) in planDays" :key="idx" class="p-apply3-plan-day-item">
                   <span class="day-tag">第 {{ idx + 1 }} 天行程：</span>
                   <div class="p-apply3-plan-nodes">
@@ -282,7 +274,7 @@
               </ul>
 
               <!-- 尚未完成規劃：節點選擇與控制按鈕 -->
-              <div v-if="!plannerFinished" class="p-apply3-planner-interactive">
+              <div v-if="!plannerFinished" class="p-apply3-planner-interactive !mt-0 !pt-2">
                 <!-- 選項按鈕前面加上「請選擇下一個地點：」，並排且大小完全統一 -->
                 <div class="p-apply3-node-chips flex flex-wrap items-center gap-2">
                   <span class="text-sm font-semibold text-slate-700 whitespace-nowrap">請選擇下一個地點：</span>
@@ -310,13 +302,15 @@
               </div>
 
               <!-- 路線規劃完成狀態（拿掉完成文字，只留重新規劃按鈕居中） -->
-              <div v-else class="p-apply3-planner-interactive flex flex-wrap items-center justify-center gap-3">
+              <div v-else class="p-apply3-planner-interactive flex flex-wrap items-center justify-center gap-3 !mt-0 !pt-2">
                 <button type="button" class="th-btn th-btn-ghost th-btn-sm" id="con_btnreset" @click="resetPlanner">
                   <i class="fa-solid fa-rotate-left mr-1" aria-hidden="true"></i>重新規劃
                 </button>
               </div>
-            </template>
-          </div>
+            </div>
+
+            <!-- 規劃按鈕下方分隔線 -->
+            <hr class="border-t border-slate-200 my-2" />
 
           <!-- 行前講習與通訊設備：3 行對 3 行高度對齊 -->
           <div class="p-apply3-grid">

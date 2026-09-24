@@ -35,7 +35,7 @@
   <!-- bare：版面自帶 grid，不要 th-page-main 的 flex 包裝 -->
   <th-page-shell :trail="['登山申請', '登山線上申請']" title="登山線上申請" :bare="true">
     <template #stepper>
-      <th-stepper :current="1"></th-stepper>
+      <th-apply-stepper :current="1"></th-apply-stepper>
     </template>
 
     <div class="p-apply1-layout">

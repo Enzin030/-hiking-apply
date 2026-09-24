@@ -84,7 +84,42 @@ thPage({
     };
 
     const leader = (payload && payload.leader) || applicant;
-    const members = (payload && payload.members) || [];
+    const members = (payload && payload.members && payload.members.length > 0)
+      ? payload.members
+      : [
+          {
+            name: "陳小華",
+            tel: "02-27891234",
+            country: "臺北市",
+            city: "大安區",
+            addr: "信義路三段100號",
+            mobile: "0923456789",
+            fax: "",
+            email: "chen.sample@example.com",
+            nation: "中華民國",
+            sid: "B123456788",
+            sex: "1",
+            birthday: "1992-08-20",
+            contactname: "陳媽媽",
+            contacttel: "0922000222"
+          },
+          {
+            name: "林美麗",
+            tel: "04-22334455",
+            country: "臺中市",
+            city: "西屯區",
+            addr: "臺灣大道三段99號",
+            mobile: "0934567890",
+            fax: "",
+            email: "lin.sample@example.com",
+            nation: "中華民國",
+            sid: "F234567891",
+            sex: "2",
+            birthday: "1995-11-10",
+            contactname: "林爸爸",
+            contacttel: "0933000333"
+          }
+        ];
     const stay = (payload && payload.stay) || {
       name: "李守護",
       mobile: "0988777666",
@@ -130,7 +165,16 @@ thPage({
       // 送件驗證碼
       captchaInput: "4N8P",
       captchaCode: "4N8P",
-      isSubmitted: false
+      isSubmitted: false,
+
+      // 本頁內容導覽項目（供 th-page-nav 元件使用）
+      navItems: [
+        { id: "sec-summary", label: "行程計畫" },
+        { id: "sec-team", label: "隊伍資料" },
+        { id: "sec-contacts", label: "申請人與留守人" },
+        { id: "sec-npa", label: "入山證申請資訊" },
+        { id: "sec-captcha", label: "送件驗證碼" }
+      ]
     };
   },
 
@@ -152,6 +196,18 @@ thPage({
         day: idx + 1,
         text: Array.isArray(nodes) ? nodes.join(" → ") : String(nodes)
       }));
+    },
+
+    // 逐日行程節點結構（供 apply-3 badge 樣式渲染）
+    planDaysNodes() {
+      if (!this.step3 || !this.step3.planDays || !Array.isArray(this.step3.planDays)) {
+        return [];
+      }
+      return this.step3.planDays.map(item => {
+        if (Array.isArray(item)) return item;
+        if (typeof item === "string") return item.split("→").map(s => s.trim());
+        return [];
+      });
     },
 
     // 宿營地清單檢視
@@ -236,6 +292,18 @@ thPage({
   },
 
   methods: {
+    getNodeType(node) {
+      if (!node) return "red";
+      if (node.includes("服務中心")) return "green";
+      if (node.includes("山莊") || node.includes("山屋") || node.includes("營地")) return "blue";
+      return "red";
+    },
+    getNodeIcon(node) {
+      if (!node) return "fa-solid fa-location-dot";
+      if (node.includes("服務中心")) return "fa-solid fa-person-walking";
+      if (node.includes("山莊") || node.includes("山屋") || node.includes("營地")) return "fa-solid fa-bed";
+      return "fa-solid fa-location-dot";
+    },
     refreshCaptcha() {
       const captcha = this.$refs.captchaField;
       if (captcha && typeof captcha.refresh === "function") {

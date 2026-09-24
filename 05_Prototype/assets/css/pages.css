@@ -6547,8 +6547,8 @@ body:where(.p-indexb-body):before {
 /* ---------- 兩欄版面：主欄 + 側欄導覽 ---------- */
 .p-apply3-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 240px;
-  gap: 56px;
+  grid-template-columns: minmax(0, 1fr) 232px;
+  gap: 32px;
   align-items: start;
   margin-top: 24px;
 }
@@ -6557,7 +6557,7 @@ body:where(.p-indexb-body):before {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 24px;
 }
 
 /* ---------- 去卡片化區塊 ---------- */
@@ -6650,7 +6650,7 @@ body:where(.p-indexb-body):before {
 .p-apply3-plan-days {
   list-style: none;
   padding: 0;
-  margin: 0 0 16px;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -6931,9 +6931,8 @@ body:where(.p-indexb-body):before {
 }
 
 .p-apply3-planner-interactive {
-  border-top: 1px dashed var(--slate-200);
-  padding-top: 16px;
-  margin-top: 16px;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 .p-apply3-node-chips {
@@ -7238,7 +7237,7 @@ body:where(.p-indexb-body):before {
 }
 
 /* ---------- 響應式 ---------- */
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   .p-apply3-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
@@ -7573,8 +7572,8 @@ body:where(.p-indexb-body):before {
 /* ---------- 兩欄版面：主欄 + 側欄導覽 ---------- */
 .p-apply4-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 232px;
+  gap: 32px;
   align-items: start;
   margin-top: 24px;
 }
@@ -7583,7 +7582,7 @@ body:where(.p-indexb-body):before {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 24px;
 }
 
 /* ---------- 表單欄位格線（統一對齊 apply-3 為 20px 24px） ---------- */
@@ -8322,6 +8321,7 @@ body:where(.p-indexb-body):before {
 /* ---------- 置底列 ---------- */
 .p-apply4-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 12px;
@@ -8341,7 +8341,7 @@ body:where(.p-indexb-body):before {
 }
 
 /* ---------- 響應式 ---------- */
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   .p-apply4-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;

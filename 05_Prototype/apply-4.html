@@ -31,14 +31,7 @@
 
   <th-page-shell :trail="['登山申請', applyCrumb, '人員資料']" title="人員資料" :bare="true">
     <template #stepper>
-      <th-stepper :current="4" :steps="[
-        { n: 1, title: '選擇路線' },
-        { n: 2, title: '閱讀同意書' },
-        { n: 3, title: '行程規劃' },
-        { n: 4, title: '人員資料' },
-        { n: 5, title: '確認資料' },
-        { n: 6, title: '申請完成' }
-      ]"></th-stepper>
+      <th-apply-stepper :current="4"></th-apply-stepper>
     </template>
 
     <div class="p-apply4-layout mt-6">
@@ -58,8 +51,13 @@
             <!-- 次路線名稱 -->
             <h2 class="p-fc1-cabin-name">{{ summary.subRoute }}</h2>
 
-            <!-- 線下面：主要路線（同入園期間格式）與入園期間 -->
+            <!-- 線下面：隊名、主要路線（同入園期間格式）與入園期間 -->
             <div class="summary-date-row">
+              <span class="date-item">
+                <span class="date-title">隊名：</span>
+                <span class="date-value font-bold text-slate-900">{{ summary.teams_name }}</span>
+              </span>
+              <span class="summary-meta-sep" aria-hidden="true">|</span>
               <span class="date-item">
                 <span class="date-title">登山主路線：</span>
                 <span class="date-value">{{ summary.mainRoute }}</span>

@@ -98,14 +98,7 @@
       <!-- 步驟依正式站 apply_1_4.aspx 的實際流程拆分（2026-09-21 實走）：
            原本第 3 步「行程登記」在正式站是三個步驟，同頁切換 -->
       <template #stepper>
-        <th-stepper :current="2" :steps="[
-          { n: 1, title: '選擇路線' },
-          { n: 2, title: '閱讀同意書' },
-          { n: 3, title: '行程規劃' },
-          { n: 4, title: '人員資料' },
-          { n: 5, title: '確認資料' },
-          { n: 6, title: '申請完成' }
-        ]"></th-stepper>
+        <th-apply-stepper :current="2"></th-apply-stepper>
       </template>
 
       <!-- 2026-09-21 移除路線資訊區：正式站的同意書頁沒有這塊，是雛形自創的。
