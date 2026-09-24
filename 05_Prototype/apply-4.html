@@ -234,7 +234,8 @@
                 <label class="th-label" for="con_apply_contacttel">
                   <span><span class="req">*</span>緊急連絡電話</span>
                 </label>
-                <input id="con_apply_contacttel" type="tel" class="th-input" v-model="applicant.contacttel" placeholder="緊急連絡電話或手機" required />
+                <input id="con_apply_contacttel" type="tel" class="th-input" v-model="applicant.contacttel" placeholder="緊急連絡電話或手機" :aria-invalid="contactConflict(applicant)" :aria-describedby="contactConflict(applicant) ? 'con_apply_contacttel_err' : null" required />
+                <p v-if="contactConflict(applicant)" id="con_apply_contacttel_err" class="th-field-hint text-[color:var(--danger-fg)]" role="alert">緊急聯絡電話不可與領隊或隊員的電話、手機相同</p>
               </div>
             </div>
           </div>
@@ -375,7 +376,8 @@
                 <label class="th-label" for="con_leader_contacttel">
                   <span><span class="req">*</span>緊急連絡電話</span>
                 </label>
-                <input id="con_leader_contacttel" type="tel" class="th-input" v-model="leader.contacttel" placeholder="緊急連絡電話或手機" required />
+                <input id="con_leader_contacttel" type="tel" class="th-input" v-model="leader.contacttel" placeholder="緊急連絡電話或手機" :aria-invalid="contactConflict(leader)" :aria-describedby="contactConflict(leader) ? 'con_leader_contacttel_err' : null" required />
+                <p v-if="contactConflict(leader)" id="con_leader_contacttel_err" class="th-field-hint text-[color:var(--danger-fg)]" role="alert">緊急聯絡電話不可與領隊或隊員的電話、手機相同</p>
               </div>
             </div>
           </div>
@@ -508,7 +510,8 @@
                       <label class="th-label" :for="'con_lisMem_member_contacttel_' + idx">
                         <span><span class="req">*</span>緊急連絡電話</span>
                       </label>
-                      <input :id="'con_lisMem_member_contacttel_' + idx" type="tel" class="th-input" v-model="m.contacttel" placeholder="緊急連絡電話或手機" required />
+                      <input :id="'con_lisMem_member_contacttel_' + idx" type="tel" class="th-input" v-model="m.contacttel" placeholder="緊急連絡電話或手機" :aria-invalid="contactConflict(m)" :aria-describedby="contactConflict(m) ? 'con_lisMem_member_contacttel_err_' + idx : null" required />
+                      <p v-if="contactConflict(m)" :id="'con_lisMem_member_contacttel_err_' + idx" class="th-field-hint text-[color:var(--danger-fg)]" role="alert">緊急聯絡電話不可與領隊或隊員的電話、手機相同</p>
                     </div>
 
                     <!-- 地址（全寬） -->

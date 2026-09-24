@@ -91,6 +91,11 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
+// 電話比對用：只留數字，讓「0912-345-678」與「0912345678」視為同一號碼
+function digitsOnly(v) {
+  return String(v || "").replace(/\D/g, "");
+}
+
 function isValidMobile(mobile) {
   if (!mobile || typeof mobile !== "string") return false;
   const m = mobile.replace(/[-\s]/g, "");
@@ -377,6 +382,21 @@ thPage({
       return this.leader;
     },
 
+    /* 領隊與所有隊員的電話、手機（只留數字），供緊急聯絡電話比對。
+       正式站規則原文：「緊急連絡人的電話(或手機)不能是領隊的，也不能是隊員的」
+       （2026-09-24 玉山步驟二實填時由網站對話框擋下，觸發處為隊員緊急聯絡人）。 */
+    teamPhones() {
+      const set = new Set();
+      [this.activeLeader, ...this.members].forEach(p => {
+        if (!p) return;
+        [p.tel, p.mobile].forEach(v => {
+          const n = digitsOnly(v);
+          if (n) set.add(n);
+        });
+      });
+      return set;
+    },
+
     // 取得當前作用中的留守人資料
     activeStay() {
       return this.stay;
@@ -514,8 +534,15 @@ thPage({
         !!p.city &&
         !!p.addr && !!p.addr.trim() &&
         !!p.contactname && !!p.contactname.trim() &&
-        !!p.contacttel && !!p.contacttel.trim()
+        !!p.contacttel && !!p.contacttel.trim() &&
+        !this.contactConflict(p)
       );
+    },
+
+    // 緊急聯絡電話與領隊或任一隊員的電話／手機相同 → 不可（比對前去除非數字）
+    contactConflict(p) {
+      const n = digitsOnly(p && p.contacttel);
+      return !!n && this.teamPhones.has(n);
     },
 
     // 同申請人：同步申請人資料至領隊輸入欄位
