@@ -58,6 +58,12 @@
                 <span class="date-value font-bold text-slate-900">{{ summary.teams_name }}</span>
               </span>
               <span class="summary-meta-sep" aria-hidden="true">|</span>
+              <!-- 出發人數（領隊＋隊員）：正式站確認頁在隊名之後即列出（玉山、雪霸 2026-09-24） -->
+              <span class="date-item">
+                <span class="date-title">出發人數：</span>
+                <span class="date-value">{{ teamsCount }} 人</span>
+              </span>
+              <span class="summary-meta-sep" aria-hidden="true">|</span>
               <span class="date-item">
                 <span class="date-title">登山主路線：</span>
                 <span class="date-value">{{ summary.mainRoute }}</span>

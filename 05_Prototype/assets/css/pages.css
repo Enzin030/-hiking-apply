@@ -8463,10 +8463,13 @@ body:where(.p-indexb-body):before {
 .p-apply4-summary-card .summary-date-row .date-item {
   display: inline-flex;
   align-items: center;
+  /* 窄螢幕放不下時整段換行，而不是把標題與日期擠成兩行（390px 實測「2026-10- / 15」斷開） */
+  flex-wrap: wrap;
   gap: 4px;
 }
 
 .p-apply4-summary-card .summary-date-row .date-title {
+  white-space: nowrap;
   font-size: 14px;
   font-weight: 500;
   color: var(--slate-600);
@@ -8492,6 +8495,7 @@ body:where(.p-indexb-body):before {
   font-size: 14px;
   font-weight: normal;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .p-apply4-summary-card .summary-date-row .date-sep {
