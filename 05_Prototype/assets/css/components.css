@@ -1280,6 +1280,11 @@
 .th-home-utility .th-lang-btn:hover { opacity: 0.7; }
 /* 置中頁首：語言下拉對齊按鈕中線（設計檔 components.css 同款） */
 .th-home-utility .th-lang-dropdown { right: auto; left: 50%; transform: translateX(-50%); }
+/* 搜尋框沿用 th-header 的 .th-hdrsearch（2026-09-24）。900px 以下那條「獨佔一列、
+   輸入框撐滿」是為內頁漢堡選單寫的，套到置中功能列會變成一條按鈕卡在中間的長膠囊，
+   故首頁一律維持桌機尺寸，隨功能列自然折行。 */
+.th-home-utility .th-hdrsearch { flex: none; }
+.th-home-utility .th-hdrsearch-input { width: 140px; }
 
 .th-home-marquee-slot { margin-top: 24px; }
 .th-home-main {
@@ -1361,6 +1366,136 @@
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-wide);
 }
+/* 沒有合適圖示時以文字暫代（2026-09-24：PAC 待管處提供正式圖檔）。
+   字級取圖示的一半左右，三個英文字母在 76px（≤900px）圓內仍留邊。 */
+.th-tile-glyph {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+/* 登山教育區：磁磚格線＋右下角 more（2026-09-24 會議紀錄（一）3(9)）。
+   包一層是因為 .th-home-panel-body 是橫向 flex，more 要落在格線下方靠右。 */
+.th-home-tiles-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+.th-home-more {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border: 1px solid var(--national-200);
+  border-radius: var(--r-pill);
+  background: var(--white);
+  color: var(--national-700);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: background 0.15s ease;
+}
+.th-home-more:hover { background: var(--national-100); }
+/* 可申請日期試算彈窗（2026-09-24 會議紀錄（一）4(2)）。外殼是 th-modal，
+   版面照正式站首頁同一區塊（Bootstrap input-group）：左側灰底標籤、右側欄位，一列一項；
+   「可申請日期」是結果列，查詢鈕置中。.bulletin-modal-body 有 white-space: pre-line，
+   樣板內的換行縮排由 Vue condense 去掉，不會變成空行。 */
+.bulletin-modal:has(.th-home-calc) { max-width: 560px; }
+/* 現在時間／可申請時段：兩格資訊塊，數值放大（2026-09-29 使用者：要更顯眼） */
+.th-home-calc-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.th-home-calc-stat {
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  background: var(--national-100);
+}
+.th-home-calc-stat dt {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+}
+.th-home-calc-stat dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--national-700);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-tight);
+}
+.th-home-calc-stat small {
+  margin-left: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--fg-2);
+}
+.th-home-calc-hint {
+  margin: 8px 0 16px;
+  font-size: var(--fs-sm);
+  color: var(--danger-fg);
+}
+.th-home-calc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.th-home-calc-row {
+  display: grid;
+  grid-template-columns: 7.5em minmax(0, 1fr);
+  align-items: stretch;
+}
+.th-home-calc-key {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--border-ui);
+  border-right: none;
+  border-radius: var(--r-md) 0 0 var(--r-md);
+  background: var(--bg-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-2);
+  white-space: nowrap;     /* 7.5em 剛好容下最長的「預計入園日期」，窄版也不折 */
+}
+/* 欄位與標籤接成一個 input-group：左側圓角拿掉 */
+.th-home-calc-row .th-select,
+.th-home-calc-row .th-input,
+.th-home-calc-out {
+  width: 100%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.th-home-calc-out {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-ui);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--bg-1);
+  white-space: normal;
+}
+.th-home-calc-range {
+  font-weight: 700;
+  color: var(--national-700);
+  font-variant-numeric: tabular-nums;
+}
+.th-home-calc-range > span { white-space: nowrap; }
+.th-home-calc-msg { font-size: var(--fs-sm); color: var(--fg-1); }
+.th-home-calc-note { font-size: var(--fs-xs); color: var(--fg-2); }
+.th-home-calc-error {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--danger-fg);
+}
+.th-home-calc-actions { display: flex; justify-content: center; margin-top: 8px; }
+
 
 @media (max-width: 900px) {
   .th-container,
@@ -2298,6 +2433,15 @@ ul.th-doc-list {
 @media (min-width: 901px) and (max-width: 1100px) {
   .th-utility { gap: 6px; }
 }
+/* 2026-09-24：「語言(Language)」「最新消息」讓輔助列變寬，901–1120 間搜尋框會被擠到
+   第二行、頁首長高 30px。改為不換行、由搜尋輸入框吸收不足的寬度（901px 時約 51px，
+   1030px 起回到 140px）。**不要給輸入框 min-width**：實測 72px 下限會讓 901px 的
+   送出鈕超出視窗右緣。 */
+@media (min-width: 901px) and (max-width: 1120px) {
+  .th-utility { flex-wrap: nowrap; }
+  .th-utility > .th-hdrsearch { flex-shrink: 1; min-width: 0; }
+  .th-utility .th-hdrsearch-input { flex: 1 1 auto; min-width: 0; }
+}
 
 /* 可點區至少 24×24 CSS px（WCAG 2.5.8）——原本只有文字高度 23px */
 .th-utility-link,
@@ -2382,11 +2526,44 @@ ul.th-doc-list {
   .th-menubtn i { font-size: var(--fs-lg); }
 }
 
+/* 窄版頁首列的語言鈕（2026-09-24）：外框與選單鈕同款，只放地球圖示。
+   選單內原本的語言下拉在窄版隱藏，全頁只留這一個語言入口。 */
+/* 選擇器帶 .th-lang-wrapper：該 class 的 display 規則排在本段之後，單寫 .th-mlang 會被蓋掉
+   （實測桌機頁首因此多出一顆地球鈕） */
+.th-lang-wrapper.th-mlang { display: none; }
+@media (max-width: 900px) {
+  .th-lang-wrapper.th-mlang { display: block; flex-shrink: 0; }
+  /* 內距、字級與 .th-menubtn 相同，兩顆鈕等高並排 */
+  .th-mlang-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: 1px solid var(--slate-200);
+    border-radius: var(--r-lg);
+    background: var(--bg-1);
+    color: var(--fg-2);
+    font-size: var(--fs-sm);
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .th-mlang-btn:hover {
+    background: var(--bg-2);
+    border-color: var(--slate-400);
+    color: var(--national-700);
+  }
+  .th-mlang-btn i { font-size: var(--fs-lg); }
+  .th-utility .th-lang-wrapper { display: none; }
+  /* 多了語言鈕之後站名要讓位：只在「臺灣登山申請｜一站式服務網」之間換行
+     （樣板內的 <wbr>），不在詞中間斷。品牌區的 flex 見下方「窄版」段。 */
+  .th-wordmark { word-break: keep-all; }
+}
+
 /* ── 窄版（≤900px）：頁首往下就地展開 ─────────────────────── */
 @media (max-width: 900px) {
   .th-header-inner { flex-wrap: wrap; gap: 10px; padding: 0 16px; }
   /* 品牌與標誌的間距用 gap（設計檔的機制），不用 .th-logo 的 margin-right */
-  .th-brand { flex: 1 1 auto; min-width: 0; gap: 10px; }
+  /* basis 0：品牌區吃剩餘寬度，語言鈕與選單鈕固定留在同一列（2026-09-24，原為 1 1 auto） */
+  .th-brand { flex: 1 1 0; min-width: 0; gap: 10px; }
   .th-logo { height: 44px; }
 
   .th-header-right {
@@ -2400,7 +2577,8 @@ ul.th-doc-list {
   .th-utility { width: 100%; }
   /* 搜尋框在窄版獨佔一列，排在輔助連結之後 */
   .th-hdrsearch { flex: 1 1 100%; order: 1; }
-  .th-hdrsearch-input { width: 100%; }
+  /* 輸入框吸收剩餘寬度；原本寫 width: 100% 會讓送出鈕卡在膠囊中間（2026-09-24 修） */
+  .th-hdrsearch-input { flex: 1 1 auto; width: auto; min-width: 0; }
   .th-utility .th-divider:last-of-type { display: none; }
 
   .th-nav {
@@ -2725,6 +2903,32 @@ ul.th-doc-list {
   font-size: var(--fs-xs);
 }
 
+/* ------------------------------------------------------------
+   th-combobox — 可打字篩選的下拉（2026-09-24）
+   ------------------------------------------------------------
+   面板與項目沿用上面的 .th-hsel-panel／.th-hsel-item；這裡只補三件事：
+   面板寬度跟著最長選項（max-content，最小寬度＝欄位寬、最大寬度由 JS 限在視窗內，
+   超出才折行）、鍵盤目前項的底色（與 hover 同一階）、篩不到東西時的提示。
+   座標由 JS 給（見元件檔頭）。
+   ------------------------------------------------------------ */
+.th-combo { position: relative; width: 100%; min-width: 0; }
+.th-combo-input { width: 100%; cursor: pointer; }
+.th-combo-input:focus { cursor: text; }
+.th-combo-panel {
+  width: max-content;
+  margin: 0;
+  list-style: none;
+  z-index: 10000;          /* 要蓋過 th-modal 的遮罩（9999） */
+}
+.th-combo-panel .th-hsel-item { cursor: pointer; }
+.th-combo-panel .th-hsel-item.is-active { background: var(--bg-mist); }
+.th-combo-panel .th-hsel-item.is-selected.is-active { background: var(--bg-mist-2); }
+.th-combo-empty {
+  padding: 8px 12px;
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+}
+
 /* 向上展開時改由 bottom 定位（JS 一併給座標），縮高之後才不會蓋住欄位。
    原生 select 的清單也是這樣翻的；不翻的話頁面下半部的欄位會被視窗底部裁掉。 */
 .th-hsel-panel.is-up {
@@ -2737,6 +2941,8 @@ ul.th-doc-list {
   .th-hsel-panel {
     display: none;
   }
+  /* th-combobox 借用 .th-hsel-panel 的外觀，但它沒有原生 select 可退回，窄版照常顯示 */
+  .th-hsel-panel.th-combo-panel { display: flex; }
 }
 
 /*

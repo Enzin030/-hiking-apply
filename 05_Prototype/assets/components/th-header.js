@@ -101,12 +101,13 @@ window.TH_HEADER_NAV = [
   ] },
 ];
 
-/* 工具列項目（網站導覽／本站使用說明／警特報／RSS） */
+/* 工具列項目（網站導覽／本站使用說明／警特報／最新消息）
+   2026-09-24 會議紀錄（一）5：RSS 換成最新消息；RSS 改由網站導覽提供（sitemap.js 已有「RSS訂閱」）。 */
 window.TH_HEADER_UTILITY = [
   { label: "網站導覽", url: "sitemap.html" },
   { label: "本站使用說明", url: "web_illustrate.html" },
   { label: "警特報",   url: "https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", external: true },
-  { label: "RSS",     url: "rss.html" },
+  { label: "最新消息", url: "news_0.html" },
 ];
 
 /* 可選語系定義 */
@@ -131,6 +132,7 @@ window.thComponents["th-header"] = {
     return {
       menuOpen: false,    // 窄版：頁首往下就地展開
       langOpen: false,
+      mLangOpen: false,   // 窄版頁首列上的語言鈕（2026-09-24）
       navOpen: "",        // 目前展開的主選單 key（桌機下拉與窄版手風琴共用）
       canHover: true,     // 裝置是否支援 hover（觸控裝置為 false，改用點擊展開）
       currentLang: "zh-TW",
@@ -181,6 +183,7 @@ window.thComponents["th-header"] = {
       if (e.defaultPrevented) return;
       /* 由內而外關，每一層都把焦點還給觸發它的按鈕 */
       if (self.langOpen) { self.closeLang(true); return; }
+      if (self.mLangOpen) { self.closeMLang(true); return; }
       if (self.navOpen) { self.closeNav(true); return; }
       if (self.menuOpen) { self.closeMenu(true); }
     };
@@ -188,6 +191,9 @@ window.thComponents["th-header"] = {
     this._onClickOutside = function (e) {
       if (self.langOpen && self.$refs.langWrapper && !self.$refs.langWrapper.contains(e.target)) {
         self.closeLang(false);
+      }
+      if (self.mLangOpen && self.$refs.mLangWrapper && !self.$refs.mLangWrapper.contains(e.target)) {
+        self.closeMLang(false);
       }
       if (self.navOpen && !e.target.closest(".th-navsub")) self.closeNav(false);
     };
@@ -208,7 +214,7 @@ window.thComponents["th-header"] = {
        **改這裡要連 components.css 的三個 @media 一起改**（選單鈕、頁首版面、
        子選單手風琴），兩邊不同步會出現「已收進選單鈕但樣式還是桌機」的狀態。 */
     this._narrowMq = window.matchMedia("(max-width: 900px)");
-    this._onNarrowMq = function () { self.navOpen = ""; self.menuOpen = false; };
+    this._onNarrowMq = function () { self.navOpen = ""; self.menuOpen = false; self.mLangOpen = false; };
     this._narrowMq.addEventListener("change", this._onNarrowMq);
   },
 
@@ -353,10 +359,15 @@ window.thComponents["th-header"] = {
     },
 
     onLangMenuKey(e) {
-      var list = this.langItems();
+      this.menuKeyNav(e, this.langItems(), this.closeLang);
+    },
+
+    /* 語言清單的鍵盤操作（桌機輔助列與窄版頁首列共用）：
+       Esc 關閉並還焦點、↑↓ 循環、Home／End */
+    menuKeyNav(e, list, close) {
       if (!list.length) return;
       var idx = list.indexOf(document.activeElement);
-      if (e.key === "Escape") { e.preventDefault(); this.closeLang(true); }
+      if (e.key === "Escape") { e.preventDefault(); close.call(this, true); }
       else if (e.key === "ArrowDown") { e.preventDefault(); list[(idx + 1) % list.length].focus(); }
       else if (e.key === "ArrowUp") { e.preventDefault(); list[(idx - 1 + list.length) % list.length].focus(); }
       else if (e.key === "Home") { e.preventDefault(); list[0].focus(); }
@@ -372,6 +383,51 @@ window.thComponents["th-header"] = {
     pickLang(key) {
       this.currentLang = key;
       this.closeLang(true);
+    },
+
+    /* ── 互動二之二：窄版頁首列的語言鈕（2026-09-24）──────────
+       窄版的輔助列（含語言下拉）收在選單鈕後面，外語使用者得先猜到要點「☰」
+       才找得到語言。這裡在頁首列直接放一顆地球鈕，清單與鍵盤行為同互動二；
+       選單內原本那一顆在窄版隱藏（CSS），不出現兩個語言入口。 */
+    mLangItems() {
+      var menu = this.$refs.mLangMenu;
+      return menu ? Array.prototype.slice.call(menu.querySelectorAll("button")) : [];
+    },
+
+    openMLang(focusFirst) {
+      this.mLangOpen = true;
+      var self = this;
+      this.$nextTick(function () {
+        if (focusFirst) {
+          var list = self.mLangItems();
+          if (list.length) list[0].focus();
+        }
+      });
+    },
+
+    closeMLang(focusBtn) {
+      this.mLangOpen = false;
+      if (focusBtn && this.$refs.mLangBtn) this.$refs.mLangBtn.focus();
+    },
+
+    onMLangBtnKey(e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); this.openMLang(true); }
+      else if (e.key === "Escape" && this.mLangOpen) { e.preventDefault(); this.closeMLang(true); }
+    },
+
+    onMLangMenuKey(e) {
+      this.menuKeyNav(e, this.mLangItems(), this.closeMLang);
+    },
+
+    onMLangFocusOut(e) {
+      if (this.mLangOpen && this.$refs.mLangWrapper && !this.$refs.mLangWrapper.contains(e.relatedTarget)) {
+        this.mLangOpen = false;
+      }
+    },
+
+    pickMLang(key) {
+      this.currentLang = key;
+      this.closeMLang(true);
     },
   },
 
@@ -392,8 +448,30 @@ window.thComponents["th-header"] = {
         -->
         <a href="index.html" class="th-brand" aria-label="臺灣登山申請一站式服務網 首頁">
           <img src="assets/logo-mark.png" alt="國家公園署" class="th-logo" />
-          <span class="th-wordmark"><span class="th-wordmark-lead">臺灣<span class="th-accent">登山申請</span></span>一站式服務網</span>
+          <span class="th-wordmark"><span class="th-wordmark-lead">臺灣<span class="th-accent">登山申請</span></span><wbr>一站式服務網</span>
         </a>
+
+        <!-- 窄版（≤900px）語言入口：直接放在頁首列，不必先展開選單（見互動二之二） -->
+        <div class="th-lang-wrapper th-mlang" ref="mLangWrapper" @focusout="onMLangFocusOut">
+          <button type="button" class="th-mlang-btn" ref="mLangBtn" id="th-mlang-btn"
+                  @click="mLangOpen ? closeMLang(false) : openMLang(false)"
+                  @keydown="onMLangBtnKey"
+                  :aria-expanded="mLangOpen ? 'true' : 'false'" aria-haspopup="true"
+                  aria-controls="th-mlang-list" :aria-label="'語言(Language)，目前：' + currentLangObj.label">
+            <i class="fa-solid fa-globe" aria-hidden="true"></i>
+          </button>
+          <div v-if="mLangOpen" class="th-lang-dropdown" id="th-mlang-list" ref="mLangMenu"
+               aria-labelledby="th-mlang-btn" @keydown="onMLangMenuKey">
+            <button v-for="lang in languages" :key="lang.key" type="button"
+                    :lang="lang.key === 'zh-TW' ? 'zh-Hant-TW' : lang.key"
+                    :class="['th-lang-item', { 'is-active': currentLang === lang.key }]"
+                    :aria-current="currentLang === lang.key ? 'true' : null"
+                    @click="pickMLang(lang.key)">
+              <span>{{ lang.label }}</span>
+              <i v-if="currentLang === lang.key" class="fa-solid fa-check th-lang-tick" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
 
         <!-- 窄版（≤900px）：就地展開／收合，不是抽屜，所以沒有 aria-haspopup="dialog" -->
         <button type="button" class="th-menubtn" ref="menuBtn"
@@ -423,8 +501,9 @@ window.thComponents["th-header"] = {
                       aria-controls="th-lang-list">
                 <i class="fa-solid fa-globe" aria-hidden="true"></i>
                 <!-- 顯示「語言」而非目前語系：目前語系由選單內的勾號與
-                     aria-current 表達（設計檔的作法），按鈕本身維持固定寬度。 -->
-                <span>語言</span>
+                     aria-current 表達（設計檔的作法），按鈕本身維持固定寬度。
+                     2026-09-24 會議紀錄（一）2：附英文，與首頁一致。 -->
+                <span>語言(<span lang="en">Language</span>)</span>
                 <span class="th-sr-only">（目前：{{ currentLangObj.label }}）</span>
                 <i :class="['fa-solid fa-angle-down th-caret', { 'rotate-180': langOpen }]" aria-hidden="true"></i>
               </button>

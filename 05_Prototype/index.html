@@ -67,7 +67,8 @@
             <span class="th-home-sep" aria-hidden="true"></span>
             <a href="https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html" target="_blank" rel="noopener noreferrer" class="th-focusable">警特報</a>
             <span class="th-home-sep" aria-hidden="true"></span>
-            <a href="rss.html" class="th-focusable">RSS</a>
+            <!-- 2026-09-24 會議紀錄（一）5：RSS 換成最新消息，RSS 改由網站導覽提供 -->
+            <a href="news_0.html" class="th-focusable">最新消息</a>
             <span class="th-home-sep" aria-hidden="true"></span>
             <!-- 語言選單：Disclosure Pattern，行為在 components/index-page.js（與 th-header 同一套鍵盤操作） -->
             <div class="th-lang-wrapper" ref="langWrapper" @focusout="onLangFocusOut">
@@ -95,7 +96,14 @@
               </div>
             </div>
             <span class="th-home-sep" aria-hidden="true"></span>
-            <button type="button" class="th-focusable"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> 搜尋</button>
+            <!-- 2026-09-24 使用者要求：比照內頁 th-header 改為輸入框（同一組 .th-hdrsearch）；雛形無後端，送出只擋掉預設行為 -->
+            <form class="th-hdrsearch" role="search" @submit.prevent>
+              <input type="search" name="q" class="th-hdrsearch-input" placeholder="搜尋"
+                     aria-label="搜尋站內內容" />
+              <button type="submit" class="th-hdrsearch-btn" aria-label="搜尋">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              </button>
+            </form>
           </nav>
         </div>
       </header>
@@ -143,16 +151,29 @@
                   <h2 id="edu-title" class="th-home-panel-title">登山教育及路線介紹</h2>
                 </div>
                 <div class="th-home-panel-body">
-                  <div class="th-grid-tiles">
-                    <!-- 2026-09-18 使用者裁決：首頁供機關確認功能範圍，未建置項亦給 `#` 假連結、
-                         不出待建置標記。**這是專案唯一的例外**，其餘頁面仍不給假連結。 -->
-                    <a v-for="f in eduFunctions" :key="f.key" :href="f.href"
-                       class="th-focusable th-tile th-tile-green">
-                      <span class="th-tile-ic">
-                        <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
-                      </span>
-                      <span class="th-tile-label">{{ f.label }}</span>
-                    </a>
+                  <div class="th-home-tiles-wrap">
+                    <div class="th-grid-tiles" id="edu-tiles" ref="eduGrid">
+                      <!-- 2026-09-18 使用者裁決：首頁供機關確認功能範圍，未建置項亦給 `#` 假連結、
+                           不出待建置標記。**這是專案唯一的例外**，其餘頁面仍不給假連結。 -->
+                      <a v-for="f in eduVisible" :key="f.key" :href="f.href"
+                         :target="f.external ? '_blank' : null"
+                         :rel="f.external ? 'noopener noreferrer' : null"
+                         class="th-focusable th-tile th-tile-green">
+                        <span class="th-tile-ic">
+                          <span v-if="f.glyph" class="th-tile-glyph" aria-hidden="true">{{ f.glyph }}</span>
+                          <i v-else :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
+                        </span>
+                        <span class="th-tile-label">{{ f.label }}<span v-if="f.external" class="th-sr-only">（另開新視窗）</span></span>
+                      </a>
+                    </div>
+                    <!-- 會議紀錄（一）3(9)：預設 8 個，其餘收在右下角 more。
+                         文字用成對的「顯示更多／顯示較少」（2026-09-24 使用者：more／收合不像同一顆鈕的兩態） -->
+                    <button type="button" class="th-focusable th-home-more"
+                            aria-controls="edu-tiles" :aria-expanded="eduExpanded ? 'true' : 'false'"
+                            @click="toggleEdu">
+                      <span>{{ eduExpanded ? '顯示較少' : '顯示更多' }}</span>
+                      <i :class="['fa-solid fa-angle-down th-caret', { 'rotate-180': eduExpanded }]" aria-hidden="true"></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -164,13 +185,22 @@
                 </div>
                 <div class="th-home-panel-body">
                   <div class="th-grid-tiles">
-                    <a v-for="f in applyLinks" :key="f.key" :href="f.href"
-                       class="th-focusable th-tile th-tile-blue">
-                      <span class="th-tile-ic">
-                        <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
-                      </span>
-                      <span class="th-tile-label">{{ f.label }}</span>
-                    </a>
+                    <template v-for="f in applyLinks" :key="f.key">
+                      <!-- action 項開彈窗而非換頁，用 button（語意上不是連結） -->
+                      <button v-if="f.action" type="button" :data-tile="f.key" aria-haspopup="dialog"
+                              class="th-focusable th-tile th-tile-blue" @click="openCalc">
+                        <span class="th-tile-ic">
+                          <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
+                        </span>
+                        <span class="th-tile-label">{{ f.label }}</span>
+                      </button>
+                      <a v-else :href="f.href" class="th-focusable th-tile th-tile-blue">
+                        <span class="th-tile-ic">
+                          <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
+                        </span>
+                        <span class="th-tile-label">{{ f.label }}</span>
+                      </a>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -182,11 +212,70 @@
     </div>
   </div>
 
+  <!-- 可申請日期試算（2026-09-24 會議紀錄（一）4(2)：現行首頁公告右方的同名功能）。
+       欄位照正式站：單位 → 路線 → 預計入園日期，查詢後顯示可申請日期。規則在 components/index-page.js -->
+  <th-modal v-if="calcOpen" title="可申請日期試算" @close="closeCalc">
+    <!-- 版面照正式站首頁同一區塊：上方現在時間與可申請時段，下方一列一欄「標籤｜欄位」，
+         可申請日期是結果列、查詢鈕置中。主路線→次路線連動，兩者皆可打字篩選（th-combobox）。 -->
+    <dl class="th-home-calc-meta">
+      <div class="th-home-calc-stat"><dt>現在時間</dt><dd>{{ calcNow }}</dd></div>
+      <div class="th-home-calc-stat"><dt>可申請時段</dt><dd>07:00~23:00<small>（Taiwan）</small></dd></div>
+    </dl>
+    <p class="th-home-calc-hint">※玉山於辦理抽籤期間則暫停申請</p>
+    <form class="th-home-calc" @submit.prevent="runCalc" novalidate>
+      <div class="th-home-calc-row">
+        <label class="th-home-calc-key" for="calc-unit">單位</label>
+        <th-hybrid-select>
+          <select id="calc-unit" class="th-select" v-model="calcUnit" @change="onCalcUnitChange">
+            <option v-for="u in calcUnits" :key="u.key" :value="u.key">{{ u.label }}</option>
+          </select>
+        </th-hybrid-select>
+      </div>
+      <!-- 路線層數依單位而定（routes：sub／main／category／none，見 index-page.js） -->
+      <div v-if="calcShowMain" class="th-home-calc-row">
+        <label class="th-home-calc-key" for="calc-main">路線</label>
+        <th-combobox v-model="calcMain" input-id="calc-main" :options="calcMainOptions"
+                     placeholder="請選擇或輸入關鍵字" empty-text="查無符合的路線"
+                     @change="onCalcMainChange"></th-combobox>
+      </div>
+      <div v-if="calcShowSub" class="th-home-calc-row">
+        <label class="th-home-calc-key" for="calc-route">次路線</label>
+        <th-combobox v-model="calcRoute" input-id="calc-route" :options="calcSubOptions"
+                     :placeholder="calcMain ? '請選擇或輸入關鍵字' : '請先選擇路線'" empty-text="查無符合的次路線"
+                     @change="calcResult = null"></th-combobox>
+      </div>
+      <div class="th-home-calc-row">
+        <label class="th-home-calc-key" for="calc-date">預計入園日期</label>
+        <th-date-picker bare v-model="calcDate" input-id="calc-date" :min="calcToday"></th-date-picker>
+      </div>
+      <div class="th-home-calc-row">
+        <span class="th-home-calc-key" id="calc-out-key">可申請日期</span>
+        <div class="th-home-calc-out" role="status" aria-live="polite" aria-labelledby="calc-out-key">
+          <template v-if="calcResult">
+            <!-- 窄版只在分隔符（~ 或「至」）處換行，兩端日期各自不拆 -->
+            <span v-if="calcResult.range" class="th-home-calc-range"><span>{{ calcResult.range.from }}</span>{{ calcResult.range.sep }}<wbr><span>{{ calcResult.range.to }}</span></span>
+            <span v-if="calcResult.message" class="th-home-calc-msg">{{ calcResult.message }}</span>
+            <span v-if="calcResult.note" class="th-home-calc-note">{{ calcResult.note }}</span>
+          </template>
+        </div>
+      </div>
+      <p v-if="calcError" class="th-home-calc-error" role="alert">{{ calcError }}</p>
+      <div class="th-home-calc-actions">
+        <button type="submit" class="th-btn th-btn-primary">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+        </button>
+      </div>
+    </form>
+  </th-modal>
+
   <th-quick-nav></th-quick-nav>
   <th-back-to-top></th-back-to-top>
   <th-footer></th-footer>
 
 </div>
+
+<!-- 資料檔：一般 <script>，頁面腳本只在 data() 內讀取 window.ROUTE_DATA（可申請日期試算的路線清單） -->
+<script src="components/RouteData.js"></script>
 
 <!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>
