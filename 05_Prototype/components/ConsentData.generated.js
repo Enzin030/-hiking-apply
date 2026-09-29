@@ -22,7 +22,8 @@
  *   玉山（C951CDCD…）：2026-09-21 正式站 apply_1_2.aspx 重建，21 條、預設勾 19（id attention-yu*）
  *   雪霸（E6DD4652…）：2026-09-24 正式站 apply_1_2.aspx 重建，21 條、預設勾 18（id attention-sp*），
  *                      原文存 .scratch/outputs/正式站申請流程盤點/extracts/prod-SHP003-S00-consent-html.json
- *   太魯閣（105E956F…）：仍為上方 CSV（2026-04-28 DB dump，環境不明），含已廢止的疫情條款，待正式站重建
+ *   太魯閣（105E956F…）：2026-09-29 正式站 apply_1_2.aspx 重建，18 條、預設勾 16（id attention-tr*），
+ *                      原文存 .scratch/outputs/正式站申請流程盤點/extracts/prod-TAR001-S00-consent-html.json
  */
 
 window.PARK_LIST = [
@@ -60,161 +61,233 @@ window.PARK_BY_ORG_ID = Object.fromEntries(PARK_LIST.map(park => [park.orgId, pa
 
 window.ATTENTION_ITEMS = [
     {
-        "id":  "attention-36",
-        "dbId":  36,
+        "id":  "attention-tr01",
+        "dbId":  9301,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e確認已於申請前詳閱並明瞭「\u003ca href=\"https://hike.taiwan.gov.tw/notice_a4.aspx\"\u003e 申請及入園注意事項\u003c/a\u003e」，並轉知全體隊員。\u003c/p\u003e\r\n\r\n\u003cp style=\"margin-left:24.0pt;\"\u003e1.隊伍成員如為中央流行疫情指揮中心公告之「居家隔離、居家檢疫及自主健康管理等符合通報定義」之人員(詳見:\u003ca href=\"https://www.cdc.gov.tw/\" target=\"_blank\"\u003ehttps://www.cdc.gov.tw\u003c/a\u003e)，應取消或暫緩申請入園。\u0026nbsp;\u003c/p\u003e\r\n\r\n\u003cp style=\"margin-left:24.0pt;\"\u003e2.隊伍所有成員應加強自主健康管理，入園之後如有疑似相關症狀發生，應使用口罩或足可遮掩口鼻物品進入山屋，保護自己也尊重他人。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eA confirmation of thorough acknowledgement and understanding of \u0026quot;\u003ca href=\"https://npm.nps.gov.tw/en/notice_1.aspx?tabs=2\"\u003eImportant Notices for Park Entry\u003c/a\u003e\u0026quot; prior to submitting your application.\u003c/p\u003e \u003cp\u003eAll visitors need to pay close attention to their health condition. To protect oneself and respect others, if anyone starts to have signs of cold or flu, this person must wear a mask or other object that can cover the nose and mouth while inside the cabin.\u003cbr /\u003e \u0026nbsp;\u003c/p\u003e",
-        "name_jp":  "\u003cp\u003eチームリーダーは、次の関連事項を明確に通知しました：\u003c/p\u003e\r\n\r\n\u003cp\u003e1.チームのメンバーが、中央感染症指揮センター（https://www.cdc.gov.twを参照）によって発表された「感染確認」場合、入園を自主にキャンセルする必要があります。\u003c/p\u003e\r\n\r\n\u003cp\u003e2.チーム全員が自主健康管理を強化する必要があり、入園あと、風邪の疑いがある場合は、マスクまた鼻と口を覆って、山屋に入り、自分も相手を守ります。\u003c/p\u003e\r\n",
-        "chk":  "1",
-        "selectchk":  "0",
-        "defaultChecked":  false,
-        "order":  0
-    },
-    {
-        "id":  "attention-24",
-        "dbId":  24,
-        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e入園申請前領隊責任同意事項：\u003c/p\u003e\r\n\r\n\u003cp\u003e1. 本申請人瞭解所填具之隊員資料與行程計畫等，如明知為不實之事項，而使公務員登載 於職務上所掌之公文書，足以生損害於公眾或他人者，恐涉及刑法之偽造文書罪，依「使登 載不實事項」論處。\u003c/p\u003e\r\n\r\n\u003cp\u003e2. 本申請人承諾轉知領隊及隊員有關本案核發之「生態保護區入園許可證」各項承諾規定 與審查建議事項。並請領隊攜帶入園許可證及隊員身分證明文件，供入園查核。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eResponsibilities of the Team Leader as pertaining to the Park Ecological Protection Areas Entry Permit:\u003c/p\u003e\r\n\r\n\u003col\u003e\r\n\t\u003cli\u003eThe applicant fully confirms the personal data and is aware of the travel plans of all team members. Untrue information within the application, which is considered an official document and cause damage to the public or others, that causes damage to the team or others will be punished under criminal law of forgery according to \u0026quot;the publication of false matters\u0026quot;.\u003c/li\u003e\r\n\t\u003cli\u003eThe applicant will convey to the team leader and team members the requirements and commitments addressed in the \u0026quot;Park Ecological Protection Areas Entry Permit\u0026quot;. The team leader must carry the permits and team members\u0026rsquo; identity documents for inspection.\u003c/li\u003e\r\n\u003c/ol\u003e\r\n",
-        "name_jp":  "\u003cp\u003e入園申請前領隊責任同意事項： 一、本申請人瞭解所填具之隊員資料與行程計畫等，如明知為不實之事項，而使公務員登載 於職務上所掌之公文書，足以生損害於公眾或他人者，恐涉及刑法之偽造文書罪，依「使登 載不實事項」論處。 二、本申請人承諾轉知領隊及隊員有關本案核發之「生態保護區入園許可證」各項承諾規定 與審查建議事項。並請領隊攜帶入園許可證及隊員身分證明文件，供入園查核。\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e請注意，領隊及隊員名單如有外籍人士，請提醒攜帶具有GPS功能之通訊器材，手機請打開國際漫遊之通訊及簡訊功能，以利災害應變與聯繫。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
         "order":  1
     },
     {
-        "id":  "attention-37",
-        "dbId":  37,
+        "id":  "attention-tr02",
+        "dbId":  9302,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e颱風警報發布、森林火災或其他突發事件時，管理處得另行發布緊急措施禁止人員進入，已核發之入園許可證自動廢止(無效)。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eWhen Typhoon Warnings have been issued, or in the instance of bushfires or other emergency situations, the National Park Headquarters will announce contingency plans to restrict access to some or all areas of the Park. Permits granted access during this period will be deemed void (ineffective).\u003c/p\u003e\r\n",
-        "name_jp":  "\u003cp\u003e颱風警報發布、森林火災或其他突發事件時，管理處得另行發布緊急措施禁止人員進入，已核發之入園本許可證視同作廢，並請儘速申請退費。\u003c/p\u003e\r\n",
-        "chk":  "1",
-        "selectchk":  "1",
-        "defaultChecked":  true,
-        "order":  1
-    },
-    {
-        "id":  "attention-25",
-        "dbId":  25,
-        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e生態保護措施承諾：\u003c/p\u003e\r\n\r\n\u003cp\u003e1. 將充分瞭解本區生態的脆弱性，並於行前辦理減輕生態衝擊講習。\u003c/p\u003e\r\n\r\n\u003cp\u003e2. 將充分瞭解無痕山林準則，行程中隨時注意並提醒隊員山友言行。\u003c/p\u003e\r\n\r\n\u003cp\u003e3. 將配合國家公園巡查志工之保育行動，並協助勸導隊員山友言行。\u003c/p\u003e\r\n\r\n\u003cp\u003e4. 避免人造物品影響野生物，留置物同意管理處依無主廢棄物處理。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eTeam commitment to ecological protection:\u003c/p\u003e\r\n\r\n\u003col\u003e\r\n\t\u003cli\u003eTeam members will fully recognize the ecological vulnerability of the surrounding area, and will attend a workshop on reducing one\u0026rsquo;s ecological footprint before departing.\u003c/li\u003e\r\n\t\u003cli\u003eTeam members will fully understand the Leave No Trace Principles, and together with their team members, will actively enforce these guidelines during their trip.\u003c/li\u003e\r\n\t\u003cli\u003eIf required, team members will cooperate with the National Parks Volunteers in areas of conservation action, and hold themselves and team members to upstanding behavior in this regard.\u003c/li\u003e\r\n\t\u003cli\u003eTeam members will avoid using items that can potentially impact wildlife and their habitat, and appropriately dispose or attend to rubbish in accordance with the guidelines set by the Taroko National Park Headquarters.\u003c/li\u003e\r\n\u003c/ol\u003e\r\n",
-        "name_jp":  "\u003cp\u003e生態保護措施承諾： 1.將充分瞭解本區生態的脆弱性，並於行前辦理減輕生態衝擊講習。 2.將充分瞭解無痕山林準則，行程中隨時注意並提醒隊員山友言行。 3.將配合國家公園巡查志工之保育行動，並協助勸導隊員山友言行。 4.避免人造物品影響野生物，留置物同意管理處依無主廢棄物處理。\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e請山友留意台8線公路交通管制資訊，詳情依公路局太魯閣工務段最新公告為準。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
         "order":  2
     },
     {
-        "id":  "attention-26",
-        "dbId":  26,
+        "id":  "attention-tr03",
+        "dbId":  9303,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e登山安全措施承諾：\u003c/p\u003e\r\n\r\n\u003cp\u003e1. 將充分瞭解本區之災害與天候資訊，並於行前辦理安全維護講習。\u003c/p\u003e\r\n\r\n\u003cp\u003e2. 將充分瞭解所有隊友身心狀況，並於行前自主訓練補強各項技能。\u003c/p\u003e\r\n\r\n\u003cp\u003e3. 將充分瞭解原野地緊急應變措施，確實攜帶各項登山裝備與用品。\u003c/p\u003e\r\n\r\n\u003cp\u003e4. 攜帶足夠的通訊設備與電池，並定時與山下留守人員及家人聯絡。\u003c/p\u003e\r\n\r\n\u003cp\u003e5. 行進中隨時評估氣象與隊員狀況，以安全第一為原則下妥善因應。\u003c/p\u003e\r\n\r\n\u003cp\u003e6. 配合國家公園保育志工查核與引導，如有安全疑慮絕不勉強攀登。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eTeam commitment to safety hiking:\u003c/p\u003e\r\n\r\n\u003col\u003e\r\n\t\u003cli\u003eTeam members must fully recognize and understand the various disaster risks within and weather forecast pertaining to the Park area, and attend the safety maintenance workshops before the hiking trip, if required.\u003c/li\u003e\r\n\t\u003cli\u003eThe team leader must be fully informed of the physical and mental conditions of all team members, and undertake any necessary physical conditioning and essential mountaineering skills before embarking on the trip. \u0026nbsp;\u003c/li\u003e\r\n\t\u003cli\u003eThe team leader must be aware and be familiar with contingency plans during the entire trip. The team is responsible for bringing the necessary mountaineering equipment and supplies.\u003c/li\u003e\r\n\t\u003cli\u003eThe team must carry communications equipment and sufficient batteries, and keep in touch with the rear personnel and respective families on a regular basis.\u003c/li\u003e\r\n\t\u003cli\u003eThe team leader must be cognizant of the weather and be vigilant in monitoring the condition of team members at all times during the trip, and must adhere to the \u0026ldquo;Safety First\u0026rdquo; principles while on the trip.\u003c/li\u003e\r\n\t\u003cli\u003eAll team members must comply the National Parks Conservation Volunteers if subject to inspection and/or instruction, and never pursue hiking if faced with security and safety concerns.\u003c/li\u003e\r\n\u003c/ol\u003e\r\n",
-        "name_jp":  "\u003cp\u003e登山安全措施承諾： 1.將充分瞭解本區之災害與天候資訊，並於行前辦理安全維護講習。 2.將充分瞭解所有隊友身心狀況，並於行前自主訓練補強各項技能。 3.將充分瞭解原野地緊急應變措施，確實攜帶各項登山裝備與用品。 4.攜帶足夠的通訊設備與電池，並定時與山下留守人員及家人聯絡。 5.行進中隨時評估氣象與隊員狀況，以安全第一為原則下妥善因應。 6.配合國家公園保育志工查核與引導，如有安全疑慮絕不勉強攀登。\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e確認已於申請前詳閱並明瞭「 \u003ca href=\"https://hike.taiwan.gov.tw/nationpark/manasystem/news/files/news/a9ebddc7-f95e-46c2-b271-e9b44cd0edc2.pdf\" target=\"_blank\"\u003e登山活動應注意事項\u003c/a\u003e」，並轉知全體隊員。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
         "order":  3
     },
     {
-        "id":  "attention-1048",
-        "dbId":  1048,
+        "id":  "attention-tr04",
+        "dbId":  9304,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e欲申請「其他路線」：\u003c/p\u003e\r\n\r\n\u003cp\u003e線上系統僅受理進入生態保護區之案件，非進入生態保護區，系統亦將退回申辦案件。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eWhen applying for non-traditional routes (designated as \u0026quot;Other\u0026quot;):\u003c/p\u003e\r\n\r\n\u003cp\u003eThe online system will only accept applications for routes within the Ecological Protected Area. Applications with routes that at any point stray outside the Ecological Protected Area will be rejected.\u003c/p\u003e\r\n",
-        "name_jp":  "\u003cp\u003e欲申請「其他路線」，線上系統僅受理進入生態保護區之案件，非進入生態保護區，系統亦將退回申辦案件。\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e確認已於申請前詳閱並明瞭「\u003ca href=\"https://hike.taiwan.gov.tw/notice_a4.aspx\"\u003e 申請及入園注意事項\u003c/a\u003e」，並轉知全體隊員，隊伍所有成員應加強自主健康管理，入園之後如有疑似相關症狀發生，應使用口罩或足可遮掩口鼻物品進入山屋，保護自己也尊重他人。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
         "order":  4
     },
     {
-        "id":  "attention-14",
-        "dbId":  14,
+        "id":  "attention-tr05",
+        "dbId":  9305,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e登山申請時間說明：\u003c/p\u003e\r\n\r\n\u003cp\u003e1、奇萊主（北）峰、奇萊連峰、奇萊東稜、奇萊南峰、南湖大山、南湖中央尖、北一縱走北二、北二段、閂山鈴鳴山、閂山單攻、畢祿縱走羊頭、清水山、其它路線：\u003c/p\u003e\r\n\r\n\u003cp\u003e（一）入園5天15:00前至2個月前可提出申請。\u003c/p\u003e\r\n\r\n\u003cp\u003e（二）每份申請書為一隊，每隊最多不得超過12人，若超過上述人數，請分別填寫，領隊及隊員均不得重覆。\u003c/p\u003e\r\n\r\n\u003cp\u003e（三）入園前5天內申請案件不予受理。(連續假期應於放假前1天15：00前完成申請）\u003c/p\u003e\r\n\r\n\u003cp\u003e（四）入園前2個月內提出申請案件以線上申請時間為先後排序。\u003c/p\u003e\r\n\r\n\u003cp\u003e（五）入園申請案件審核通過後，日期、人員(含領隊、隊員、留守)不得更換或增加，可以取消入園（全隊或個別隊員取消），新增人員應另案提出申請。\u003c/p\u003e\r\n\r\n\u003cp\u003e2、羊頭山、畢祿山單攻路線：\u003c/p\u003e\r\n\r\n\u003cp\u003e（一）入園3天15:00前至2個月前可提出申請。\u003c/p\u003e\r\n\r\n\u003cp\u003e（二）每份申請書為一隊，每隊最多不得超過12人，若超過上述人數，請分別填寫，領隊及隊員均不得重覆。\u003c/p\u003e\r\n\r\n\u003cp\u003e（三）入園前3天內申請案件不予受理。(翌週一及連續假期應於放假前1天15：00前完成申請）\u003c/p\u003e\r\n\r\n\u003cp\u003e（四）入園前2個月內提出申請案件以線上申請時間為先後排序。\u003c/p\u003e\r\n\r\n\u003cp\u003e（五）入園申請案件審核通過後，日期、人員(含領隊、隊員、留守)不得更換或增加，可以取消入園（全隊或個別隊員取消），新增人員應另案提出申請。\u003c/p\u003e\r\n\r\n\u003cp\u003e3、錐麓古道單日路線：\u003c/p\u003e\r\n\r\n\u003cp\u003e（一）入園1天15：00前至2個月前可提出申請。\u003c/p\u003e\r\n\r\n\u003cp\u003e（二）錐麓古道每天每一人限制申請一隊12人，申請人、領隊及隊員不得重複申請。\u003c/p\u003e\r\n\r\n\u003cp\u003e（三）錐麓古道受理申請時間為入園前1天15：00前至2個月前，週二至週五入園應於前1天15：00前完成申請，週六至翌週一入園應於週五15：00前完成申請（連續假期應於放假前1天15：00前完成申請），2個月內之申請案件不在此限。\u003c/p\u003e\r\n\r\n\u003cp\u003e（四）入園前2個月內提出申請案件以線上申請時間為先後排序。\u003c/p\u003e\r\n\r\n\u003cp\u003e（五）入園申請案件審核通過後，日期、人員(含領隊、隊員、留守)不得更換或增加，可以取消入園（全隊或個別隊員取消），新增人員應另案提出申請。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eSubmission window and times regarding National Park Entry Permits:\u003c/p\u003e\r\n\r\n\u003col\u003e\r\n\t\u003cli\u003eThe application system is open for submissions every day between 7:00 am and 11:00 pm. The system will be closed between 11:00 pm to 7:00 am the next morning for routine maintenance. Quotas regarding the daily maximum number of persons are applied on some routes.\u003c/li\u003e\r\n\t\u003cli\u003eFor Qilai (Qilai Main Peak and Qilai North Peak, Mt. Qilai Range, Qilai East Ridge, Qilai South Peak), Nanhu (Mt. Nanhu, Mt. Nanhu \u0026ndash; Mt. Zhongyangjian/North Section 1 of Central Mt. Range), North Section 1.~2. North of Central Mt. Range, North Section 2 of Central Mt. Range/Guimenguan Cliff, Mt. Shuan \u0026ndash; Mt. Lingming, Mt. Shuan Single Day Ascent, Mt. Bilu \u0026ndash; Mt. Yangtou, Mt. Qingshui, and non-traditional (\u0026ldquo;Other\u0026rdquo;) routes:\r\n\t\u003col style=\"list-style-type:upper-alpha;\"\u003e\r\n\t\t\u003cli\u003eApplication window open 5-30 days before date of intended entry\u0026nbsp;(closing at\u0026nbsp;3 pm, 5 days before the date of intended entry).\u003c/li\u003e\r\n\t\t\u003cli\u003eOne application is representative of one team. A team can consist of a maximum of 12 people; separate (new) application(s) should be completed if the number of team members exceeds 12. An applicant can only be a team member or a team leader a maximum of once a day (e.g. one cannot be a member of a team and the leader of another team on the same day).\u003c/li\u003e\r\n\t\t\u003cli\u003eApplications submitted less than 5 days before the date of intended entry will not be accepted.\u003c/li\u003e\r\n\t\t\u003cli\u003eApplications successfully submitted within 30 days before the date of intended entry will be arranged in the order of submission time.\u003c/li\u003e\r\n\t\t\u003cli\u003eOnce an application is approved, the date of entry and the names of members (including the team leader, team members, and the emergency coordinator) cannot be changed. Parties may cancel their application in whole or in part (either for an individual or for the entire party). Additional (separate) applications should be submitted if additional members wish to participate.\u003c/li\u003e\r\n\t\u003c/ol\u003e\r\n\t\u003c/li\u003e\r\n\t\u003cli\u003eFor Mt. Yangtou Single Day Ascent, Mt. Bilu Single Day Ascent routes:\r\n\t\u003col style=\"list-style-type:upper-alpha;\"\u003e\r\n\t\t\u003cli\u003eApplication window open 3-30 days before entry (closing at\u0026nbsp;3 pm, 3 days before the date of intended entry).\u003c/li\u003e\r\n\t\t\u003cli\u003eOne application is representative of one team. A team can consist of a maximum of 12 people; separate (new) application(s) should be completed if the number of team members exceeds 12. An applicant can only be a team member or a team leader a maximum of once a day (e.g. one cannot be a member of a team and the leader of another team on the same day).\u003c/li\u003e\r\n\t\t\u003cli\u003eApplications submitted less than 3 days before the date of intended entry will not be accepted.\u003c/li\u003e\r\n\t\t\u003cli\u003eApplications successfully submitted within 30 days before the date of intended entry will be arranged in the order of submission time.\u003c/li\u003e\r\n\t\t\u003cli\u003eOnce an application is approved, the date of entry and the names of members (including the team leader, team members, and the emergency coordinator) cannot be changed. Parties may cancel their application in whole or in part (either for an individual or for the entire party). Additional (separate) applications should be submitted if additional members wish to participate.\u003c/li\u003e\r\n\t\u003c/ol\u003e\r\n\t\u003c/li\u003e\r\n\t\u003cli\u003eFor Zhuilu Old Road:\r\n\t\u003col style=\"list-style-type:upper-alpha;\"\u003e\r\n\t\t\u003cli\u003eApplications will open 1 \u0026ndash; 30 days before entry. The application window will close at 3 pm on the previous working day.\u003c/li\u003e\r\n\t\t\u003cli\u003eOne application is representative of one team. A team can consist of a maximum of 12 people; separate (new) application(s) should be completed if the number of team members exceeds 12. An applicant can only be a team member or a team leader a maximum of once a day (e.g. one cannot be a member of a team and the leader of another team on the same day).\u003c/li\u003e\r\n\t\t\u003cli\u003eThe latest submission time for Zhuilu Old Road is 3 pm the previous day if the date of intended entry falls between Tuesday and Friday, and before 3 pm on Friday for entry between Saturday and Monday. If there is a public holiday before the date of intended entry, the latest submission time is 3 pm on the last working day. Otherwise, applications submitted in advance of these date restrictions will not be subjected to these regulations.\u003c/li\u003e\r\n\t\t\u003cli\u003eApplications successfully submitted within 30 days before the date of intended entry will be arranged in the order of submission time.\u003c/li\u003e\r\n\t\t\u003cli\u003eOnce an application is approved, the date of entry and the names of members (including the team leader, team members, and the emergency coordinator) cannot be changed. Parties may cancel their application in whole or in part (either for an individual or for the entire party). Additional (separate) applications should be submitted if additional members wish to participate.\u003c/li\u003e\r\n\t\u003c/ol\u003e\r\n\t\u003c/li\u003e\r\n\t\u003cli\u003e\r\n\t\u003cp\u003eAdvance Application for Zhuilu Old Road (Foreigners Only):\u003c/p\u003e\r\n\t\u003c/li\u003e\r\n\u003c/ol\u003e\r\n\r\n\u003cul\u003e\r\n\t\u003cli\u003e\r\n\t\u003cp\u003eApplication window open 4 months to 35 days before date of intended entry; weekdays only (Monday to Thursday, excluding public holidays).\u0026nbsp;The application window closes at\u0026nbsp;3 pm, 35 days before the date of intended entry.\u003c/p\u003e\r\n\t\u003c/li\u003e\r\n\t\u003cli\u003e\r\n\t\u003cp\u003eAll team members must possess foreign nationality; please upload the photo page of your valid passport or a resident ID card as proof.\u003c/p\u003e\r\n\t\u003c/li\u003e\r\n\t\u003cli\u003e\r\n\t\u003cp\u003eOnce an application has been approved, the date of entry and the names of all team members (including the leader, team members, and the emergency coordinator) cannot be altered, and additional team members cannot be added to the same application. Cancellation (for an individual or for the entire party, excluding the team leader) can be accepted. Separate applications should be submitted if additional members wish to hike on the same date of intended entry.\u003c/p\u003e\r\n\t\u003c/li\u003e\r\n\t\u003cli\u003e\r\n\t\u003cp\u003eThere will be no standby measures (i.e. waitlist) for foreign visitor applications to Zhuilu Old Road. All applicants regardless of nationality are welcome to apply through the standard application window (1 \u0026ndash; 30 days before date of intended entry) if the quota for foreign visitors has already been reached.\u003c/p\u003e\r\n\t\u003c/li\u003e\r\n\u003c/ul\u003e\r\n",
-        "name_jp":  "\u003cp style=\"margin-left:49.6pt;\"\u003e●奇萊主（北）峰、奇萊連峰、奇萊東稜、奇萊南峰、南湖大山、南湖中央尖、北一縱走北二、北二段、閂山鈴鳴山、閂山單攻、畢祿縱走羊頭、清水山、其它路線：入園予定日前2個月から5日の15：00以前。\u003c/p\u003e\r\n\r\n\u003cp style=\"margin-left:49.6pt;\"\u003e●羊頭山、畢祿山單攻路線：入園予定日2個月から3日の15：00以前。\u003c/p\u003e\r\n\r\n\u003cp style=\"margin-left:49.6pt;\"\u003e●錐麓古道日帰りルート：入園予定日2個月から１日の15：00以前\u003c/p\u003e\r\n\r\n\u003cp style=\"margin-left:49.6pt;\"\u003e●錐麓古道日帰りルート外国人先行申請：入園予定日前4か月から35日、入園予定日は月曜日から木曜日（祝祭日を除く）に限る\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e颱風警報發布、森林火災或其他突發事件時，管理處得另行發布緊急措施禁止人員進入，已核發之入園許可證自動廢止(無效)。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
         "order":  5
     },
     {
-        "id":  "attention-38",
-        "dbId":  38,
+        "id":  "attention-tr06",
+        "dbId":  9306,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e「緊急災難處理」\u003c/p\u003e\r\n\r\n\u003cp\u003e1.攜帶登山所須個人及團體裝備(雪季期間攜帶雪地攀登裝備)。\u003c/p\u003e\r\n\r\n\u003cp\u003e2.攜帶足夠的通訊及定位(GPS)設備，並定時與留守人員及家人聯絡。\u003c/p\u003e\r\n\r\n\u003cp\u003e3.充分瞭解園區之災害與天候資訊，並於行前辦理登山安全講習。\u003c/p\u003e\r\n\r\n\u003cp\u003e4.充分瞭解所有隊員身心狀況，並於行前自主訓練登山技能。\u003c/p\u003e\r\n\r\n\u003cp\u003e5.行進間以安全第一為原則，並配合國家公園現場人員查核及引導。\u003c/p\u003e\r\n\r\n\u003cp\u003e6.辦妥相關保險。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003e[Emergency Planning]\u003c/p\u003e\r\n\r\n\u003col\u003e\r\n\t\u003cli\u003ePlease ensure and bring adequate personal and group mountain equipment with you on your hike (including snow/ice climbing equipment during snow season).\u003c/li\u003e\r\n\t\u003cli\u003ePlease bring working communication and GPS devices with you on your hike, and regularly notify family members and/or your emergency contact persons of your itinerary and current position.\u003c/li\u003e\r\n\t\u003cli\u003eTeam members must be cognizant of the weather and must fully recognize and understand the various disaster risks within the Park area, and attend the safety maintenance workshops before the hiking trip, if required.\u003c/li\u003e\r\n\t\u003cli\u003eThe team leader must be fully informed of the physical and mental conditions of all team members, and undertake any necessary physical conditioning and essential mountaineering skills before embarking on the trip. \u0026nbsp;\u003c/li\u003e\r\n\t\u003cli\u003eTeam members must adhere to the \u0026ldquo;Safety First\u0026rdquo; principles while on the trip. All team members must comply the National Parks Conservation Volunteers if subject to inspection and/or instruction, and adhere to their guidance if needed.\u003c/li\u003e\r\n\t\u003cli\u003ePlease consider appropriate insurance for your team to ensure adequate coverage in the face of an emergency.\u003c/li\u003e\r\n\u003c/ol\u003e\r\n",
-        "name_jp":  "\u003cp\u003e「緊急災難處理」\u003c/p\u003e\r\n\r\n\u003cp\u003e1.攜帶登山所須個人及團體裝備(雪季期間攜帶雪地攀登裝備)。\u003c/p\u003e\r\n\r\n\u003cp\u003e2.攜帶足夠的通訊及定位(GPS)設備，並定時與留守人員及家人聯絡。\u003c/p\u003e\r\n\r\n\u003cp\u003e3.充分瞭解園區之災害與天候資訊，並於行前辦理登山安全講習。\u003c/p\u003e\r\n\r\n\u003cp\u003e4.充分瞭解所有隊員身心狀況，並於行前自主訓練登山技能。\u003c/p\u003e\r\n\r\n\u003cp\u003e5.行進間以安全第一為原則，並配合國家公園現場人員查核及引導。\u003c/p\u003e\r\n\r\n\u003cp\u003e6.辦妥相關保險。\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e入園申請前領隊責任同意事項：\u003c/p\u003e\n\n\u003cp\u003e1. 本申請人瞭解所填具之隊員資料與行程計畫等，如明知為不實之事項，而使公務員登載 於職務上所掌之公文書，足以生損害於公眾或他人者，恐涉及刑法之偽造文書罪，依「使登 載不實事項」論處。\u003c/p\u003e\n\n\u003cp\u003e2. 本申請人承諾轉知領隊及隊員有關本案核發之「生態保護區入園許可證」各項承諾規定 與審查建議事項。並請領隊攜帶入園許可證及隊員身分證明文件，供入園查核。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
-        "order":  95
+        "order":  6
     },
     {
-        "id":  "attention-39",
-        "dbId":  39,
+        "id":  "attention-tr07",
+        "dbId":  9307,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e「環境維護」\u003c/p\u003e\r\n\r\n\u003cp\u003e1.遵守進入國家公園生態保護區之相關規定。\u003c/p\u003e\r\n\r\n\u003cp\u003e2.充分瞭解無痕山林準則，減輕環境及生態衝擊。\u003c/p\u003e\r\n\r\n\u003cp\u003e3.避免影響野生動植物，不留下任何廢棄物及物品。\u003c/p\u003e\r\n\r\n\u003cp\u003e4.不離開已開放供使用之步道及區域。\u003c/p\u003e\r\n\r\n\u003cp\u003e5.配合國家公園保育巡查及行動，並協助勸導隊員言行舉止。\u003c/p\u003e\r\n\r\n\u003cp\u003e6.為考量安全及損壞設施請勿在山屋床位上炊煮。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003e[Environmental Protection]\u003c/p\u003e\r\n\r\n\u003col\u003e\r\n\t\u003cli\u003eAll team members must obey the relevant regulations when entering the Ecological Protection Area of Taroko National Park.\u003c/li\u003e\r\n\t\u003cli\u003eTeam members will fully understand the Leave No Trace Principles, and strive to keep their ecological footprint to a minimum.\u003c/li\u003e\r\n\t\u003cli\u003eTeam members will keep contact with wildlife to a minimum, and will not dispose of any rubbish on the trails.\u003c/li\u003e\r\n\t\u003cli\u003eTeam members must not leave the trailpath.\u003c/li\u003e\r\n\t\u003cli\u003eIf required, team members will cooperate with the National Parks Volunteers in areas of conservation action, and hold themselves and team members to upstanding behavior in this regard.\u003c/li\u003e\r\n\t\u003cli\u003eFor your own safety, it is forbidden to cook on beds inside cabins\u003c/li\u003e\r\n\u003c/ol\u003e\r\n",
-        "name_jp":  "\u003cp\u003e「環境維護」\u003c/p\u003e\r\n\r\n\u003cp\u003e1.遵守進入國家公園生態保護區之相關規定。\u003c/p\u003e\r\n\r\n\u003cp\u003e2.充分瞭解無痕山林準則，減輕環境及生態衝擊。\u003c/p\u003e\r\n\r\n\u003cp\u003e3.避免影響野生動植物，不留下任何廢棄物及物品。\u003c/p\u003e\r\n\r\n\u003cp\u003e4.不離開已開放供使用之步道及區域。\u003c/p\u003e\r\n\r\n\u003cp\u003e5.配合國家公園保育巡查及行動，並協助勸導隊員言行舉止。\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e生態保護措施承諾：\u003c/p\u003e\n\n\u003cp\u003e1. 將充分瞭解本區生態的脆弱性，並於行前辦理減輕生態衝擊講習。\u003c/p\u003e\n\n\u003cp\u003e2. 將充分瞭解無痕山林準則，行程中隨時注意並提醒隊員山友言行。\u003c/p\u003e\n\n\u003cp\u003e3. 將配合國家公園巡查志工之保育行動，並協助勸導隊員山友言行。\u003c/p\u003e\n\n\u003cp\u003e4. 避免人造物品影響野生物，留置物同意管理處依無主廢棄物處理。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
-        "order":  96
+        "order":  7
     },
     {
-        "id":  "attention-1029",
-        "dbId":  1029,
+        "id":  "attention-tr08",
+        "dbId":  9308,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e如欲申請【錐麓古道】請觀看\u003ca href=\"https://www.youtube.com/watch?v=mlQmpH1w0Rw\" style=\"line-height: 20.8px;\" target=\"_blank\"\u003e錐麓古道安全宣導影片\u003c/a\u003e\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003ePlease watch the \u0026quot;\u003ca href=\"https://www.youtube.com/watch?v=mlQmpH1w0Rw\"\u003eZhuilu Old Road Safety Announcement Video\u003c/a\u003e\u0026quot; if you wish to apply for admission to Zhuilu Old Road.\u003c/p\u003e\r\n",
-        "name_jp":  "\u003cp\u003e如欲申請【錐麓古道】請觀看\u003ca href=\"https://www.youtube.com/watch?v=mlQmpH1w0Rw\" style=\"line-height: 20.8px;\" target=\"_blank\"\u003e錐麓古道安全宣導影片\u003c/a\u003e\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e3G網路將於113年6月30日關閉，屆時無論上網或是語音，將全面透過4G/5G網路進行，屆時將無法打電話/接電話（含撥打110、119、112緊急電話），手機及SIM卡必須能支援4G語音（VoLTE）並打開手機4G語音（VoLTE）設定，敬請山友及早更新通訊設備因應。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "1",
         "defaultChecked":  true,
-        "order":  97
+        "order":  8
     },
     {
-        "id":  "attention-1036",
-        "dbId":  1036,
+        "id":  "attention-tr09",
+        "dbId":  9309,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e\u003cstrong\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e確認已於申請前詳閱並明瞭「\u003c/span\u003e\u003c/span\u003e\u003ca href=\"https://hike.taiwan.gov.tw/notice_a4.aspx\" style=\"color: rgb(51, 122, 183); text-transform: none; text-indent: 0px; letter-spacing: normal; font-family: 微軟正黑體, Verdana, Arial, Helvetica, sans-serif; font-size: 15px; font-style: normal; font-weight: normal; text-decoration: none; word-spacing: 0px; white-space: normal; box-sizing: border-box; orphans: 2; widows: 2; background-color: rgb(235, 240, 216); font-variant-ligatures: normal; font-variant-caps: normal; -webkit-text-stroke-width: 0px;\"\u003e\u003cspan style=\"color:#b22222;\"\u003e \u003c/span\u003e\u003c/a\u003e\u003ca href=\"https://hike.taiwan.gov.tw/news_0_1.aspx?id=1855\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e\u003cspan style=\"font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:14px\"\u003e錐麓古道入園收費須知\u003c/span\u003e\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e」，\u003c/span\u003e\u003c/span\u003e\u003cspan style=\"color:#ff0000;\"\u003e現場購票與入園查核時間每日\u003c/span\u003e\u003ca href=\"https://hike.taiwan.gov.tw/news_0_1.aspx?id=3106\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e\u003cu\u003e上午7時~上午10時\u003c/u\u003e\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#ff0000;\"\u003e止\u003c/span\u003e\u003c/strong\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cstrong\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e，\u003c/span\u003e\u003c/strong\u003e\u003cstrong\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e並轉知全體隊員。\u003c/span\u003e\u003c/strong\u003e\u003c/span\u003e\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003e\u003cspan style=\"color:#b22222;\"\u003eI have read and acknowledge the \u0026quot;\u003c/span\u003e\u003ca href=\"https://hike.taiwan.gov.tw/en/news_0_1.aspx?id=1855\"\u003e\u003cspan style=\"color:#0000ff;\"\u003eAdmission Fees pertaining to Zhuilu Old Road\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#b22222;\"\u003e\u0026quot; prior to applying.\u003c/span\u003e\u003cspan style=\"color:#ff0000;\"\u003e \u003cstrong\u003e\u003cspan style=\"font-size:12px;\"\u003eI understand that we must enter Zhuilu Old Road between\u003c/span\u003e\u003c/strong\u003e\u003c/span\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cstrong\u003e\u003cspan style=\"font-size:12px;\"\u003e \u003c/span\u003e\u003c/strong\u003e\u003c/span\u003e\u003ca href=\"http://npm.cpami.gov.tw/en/news_1main.aspx?id=1855\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e\u003cstrong\u003e\u003cspan style=\"font-size:12px;\"\u003e\u003cu\u003e7 AM and 10 AM\u003c/u\u003e\u003c/span\u003e\u003c/strong\u003e\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cstrong\u003e\u003cspan style=\"font-size:12px;\"\u003e.\u003c/span\u003e\u0026nbsp;\u003c/strong\u003eI will convey this information to all team members.\u003c/span\u003e\u003c/p\u003e\r\n",
-        "name_jp":  "\u003cp\u003e\u003cstrong\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e確認已於申請前詳閱並明瞭「\u003c/span\u003e\u003c/span\u003e\u003ca href=\"https://hike.taiwan.gov.tw/en/notice_a4.aspx\" style=\"color: rgb(51, 122, 183); text-transform: none; text-indent: 0px; letter-spacing: normal; font-family: 微軟正黑體, Verdana, Arial, Helvetica, sans-serif; font-size: 15px; font-style: normal; font-weight: normal; text-decoration: none; word-spacing: 0px; white-space: normal; box-sizing: border-box; orphans: 2; widows: 2; background-color: rgb(235, 240, 216); font-variant-ligatures: normal; font-variant-caps: normal; -webkit-text-stroke-width: 0px;\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e \u003c/span\u003e\u003c/a\u003e\u003ca href=\"https://npm.cpami.gov.tw/news_1main.aspx?id=1855\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e\u003cspan style=\"font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:14px\"\u003e錐麓古道入園收費須知\u003c/span\u003e\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e」，\u003c/span\u003e\u003c/span\u003e\u003cspan style=\"color:#ff0000;\"\u003e現場購票與入園查核時間每日\u003c/span\u003e\u003ca href=\"https://npm.cpami.gov.tw/news_1main.aspx?id=3106\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e\u003cu\u003e上午7時~上午10時\u003c/u\u003e\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#ff0000;\"\u003e止\u003c/span\u003e\u003c/strong\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cstrong\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e，並轉知全體隊員。\u003c/span\u003e\u003c/strong\u003e\u003c/span\u003e\u003c/p\u003e\r\n",
+        "name":  "\u003cp\u003e登山安全措施承諾：\u003c/p\u003e\n\n\u003cp\u003e1. 將充分瞭解本區之災害與天候資訊，並於行前辦理安全維護講習。\u003c/p\u003e\n\n\u003cp\u003e2. 將充分瞭解所有隊友身心狀況，並於行前自主訓練補強各項技能。\u003c/p\u003e\n\n\u003cp\u003e3. 將充分瞭解原野地緊急應變措施，確實攜帶各項登山裝備與用品。\u003c/p\u003e\n\n\u003cp\u003e4. 攜帶足夠的通訊設備與電池，並定時與山下留守人員及家人聯絡。\u003c/p\u003e\n\n\u003cp\u003e5. 行進中隨時評估氣象與隊員狀況，以安全第一為原則下妥善因應。\u003c/p\u003e\n\n\u003cp\u003e6. 配合國家公園保育志工查核與引導，如有安全疑慮絕不勉強攀登。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  9
+    },
+    {
+        "id":  "attention-tr10",
+        "dbId":  9310,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e欲申請「其他路線」：\u003c/p\u003e\n\n\u003cp\u003e線上系統僅受理進入生態保護區之案件，非進入生態保護區，系統亦將退回申辦案件。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  10
+    },
+    {
+        "id":  "attention-tr11",
+        "dbId":  9311,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e登山申請時間說明：\u003c/p\u003e\n\n\u003cp\u003e1、奇萊主（北）峰、奇萊連峰、奇萊東稜、奇萊南峰、南湖大山、南湖中央尖、北一縱走北二、北二段、閂山鈴鳴山、閂山單攻、畢祿縱走羊頭、清水山、其它路線：\u003c/p\u003e\n\n\u003cp\u003e（一）預定入園日前5天下午3時至前2個月提出申請，並得申請連日行程。\u003c/p\u003e\n\n\u003cp\u003e（二）.每份申請書為一隊，每隊最多12人；超過者應分別填寫。領隊及隊員均不得重覆。\u003c/p\u003e\n\n\u003cp\u003e（三）預定入園日前5天內申請案件不予受理。連續假期應於放假前5天上班日下午3時前完成申請。\u003c/p\u003e\n\n\u003cp\u003e（四）預定入園日前2個月內提出申請，以申請送件時間為先後排序。\u003c/p\u003e\n\n\u003cp\u003e（五）入園(住)申請案件經登錄系統後，日期及人員不得更換或增加。\u003c/p\u003e\n\n\u003cp\u003e（六）全隊或個別隊員可以取消入園。\u003c/p\u003e\n\n\u003cp\u003e（七）新增人員，應另案提出申請。\u003c/p\u003e\n\n\u003cp\u003e2、羊頭山、畢祿山單攻路線：\u003c/p\u003e\n\n\u003cp\u003e（一）預定入園日前3天下午3時至前2個月提出申請，並得申請連日行程。\u003c/p\u003e\n\n\u003cp\u003e（二）每份申請書為一隊，每隊最多12人；超過者應分別填寫。領隊及隊員均不得重覆。\u003c/p\u003e\n\n\u003cp\u003e（三）預定入園日前3天內申請案件不予受理。翌週一及連續假期應於放假前3天上班日下午3時前完成申請。\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（四）預定入園日前2個月內提出申請，以申請送件時間為先後排序。\u003c/p\u003e\n\n\u003cp\u003e（五）入園(住)申請案件經登錄系統後，日期及人員不得更換或增加。\u003c/p\u003e\n\n\u003cp\u003e（六）全隊或個別隊員可以取消入園。\u003c/p\u003e\n\n\u003cp\u003e（七）新增人員，應另案提出申請。\u003c/p\u003e\n\n\u003cp\u003e3、錐麓古道單日路線：\u003c/p\u003e\n\n\u003cp\u003e（一）預定入園日前1天下午3時前至前2個月前可提出申請。\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（二）錐麓古道每天每一人限制申請一隊12人，每份申請書為一隊，每隊最多12人；超過者應分別填寫。領隊及隊員均不得重覆。\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（三）入園前一日為週二至週五者，應於前1天下午3時前完成申請；為週六至翌週一者，應於週五下午3時前完成申請。\u003c/p\u003e\n\n\u003cp\u003e（四）連續假期，應於放假前1天下午3時前完成申請。\u003c/p\u003e\n\n\u003cp\u003e（五）預定入園日前2個月內提出申請，以申請送件時間為先後排序。\u003c/p\u003e\n\n\u003cp\u003e（六）入園(住)申請案件經登錄系統後，日期及人員不得更換或增加。\u003c/p\u003e\n\n\u003cp\u003e（七）全隊或個別隊員可以取消入園。\u003c/p\u003e\n\n\u003cp\u003e（八）新增人員，應另案提出申請。\u003c/p\u003e\n\n\u003cp\u003e4、屏風避難山屋：\u003c/p\u003e\n\n\u003cp\u003e（一）.預定入住前5天下午3時前至前2個月可提出申請，得申請連2日行程。\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（二）每份申請書為一隊，每隊最多12人；超過者應分別填寫。領隊及隊員均不得重覆。\u0026nbsp;\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（三）預定入住日前5 天內申請案件不予受理。連續假期應於放假前1天下午3時前完成申請。\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（四）預定入住日前2 個月內提出申請案件，以申請送件時間為先後排序。\u0026nbsp;\u003c/p\u003e\n\n\u003cp\u003e（五）入住申請案件經登錄系統後，日期及人員不得更換或增加。\u003c/p\u003e\n\n\u003cp\u003e（六）全隊或個別隊員可以取消入園。\u003c/p\u003e\n\n\u003cp\u003e（七）新增人員，應另案提出申請。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  11
+    },
+    {
+        "id":  "attention-tr12",
+        "dbId":  9312,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e「緊急災難處理」\u003c/p\u003e\n\n\u003cp\u003e1.攜帶登山所須個人及團體裝備(雪季期間攜帶雪地攀登裝備)。\u003c/p\u003e\n\n\u003cp\u003e2.攜帶足夠的通訊及定位(GPS)設備，並定時與留守人員及家人聯絡。\u003c/p\u003e\n\n\u003cp\u003e3.充分瞭解園區之災害與天候資訊，並於行前辦理登山安全講習。\u003c/p\u003e\n\n\u003cp\u003e4.充分瞭解所有隊員身心狀況，並於行前自主訓練登山技能。\u003c/p\u003e\n\n\u003cp\u003e5.行進間以安全第一為原則，並配合國家公園現場人員查核及引導。\u003c/p\u003e\n\n\u003cp\u003e6.辦妥相關保險。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  12
+    },
+    {
+        "id":  "attention-tr13",
+        "dbId":  9313,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e「環境維護」\u003c/p\u003e\n\n\u003cp\u003e1.遵守進入國家公園生態保護區之相關規定。\u003c/p\u003e\n\n\u003cp\u003e2.充分瞭解無痕山林準則，減輕環境及生態衝擊。\u003c/p\u003e\n\n\u003cp\u003e3.避免影響野生動植物，不留下任何廢棄物及物品。\u003c/p\u003e\n\n\u003cp\u003e4.不離開已開放供使用之步道及區域。\u003c/p\u003e\n\n\u003cp\u003e5.配合國家公園保育巡查及行動，並協助勸導隊員言行舉止。\u003c/p\u003e\n\n\u003cp\u003e6.為考量安全及損壞設施請勿在山屋床位上炊煮。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  13
+    },
+    {
+        "id":  "attention-tr14",
+        "dbId":  9314,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e如欲申請【錐麓古道】請觀看\u003ca href=\"https://www.youtube.com/watch?v=mlQmpH1w0Rw\" style=\"line-height: 20.8px;\" target=\"_blank\"\u003e錐麓古道安全宣導影片\u003c/a\u003e\u0026nbsp; 。「\u003ca href=\"https://hike.taiwan.gov.tw/NationPark/manasystem/news/files/news/12e14c98-0cf9-4e3a-b60c-091958932702.docx\" target=\"_blank\"\u003e錐麓古道入園公約\u003c/a\u003e」請於出發前先行下載詳閱，並於入園當日現場繳交。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  14
+    },
+    {
+        "id":  "attention-tr15",
+        "dbId":  9315,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e\u003cstrong\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e確認已於申請前詳閱並明瞭「\u003c/span\u003e\u003c/span\u003e\u003ca href=\"https://hike.taiwan.gov.tw/notice_a4.aspx\" style=\"color: rgb(51, 122, 183); text-transform: none; text-indent: 0px; letter-spacing: normal; font-family: 微軟正黑體, Verdana, Arial, Helvetica, sans-serif; font-size: 15px; font-style: normal; font-weight: normal; text-decoration: none; word-spacing: 0px; white-space: normal; box-sizing: border-box; orphans: 2; widows: 2; background-color: rgb(235, 240, 216); font-variant-ligatures: normal; font-variant-caps: normal; -webkit-text-stroke-width: 0px;\"\u003e\u003cspan style=\"color:#b22222;\"\u003e \u003c/span\u003e\u003c/a\u003e\u003ca href=\"https://hike.taiwan.gov.tw/news_0_1.aspx?id=1855\"\u003e\u003cspan style=\"color:#0000ff;\"\u003e\u003cspan style=\"font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:14px\"\u003e錐麓古道入園收費須知\u003c/span\u003e\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e」，\u003c/span\u003e\u003c/span\u003e\u003cspan style=\"color:#ff0000;\"\u003e現場購票與入園查核時間每日\u003cu\u003e上午7時~上午10時\u003c/u\u003e\u003c/span\u003e\u003cspan style=\"color:#ff0000;\"\u003e止\u003c/span\u003e\u003c/strong\u003e\u003cspan style=\"color:#b22222;\"\u003e\u003cstrong\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e，\u003c/span\u003e\u003c/strong\u003e\u003cstrong\u003e\u003cspan style=\"background-color:#ebf0d8; font-family:微軟正黑體,Verdana,Arial,Helvetica,sans-serif; font-size:15px\"\u003e並轉知全體隊員。\u003c/span\u003e\u003c/strong\u003e\u003c/span\u003e\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  15
+    },
+    {
+        "id":  "attention-tr16",
+        "dbId":  9316,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e入園申請隊員若具有學生身分或參加學校社團活動，請務必自行通報學校相關單位，作為緊急應變之用。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
+        "chk":  "1",
+        "selectchk":  "1",
+        "defaultChecked":  true,
+        "order":  16
+    },
+    {
+        "id":  "attention-tr17",
+        "dbId":  9317,
+        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
+        "name":  "\u003cp\u003e請確認您的隊伍是否符合「\u003ca href=\"https://glrs.nantou.gov.tw/glrsout/LawContent.aspx?id=GL000318\"\u003e南投縣登山活動管理自治條例\u003c/a\u003e」、「\u003ca href=\"https://lawsearch.taichung.gov.tw/GLRSout/LawContent.aspx?id=GL003013\"\u003e臺中市登山活動管理自治條例\u003c/a\u003e」、「\u003ca href=\"https://glrs.hl.gov.tw/glrsout/LawContent.aspx?id=GL000696\"\u003e花蓮縣登山活動管理自治條例\u003c/a\u003e」內載相關規定，以免觸法。\u003c/p\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "0",
         "defaultChecked":  false,
-        "order":  99
+        "order":  17
     },
     {
-        "id":  "attention-1056",
-        "dbId":  1056,
+        "id":  "attention-tr18",
+        "dbId":  9318,
         "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e\u003cspan style=\"color:#ff0000;\"\u003e1.隊伍所有成員於入園前一日皆「非」中央疫情指揮中心所公告居家隔離、居家檢疫及自主健康管理之人員。\u003c/span\u003e\u003cspan style=\"color:#ff0000;\"\u003e(詳見:\u003c/span\u003e\u003cspan style=\"color:#0000ff;\"\u003ehttps://www.cdc.gov.tw\u003c/span\u003e)。\u003c/p\u003e\r\n\r\n\u003cp\u003e\u003cspan style=\"color:#ff0000;\"\u003e2.隊伍所有成員入園前若有發燒、呼吸道不適或嚴重咳嗽者等症狀，即自行取消入園，且領隊已明確告知相關權利義務。\u003c/span\u003e\u003c/p\u003e\r\n\r\n\u003cp\u003e\u003cspan style=\"color:#ff0000;\"\u003e3.隊伍所有成員應加強自主健康管理，進入山屋應使用口罩或足可遮掩口鼻物品，保護自己也尊重他人。入園之後如有疑似相關症狀發生，請盡快下山。\u003c/span\u003e\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003e\u003cspan style=\"color:#b22222;\"\u003e1. None of the group members meets the reporting criteria specified by the Central Epidemic Command Center. (\u003c/span\u003e\u003ca href=\"https://www.cdc.gov.tw/En\"\u003e\u003cspan style=\"color:#b22222;\"\u003ehttps://www.cdc.gov.tw/En\u003c/span\u003e\u003c/a\u003e\u003cspan style=\"color:#b22222;\"\u003e)\u003c/span\u003e\u003c/p\u003e\r\n\r\n\u003cp\u003e\u003cspan style=\"color:#b22222;\"\u003e2. Anyone member who shows symptoms such as fever, shortness of breath, or serious cough before entering the park is required to cancel the individual application.\u003c/span\u003e\u003c/p\u003e\r\n\r\n\u003cp\u003e\u003cspan style=\"color:#b22222;\"\u003e3. All visitors need to pay close attention to the health condition. To protect oneself and respect others, if anyone starts to have signs of cold or flu, this person must wear a mask or other object that can cover the nose and month while inside the cabin.\u003c/span\u003e\u003c/p\u003e\r\n",
-        "name_jp":  "\u003cp\u003e1. None of the group members comes from Level 1 or Level 2 areas listed by the Central Epidemic Command Center nor travels to China within 14 days.\u003c/p\u003e\r\n\r\n\u003cp\u003e2. Anyone who with symptoms such as fever, shortness of breath, or serious cough is required to cancel the individual application.\u003c/p\u003e\r\n\r\n\u003cp\u003e3. All visitors need to pay close attention to the health condition. If one starts to show the sign of cold or flu, this person must wear a mask or other object that can cover the nose and month while inside the cabin.\u003c/p\u003e\r\n",
+        "name":  "\u003cspan style=\"color: #cc0000;\"\u003e\u003cb\u003e本人已閱讀並充分瞭解上述注意事項，並會遵守國家公園、警政署各項規定。\u003c/b\u003e\u003c/span\u003e",
+        "name_en":  "",
+        "name_jp":  "",
         "chk":  "1",
         "selectchk":  "0",
         "defaultChecked":  false,
-        "order":  100
+        "order":  18
     },
-    {
-        "id":  "attention-1057",
-        "dbId":  1057,
-        "orgId":  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12",
-        "name":  "\u003cp\u003e入園申請隊員若具有學生身分或參加學校社團活動，請務必自行通報學校相關單位，作為緊急應變之用。\u003c/p\u003e\r\n",
-        "name_en":  "\u003cp\u003eIf the applicants for admission have student status or participate in school club activities, you must report to the relevant school unit for emergency response.\u003c/p\u003e\r\n",
-        "name_jp":  "\u003cp\u003e入学志願者が学生の地位を持っているか、学校のクラブ活動に参加している場合、彼らは緊急対応のために関連する学校単位に報告しなければなりません。\u003c/p\u003e\r\n",
-        "chk":  "1",
-        "selectchk":  "0",
-        "defaultChecked":  false,
-        "order":  102
-    },
+
+
+
+
+
+
+
+
+
+
+
+
     {
         "id":  "attention-yu00",
         "dbId":  9100,
