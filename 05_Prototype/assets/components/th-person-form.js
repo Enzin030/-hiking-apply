@@ -21,8 +21,8 @@
    | role   | 欄位數 | 與 apply 的差異 |
    |--------|--------|-----------------|
    | apply  | 15     | —（18 歲提示由頁面顯示，見 ROLES.apply 註解） |
-   | leader | 16     | 多「是否為學生」 |
-   | member | 15     | 少「傳真」、多「是否為學生」 |
+   | leader | 15     | —（2026-09-29 正式站無「是否為學生」，已移除） |
+   | member | 14     | 少「傳真」 |
    | stay   | 9      | 只有姓名／電話／手機／傳真／email／國籍／國別／證號／生日 |
 
    「國別」只在國籍選「國外」時出現，所以畫面上的欄位數會少一個。
@@ -104,15 +104,15 @@
     apply:  { title: "申請人", note: "",
               keys: ["name", "tel", "country", "city", "addr", "mobile", "fax", "email",
                      "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel"] },
+    /* 2026-09-29 正式站太魯閣步驟二擷取（空白、填妥兩份）皆無「是否為學生」，
+       舊站程式碼的 leader_student／member_student 在正式站未顯示，依正式站移除 */
     leader: { title: "領隊", note: "領隊須為年滿18歲之成年人",
               keys: ["name", "tel", "country", "city", "addr", "mobile", "fax", "email",
-                     "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel",
-                     "student"] },
+                     "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel"] },
     member: { title: "隊員", note: "",
               keys: ["name", "tel", "country", "city", "addr", "mobile", "email",
-                     "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel",
-                     "student"] },
-    stay:   { title: "留守人", note: "",
+                     "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel"] },
+    stay:   { title: "留守人", note: "留守人須為年滿18歲之成年人",
               keys: ["name", "tel", "mobile", "fax", "email", "nation", "nationid", "sid", "birthday"] },
   };
 

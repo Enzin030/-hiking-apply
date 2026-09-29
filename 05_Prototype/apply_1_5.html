@@ -94,7 +94,7 @@
             <div class="th-field">
               <label class="th-label" for="f-sumday"><span class="req">*</span>登山總日數</label>
               <th-hybrid-select><select id="f-sumday" class="th-select" v-model.number="sumday">
-                <option v-for="n in 7" :key="n" :value="n">共{{ n }}天</option>
+                <option v-for="n in 30" :key="n" :value="n">共{{ n }}天</option>
               </select></th-hybrid-select>
             </div>
             <div class="th-field">
@@ -198,8 +198,10 @@
         <div v-show="open.leader" class="th-card-body grid gap-4">
           <label class="flex items-center gap-2 th-label">
             <input type="checkbox" v-model="leaderSame" />同申請人</label>
+          <p class="th-field-hint">未滿18歲者不得擔任領隊</p>
           <th-person-form v-if="leaderSame" role="leader" id-prefix="leader-v" :model-value="leaderView" readonly></th-person-form>
           <th-person-form v-else role="leader" id-prefix="leader" v-model="leader"></th-person-form>
+          <p class="th-field-hint">「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
         </div>
       </section>
 
@@ -212,7 +214,8 @@
         </button>
         <div v-show="open.member" class="th-card-body grid gap-4">
           <label class="flex items-start gap-2 th-label">
-            <input type="checkbox" v-model="memberConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令。</label>
+            <input type="checkbox" v-model="memberConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請，以免違反相關法令。</label>
+          <p class="th-field-hint">(請填個人手機號碼(勿共用)，隊員如非同住家人，e-mail、地址、緊急聯絡人請勿重複，如填寫資料重複會請申請人修改，耽誤您等候審核時間)</p>
           <template v-if="memberConsent">
             <div v-for="(m, i) in members" :key="i" class="grid gap-2">
               <div class="flex items-center gap-2">
@@ -221,6 +224,7 @@
                   <i class="fa-solid fa-user-minus" aria-hidden="true"></i>刪除隊員</button>
               </div>
               <th-person-form role="member" :id-prefix="'member' + i" :model-value="m" @update:model-value="setMember(i, $event)"></th-person-form>
+              <p class="th-field-hint">「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
             </div>
             <div v-if="teamsCount < teamMax">
               <button type="button" class="th-btn th-btn-secondary" @click="addMember">
@@ -242,6 +246,7 @@
         <div v-show="open.stay" class="th-card-body grid gap-4">
           <label class="flex items-center gap-2 th-label">
             <input type="checkbox" v-model="staySame" />同申請人</label>
+          <p class="th-field-hint">「留守人員是指不上山人員(家人或朋友等)，每日不定時與山上隊伍聯繫，掌握山上人員行蹤，當隊伍發生狀況需協助、救援時，第一時間通報相關單位，是隊伍的守護天使。」</p>
           <th-person-form role="stay" id-prefix="stay" v-model="stay"></th-person-form>
         </div>
       </section>

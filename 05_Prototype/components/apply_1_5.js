@@ -28,6 +28,28 @@
    - 太魯閣沒有隊伍名稱欄位（舊站 teams_name 是 HiddenField），本頁照做
 
    ------------------------------------------------------------
+   2026-09-29 依正式站實走修正（02_Spec/05c）
+   ------------------------------------------------------------
+   - 入園日期：最早為今日＋5 天、連續 57 個（正式站當天 10-04～11-29，同意書第 11 條「入園日前 5 天」）
+   - 登山總日數 1～30（原 1～7）
+   - 示意路線改為正式站實走節點（經多加屯山登山口、住雲稜山屋）
+   - 入山證：前往地點預填「南湖北山(宜蘭縣-大同鄉)」；**登山計畫書在路線規劃完成時自動產生**
+     「D1:起點→…→終點。」（正式站行為：規劃完成前空白、完成後帶入）
+   - 領隊、隊員**沒有「是否為學生」**（正式站擷取皆無此欄，推翻舊站程式碼推論）
+   - 正式站第 2 天起的起點標籤仍寫「請選擇起點」屬文案瑕疵，本頁不照抄
+
+   ------------------------------------------------------------
+   2026-09-29 依正式站實走修正（02_Spec/05c）
+   ------------------------------------------------------------
+   - 入園日期：最早為今日＋5 天、連續 57 個（正式站當天 10-04～11-29，同意書第 11 條「入園日前 5 天」）
+   - 登山總日數 1～30（原 1～7）
+   - 示意路線改為正式站實走節點（經多加屯山登山口、住雲稜山屋）
+   - 入山證：前往地點預填「南湖北山(宜蘭縣-大同鄉)」；**登山計畫書在路線規劃完成時自動產生**
+     「D1:起點→…→終點。」（正式站行為：規劃完成前空白、完成後帶入）
+   - 領隊、隊員**沒有「是否為學生」**（正式站擷取皆無此欄，推翻舊站程式碼推論）
+   - 正式站第 2 天起的起點標籤仍寫「請選擇起點」屬文案瑕疵，本頁不照抄
+
+   ------------------------------------------------------------
    資料
    ------------------------------------------------------------
    components/Apply15Data.js 與 components/TrailLevelData.js 都在 <body> 底部載入。
@@ -45,12 +67,23 @@ function apply15AddDays(iso, n) {
   return apply15Iso(p[0], p[1] - 1, p[2] + n);
 }
 
-/* 可選入園日期（測試站當下為 2026-09-22 起，示意） */
+/* 可選入園日期：今日＋5 天起連續 57 個（正式站 2026-09-29 觀察：10-04～11-29，無排除日；示意） */
 function apply15Dates() {
+  var t = new Date();
   var out = [];
-  for (var i = 0; i < 20; i++) out.push(apply15Iso(2026, 8, 22 + i));
+  for (var i = 0; i < 57; i++) out.push(apply15Iso(t.getFullYear(), t.getMonth(), t.getDate() + 5 + i));
   return out;
 }
+
+/* 入山證登山計畫書：正式站在路線規劃完成後依逐日節點自動產生 */
+function apply15NpaPlan(days) {
+  return days.map(function (d, i) { return "D" + (i + 1) + ":" + d.join("→") + "。"; }).join("\n");
+}
+var APPLY15_DEMO_DAYS = [
+  ["思源埡口", "5.1K登山口", "多加屯山登山口", "木杆鞍部", "雲稜山屋"],
+  ["雲稜山屋", "審馬陣登山口", "審馬陣山屋"],
+  ["審馬陣山屋", "審馬陣登山口", "雲稜山屋", "木杆鞍部", "多加屯山登山口", "5.1K登山口", "思源埡口"],
+];
 
 var APPLY15_STEPS = [
   { n: 1, title: "行程規劃" },
@@ -247,27 +280,21 @@ thPage({
 
       /* 步驟一（示意資料預設帶入） */
       mainId: "16",
-      subId: "26",
+      subId: "667",
       sumday: 3,
       startDate: dates[2],
       noteChecked: true,
-      plan: {
-        days: [
-          ["思源埡口", "5.1K登山口", "木杆鞍部", "雲稜營地"],
-          ["雲稜營地", "審馬陣登山口", "審馬陣山屋"],
-          ["審馬陣山屋", "審馬陣登山口", "雲稜營地", "木杆鞍部", "5.1K登山口", "思源埡口"],
-        ],
-        finished: true,
-      },
+      plan: { days: APPLY15_DEMO_DAYS, finished: true },
       satellitephone: "",
       frequency: "",
       noteUser: "",
       npa: {
         reason: "登山健行",
-        places: [{ code: "865+10002+10002110+1+0", name: "南湖中央尖山(宜蘭縣-大同鄉)", desc: "南湖大山線，經雲稜營地、審馬陣山屋" }],
+        /* 事由、前往地點、路線圖詞庫正式站依路線預填（2026-09-29 南湖大山線） */
+        places: [{ code: "532+10002+10002110+1+0", name: "南湖北山(宜蘭縣-大同鄉)", desc: "南湖大山線，經雲稜山屋、審馬陣山屋" }],
         lib: "TM00",
         sub: "M15",
-        plan: "D1：思源埡口→5.1K登山口→木杆鞍部→雲稜營地。\nD2：雲稜營地→審馬陣登山口→審馬陣山屋。\nD3：審馬陣山屋→審馬陣登山口→雲稜營地→木杆鞍部→5.1K登山口→思源埡口。",
+        plan: apply15NpaPlan(APPLY15_DEMO_DAYS),
       },
 
       /* 步驟二 */
@@ -304,7 +331,7 @@ thPage({
       return this.levels.find(function (l) { return l.level === lv; }) || null;
     },
     endDate() { return apply15AddDays(this.startDate, this.sumday - 1); },
-    leaderView() { return this.leaderSame ? Object.assign({}, this.applicant, { student: !!this.leader.student }) : this.leader; },
+    leaderView() { return this.leaderSame ? Object.assign({}, this.applicant) : this.leader; },
     planDays() { return this.plan.days.length ? this.plan.days : [[this.graph.start]]; },
     teamsCount() { return this.members.length + 1; },   // 含領隊
     isSolo() { return this.teamsCount === 1; },
@@ -332,7 +359,11 @@ thPage({
       this.subId = first ? first.id : "";
     },
     subId() { this.plan = { days: [], finished: false }; },
-    plan() { this.campPick = {}; },
+    /* 規劃完成才產生計畫書；重新規劃時清空（正式站行為，2026-09-29） */
+    plan(v) {
+      this.campPick = {};
+      this.npa = Object.assign({}, this.npa, { plan: v.finished ? apply15NpaPlan(v.days) : "" });
+    },
     applicant: {
       deep: true,
       handler(v) { if (this.staySame) this.stay = this.pickStay(v); },
