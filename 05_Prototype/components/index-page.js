@@ -47,7 +47,8 @@ const EDU_FUNCTIONS = [
   { key: "weather",  label: "山區氣象",           icon: "fa-cloud-sun",           href: "information_2.html" },
   { key: "pac",      label: "PAC 位置",           glyph: "PAC",                   href: "#", more: true },
   { key: "peaks",    label: "百岳位置",           icon: "fa-mountain",            href: "#" },
-  { key: "law",      label: "法令資訊",           icon: "fa-scale-balanced",      href: "#" },
+  // 會議紀錄（一）4(4)：「登山須知」與本項重複、保留本項，故連到原登山須知頁（2026-09-29）
+  { key: "law",      label: "法令資訊",           icon: "fa-scale-balanced",      href: "notice.html" },
   { key: "gear",     label: "步道分級及建議裝備", icon: "fa-list-check",          href: "information_6.html" },
   { key: "control",  label: "警政署入山管制區",   icon: "fa-dove",                href: "#" },
   { key: "helipad",  label: "待援點",             icon: "fa-helicopter",          href: "#" },

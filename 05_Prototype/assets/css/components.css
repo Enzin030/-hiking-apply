@@ -1638,6 +1638,13 @@
   font-size: var(--fs-xxs);
   color: var(--fg-3);
 }
+/* 欄位錯誤訊息。2026-09-07 隨 th-date-picker 新增（見上方「th-date-picker」段註解），
+   09-08 重新複製 input 家族時被整段蓋掉、只剩註解，此後錯誤訊息一直是一般字色
+   （mail_1 的欄位錯誤、th-date-picker 的 error）。2026-09-29 照原樣補回；
+   排在 .th-field-hint 之後，th-date-picker 的「hint＋error」組合才會取這裡的顏色。 */
+.th-field-error {
+  color: var(--danger-fg);
+}
 /* 2026-09-14（C 批）：邊框由 --slate-300（白底 1.48:1）改 --border-ui（3.64:1），
    WCAG 1.4.11 非文字對比需 ≥3:1。裝飾性分隔線仍用 --slate-200/300。 */
 .th-input,
