@@ -345,7 +345,9 @@
         </div>
       </section>
 
-      <!-- 確認頁欄位照舊站（2026-09-17 截圖 TAR026_S04_confirm）：申請人一列表格、隊伍 13 欄；舊站確認頁沒有每日行程與留守人 -->
+      <!-- 確認頁欄位照舊站（2026-09-17 截圖 TAR026_S04_confirm）：申請人一列表格、隊伍 13 欄；舊站確認頁沒有每日行程與留守人。
+           留守人表為 2026-09-29 使用者裁決補上：三家一致，確認頁是送出前核對留守人聯絡方式的最後機會。
+           只列留守人自己有的 8 欄，不與申請人合表（同玉山 apply-5 2026-09-24 裁示：避免固定空白欄）。 -->
       <section class="th-card">
         <div class="th-card-head">
           <i class="fa-solid fa-user" aria-hidden="true"></i>
@@ -353,6 +355,16 @@
         </div>
         <div class="th-card-body">
           <th-data-table :columns="applicantColumns" :rows="applicantRows" row-key="name" caption="申請人資料"></th-data-table>
+        </div>
+      </section>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-house-user" aria-hidden="true"></i>
+          <h2 class="th-card-title">留守人資料</h2>
+        </div>
+        <div class="th-card-body">
+          <th-data-table :columns="stayColumns" :rows="stayRows" row-key="name" caption="留守人資料"></th-data-table>
         </div>
       </section>
 

@@ -107,6 +107,17 @@ var APPLY15_PERSON_COLUMNS = [
   { key: "tel", label: "電話" },
   { key: "fax", label: "傳真" },
 ];
+/* 留守人只列自己有的欄位（th-person-form ROLES.stay），不與申請人合表 */
+var APPLY15_STAY_COLUMNS = [
+  { key: "name", label: "姓名" },
+  { key: "tel", label: "電話" },
+  { key: "mobile", label: "手機" },
+  { key: "fax", label: "傳真" },
+  { key: "email", label: "E-mail" },
+  { key: "nation", label: "國籍" },
+  { key: "sid", label: "身份證號/護照號碼" },
+  { key: "birthday", label: "生日" },
+];
 var APPLY15_TEAM_COLUMNS = [
   { key: "no", label: "No.", align: "center" },
   { key: "leader", label: "領隊", align: "center" },
@@ -266,6 +277,7 @@ thPage({
       stepperSteps: APPLY15_STEPS,
       teamColumns: APPLY15_TEAM_COLUMNS,
       applicantColumns: APPLY15_PERSON_COLUMNS,
+      stayColumns: APPLY15_STAY_COLUMNS,
       npaSite: "https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList",
       /* 舊站顯示伺服器時間；雛形取載入當下的本機時間 */
       nowTime: new Date().toTimeString().slice(0, 5),
@@ -341,6 +353,11 @@ thPage({
       });
     },
     applicantRows() { return [apply15PersonRow(this.applicant)]; },
+    stayRows() {
+      var s = this.stay, dash = function (v) { return v ? v : "—"; };
+      return [{ name: dash(s.name), tel: dash(s.tel), mobile: dash(s.mobile), fax: dash(s.fax), email: dash(s.email),
+                nation: dash(s.nation), sid: dash(s.sid), birthday: dash(s.birthday) }];
+    },
     queueRows() {
       var self = this;
       return this.planDays.slice(0, -1).map(function (d, i) {
