@@ -83,7 +83,9 @@ const UNIT_NEXT = {
   "taroko":         r => `apply-2.html?${buildApplyQuery(r)}`,
   "forestry-camp":  null,   // 待開發：顯示提示
   "forestry-area":  r => `apply-2.html?${buildApplyQuery(r)}`,
-  "police":         r => `apply-2.html?${buildApplyQuery(r)}`,
+  /* 2026-09-30：原導向國家公園同意書 apply-2（錯的流程）。正式站警政署沒有同意書頁，
+     直接進 apply_npa_1.aspx?unit=<機關代碼>（02_Spec/05d） */
+  "police":         r => `apply_npa_1.html?unit=${encodeURIComponent(r.orgId || "")}`,
   "suspended":      null,   // 顯示暫停 modal
 };
 

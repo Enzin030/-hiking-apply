@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜警政署入山證申請 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_npa_2 — 警政署入山證申請 步驟 2：行程計畫
+  ------------------------------------------------------------
+  2026-09-30 新增，由 template/page.html 起手，檔名比照正式站 apply_npa_2.aspx。
+  依據：02_Spec/05d §三：入山事由、前往地點（加入清單＋描述必填）、登山路線圖詞庫、
+  登山計畫書。欄位與國家公園步驟一內嵌的入山證區塊同一組，沿用共用元件 th-npa-permit，
+  但這裡**全部空白起手**（太魯閣會依路線預填）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_npa_2.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="警政署-02 行程計畫">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, '警政署入山證', '行程計畫']" title="警政署入山證申請">
+
+    <template #stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
+    </template>
+
+    <section class="th-card">
+      <div class="th-card-head">
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+        <h2 class="th-card-title">警政署入山證申請</h2>
+      </div>
+      <div class="th-card-body">
+        <th-npa-permit id-prefix="npa" v-model="npa"></th-npa-permit>
+      </div>
+    </section>
+
+    <div class="flex flex-wrap justify-between gap-2 mt-6">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步：隊伍資料<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </th-page-shell>
+
+  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
+    <ul class="list-disc pl-5 grid gap-1">
+      <li v-for="e in errors" :key="e">{{ e }}</li>
+    </ul>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>
