@@ -51,6 +51,10 @@ const FC1_ROUTE_ID = new URLSearchParams(window.location.search).get("route") ||
 const FC1_CABIN = window.TH_CABIN_DATA[FC1_ROUTE_ID] || window.TH_CABIN_DATA["jiaming"];
 /* 只取一次：分兩次呼叫會在跨午夜時拿到不同的日期 */
 const FC1_TODAY = window.thTodayValue();
+/* 可選出發日：今日＋5 天起，至約 2 個月後（正式站 apply_forest_camp_1 的 TravelStep01StartDate：
+   StartDay＝今日＋5、EndDay＝AddMonths(StartDay−5, 2)；注意事項「一般申請：住宿日前60日至前5日」） */
+const FC1_MIN_DATE = window.thAddDaysToDateValue(FC1_TODAY, 5);
+const FC1_MAX_DATE = window.thAddDaysToDateValue(FC1_TODAY, 60);
 
 const FC1_STATUS_LABEL = { avail: "充足", tight: "尚有名額", scarce: "名額有限", full: "已額滿" };
 const FC1_STATUS_COLOR = { avail: "var(--success-fg)", tight: "var(--warning-fg)", scarce: "#dc2626", full: "var(--fg-4)" };
@@ -109,11 +113,13 @@ thPage({
 
   data() {
     return {
-      startDate: FC1_TODAY,
+      startDate: FC1_MIN_DATE,
       nights: FC1_CABIN.minDays,
       headcount: 4,
       queried: false,
       todayStr: FC1_TODAY,
+      minDate: FC1_MIN_DATE,
+      maxDate: FC1_MAX_DATE,
     };
   },
 

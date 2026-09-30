@@ -76,7 +76,8 @@
             <th-date-picker
               label="出發日期"
               :model-value="startDate"
-              :min="todayStr"
+              :min="minDate"
+              :max="maxDate"
               @update:model-value="setStartDate"></th-date-picker>
 
             <div class="th-field">

@@ -90,7 +90,7 @@
           <h2 class="fc-section-title">
             <i class="ph-bold ph-bed" aria-hidden="true"></i>每日住宿床位 / 營位
           </h2>
-          <p class="p-fc2-section-desc">請依每晚需求分別填寫床位與營位數量。各設施每晚至少填入 1 個單位。</p>
+          <p class="p-fc2-section-desc">每晚擇一種床位或營位並填寫數量；同一住宿日內不得同時申請山屋與營地。</p>
 
           <div v-for="i in nightIndexes" :key="i"
                :class="['p-fc2-night-block', { 'is-filled': nightTotal(i) > 0 }]">
@@ -115,7 +115,7 @@
                   </div>
                 </div>
                 <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"
-                               :max="Math.min(f.max, headcount)"
+                               :max="otherUsed(i, f.id) ? 0 : Math.min(f.max, headcount)"
                                @change="setQty(i, f.id, $event)"></p-fc2-stepper>
               </div>
             </div>

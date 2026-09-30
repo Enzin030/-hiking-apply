@@ -90,10 +90,11 @@
    fmtDate 同理（用 UTC 解析出來的 Date 取本地 getMonth／getDate／getDay）。
    ============================================================ */
 
+/* 付款方式照正式站 apply_forest_camp_2（2026-09-29 實走）：只有匯款／線上刷卡，畫面註明「訂房後不可更改」。
+   原三項（信用卡／ATM 轉帳／郵政劃撥）與說明文字為我方自撰。繳費期限依注意事項（抽中後 5 日內，臨近住宿日縮短） */
 const PAYMENT_OPTIONS = [
-  { id: "credit", label: "信用卡", icon: "ph-bold ph-credit-card",     note: "Visa / Mastercard / JCB，限本人持卡" },
-  { id: "atm",    label: "ATM 轉帳", icon: "ph-bold ph-bank",          note: "核准後 3 日內完成匯款" },
-  { id: "post",   label: "郵政劃撥", icon: "ph-bold ph-envelope",      note: "劃撥帳號於核准通知中提供" },
+  { id: "remit", label: "匯款",     icon: "ph-bold ph-bank",        note: "抽中後依繳費通知期限匯款（訂房後不可更改）" },
+  { id: "card",  label: "線上刷卡", icon: "ph-bold ph-credit-card", note: "抽中後依繳費通知期限刷卡（訂房後不可更改）" },
 ];
 
 /* 日期字串 +N 天（UTC 路徑，理由見檔頭：不可換成 th-date-utils） */
@@ -209,6 +210,12 @@ thPage({
     /* 鍵在初始化時已存在，Vue 3 直接賦值即為響應式（見檔頭） */
     setQty(night, facilityId, qty) {
       this.alloc[night][facilityId] = qty;
+    },
+
+    /* 同一晚已選了別的設施？注意事項「同天住宿日內不得同時申請山屋或營地」；
+       正式站每晚只有一個房型下拉（2026-09-29 實走），所以一晚只允許一種設施有數量 */
+    otherUsed(i, facilityId) {
+      return this.cabin.facilities.some(f => f.id !== facilityId && this.qtyOf(i, f.id) > 0);
     },
 
     nightTotal(i) {
