@@ -78,7 +78,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 關鍵路徑
 
 - 雛形一律放 `05_Prototype/`，repo 根目錄不再放頁面檔
-- 入口：`05_Prototype/index.html`；申請流程 `apply-1/2/3.html`；林場露營 `forest-camp-1/2.html`
+- 入口：`05_Prototype/index.html`；申請流程 `apply-1/2/3.html`；太魯閣申請 `apply_1_5.html`；林保署山屋申請 `forest-camp-1～6.html`（六步驟，第 3～6 步 2026-09-30 新增）
 - **Vue 3 全域建構，無 build**（2026-09-09 階段 3 完成，當時 32 頁全數遷移；
   之後續有新頁，現為 66 頁，新頁一律照下面「開新頁的標準流程」）：
   共用元件 `05_Prototype/assets/components/th-*.js`；每頁的狀態與初始化
