@@ -97,6 +97,7 @@
     contacttel:  { label: "緊急聯絡人電話", type: "text",  req: true },
     student:     { label: "是否為學生",     type: "student", req: false,
                    hint: "入園時須出示學生證，否則將依規定收費" },
+    notes:       { label: "備註",           type: "text",  req: false, wide: true },
   };
 
   var ROLES = {
@@ -112,6 +113,12 @@
     member: { title: "隊員", note: "",
               keys: ["name", "tel", "country", "city", "addr", "mobile", "email",
                      "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel"] },
+    /* 六步驟家族（警政署、林保署自然保護區域、山屋）共用的 apply_03 隊伍資料頁：
+       申請人、領隊、隊員三區欄位相同（正式站 Step03_01_／Step03_02_／Step03_<N>_，2026-09-29），
+       多「備註」，沒有留守人與學生欄。新增 role，不動既有四個（apply_1_5 仍用）。 */
+    team:   { title: "人員", note: "",
+              keys: ["name", "tel", "country", "city", "addr", "mobile", "fax", "email",
+                     "nation", "nationid", "sid", "sex", "birthday", "contactname", "contacttel", "notes"] },
     stay:   { title: "留守人", note: "留守人須為年滿18歲之成年人",
               keys: ["name", "tel", "mobile", "fax", "email", "nation", "nationid", "sid", "birthday"] },
   };

@@ -180,9 +180,59 @@ window.TH_FC_STEPS = [
   { n: 2, label: "行程計畫" },
   { n: 3, label: "隊伍資料" },
   { n: 4, label: "附件上傳" },
-  { n: 5, label: "申請須知" },
+  { n: 5, label: "同意聲明" },   // 正式站步驟條原文（2026-09-29），原寫「申請須知」
   { n: 6, label: "確認送出" },
 ];
+
+/* ------------------------------------------------------------
+   山屋申請第 3～6 步的跨頁狀態（2026-09-30 新增）
+   ------------------------------------------------------------
+   第 1、2 步沿用查詢字串；第 2 步按下一步起，訂位、隊伍資料等存成**單一**
+   sessionStorage key。人員資料不放網址（個資、長度）。
+   **第 1 步載入時一律 reset**：正式站同分頁連續申請會殘留上一張的暫存
+   （02_Spec/05e §7 缺陷），雛形不重蹈。sessionStorage 不可用時退回記憶體，
+   頁面照常可操作（重新整理會遺失，雛形可接受）。 */
+(function () {
+  var KEY = "th_fc_apply";
+  var mem = null;
+  window.thFcState = {
+    load: function () {
+      try { var v = window.sessionStorage.getItem(KEY); return v ? JSON.parse(v) : (mem || {}); }
+      catch (e) { return mem || {}; }
+    },
+    save: function (patch) {
+      var next = Object.assign({}, this.load(), patch);
+      mem = next;
+      try { window.sessionStorage.setItem(KEY, JSON.stringify(next)); } catch (e) { /* 退回記憶體 */ }
+      return next;
+    },
+    reset: function () {
+      mem = null;
+      try { window.sessionStorage.removeItem(KEY); } catch (e) { /* 無 storage 時略過 */ }
+    },
+  };
+})();
+
+/* 付款方式（第 2 步選、第 6 步顯示共用同一份）：照正式站只有匯款／線上刷卡 */
+window.TH_FC_PAYMENTS = [
+  { id: "remit", label: "匯款",     icon: "ph-bold ph-bank",        note: "抽中後依繳費通知期限匯款（訂房後不可更改）" },
+  { id: "card",  label: "線上刷卡", icon: "ph-bold ph-credit-card", note: "抽中後依繳費通知期限刷卡（訂房後不可更改）" },
+];
+
+/* 第 3～6 步頂端「行程計畫」摘要，欄位照正式站 apply_03／apply_06（2026-09-29）：
+   單位／主路線／申辦日期／出發日期／行程天數／出發人數／路線 */
+window.thFcPlanRows = function (st, cabin, today) {
+  var nights = Number(st.nights) || 0;
+  return [
+    { label: "單位",     value: "國家步道(山屋/營地)" },
+    { label: "主路線",   value: cabin.name },
+    { label: "申辦日期", value: today },
+    { label: "出發日期", value: st.start || "—" },
+    { label: "行程天數", value: nights ? (nights + 1) + " 天（" + nights + " 晚）" : "—" },
+    { label: "出發人數", value: st.headcount ? st.headcount + " 人" : "—" },
+    { label: "路線",     value: cabin.name },
+  ];
+};
 
 /* th-fc-stepper — 山屋流程的六步驟條（原 FcStepper）。
    與 th-stepper（登山申請四步驟）刻意分開：兩者步驟數、DOM 與 class 前綴

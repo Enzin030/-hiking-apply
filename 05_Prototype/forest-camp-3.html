@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  forest-camp-3 — 山屋住宿申請 步驟 3：隊伍資料
+  ------------------------------------------------------------
+  2026-09-30 新增，由 template/page.html 起手。依據：正式站 apply_03.aspx
+  （2026-09-29 實走嘉明湖，02_Spec/05f、05d §四）。此頁在正式站由警政署、
+  林保署自然保護區域、山屋三類共用；雛形先做山屋，第二類要用時再提升為共用。
+  互動與資料約定見 components/forest-camp-3.js 檔頭。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/forest-camp-3.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="FC-03 隊伍資料">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '隊伍資料']" title="山屋住宿申請">
+
+    <template #stepper>
+      <th-fc-stepper :current="3"></th-fc-stepper>
+    </template>
+
+    <div class="grid gap-6">
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-mountains" aria-hidden="true"></i>
+          <h2 class="th-card-title">行程計畫</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
+            <template v-for="r in planRows" :key="r.label">
+              <dt class="th-label">{{ r.label }}</dt><dd>{{ r.value }}</dd>
+            </template>
+          </dl>
+        </div>
+      </section>
+
+      <p class="th-field-hint">基本資料填寫（請注意，人員資料必須有：申請人、領隊、隊員（如無則免））<br /><strong>請注意：本案件申請人與領隊須為同一人</strong></p>
+
+      <!-- 申請人 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-user" aria-hidden="true"></i>
+          <h2 class="th-card-title">申請人資料</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <p class="th-field-hint">未成年者不得擔任申請人</p>
+          <label class="flex items-start gap-2 th-label">
+            <input type="checkbox" v-model="applyConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令</label>
+          <th-person-form v-if="applyConsent" role="team" id-prefix="apply" v-model="applicant"></th-person-form>
+        </div>
+      </section>
+
+      <!-- 領隊：申請人須為領隊，固定帶入、不可另填 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-flag" aria-hidden="true"></i>
+          <h2 class="th-card-title">領隊資料</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <label class="flex items-center gap-2 th-label">
+            <input type="checkbox" checked disabled />同申請人（本案件申請人須為領隊）</label>
+          <th-person-form role="team" id-prefix="leader" :model-value="applicant" readonly></th-person-form>
+        </div>
+      </section>
+
+      <!-- 隊員：人數在第 1 步已決定，依人數預先產生（見 js 檔頭） -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-users" aria-hidden="true"></i>
+          <h2 class="th-card-title">隊員資料</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <p class="th-field-hint">(請填個人手機號碼(勿共用)，隊員如非同住家人，e-mail、地址、緊急聯絡人請勿重複，如填寫資料重複會請申請人修改，耽誤您等候審核時間)</p>
+          <p class="th-field-hint">入園時申請出發人數：{{ headcount }}　隊伍人數（含領隊）</p>
+          <div v-for="(m, i) in members" :key="i" class="grid gap-2">
+            <h3 class="th-section-title">No.{{ i + 1 }} 隊員資料</h3>
+            <th-person-form role="team" :id-prefix="'member' + i" :model-value="m" @update:model-value="setMember(i, $event)"></th-person-form>
+            <p class="th-field-hint">「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
+          </div>
+          <p v-if="!members.length" class="th-field-hint">出發人數 1 人，只有領隊，無隊員。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="flex flex-wrap justify-between gap-2 mt-6">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步：附件上傳<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </th-page-shell>
+
+  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
+    <ul class="list-disc pl-5 grid gap-1">
+      <li v-for="e in errors" :key="e">{{ e }}</li>
+    </ul>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>

@@ -111,6 +111,9 @@ const pFc1AvailBar = {
 thPage({
   components: { "p-fc1-avail-bar": pFc1AvailBar },
 
+  /* 每張申請從第 1 步重新開始：清掉上一張的第 3～6 步暫存（見 th-forest-camp-shared.js thFcState） */
+  created() { window.thFcState.reset(); },
+
   data() {
     return {
       startDate: FC1_MIN_DATE,

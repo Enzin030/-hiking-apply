@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  forest-camp-6 — 山屋住宿申請 步驟 6：確認送出
+  ------------------------------------------------------------
+  2026-09-30 新增，由 template/page.html 起手。依據：正式站 apply_06.aspx
+  （2026-09-29 實走嘉明湖）：行程計畫、山屋及營地申請單明細（含費用與付款方式）、
+  隊伍資料（身分欄、證號遮罩）、附件資料、送件驗證碼、儲存草稿／上一步／確認送出。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/forest-camp-6.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="FC-06 確認送出">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '確認送出']" title="山屋住宿申請">
+
+    <template #stepper>
+      <th-fc-stepper :current="done ? 7 : 6"></th-fc-stepper>
+    </template>
+
+    <div v-if="!done" class="grid gap-6">
+      <th-callout>請確認資料正確無誤後，再確認送出！</th-callout>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-mountains" aria-hidden="true"></i>
+          <h2 class="th-card-title">行程計畫</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
+            <template v-for="r in planRows" :key="r.label">
+              <dt class="th-label">{{ r.label }}</dt><dd>{{ r.value }}</dd>
+            </template>
+          </dl>
+        </div>
+      </section>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-bed" aria-hidden="true"></i>
+          <h2 class="th-card-title">山屋及營地申請單明細（林業及自然保育署）</h2>
+        </div>
+        <div class="th-card-body grid gap-3">
+          <th-data-table :columns="bookingColumns" :rows="bookingRows" row-key="key" caption="山屋及營地申請單明細" empty="尚未選擇床位或營位"></th-data-table>
+          <dl class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
+            <dt class="th-label">費用明細</dt>
+            <dd><span v-for="n in nightCosts" :key="n.date" class="mr-3">【{{ n.date }}】{{ n.cost.toLocaleString() }}元</span></dd>
+            <dt class="th-label">總金額</dt>
+            <dd><strong>本申請單總金額為：NT${{ total.toLocaleString() }}元</strong></dd>
+            <dt class="th-label">付款方式</dt>
+            <dd>{{ paymentLabel }}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-users" aria-hidden="true"></i>
+          <h2 class="th-card-title">隊伍資料</h2>
+        </div>
+        <div class="th-card-body">
+          <th-data-table :columns="teamColumns" :rows="teamRows" row-key="no" caption="隊伍資料"></th-data-table>
+        </div>
+      </section>
+
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
+          <h2 class="th-card-title">附件資料</h2>
+        </div>
+        <div class="th-card-body">
+          <th-data-table :columns="fileColumns" :rows="[]" row-key="no" caption="附件資料" empty="無須上傳附件"></th-data-table>
+        </div>
+      </section>
+
+      <th-captcha v-model="vcode" input-id="f-vcode" code="7K4M" layout="col12"></th-captcha>
+
+      <div class="flex flex-wrap justify-between gap-2">
+        <div class="flex gap-2">
+          <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
+          <button type="button" class="th-btn th-btn-secondary" @click="draftOpen = true">儲存草稿</button>
+        </div>
+        <button type="button" class="th-btn th-btn-primary th-btn-lg" @click="submit">確認送出</button>
+      </div>
+    </div>
+
+    <section v-else class="th-card">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <h2 class="th-card-title">申請完成</h2>
+      </div>
+      <div class="th-card-body grid gap-3">
+        <p>您的山屋住宿申請已送出。住宿日前 30 日下午 3 時抽籤，結果將以電子郵件通知；抽中後請依繳費通知期限完成繳費。</p>
+        <div><a class="th-btn th-btn-ghost" href="applySearch.html">前往申請進度查詢</a></div>
+      </div>
+    </section>
+  </th-page-shell>
+
+  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
+    <ul class="list-disc pl-5 grid gap-1">
+      <li v-for="e in errors" :key="e">{{ e }}</li>
+    </ul>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+    </template>
+  </th-modal>
+
+  <th-modal v-if="draftOpen" title="儲存草稿" @close="draftOpen = false">
+    <p>草稿已儲存，可至「草稿編輯」繼續填寫。</p>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="draftOpen = false">確定</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+
+</div>
+</body>
+</html>

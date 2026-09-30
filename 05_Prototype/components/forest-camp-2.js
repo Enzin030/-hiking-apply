@@ -91,11 +91,8 @@
    ============================================================ */
 
 /* 付款方式照正式站 apply_forest_camp_2（2026-09-29 實走）：只有匯款／線上刷卡，畫面註明「訂房後不可更改」。
-   原三項（信用卡／ATM 轉帳／郵政劃撥）與說明文字為我方自撰。繳費期限依注意事項（抽中後 5 日內，臨近住宿日縮短） */
-const PAYMENT_OPTIONS = [
-  { id: "remit", label: "匯款",     icon: "ph-bold ph-bank",        note: "抽中後依繳費通知期限匯款（訂房後不可更改）" },
-  { id: "card",  label: "線上刷卡", icon: "ph-bold ph-credit-card", note: "抽中後依繳費通知期限刷卡（訂房後不可更改）" },
-];
+   原三項（信用卡／ATM 轉帳／郵政劃撥）與說明文字為我方自撰。清單放 th-forest-camp-shared.js（第 6 步也要顯示） */
+const PAYMENT_OPTIONS = window.TH_FC_PAYMENTS;
 
 /* 日期字串 +N 天（UTC 路徑，理由見檔頭：不可換成 th-date-utils） */
 function fc2AddDays(dateStr, n) {
@@ -157,10 +154,13 @@ thPage({
   components: { "p-fc2-stepper": pFc2Stepper },
 
   data() {
+    /* 從第 3 步按上一步回來時，還原已填的隊名／付款／訂位（同一山屋、同出發日、同晚數才還原） */
+    const st = window.thFcState.load();
+    const same = st.route === FC2_ROUTE_ID && st.start === FC2_START && Number(st.nights) === FC2_NIGHTS && st.alloc;
     return {
-      teamName: "",
-      payment: "",
-      alloc: fc2MakeInitAlloc(),
+      teamName: same ? st.team || "" : "",
+      payment: same ? st.payment || "" : "",
+      alloc: same ? st.alloc : fc2MakeInitAlloc(),
       startDate: FC2_START,
       nights: FC2_NIGHTS,
       headcount: FC2_HEADCOUNT,
@@ -231,18 +231,20 @@ thPage({
     /* 第 i 夜、某設施的單價。**所有金額計算都走這支**，不要直接讀 price.weekday */
     priceOf(f, i) { return window.thFcPriceOf(f, this.nightDate(i)); },
 
+    /* 2026-09-30：原導向玉山流程的 apply-3.html（行程規劃，非本流程）。改為本流程第 3 步，
+       訂位內容存進 thFcState，不再帶長網址 */
     handleNext() {
-      const params = new URLSearchParams({
+      window.thFcState.save({
         route: FC2_ROUTE_ID,
         start: this.startDate,
         nights: this.nights,
         headcount: this.headcount,
         team: this.teamName.trim(),
         payment: this.payment,
-        alloc: JSON.stringify(this.alloc),
+        alloc: JSON.parse(JSON.stringify(this.alloc)),
         total: this.grandTotal,
       });
-      window.location.href = `apply-3.html?${params}`;
+      window.location.href = "forest-camp-3.html";
     },
 
     goBack() {
