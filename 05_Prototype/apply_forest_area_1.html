@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜自然保護區域申請 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_forest_area_1 — 林保署自然保護區域申請 步驟 1：日期確認
+  ------------------------------------------------------------
+  2026-09-30 新增，由 template/page.html 起手，檔名比照正式站 apply_forest_area_1.aspx。
+  依據：02_Spec/05e §二（2026-09-29 實走北插天山）：區域類型標題＋推薦行程、行程天數依區域、
+  出發日期最早 5 天後、出發人數 1～15、「最晚須於5天前申請」。
+  區域資料只有北插天山（components/ForestAreaData.js）；其他區域顯示尚未盤點。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_forest_area_1.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="保護區-01 日期確認">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, crumb, '日期確認']" title="自然保護區域申請">
+
+    <template #stepper>
+      <th-fc-stepper :current="1"></th-fc-stepper>
+    </template>
+
+    <th-callout v-if="!area">此區域的申請資料尚未盤點〔待確認〕：正式站只實走過「插天山自然保留區 - 北插天山步道及其支線」，其他區域的天數、進入範圍與宣達事項不套用該筆資料。</th-callout>
+
+    <section v-else class="th-card">
+      <div class="th-card-head">
+        <i class="ph-bold ph-tree" aria-hidden="true"></i>
+        <h2 class="th-card-title">{{ area.type }}</h2>
+      </div>
+      <div class="th-card-body grid gap-4">
+        <p class="th-field-hint">(請注意：國家公園路線於每日23：00至隔日07：00暫停受理申請)　<strong>目前系統時間為：{{ nowTime }}</strong></p>
+        <dl class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
+          <dt class="th-label">推薦行程</dt><dd>{{ area.name }}</dd>
+        </dl>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-days"><span class="req">*</span>行程天數</label>
+            <th-hybrid-select><select id="f-days" class="th-select" v-model.number="days">
+              <option :value="0">請選擇</option>
+              <option v-for="n in area.days" :key="n" :value="n">{{ n }}</option>
+            </select></th-hybrid-select>
+          </div>
+          <div class="th-field">
+            <label class="th-label" for="f-start"><span class="req">*</span>出發日期</label>
+            <th-hybrid-select><select id="f-start" class="th-select" v-model="start" :disabled="!days">
+              <option value="">請選擇</option>
+              <option v-for="d in dates" :key="d" :value="d">{{ d }}</option>
+            </select></th-hybrid-select>
+          </div>
+          <div class="th-field">
+            <label class="th-label" for="f-people"><span class="req">*</span>出發人數</label>
+            <th-hybrid-select><select id="f-people" class="th-select" v-model.number="headcount">
+              <option :value="0">請選擇</option>
+              <option v-for="n in area.peopleMax" :key="n" :value="n">{{ n }}</option>
+            </select></th-hybrid-select>
+            <span class="th-field-hint">隊伍人數（含領隊）</span>
+          </div>
+        </div>
+        <p class="th-field-hint">＊因作業規定，最晚須於5天前申請。</p>
+      </div>
+    </section>
+
+    <div class="flex flex-wrap justify-between gap-2 mt-6">
+      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回路線列表</a>
+      <button v-if="area" type="button" class="th-btn th-btn-primary" @click="next">下一步：行程計畫<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </th-page-shell>
+
+  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
+    <ul class="list-disc pl-5 grid gap-1">
+      <li v-for="e in errors" :key="e">{{ e }}</li>
+    </ul>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：parser-inserted，頁面腳本只在 data() 裡讀 -->
+<script src="components/ForestAreaData.js"></script>
+<script src="components/RouteData.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜自然保護區域申請 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_forest_area_2 — 林保署自然保護區域申請 步驟 2：行程計畫
+  ------------------------------------------------------------
+  2026-09-30 新增，由 template/page.html 起手，檔名比照正式站 apply_forest_area_2.aspx。
+  依據：02_Spec/05e §三（2026-09-29 實走北插天山）九個區塊：
+  1 進入範圍（多選）＋其他範圍 2 進出入口與預計抵達時間 3 申請目的 4 安全聲明
+  5～9 各項宣達確認（內容與數量依區域，資料見 components/ForestAreaData.js）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_forest_area_2.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="保護區-02 行程計畫">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, area.name, '行程計畫']" title="自然保護區域申請">
+
+    <template #stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
+    </template>
+
+    <div class="grid gap-6">
+      <!-- 1. 進入範圍 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-map-trifold" aria-hidden="true"></i>
+          <h2 class="th-card-title">1.選擇申請區域與進入範圍</h2>
+        </div>
+        <div class="th-card-body grid gap-3">
+          <dl class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
+            <dt class="th-label">申請區域</dt><dd>{{ area.type }}/{{ area.name }}</dd>
+          </dl>
+          <span class="th-label"><span class="req">*</span>進入範圍</span>
+          <label v-for="s in area.segments" :key="s.id" class="flex items-start gap-2">
+            <input type="checkbox" :value="s.value" v-model="picked" class="mt-1" />
+            <span><strong>{{ s.value }}</strong><br /><span class="th-field-hint">{{ s.desc }}</span></span>
+          </label>
+          <input class="th-input" type="text" :placeholder="area.notesPlaceholder" v-model="notes" aria-label="其他範圍或備註" />
+        </div>
+      </section>
+
+      <!-- 2. 進出入口：勾了範圍才出現對應入口（正式站即時過濾） -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-sign-in" aria-hidden="true"></i>
+          <h2 class="th-card-title">2.選擇進出入口與預計抵達時間</h2>
+        </div>
+        <div class="th-card-body grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-entr"><span class="req">*</span>入口</label>
+            <th-hybrid-select><select id="f-entr" class="th-select" v-model="entr">
+              <option value="">請選擇</option>
+              <option v-for="o in entrOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
+            </select></th-hybrid-select>
+          </div>
+          <div class="th-field">
+            <label class="th-label" for="f-entr-time"><span class="req">*</span>抵達入口時間</label>
+            <th-hybrid-select><select id="f-entr-time" class="th-select" v-model="entrTime">
+              <option value="">請選擇</option>
+              <option v-for="t in area.times" :key="t" :value="t">{{ t }}</option>
+            </select></th-hybrid-select>
+          </div>
+          <div class="th-field">
+            <label class="th-label" for="f-exit"><span class="req">*</span>出口</label>
+            <th-hybrid-select><select id="f-exit" class="th-select" v-model="exit">
+              <option value="">請選擇</option>
+              <option v-for="o in exitOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
+            </select></th-hybrid-select>
+          </div>
+          <div class="th-field">
+            <label class="th-label" for="f-exit-time"><span class="req">*</span>抵達出口時間</label>
+            <th-hybrid-select><select id="f-exit-time" class="th-select" v-model="exitTime">
+              <option value="">請選擇</option>
+              <option v-for="t in area.times" :key="t" :value="t">{{ t }}</option>
+            </select></th-hybrid-select>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 申請目的 -->
+      <section class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-target" aria-hidden="true"></i>
+          <h2 class="th-card-title">3.申請目的或項目</h2>
+        </div>
+        <div class="th-card-body grid gap-2">
+          <label v-for="p in area.purposes" :key="p.value" class="flex items-center gap-2">
+            <input type="radio" name="purpose" :value="p.value" v-model="purpose" />{{ p.value }}<span v-if="p.attach" class="th-field-hint">（須附件）</span></label>
+        </div>
+      </section>
+
+      <!-- 4～9. 安全聲明與各項宣達 -->
+      <section v-for="b in area.blocks" :key="b.no" class="th-card">
+        <div class="th-card-head">
+          <i class="ph-bold ph-megaphone" aria-hidden="true"></i>
+          <h2 class="th-card-title">{{ b.no }}.{{ b.title }}</h2>
+        </div>
+        <div class="th-card-body grid gap-2">
+          <p>{{ b.text }}</p>
+          <label v-if="b.input === 'radio'" class="flex items-start gap-2 th-label">
+            <input type="checkbox" v-model="confirms[b.name]" class="mt-1" />{{ b.confirm }}</label>
+          <!-- 正式站這類為唯讀已帶入的文字欄（OtherName7／8），不需勾選 -->
+          <p v-else class="th-input th-input-readonly">{{ b.confirm }}</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="flex flex-wrap justify-between gap-2 mt-6">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步：隊伍資料<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </th-page-shell>
+
+  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
+    <ul class="list-disc pl-5 grid gap-1">
+      <li v-for="e in errors" :key="e">{{ e }}</li>
+    </ul>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：parser-inserted，頁面腳本只在 data() 裡讀 -->
+<script src="components/ForestAreaData.js"></script>
+</body>
+</html>

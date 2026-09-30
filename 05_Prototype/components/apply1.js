@@ -82,7 +82,9 @@ const UNIT_NEXT = {
   "shei-pa":        r => `apply-2.html?${buildApplyQuery(r)}`,
   "taroko":         r => `apply-2.html?${buildApplyQuery(r)}`,
   "forestry-camp":  null,   // 待開發：顯示提示
-  "forestry-area":  r => `apply-2.html?${buildApplyQuery(r)}`,
+  /* 2026-09-30：原導向國家公園同意書 apply-2。正式站自然保護區域沒有同意書頁，直接進
+     apply_forest_area_1.aspx?unit=<機關代碼>&tmpc_id=<cId>&tmpf_id=<fId>（02_Spec/05e） */
+  "forestry-area":  r => `apply_forest_area_1.html?${new URLSearchParams({ unit: r.orgId || "", tmpc_id: r.cId || "", tmpf_id: r.fId || "" })}`,
   /* 2026-09-30：原導向國家公園同意書 apply-2（錯的流程）。正式站警政署沒有同意書頁，
      直接進 apply_npa_1.aspx?unit=<機關代碼>（02_Spec/05d） */
   "police":         r => `apply_npa_1.html?unit=${encodeURIComponent(r.orgId || "")}`,

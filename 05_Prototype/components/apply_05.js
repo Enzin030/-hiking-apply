@@ -17,8 +17,9 @@ thPage({
     const fc = window.TH_FC_NOTICES || {};
     let notice = { title: "", paras: [] };
     if (st.kind === "area") {
-      const n = a6.area[st.areaType] || a6.area["85"] || { lines: [] };
-      notice = { title: "", paras: n.lines };
+      const n = a6.area[st.areaType] || a6.area["85"] || { lines: [], title: "" };
+      /* 原文第一行即區域類型名稱，與卡片標題重複，略去 */
+      notice = { title: "", paras: n.lines[0] === n.title ? n.lines.slice(1) : n.lines };
     } else if (st.kind === "camp") {
       notice = fc[st.route] || fc.jiaming || notice;
     }
