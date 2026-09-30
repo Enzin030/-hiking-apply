@@ -231,10 +231,17 @@ thPage({
     /* 第 i 夜、某設施的單價。**所有金額計算都走這支**，不要直接讀 price.weekday */
     priceOf(f, i) { return window.thFcPriceOf(f, this.nightDate(i)); },
 
-    /* 2026-09-30：原導向玉山流程的 apply-3.html（行程規劃，非本流程）。改為本流程第 3 步，
-       訂位內容存進 thFcState，不再帶長網址 */
+    /* 2026-09-30：原導向玉山流程的 apply-3.html（行程規劃，非本流程）。改為六步驟家族共用的
+       第 3 步 apply_03.html；訂位內容與類別（kind＝camp）存進 thFcState，不再帶長網址 */
     handleNext() {
+      const back = new URLSearchParams({ route: FC2_ROUTE_ID, start: this.startDate, nights: this.nights, headcount: this.headcount });
       window.thFcState.save({
+        kind: "camp",
+        title: "山屋住宿申請",
+        crumb: this.cabin.name,
+        backUrl: "forest-camp-2.html?" + back,
+        plan: { unit: "國家步道(山屋/營地)", main: this.cabin.name, route: this.cabin.name },
+        days: this.nights + 1,
         route: FC2_ROUTE_ID,
         start: this.startDate,
         nights: this.nights,
@@ -244,7 +251,7 @@ thPage({
         alloc: JSON.parse(JSON.stringify(this.alloc)),
         total: this.grandTotal,
       });
-      window.location.href = "forest-camp-3.html";
+      window.location.href = "apply_03.html";
     },
 
     goBack() {

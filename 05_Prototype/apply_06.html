@@ -2,28 +2,28 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
+<title>登山線上申請｜確認送出 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  forest-camp-6 — 山屋住宿申請 步驟 6：確認送出
+  apply_06 — 六步驟家族 步驟 6：確認送出（警政署、自然保護區域、山屋共用）
   ------------------------------------------------------------
-  2026-09-30 新增，由 template/page.html 起手。依據：正式站 apply_06.aspx
-  （2026-09-29 實走嘉明湖）：行程計畫、山屋及營地申請單明細（含費用與付款方式）、
-  隊伍資料（身分欄、證號遮罩）、附件資料、送件驗證碼、儲存草稿／上一步／確認送出。
+  2026-09-30 新增（原 forest-camp-6，同日依舊站檔名改名）。依據：正式站 apply_06.aspx
+  （2026-09-29 實走三類）：行程計畫、隊伍資料（身分欄、證號遮罩）、附件資料、送件驗證碼、
+  儲存草稿／上一步／確認送出；**只有山屋**多「山屋及營地申請單明細」（費用、付款方式）。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="assets/css/index.css" />
-<script src="assets/includes/head-loader.js" data-page-init="components/forest-camp-6.js"></script>
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_06.js"></script>
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="FC-06 確認送出">
+<div id="th-app" v-cloak data-screen-label="六步驟-06 確認送出">
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '確認送出']" title="山屋住宿申請">
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '確認送出']" :title="st.title">
 
     <template #stepper>
       <th-fc-stepper :current="done ? 7 : 6"></th-fc-stepper>
@@ -35,7 +35,7 @@
       <section class="th-card">
         <div class="th-card-head">
           <i class="ph-bold ph-mountains" aria-hidden="true"></i>
-          <h2 class="th-card-title">行程計畫</h2>
+          <h2 class="th-card-title">{{ planTitle }}</h2>
         </div>
         <div class="th-card-body">
           <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
@@ -46,7 +46,7 @@
         </div>
       </section>
 
-      <section class="th-card">
+      <section v-if="st.kind === 'camp'" class="th-card">
         <div class="th-card-head">
           <i class="ph-bold ph-bed" aria-hidden="true"></i>
           <h2 class="th-card-title">山屋及營地申請單明細（林業及自然保育署）</h2>
@@ -101,7 +101,7 @@
         <h2 class="th-card-title">申請完成</h2>
       </div>
       <div class="th-card-body grid gap-3">
-        <p>您的山屋住宿申請已送出。住宿日前 30 日下午 3 時抽籤，結果將以電子郵件通知；抽中後請依繳費通知期限完成繳費。</p>
+        <p>{{ doneText }}</p>
         <div><a class="th-btn th-btn-ghost" href="applySearch.html">前往申請進度查詢</a></div>
       </div>
     </section>

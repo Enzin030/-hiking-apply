@@ -1,7 +1,9 @@
 /* ============================================================
-   forest-camp-6.js — 山屋住宿申請 步驟 6：確認送出
+   apply_06.js — 六步驟家族 步驟 6：確認送出（警政署、自然保護區域、山屋共用）
    ------------------------------------------------------------
-   2026-09-30 新增。依據正式站 apply_06.aspx（2026-09-29 實走嘉明湖）：
+   2026-09-30 新增（原 forest-camp-6.js）。依據正式站 apply_06.aspx（2026-09-29 實走三類）：
+   - 行程計畫標題：警政署為「警政署入山行程計畫」，其餘「行程計畫」
+   - 下列「山屋及營地申請單明細」只有山屋有（kind＝camp）
    - 山屋及營地申請單明細：床位/營位、住宿費用、申請單位數；費用明細「【日期】N元」；
      「本申請單總金額為：NT$N元」；付款方式
    - 隊伍資料：NO.／姓名／身分／證號／電話／聯絡地址／緊急連絡人／緊急連絡電話；
@@ -41,7 +43,7 @@ function fc6Mask(sid) {
 
 thPage({
   data() {
-    const st = window.thFcState.load();
+    const st = Object.assign({ kind: "camp", title: "山屋住宿申請", crumb: "嘉明湖山屋" }, window.thFcState.load());
     return {
       st: st,
       cabin: window.TH_CABIN_DATA[st.route] || window.TH_CABIN_DATA.jiaming,
@@ -58,7 +60,14 @@ thPage({
 
   computed: {
     applyCrumb() { return window.TH_APPLY_CRUMB; },
-    planRows() { return window.thFcPlanRows(this.st, this.cabin, window.thTodayValue()); },
+    planRows() { return window.thApply6PlanRows(this.st, window.thTodayValue()); },
+    planTitle() { return this.st.kind === "npa" ? "警政署入山行程計畫" : "行程計畫"; },
+    /* 送出後說明：依類別的後續流程（各規格／注意事項原文），雛形示意 */
+    doneText() {
+      if (this.st.kind === "npa") return "您的入山申請已送出。審核通過後，請至「進度查詢與取消作業」或電子郵件下載入山許可證及名冊（以自行列印為原則）。";
+      if (this.st.kind === "area") return "您的自然保護區域進入申請已送出。進入日期前 14 日抽籤（僅「民眾為環境教育之需要」），結果以電子郵件通知；核准者於進入日期前 4 日起可下載許可證。";
+      return "您的山屋住宿申請已送出。住宿日前 30 日下午 3 時抽籤，結果將以電子郵件通知；抽中後請依繳費通知期限完成繳費。";
+    },
     nights() { return Number(this.st.nights) || 0; },
     nightDates() {
       return Array.from({ length: this.nights }, (_, i) => window.thAddDaysToDateValue(this.st.start, i));
@@ -87,7 +96,9 @@ thPage({
     },
     teamRows() {
       const a = this.st.applicant || {};
-      const people = [["申請人", a], ["領隊", a]].concat((this.st.members || []).map(m => ["隊員", m]));
+      /* 保護區可另填領隊（apply_03 的 leaderSame） */
+      const leader = this.st.leaderSame === false && this.st.leader ? this.st.leader : a;
+      const people = [["申請人", a], ["領隊", leader]].concat((this.st.members || []).map(m => ["隊員", m]));
       return people.map(([role, p], i) => ({
         no: i + 1, name: p.name || "—", role: role, sid: fc6Mask(p.sid), tel: p.tel || "—",
         addr: [p.country, p.city, p.addr].filter(Boolean).join("") || "—",
@@ -97,10 +108,10 @@ thPage({
   },
 
   methods: {
-    prev() { window.location.href = "forest-camp-5.html"; },
+    prev() { window.location.href = "apply_05.html"; },
     submit() {
       const e = [];
-      if (!this.bookingRows.length) e.push("尚未選擇床位或營位，請回第 2 步");
+      if (this.st.kind === "camp" && !this.bookingRows.length) e.push("尚未選擇床位或營位，請回第 2 步");
       if (!(this.st.applicant && this.st.applicant.name)) e.push("尚未填寫申請人資料，請回第 3 步");
       if (!this.st.agreed) e.push("尚未勾選同意聲明，請回第 5 步");
       if (!this.vcode) e.push("請輸入送件驗證碼");

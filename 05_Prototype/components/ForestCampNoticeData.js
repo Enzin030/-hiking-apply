@@ -7,7 +7,7 @@
    所以四間都有正式站原文。產生腳本：scripts/gen-fc-notice.py
    （重產後依 R1，git diff 應為空）。
    段落只保留文字，原站的粗體、顏色、表格格式未保留。
-   由 forest-camp-5.html 的 <body> 底部載入；頁面腳本只在 data() 裡讀。
+   由 apply_05.html 的 <body> 底部載入；頁面腳本只在 data() 裡讀。
    ============================================================ */
 window.TH_FC_NOTICES = {
  "tianchi": {

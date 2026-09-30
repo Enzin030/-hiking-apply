@@ -2,28 +2,28 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>登山線上申請｜山屋住宿申請 — 臺灣登山申請一站式服務網</title>
+<title>登山線上申請｜附件上傳 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  forest-camp-4 — 山屋住宿申請 步驟 4：附件上傳
+  apply_04 — 六步驟家族 步驟 4：附件上傳（警政署、自然保護區域、山屋共用）
   ------------------------------------------------------------
-  2026-09-30 新增，由 template/page.html 起手。依據：正式站 apply_04.aspx
-  （2026-09-29 實走嘉明湖：「行程附件上傳　檔案限制：5MB」，本路線「無須上傳附件」）。
+  2026-09-30 新增（原 forest-camp-4，同日依舊站檔名改名）。依據：正式站 apply_04.aspx
+  （2026-09-29 實走三類：「行程附件上傳　檔案限制：5MB」，三條路線皆「無須上傳附件」）。
   需要附件的情形（例：外籍人士提前申請須上傳護照）雛形未做，見 js 檔頭。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="assets/tailwind.config.js"></script>
 <link rel="stylesheet" href="assets/css/index.css" />
-<script src="assets/includes/head-loader.js" data-page-init="components/forest-camp-4.js"></script>
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_04.js"></script>
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="FC-04 附件上傳">
+<div id="th-app" v-cloak data-screen-label="六步驟-04 附件上傳">
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '附件上傳']" title="山屋住宿申請">
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '附件上傳']" :title="st.title">
 
     <template #stepper>
       <th-fc-stepper :current="4"></th-fc-stepper>
@@ -41,8 +41,8 @@
     </section>
 
     <div class="flex flex-wrap justify-between gap-2 mt-6">
-      <button type="button" class="th-btn th-btn-ghost" @click="go('forest-camp-3.html')"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
-      <button type="button" class="th-btn th-btn-primary" @click="go('forest-camp-5.html')">下一步：同意聲明<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <button type="button" class="th-btn th-btn-ghost" @click="go('apply_03.html')"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="go('apply_05.html')">下一步：同意聲明<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
 

@@ -185,7 +185,10 @@ window.TH_FC_STEPS = [
 ];
 
 /* ------------------------------------------------------------
-   山屋申請第 3～6 步的跨頁狀態（2026-09-30 新增）
+   六步驟家族（山屋、警政署入山證、林保署自然保護區域）第 3～6 步的跨頁狀態
+   （2026-09-30 新增；同日第二類起用時擴為家族共用，名稱沿用 thFcState 不改）
+   第 3～6 步頁面 apply_03～06.html 三類共用（檔名比照正式站 apply_03～06.aspx），
+   以 state.kind（camp／npa／area）切換內容。
    ------------------------------------------------------------
    第 1、2 步沿用查詢字串；第 2 步按下一步起，訂位、隊伍資料等存成**單一**
    sessionStorage key。人員資料不放網址（個資、長度）。
@@ -220,17 +223,20 @@ window.TH_FC_PAYMENTS = [
 ];
 
 /* 第 3～6 步頂端「行程計畫」摘要，欄位照正式站 apply_03／apply_06（2026-09-29）：
-   單位／主路線／申辦日期／出發日期／行程天數／出發人數／路線 */
-window.thFcPlanRows = function (st, cabin, today) {
+   單位／主路線／申辦日期／出發日期／行程天數／出發人數／路線。
+   各類別的第 1、2 步把 kind 與 plan（單位、主路線、路線）存進 thFcState，這裡不分類別。 */
+window.thApply6PlanRows = function (st, today) {
+  var plan = st.plan || {};
+  var days = Number(st.days) || 0;
   var nights = Number(st.nights) || 0;
   return [
-    { label: "單位",     value: "國家步道(山屋/營地)" },
-    { label: "主路線",   value: cabin.name },
+    { label: "單位",     value: plan.unit || "—" },
+    { label: "主路線",   value: plan.main || "—" },
     { label: "申辦日期", value: today },
     { label: "出發日期", value: st.start || "—" },
-    { label: "行程天數", value: nights ? (nights + 1) + " 天（" + nights + " 晚）" : "—" },
+    { label: "行程天數", value: days ? days + " 天" + (st.kind === "camp" && nights ? "（" + nights + " 晚）" : "") : "—" },
     { label: "出發人數", value: st.headcount ? st.headcount + " 人" : "—" },
-    { label: "路線",     value: cabin.name },
+    { label: "路線",     value: plan.route || "—" },
   ];
 };
 

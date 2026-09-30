@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>登山線上申請｜同意聲明 — 臺灣登山申請一站式服務網</title>
+<!--
+  ============================================================
+  apply_05 — 六步驟家族 步驟 5：同意聲明（警政署、自然保護區域、山屋共用）
+  ------------------------------------------------------------
+  2026-09-30 新增（原 forest-camp-5，同日依舊站檔名改名）。依據：正式站 apply_05.aspx
+  （2026-09-29）——該頁同時載入三類的聲明，依類別只顯示一塊：
+    警政署：「隱私權保護政策及作業使用說明」＋兩段提醒＋「同意上述聲明」
+    自然保護區域：依區域類型（自然保留區／自然保護區／野生動物保護區）的規定全文
+    山屋：該山屋的經營管理與住宿申請注意事項全文
+  原文由 components/Apply6NoticeData.js、ForestCampNoticeData.js 提供（scripts/ 產生）。
+  ============================================================
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/tailwind.config.js"></script>
+<link rel="stylesheet" href="assets/css/index.css" />
+<script src="assets/includes/head-loader.js" data-page-init="components/apply_05.js"></script>
+</head>
+<body>
+
+<div id="th-app" v-cloak data-screen-label="六步驟-05 同意聲明">
+
+  <th-header active="apply"></th-header>
+
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '同意聲明']" :title="st.title">
+
+    <template #stepper>
+      <th-fc-stepper :current="5"></th-fc-stepper>
+    </template>
+
+    <section class="th-card">
+      <div class="th-card-head">
+        <i :class="icon" aria-hidden="true"></i>
+        <h2 class="th-card-title">{{ blockTitle }}</h2>
+      </div>
+      <div class="th-card-body grid gap-3">
+        <!-- 警政署 -->
+        <template v-if="st.kind === 'npa'">
+          <h3 class="th-section-title">{{ npa.panelTitle }}</h3>
+          <div class="flex flex-wrap gap-4">
+            <a class="th-inline-link" :href="npa.privacyUrl" target="_blank" rel="noopener noreferrer">隱私權保護政策<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
+            <button type="button" class="th-inline-link" @click="manualOpen = true">作業使用說明</button>
+          </div>
+          <p v-for="(t, i) in npa.body" :key="i">{{ t }}</p>
+        </template>
+        <!-- 自然保護區域、山屋：規定全文 -->
+        <template v-else>
+          <h3 v-if="notice.title" class="th-section-title">{{ notice.title }}</h3>
+          <p v-for="(t, i) in notice.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
+        </template>
+
+        <label class="flex items-start gap-2 th-label mt-2">
+          <input type="checkbox" v-model="agreed" class="mt-1" />{{ agreeText }}</label>
+        <p v-if="warn" class="th-field-hint" role="alert">請確認已勾選同意聲明</p>
+      </div>
+    </section>
+
+    <div class="flex flex-wrap justify-between gap-2 mt-6">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步：確認送出<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </th-page-shell>
+
+  <!-- 警政署「作業使用說明」：正式站為彈窗（modal-TravelStep02Npa） -->
+  <th-modal v-if="manualOpen" title="作業使用說明" @close="manualOpen = false">
+    <div class="grid gap-2">
+      <p v-for="(t, i) in npa.manual" :key="i">{{ t }}</p>
+    </div>
+    <template #foot>
+      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="manualOpen = false">關閉</button></div>
+    </template>
+  </th-modal>
+
+  <th-quick-nav></th-quick-nav>
+  <th-back-to-top></th-back-to-top>
+  <th-footer></th-footer>
+
+</div>
+
+<!-- 資料檔：parser-inserted，頁面腳本只在 data() 裡讀 -->
+<script src="components/ForestCampNoticeData.js"></script>
+<script src="components/Apply6NoticeData.js"></script>
+</body>
+</html>
