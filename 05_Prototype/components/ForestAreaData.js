@@ -133,7 +133,9 @@ window.TH_FOREST_AREAS = {
   "purposes": [
    {
     "value": "民眾為環境教育之需要",
-    "attach": 0
+    "attach": 0,
+    "limit": 1,
+    "note": ""
    }
   ],
   "purposeInput": "radio",
@@ -253,15 +255,36 @@ window.TH_FOREST_AREAS = {
   "purposes": [
    {
     "value": "研究機構或大專院校為學術研究之需要",
-    "attach": 2
+    "attach": 2,
+    "limit": 0,
+    "note": "須附1.行程計畫書(應詳述路線並包含路線圖)",
+    "template": {
+     "label": "下載範本",
+     "href": "https://hike.taiwan.gov.tw/docs/鴛鴦湖-行程計畫書(範例).docx"
+    },
+    "noteAfter": "、2.研究計畫書"
    },
    {
     "value": "原住民族為傳統文化、祭儀之需要",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": "須附1.行程計畫書(應詳述路線並包含路線圖)",
+    "template": {
+     "label": "下載範本",
+     "href": "https://hike.taiwan.gov.tw/docs/鴛鴦湖-行程計畫書(範例).docx"
+    },
+    "noteAfter": ""
    },
    {
     "value": "為司馬庫斯古道借道之需要",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": "須附1.行程計畫書(應詳述路線並包含路線圖)",
+    "template": {
+     "label": "下載範本",
+     "href": "https://hike.taiwan.gov.tw/docs/鴛鴦湖-行程計畫書(範例).docx"
+    },
+    "noteAfter": ""
    }
   ],
   "purposeInput": "checkbox",
@@ -356,35 +379,51 @@ window.TH_FOREST_AREAS = {
   "purposes": [
    {
     "value": "採集標本： 植物",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    },
    {
     "value": "採集標本： 動物",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    },
    {
     "value": "人員入出",
-    "attach": 0
+    "attach": 0,
+    "limit": 0,
+    "note": "(欲申請環境教育解說服務者請勾選此項；此項須有解說員(含費用)陪同進入，申請解說員請致電0905-635652或逕至https://www.beclass.com/rid=284b3d2655d4ef152712填寫申請單)"
    },
    {
     "value": "溯溪或泛舟",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    },
    {
     "value": "引進或攜出動、植物",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    },
    {
     "value": "動、植物復育",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    },
    {
     "value": "採集種源",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    },
    {
     "value": "探採礦、採取土石、挖掘埋藏物或改變水文、地形、地貌",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": ""
    }
   ],
   "purposeInput": "radio",
@@ -479,11 +518,15 @@ window.TH_FOREST_AREAS = {
   "purposes": [
    {
     "value": "學術研究需要",
-    "attach": 1
+    "attach": 1,
+    "limit": 0,
+    "note": "須附『研究計畫書』"
    },
    {
     "value": "人員進出需要",
-    "attach": 0
+    "attach": 0,
+    "limit": 0,
+    "note": ""
    }
   ],
   "purposeInput": "radio",

@@ -66,9 +66,20 @@ def step2(name):
     def options(nm):
         sel = re.findall(rf'<select[^>]*name="{nm}"[^>]*>(.*?)</select>', seg, re.S)[0]
         return [(html.unescape(v), text(t)) for v, t in re.findall(r'<option[^>]*value[s]?="([^"]*)"[^>]*>(.*?)</option>', sel, re.S)]
-    # 申請目的：data-attach＝須附件數（空字串＝不須附件）。多數區域為單選 radio，鴛鴦湖為複選 checkbox
-    found = re.findall(r'<input type="(radio|checkbox)" name="rdo-use-reason"[^>]*data-attach="([^"]*)"[^>]*value="([^"]+)"', seg)
-    purposes = [{"value": html.unescape(v), "attach": int(a) if a else 0} for _, a, v in found]
+    # 申請目的：data-attach＝須附件數（空字串＝不須附件）；data-limit＝人數下限（申請人數小於此值不得勾選）。
+    # 多數區域為單選 radio，鴛鴦湖為複選 checkbox。選項後的紅字 <span class="text-red"> 是附件說明，
+    # 內含「下載範本」連結時另存 template（轉為正式站絕對網址）
+    found = re.findall(r'<input type="(radio|checkbox)" name="rdo-use-reason"[^>]*?data-limit="([^"]*)"[^>]*?data-attach="([^"]*)"'
+                       r'[^>]*?value="([^"]+)"[^>]*>\s*(?:<span class="text-red">(.*?)</span>)?', seg, re.S)
+    purposes = []
+    for _, lim, a, v, note in found:
+        tpl = re.search(r'<a href="([^"]+)"[^>]*>(.*?)</a>', note or "", re.S)
+        p = {"value": html.unescape(v), "attach": int(a) if a else 0, "limit": int(lim) if lim else 0,
+             "note": text((note or "")[:tpl.start()] if tpl else (note or ""))}
+        if tpl:   # 連結在說明中間：note＝連結前、noteAfter＝連結後
+            p["template"] = {"label": text(tpl.group(2)), "href": "https://hike.taiwan.gov.tw/" + tpl.group(1)}
+            p["noteAfter"] = text(note[tpl.end():])
+        purposes.append(p)
     purpose_input = found[0][0] if found else "radio"
     blocks = []
     for m in re.finditer(r'<div class="block_title">\s*(\d+)\.([^<]+)</div>(.*?)(?=<div class="block_title">|$)', seg, re.S):
