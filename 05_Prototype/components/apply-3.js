@@ -9,12 +9,16 @@ function getParam(key) {
   return new URLSearchParams(window.location.search).get(key) || "";
 }
 
-// 產生入園日期清單（56 項，排除關閉日 09-30 與 10-01）
+// 產生入園日期清單：今日＋5 天起、跨 57 天，排除關閉日。
+// 正式站 2026-09-21 擷取（prod-YUS001-S01）：09-26～11-21，排除 09-30、10-01（頁面標示「關閉日期：2026/09/30-2026/10/01」）。
+// 原本寫死從 2026-09-26 起算，過了那天清單就含過去日期（2026-10-01 發現）。
+// 關閉日是依公告的特定日期，此處只是那次觀察的示意〔待確認：關閉日來源〕。
 function generateDateOptions() {
   const list = [];
-  const start = new Date(2026, 8, 26); // 2026-09-26
+  const today = new Date();
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5);
   const closed = ["2026-09-30", "2026-10-01"];
-  for (let i = 0; i < 58; i++) {
+  for (let i = 0; i < 57; i++) {
     const d = new Date(start);
     d.setDate(d.getDate() + i);
     const y = d.getFullYear();
@@ -60,6 +64,9 @@ thPage({
     const qClimb = getParam("climbline");
     const qStart = getParam("applystart");
     const qSumday = getParam("sumday");
+    const dateOptions = generateDateOptions();
+    // 示意入園日 10-15；已不在可選範圍（過了 10 月中）就改取清單第 10 個
+    const demoStart = dateOptions.includes("2026-10-15") ? "2026-10-15" : dateOptions[9];
 
     let defaultClimb = qClimb || "2"; // 當 route=np-2 或 cid=2 時為 2~5天
     if (!qClimb) {
@@ -82,8 +89,8 @@ thPage({
       climblinemain: qMainRoute || "1", // 1: 玉山線
       climbline: defaultClimb,
       sumday: qSumday || (defaultClimb === "2" ? "2" : "1"),
-      applystart: qStart || "2026-10-15",
-      dateOptions: generateDateOptions(),
+      applystart: qStart || demoStart,
+      dateOptions: dateOptions,
 
       mainRoutes: [
         { value: "1", text: "玉山線" },
