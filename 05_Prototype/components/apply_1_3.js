@@ -15,13 +15,17 @@
    - 有「隊名」（必填）；有無人機空拍申請說明
    - **沒有警政署入山證區塊**（機關層級差異，05b §3.1）、沒有 GPS、沒有路線承載量查詢與「已詳閱說明」勾選
    - 登山總日數依次路線（雪山主峰多日行程 2～4 天）；入園日期選了天數才可選
-   - 入園日期：今日＋6 天起連續 56 個（正式站 09-24 擷取 09-30～11-24；同意書第 11 條寫入園日前 5 日，差一天〔待確認〕）
+   - 入園日期：今日＋5 天起連續 57 個（正式站 10-01 實測 10-06～12-01，與同意書「入園日前 5 日」一致；
+     09-24 擷取為 +6 天起 56 個，兩次終點皆為 +61 天）
    - 路線規劃第一步是「請選擇起點」（th-route-planner 的 pick-start）
    - 登山行前講習**預設空白**（玉山預設網路線上學習）
-   - 「登山安全管理」區塊正式站只有空標題（05b §3.4），雛形只放標題與〔待確認〕說明，不做表單
+   - 「登山安全管理」區塊正式站只有空標題（05b §3.4）；2026-10-01 再實測：切換次路線、路線規劃完成後
+     仍只有標題，表單從未出現。雛形只放標題與〔待確認〕說明，不做表單
    步驟二
    - 「國家公園行程計畫」多列隊名；沒有「承載量隊狀況」區塊
    - 附件區顯示「無需上傳資料」
+   - 隊伍 1 人時出現單人獨攀勾選（正式站 lineonechk，附「獨攀登山安全宣導」PDF），未勾擋下
+     「請勾選單人獨攀注意事項」；2 人以上不出現（2026-10-01 實測 1 人、09-24 擷取 2 人）
    - 宿營地排隊表的宿營地點下拉只有當晚宿營地一項（無「自備搭帳」），說明欄為固定文字＋宿營地與床位查詢連結
    步驟三
    - 申請人、留守人各一張表，欄位與順序照正式站雪霸確認頁；隊員表以「領隊」欄 V 標示、無傳真欄
@@ -50,11 +54,11 @@ function apply13AddDays(iso, n) {
   return apply13Iso(p[0], p[1] - 1, p[2] + n);
 }
 
-/* 可選入園日期：今日＋6 天起連續 56 個（正式站 2026-09-24 觀察，無排除日；示意） */
+/* 可選入園日期：今日＋5 天起連續 57 個（正式站 2026-10-01 實測，無排除日；示意） */
 function apply13Dates() {
   var t = new Date();
   var out = [];
-  for (var i = 0; i < 56; i++) out.push(apply13Iso(t.getFullYear(), t.getMonth(), t.getDate() + 6 + i));
+  for (var i = 0; i < 57; i++) out.push(apply13Iso(t.getFullYear(), t.getMonth(), t.getDate() + 5 + i));
   return out;
 }
 
@@ -176,6 +180,8 @@ thPage({
       members: [Object.assign({}, demo.member)],
       staySame: false,
       stay: Object.assign({}, demo.stay),
+      soloChecked: false,
+      soloPdf: "https://hike.taiwan.gov.tw/images/雪霸獨攀登山安全宣導.pdf",
       vcode2: "",
 
       /* 步驟三 */
@@ -216,6 +222,7 @@ thPage({
     endDate() { return this.sumday ? apply13AddDays(this.startDate, this.sumday - 1) : ""; },
     leaderView() { return this.leaderSame ? Object.assign({}, this.applicant) : this.leader; },
     teamsCount() { return this.members.length + 1; },   // 含領隊
+    isSolo() { return this.teamsCount === 1; },
     teamRows() {
       return [Object.assign({ isLeader: true }, this.leaderView)].concat(this.members).map(function (p, i) {
         return Object.assign({ no: i + 1, leader: p.isLeader ? "V" : "" }, apply13PersonRow(p));
@@ -308,6 +315,7 @@ thPage({
       if (this.members.length && !this.memberConsent) e.push("請勾選隊員的委託同意");
       if (this.members.some(function (m) { return !m.name || !m.sid; })) e.push("隊員姓名與證號為必填");
       if (!this.stay.name) e.push("請填寫留守人資料");
+      if (this.isSolo && !this.soloChecked) e.push("請勾選單人獨攀注意事項");
       if (!this.vcode2) e.push("請輸入送件驗證碼");
       return e;
     },

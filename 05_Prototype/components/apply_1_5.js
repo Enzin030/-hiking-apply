@@ -152,10 +152,16 @@ var APPLY15_QUEUE_COLUMNS = [
   { key: "note", label: "說明" },
 ];
 
+var APPLY15_P = new URLSearchParams(window.location.search);
+
 thPage({
   data() {
     var demo = window.APPLY15_DEMO_PEOPLE;
     var dates = apply15Dates();
+    /* 從路線列表／同意書帶來的 cid 有對應次路線就預選（2026-10-01）；否則用南湖大山線示範 */
+    var qCid = APPLY15_P.get("cid");
+    var qMain = (window.APPLY15_ROUTES || []).find(function (r) { return r.subs.some(function (s) { return s.id === qCid; }); });
+    var isDemo = !qMain || qCid === "667";
     return {
       routes: window.APPLY15_ROUTES,
       routeNotes: window.APPLY15_ROUTE_NOTES,
@@ -182,12 +188,12 @@ thPage({
       draftOpen: false,
 
       /* 步驟一（示意資料預設帶入） */
-      mainId: "16",
-      subId: "667",
-      sumday: 3,
-      startDate: dates[2],
-      noteChecked: true,
-      plan: { days: APPLY15_DEMO_DAYS, finished: true },
+      mainId: isDemo ? "16" : qMain.id,
+      subId: isDemo ? "667" : qCid,
+      sumday: isDemo ? 3 : 1,
+      startDate: isDemo ? dates[2] : "",
+      noteChecked: isDemo,
+      plan: isDemo ? { days: APPLY15_DEMO_DAYS, finished: true } : { days: [], finished: false },
       satellitephone: "",
       frequency: "",
       noteUser: "",
@@ -227,6 +233,15 @@ thPage({
     hasPlanner() { return !!(this.sub && this.sub.planner); },
     needsNpa() { return !!(this.sub && this.sub.needsNpa); },
     notes() { return (this.sub && this.routeNotes[this.sub.id]) || []; },
+    /* 「已詳閱以下說明」只在有說明或需入山證的路線出現（奇萊北屏風山線沒有，2026-10-01 正式站） */
+    hasNoteCheck() { return this.notes.length > 0 || this.needsNpa; },
+    /* 天數依次路線（奇萊北屏風山線 1～4）；未設定者沿用 1～30 */
+    dayOptions() {
+      if (this.sub && this.sub.days) return this.sub.days;
+      var out = [];
+      for (var n = 1; n <= 30; n++) out.push(n);
+      return out;
+    },
     /* 等級 0 是合法值，判空不能用 falsy */
     levelRow() {
       var lv = this.sub ? this.sub.level : undefined;
@@ -338,7 +353,7 @@ thPage({
       if (!this.sub) e.push("請選擇次路線");
       if (this.sub && this.sub.closed) e.push("此路線目前關閉（" + this.sub.closed + "），無法選擇入園日期");
       if (!this.startDate) e.push("請選擇入園日期");
-      if (!this.noteChecked) e.push("請勾選「已詳閱以下說明，並同意相關注意事項」");
+      if (this.hasNoteCheck && !this.noteChecked) e.push("請勾選「已詳閱以下說明，並同意相關注意事項」");
       if (this.hasPlanner && !this.plan.finished) e.push("路線規劃行程尚未安排完成");
       if (this.needsNpa) {
         if (!this.npa.places.length) e.push("入山證：請至少加入一個前往地點");

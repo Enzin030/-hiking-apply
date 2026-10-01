@@ -63,7 +63,7 @@
           <template v-if="sub">
             <!-- 舊站 showbed5() 開 bed_5show.aspx（路線承載量）；雛形尚無對應頁 -->
             <div><th-todo-link label="路線承載量查詢"></th-todo-link></div>
-            <label class="flex items-start gap-2 th-label">
+            <label v-if="hasNoteCheck" class="flex items-start gap-2 th-label">
               <input type="checkbox" v-model="noteChecked" class="mt-1" />已詳閱以下說明，並同意相關注意事項。</label>
             <ul v-if="notes.length || needsNpa" class="th-field-hint list-disc pl-5">
               <li v-for="n in notes" :key="n">{{ n }}</li>
@@ -94,7 +94,7 @@
             <div class="th-field">
               <label class="th-label" for="f-sumday"><span class="req">*</span>登山總日數</label>
               <th-hybrid-select><select id="f-sumday" class="th-select" v-model.number="sumday">
-                <option v-for="n in 30" :key="n" :value="n">共{{ n }}天</option>
+                <option v-for="n in dayOptions" :key="n" :value="n">共{{ n }}天</option>
               </select></th-hybrid-select>
             </div>
             <div class="th-field">
