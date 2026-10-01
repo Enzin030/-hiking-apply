@@ -46,6 +46,7 @@
             <input type="checkbox" :value="s.value" v-model="picked" class="mt-1" />
             <span><strong>{{ s.value }}</strong><br /><span class="th-field-hint">{{ s.desc }}</span></span>
           </label>
+          <!-- 沒勾任何範圍時此欄必填（正式站 ForestAreaNext）；沒有預設範圍的區域只有這一欄 -->
           <input class="th-input" type="text" :placeholder="area.notesPlaceholder" v-model="notes" aria-label="其他範圍或備註" />
         </div>
       </section>
@@ -57,7 +58,12 @@
           <h2 class="th-card-title">2.選擇進出入口與預計抵達時間</h2>
         </div>
         <div class="th-card-body grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="th-field">
+          <!-- 沒有預設範圍的區域（gateText）：入口、出口為必填文字欄「請自行填寫」 -->
+          <div v-if="area.gateText" class="th-field">
+            <label class="th-label" for="f-entr-text"><span class="req">*</span>入口</label>
+            <input id="f-entr-text" class="th-input" type="text" placeholder="請自行填寫" v-model="entrText" />
+          </div>
+          <div v-else class="th-field">
             <label class="th-label" for="f-entr"><span class="req">*</span>入口</label>
             <th-hybrid-select><select id="f-entr" class="th-select" v-model="entr">
               <option value="">請選擇</option>
@@ -71,7 +77,11 @@
               <option v-for="t in area.times" :key="t" :value="t">{{ t }}</option>
             </select></th-hybrid-select>
           </div>
-          <div class="th-field">
+          <div v-if="area.gateText" class="th-field">
+            <label class="th-label" for="f-exit-text"><span class="req">*</span>出口</label>
+            <input id="f-exit-text" class="th-input" type="text" placeholder="請自行填寫" v-model="exitText" />
+          </div>
+          <div v-else class="th-field">
             <label class="th-label" for="f-exit"><span class="req">*</span>出口</label>
             <th-hybrid-select><select id="f-exit" class="th-select" v-model="exit">
               <option value="">請選擇</option>
@@ -123,9 +133,11 @@
           <h2 class="th-card-title">{{ b.no }}.{{ b.title }}</h2>
         </div>
         <div class="th-card-body grid gap-2">
-          <p>{{ b.text }}</p>
+          <p class="whitespace-pre-line">{{ b.text }}</p>
           <label v-if="b.input === 'radio'" class="flex items-start gap-2 th-label">
             <input type="checkbox" v-model="confirms[b.name]" class="mt-1" />{{ b.confirm }}</label>
+          <!-- 空白待填（例：行程計畫，出雲山 textarea、翡翠水庫空白 text）；正式站未標必填〔待確認〕 -->
+          <textarea v-else-if="isFillIn(b)" class="th-textarea" rows="4" v-model="fills[b.name]" :aria-label="b.title"></textarea>
           <!-- 正式站這類為唯讀已帶入的文字欄（OtherName7／8），不需勾選 -->
           <p v-else class="th-input th-input-readonly">{{ b.confirm }}</p>
         </div>

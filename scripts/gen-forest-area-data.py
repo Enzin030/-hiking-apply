@@ -7,7 +7,9 @@
   632 鴛鴦湖（85 自然保留區）       prod-FA003-S01／S02（2026-09-30）
   623 十八羅漢山（86 自然保護區）   prod-FA004-S01／S02（2026-09-30）
   628 玉里（87 野生動物保護區）     prod-FA005-S01／S02（2026-09-30）
-其他區域沒有資料，雛形不編造（頁面顯示尚未盤點）。重跑後依 R1，git diff 應為空。
+  其餘 19 區                         prod-FA006～FA024-S01／S02（2026-10-01，walk_fa --stop-at 2）
+正式站路線清單上的 23 區全部收錄。第 2 步有兩種版面：有預設進入範圍（SubBlockArea 勾選＋入口出口下拉），
+或沒有（gateText：進入範圍只有文字欄、入口出口為必填文字欄）。重跑後依 R1，git diff 應為空。
 """
 import datetime as dt
 import html
@@ -28,6 +30,15 @@ AREAS = {
     "623": ("504", "86", "prod-FA004-S02", "prod-FA004-S01"),
     "628": ("509", "87", "prod-FA005-S02", "prod-FA005-S01"),
 }
+# 2026-10-01 其餘 19 區（cId, fId, typeCode, 擷取編號）
+for _cid, _fid, _t, _no in [
+    ("609", "490", "85", 6), ("610", "491", "85", 7), ("611", "492", "85", 8), ("612", "493", "85", 9),
+    ("613", "494", "85", 10), ("614", "495", "85", 11), ("615", "496", "85", 12), ("616", "497", "85", 13),
+    ("617", "498", "85", 14), ("618", "499", "85", 15), ("619", "500", "85", 16), ("620", "501", "85", 17),
+    ("629", "510", "85", 18), ("631", "512", "85", 19), ("622", "503", "86", 20), ("624", "505", "86", 21),
+    ("625", "506", "86", 22), ("626", "507", "86", 23), ("627", "508", "87", 24),
+]:
+    AREAS[_cid] = (_fid, _t, f"prod-FA{_no:03d}-S02", f"prod-FA{_no:03d}-S01")
 
 
 def load(name):
@@ -64,8 +75,10 @@ def step2(name):
     notes = re.search(r'name="Notes"[^>]*placeholder="([^"]+)"', seg)
 
     def options(nm):
-        sel = re.findall(rf'<select[^>]*name="{nm}"[^>]*>(.*?)</select>', seg, re.S)[0]
-        return [(html.unescape(v), text(t)) for v, t in re.findall(r'<option[^>]*value[s]?="([^"]*)"[^>]*>(.*?)</option>', sel, re.S)]
+        sel = re.findall(rf'<select[^>]*name="{nm}"[^>]*>(.*?)</select>', seg, re.S)
+        if not sel:   # 自由輸入版面沒有入口／出口下拉
+            return []
+        return [(html.unescape(v), text(t)) for v, t in re.findall(r'<option[^>]*value[s]?="([^"]*)"[^>]*>(.*?)</option>', sel[0], re.S)]
     # 申請目的：data-attach＝須附件數（空字串＝不須附件）；data-limit＝人數下限（申請人數小於此值不得勾選）。
     # 多數區域為單選 radio，鴛鴦湖為複選 checkbox。選項後的紅字 <span class="text-red"> 是附件說明，
     # 內含「下載範本」連結時另存 template（轉為正式站絕對網址）
@@ -86,15 +99,19 @@ def step2(name):
         no, title, body = int(m.group(1)), m.group(2).strip(), m.group(3)
         if no < 4:
             continue
-        desc = re.search(r'control_label_text">(.*?)</label>', body, re.S)
-        inp = re.search(r'<input type="(radio|text)" name="([^"]+)"[^>]*value="([^"]+)"', body)
-        blocks.append({"no": no, "title": title, "text": text(desc.group(1)) if desc else "",
+        # 說明可能不只一段（例：出雲山「行程計畫」有說明＋填寫範例兩段），以換行接起
+        desc = [text(d) for d in re.findall(r'control_label_text">(.*?)</label>', body, re.S)]
+        # 三種欄位：radio＝勾選確認；text＝唯讀已帶入文字；textarea＝空白待填（例：行程計畫，2026-10-01 出雲山、翡翠水庫）
+        inp = re.search(r'<input type="(radio|text|textarea)" name="([^"]+)"[^>]*value="([^"]*)"', body)
+        blocks.append({"no": no, "title": title, "text": "\n".join(d for d in desc if d),
                        "name": inp.group(2), "input": inp.group(1), "confirm": html.unescape(inp.group(3))})
     return {"type": area_type, "name": area_name, "segments": segments,
             "notesPlaceholder": notes.group(1) if notes else "",
             "entrances": [{"value": v, "label": t} for v, t in options("SubBlockArea_entr") if v],
             "exits": [{"value": v, "label": t} for v, t in options("SubBlockArea_exit") if v],
             "times": [t for v, t in options("GateTime") if t],
+            # 第二種版面（區域沒有 sub_block）：進入範圍只有 Notes 文字欄，入口／出口為必填文字欄 GateText
+            "gateText": 'name="GateText"' in seg,
             "purposes": purposes, "purposeInput": purpose_input, "blocks": blocks}
 
 
@@ -112,9 +129,9 @@ js = """/* ============================================================
    ForestAreaData.js — 林保署自然保護區域申請的區域資料（第 1、2 步）
    ------------------------------------------------------------
    **自動產生，不要手改。** 來源：正式站 hike.taiwan.gov.tw `apply_forest_area_1／2.aspx`
-   實走擷取（北插天山 2026-09-29；鴛鴦湖、十八羅漢山、玉里 2026-09-30）。產生腳本：
+   實走擷取（北插天山 2026-09-29；鴛鴦湖、十八羅漢山、玉里 2026-09-30；其餘 19 區 2026-10-01）。產生腳本：
    scripts/gen-forest-area-data.py（重產後依 R1，git diff 應為空）。
-   **只有這四個區域實走過**；其他區域沒有資料，頁面顯示「尚未盤點」，不套用任何一筆。
+   正式站路線清單上的 23 區全部收錄；gateText＝沒有預設進入範圍，入口／出口為自由輸入。
    鍵為 cId（路線列表以 tmpc_id 帶入）。typeCode：85 自然保留區／86 自然保護區／87 野生動物保護區。
    purposes[].attach：須附件數（0＝不須）；purposeInput：radio 單選／checkbox 複選。鴛鴦湖為複選且所有目的都須附件。
    由 apply_forest_area_1／2.html 的 <body> 底部載入；頁面腳本只在 data() 裡讀。

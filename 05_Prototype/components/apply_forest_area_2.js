@@ -35,11 +35,14 @@ thPage({
       entrTime: saved.entrTime || "",
       exit: saved.exit || "",
       exitTime: saved.exitTime || "",
+      entrText: saved.entrText || "",   // gateText 區域的入口／出口文字
+      exitText: saved.exitText || "",
       purpose: saved.purpose || "",
       purposes: saved.purposes || [],
       attachFiles: saved.attachFiles || {},   // { 目的: [第 1 件檔名, 第 2 件檔名…] }
       headcount: Number(st.headcount) || 0,
       confirms: confirms,
+      fills: Object.assign({}, saved.fills),   // 空白待填區塊（行程計畫）的內容
       errors: [],
       errorOpen: false,
     };
@@ -68,6 +71,8 @@ thPage({
   },
   methods: {
     isChosen(v) { return this.chosenPurposes.indexOf(v) >= 0; },
+    /* textarea，或預設值空白的 text＝讓使用者填寫；有預帶文字的 text＝唯讀顯示 */
+    isFillIn(b) { return b.input === "textarea" || (b.input === "text" && !b.confirm); },
     fileName(v, i) { return (this.attachFiles[v] || [])[i] || ""; },
     /* 檢查同正式站（ForestAreaAAcceptFileTypes、MaxFileSize＝5MB），通過才記檔名 */
     pickFile(v, i, ev) {
@@ -84,18 +89,27 @@ thPage({
     },
     plan() {
       return { picked: this.picked, notes: this.notes, entr: this.entr, entrTime: this.entrTime,
-               exit: this.exit, exitTime: this.exitTime, purpose: this.purpose, purposes: this.purposes,
-               attachFiles: this.attachFiles, confirms: this.confirms };
+               exit: this.exit, exitTime: this.exitTime, entrText: this.entrText, exitText: this.exitText,
+               purpose: this.purpose, purposes: this.purposes,
+               attachFiles: this.attachFiles, confirms: this.confirms, fills: this.fills };
     },
     check() {
       const e = [];
-      if (!this.picked.length) e.push("請選擇進入範圍");
-      if (!this.entr || !this.entrTime) e.push("請選擇入口與抵達入口時間");
-      if (!this.exit || !this.exitTime) e.push("請選擇出口與抵達出口時間");
+      /* 訊息照正式站 js/HSTS/Swal.js：沒勾範圍且備註空白＝-60「進入範圍未選擇」；必填文字欄空白＝-4 */
+      if (!this.picked.length && !this.notes.trim()) e.push("進入範圍未選擇");
+      if (this.area.gateText) {
+        if (!this.entrText.trim() || !this.exitText.trim()) e.push("必填欄位未填寫");
+        if (!this.entrTime || !this.exitTime) e.push("請選擇抵達入口與出口時間");
+      } else {
+        if (!this.entr || !this.entrTime) e.push("請選擇入口與抵達入口時間");
+        if (!this.exit || !this.exitTime) e.push("請選擇出口與抵達出口時間");
+      }
       if (!this.chosenPurposes.length) e.push("申請目的或項目未選擇");
       if (this.area.purposes.some(p => this.isChosen(p.value) && p.limit && this.headcount < p.limit)) e.push("申請人數小於限制人數");
       if (this.attachMissing) e.push("未上傳附件");
-      this.area.blocks.forEach(b => { if (b.input === "radio" && !this.confirms[b.name]) e.push("請確認「" + b.title + "」"); });
+      this.area.blocks.forEach(b => {
+        if (b.input === "radio" && !this.confirms[b.name]) e.push(b.name === "rdo-use-safe" ? "安全聲明未選擇" : "請確認「" + b.title + "」");
+      });
       return e;
     },
     next() {
