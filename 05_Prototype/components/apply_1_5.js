@@ -16,9 +16,8 @@
    難度等級照步道分級的處理方式：`th-level lv-N` 徽章，點開 th-modal 顯示
    window.TRAIL_LEVELS 的說明／適合對象／建議裝備（與步道分級頁、開放狀態頁同一份資料）。
 
-   **路線規劃器目前是頁面區域元件**：2026-09-18 實走確認玉山與太魯閣是同一套
-   （節點與按鈕 ID、兩條完成規則都相同），但雪霸未驗證，而且雛形只有本頁用到；
-   依「二次即提升」，第二個頁面要用時再提升為 .th-*。
+   **路線規劃器**原為本頁的區域元件 p-apply15-planner，2026-10-01 雪霸 apply_1_3
+   成為第二個消費端，依「二次即提升」改為共用元件 th-route-planner（行為不變）。
 
    ------------------------------------------------------------
    互動約定（2026-09-17 使用者指示）
@@ -153,115 +152,7 @@ var APPLY15_QUEUE_COLUMNS = [
   { key: "note", label: "說明" },
 ];
 
-/* ------------------------------------------------------------
-   頁面區域元件：路線規劃器
-   舊站行為（實走確認）：逐節點選擇，下一批可選節點由目前位置決定；
-   只有停在宿營地才能完成當日路線；完成當日後下一天從該宿營地出發。
-   最後一天須回到登山口（2026-09-18 測試站實走玉山確認，舊站訊息「最後一天行程的點必須為登山口」）。
-   玉山的規劃器與太魯閣同一套（節點與按鈕 ID 相同）；雪霸未驗證，所以仍先留在頁面層。
-   ------------------------------------------------------------ */
-var P_APPLY15_PLANNER = {
-  props: {
-    graph: { type: Object, required: true },
-    days: { type: Number, required: true },
-    modelValue: { type: Object, required: true },   // { days: [[節點...]], finished: bool }
-    readonly: { type: Boolean, default: false },
-  },
-  emits: ["update:modelValue"],
-  data() {
-    return { msg: "" };
-  },
-  computed: {
-    plan() { return this.modelValue.days.length ? this.modelValue.days : [[this.graph.start]]; },
-    dayIndex() { return this.plan.length - 1; },
-    today() { return this.plan[this.dayIndex]; },
-    here() { return this.today[this.today.length - 1]; },
-    isLastDay() { return this.dayIndex === this.days - 1; },
-    options() {
-      var here = this.here;
-      var out = [];
-      this.graph.edges.forEach(function (e) {
-        if (e[0] === here) out.push(e[1]);
-        else if (e[1] === here) out.push(e[0]);
-      });
-      return out;
-    },
-  },
-  watch: {
-    days() { if (!this.readonly) this.reset(); },
-  },
-  methods: {
-    isCamp(n) { return this.graph.camps.indexOf(n) >= 0; },
-    push(days, finished) { this.$emit("update:modelValue", { days: days, finished: !!finished }); },
-    copy() { return this.plan.map(function (d) { return d.slice(); }); },
-    pick(n) {
-      this.msg = "";
-      var days = this.copy();
-      days[this.dayIndex].push(n);
-      this.push(days, false);
-    },
-    back() {
-      this.msg = "";
-      var days = this.copy();
-      if (days[this.dayIndex].length > 1) days[this.dayIndex].pop();
-      else if (this.dayIndex > 0) days.pop();
-      this.push(days, false);
-    },
-    reset() {
-      this.msg = "";
-      this.push([[this.graph.start]], false);
-    },
-    finishDay() {
-      if (this.today.length < 2) { this.msg = "請先選擇今日行經的地點"; return; }
-      if (this.isLastDay) {
-        if (this.graph.exits.indexOf(this.here) < 0) { this.msg = "最後一天行程的點必須為登山口"; return; }
-        this.msg = "";
-        this.push(this.plan, true);
-        return;
-      }
-      if (!this.isCamp(this.here)) { this.msg = "只有宿營地才能完成今日路線"; return; }
-      this.msg = "";
-      var days = this.copy();
-      days.push([this.here]);
-      this.push(days, false);
-    },
-  },
-  template: `
-    <div class="p-apply15-planner">
-      <ol class="grid gap-2 mb-3">
-        <li v-for="(d, i) in plan" :key="i" class="th-input th-input-readonly">
-          <strong>第 {{ i + 1 }} 天：</strong>{{ d.join(' → ') }}<span v-if="isCamp(d[d.length - 1]) && (i < plan.length - 1 || modelValue.finished)" class="th-flag ml-2">宿營</span>
-        </li>
-      </ol>
-
-      <template v-if="!readonly && !modelValue.finished">
-        <p class="th-label">第 {{ dayIndex + 1 }} 天 · 目前位置：{{ here }}，請選擇下一個地點</p>
-        <div class="th-chip-row mb-3">
-          <button v-for="n in options" :key="n" type="button" class="th-chip" @click="pick(n)">
-            <i v-if="isCamp(n)" class="fa-solid fa-campground" aria-hidden="true"></i>{{ n }}</button>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="reset"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i>重新規劃</button>
-          <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>返回上個地點</button>
-          <button type="button" class="th-btn th-btn-primary th-btn-sm" @click="finishDay"><i class="fa-solid fa-check" aria-hidden="true"></i>{{ isLastDay ? '完成路線' : '完成今日路線' }}</button>
-        </div>
-        <p v-if="msg" class="th-field-hint mt-2" role="alert">{{ msg }}</p>
-      </template>
-      <!-- 舊站完成路線後「完成路線」消失，仍保留「重新規劃」「返回上個地點」（2026-09-17 截圖 TAR026_S02_ready） -->
-      <div v-else-if="!readonly" class="flex flex-wrap items-center gap-2">
-        <span class="th-field-hint">路線規劃完成。</span>
-        <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="reset"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i>重新規劃</button>
-        <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>返回上個地點</button>
-      </div>
-    </div>
-  `,
-};
-
 thPage({
-  components: {
-    "p-apply15-planner": P_APPLY15_PLANNER,
-  },
-
   data() {
     var demo = window.APPLY15_DEMO_PEOPLE;
     var dates = apply15Dates();
