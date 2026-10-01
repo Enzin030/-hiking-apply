@@ -289,6 +289,9 @@ R2 的其餘部分不變：**路徑層級的 `git checkout`／`clean`／`reset -
   `node scripts/sync-route-data.js` 合併（清單以正式站為準，正式站沒有的欄位沿用既有值）。
   依 R1，重跑 `sync-route-data.js` 後 `git diff` 必須是空的。
   `ConsentData.generated.js` 仍沒有生成腳本，產生方式待確認；補上腳本時請放 `scripts/`。
+  **`RouteRelationData.js`（複合申請的關聯路線）由 `python scripts/fetch-route-relations.py` 產生**
+  （唯讀查正式站 `Func=ApplyFixedclimbRelation`，原始回應存 `01_Raw_Input/raw/正式站關聯路線.json`）；
+  只重產 JS 用 `--from-raw`，依 R1 跑完 `git diff` 必須是空的。
 - `scripts/gen-schema-from-csv.js` 是**另一條產線**，與上面兩支無關：
   由 `01_Raw_Input/現行tableSchema.csv` 產生 `03_Schema/`（一表一份 md ＋ `_fields/`）。
   合併式產生而非重建——CSV 覆寫 DB 事實欄位，人工欄位與正文保留，絕不刪檔。
