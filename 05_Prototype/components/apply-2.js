@@ -194,6 +194,11 @@ const SUMMARY_CONFIG = {
   },
 };
 
+/* 同意後的申請頁依機關分流（正式站 apply_1_2 之後：玉山 apply_1_4、雪霸 apply_1_3、太魯閣 apply_1_5）。
+   ConsentData.generated.js 的 PARK_LIST.nextPage 三家都寫 apply-3（玉山頁），該檔沒有生成腳本，
+   改在消費端覆寫；2026-10-01 實走發現雪霸、太魯閣同意後都落在玉山的 apply-3 */
+const A2_NEXT_BY_UNIT = { "shei-pa": "apply_1_3.html", taroko: "apply_1_5.html" };
+
 /* 逐頁參數：全部從查詢字串推導，載入後不變，所以放模組層級而非 data() */
 const A2_UNIT = getParam("unit") || "yushan";
 const A2_MODE = (A2_UNIT === "forestry-area" || A2_UNIT === "police") ? "summary" : "consent";
@@ -272,7 +277,7 @@ thPage({
     },
 
     goApply1() { window.location.href = "apply-1.html"; },
-    goNext() { window.location.href = nextUrl(this.cfg.nextPage); },
+    goNext() { window.location.href = nextUrl(A2_NEXT_BY_UNIT[this.cfg.unit] || this.cfg.nextPage); },
   },
 
   mounted() {
