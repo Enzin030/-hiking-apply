@@ -91,6 +91,35 @@ const UNIT_NEXT = {
   "suspended":      null,   // 顯示暫停 modal
 };
 
+/* 複合申請詢問框（正式站 apply_1.aspx OtherRoute，2026-10-01 讀原始碼）：
+   點路線時以 Func=ApplyFixedclimbRelation 查關聯路線，有就問「是否需要同時申請以下入山/山屋/路線?」。
+   關聯資料 window.TH_ROUTE_RELATIONS 由 scripts/fetch-route-relations.py 擷取正式站產生；
+   2026-10-01 全 98 條只有警政署入山證（157）有關聯（→ 太管處舊南湖大山線 c_id 26，已不在路線清單）。
+   選「是」的導向照 OtherRoute：
+   - 起點為國家公園：進自己的同意書，camp_id＝所選關聯路線
+   - 所選為國家公園（起點為警政署／保護區／山屋）：改進所選路線的同意書，camp_id 警政署為 0、其餘＝所選 c_id
+   - 山屋與警政署互選：正式站進 apply_forest_camp_1?hasNpa=1（目前無此關聯資料，雛形未做〔待確認〕）
+   選「否」＝走原路線自己的入口（UNIT_NEXT）。 */
+var PARK_UNIT_BY_ORG = {
+  "105E956F-D8DA-49F7-A9B7-3AEFDDA88A12": "taroko",
+  "E6DD4652-2D37-4346-8F5D-6E538353E0C2": "shei-pa",
+  "C951CDCD-B75A-46B9-8002-8EF952EC95FD": "yushan",
+};
+var NPA_ORG = "8F7C09DC-AFEB-4708-A7BB-B20DA2A24648";
+
+function compositeUrl(r, o) {
+  var org = String(r.orgId || "").toUpperCase();
+  var q;
+  if (PARK_UNIT_BY_ORG[org]) {
+    q = { unit: PARK_UNIT_BY_ORG[org], route: r.id, orgId: org, cid: r.cId, fid: r.fId, camp_id: o.cId, park: PARK_UNIT_BY_ORG[org] };
+  } else if (PARK_UNIT_BY_ORG[o.orgId]) {
+    q = { unit: PARK_UNIT_BY_ORG[o.orgId], orgId: o.orgId, cid: o.cId, fid: o.fId, camp_id: org === NPA_ORG ? "0" : o.cId, park: PARK_UNIT_BY_ORG[o.orgId] };
+  } else {
+    return "";
+  }
+  return "apply-2.html?" + new URLSearchParams(q).toString();
+}
+
 /* ------------------------------------------------------------
    區域元件一：暫停申請的提示 modal（原 SuspendedModal）
    原本整支用 inline style 寫成，§7 禁 inline style，已改為 pages.css 的
@@ -125,7 +154,7 @@ var pApply1SuspendModal = {
    ------------------------------------------------------------ */
 var pApply1RouteCard = {
   props: { r: { type: Object, required: true } },
-  emits: ["suspended"],
+  emits: ["suspended", "composite"],
   computed: {
     statusInfo() {
       var map = {
@@ -170,6 +199,12 @@ var pApply1RouteCard = {
       }
       if (unit === "forestry-camp") {
         window.location.href = "forest-camp-1.html?route=" + this.r.id;
+        return;
+      }
+      /* 有關聯路線就先開複合申請詢問框（正式站 OtherRoute），由頁面決定導向 */
+      var rel = (window.TH_ROUTE_RELATIONS || {})[this.r.cId];
+      if (rel && rel.options.length) {
+        this.$emit("composite", this.r);
         return;
       }
       var nextFn = UNIT_NEXT[unit];
@@ -233,6 +268,8 @@ thPage({
       openOnly: false,
       sort: "default",
       suspendedRoute: null,
+      compositeRoute: null,   // 複合申請詢問框的起點路線；null＝不開
+      compositePick: 0,
       dayOptions: [
         { v: "all", l: "全部" },
         { v: "1", l: "單日" },
@@ -249,6 +286,8 @@ thPage({
   computed: {
     /* 唯讀資料以 computed 取得，避免被包成 reactive proxy（見檔頭） */
     agencies() { return AGENCIES; },
+    compositeRel() { return this.compositeRoute ? (window.TH_ROUTE_RELATIONS || {})[this.compositeRoute.cId] : null; },
+    compositeOpt() { return this.compositeRel ? this.compositeRel.options[this.compositePick] : null; },
 
     /* 原 useMemo filtered，過濾與排序邏輯逐字照搬 */
     filtered() {
@@ -326,5 +365,18 @@ thPage({
       this.diff = this.diff === String(n) ? "all" : String(n);
     },
     groupIcon(agency) { return agencyIcon(agency); },
+    openComposite(r) {
+      this.compositePick = 0;
+      this.compositeRoute = r;
+    },
+    compositeYes() {
+      var url = compositeUrl(this.compositeRoute, this.compositeOpt);
+      if (url) window.location.href = url;
+      else this.compositeNo();
+    },
+    compositeNo() {
+      var r = this.compositeRoute, nextFn = UNIT_NEXT[r.unit || "yushan"];
+      if (nextFn) window.location.href = nextFn(r);
+    },
   },
 });
