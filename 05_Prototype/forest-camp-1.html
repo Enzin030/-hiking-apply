@@ -101,11 +101,11 @@
                   <i class="fa-solid fa-minus" aria-hidden="true"></i>
                 </button>
                 <span class="fc-stepper-val">{{ headcount }} 人</span>
-                <button class="fc-stepper-btn" @click="addHeadcount(1)" :disabled="headcount >= 12">
+                <button class="fc-stepper-btn" @click="addHeadcount(1)" :disabled="headcount >= peopleMax">
                   <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
-              <div class="th-field-hint">最多 12 人（notice_b3：每隊 1〜12 名）</div>
+              <div class="th-field-hint">最多 {{ peopleMax }} 人</div>
             </div>
 
             <div v-if="endDate" class="th-field">

@@ -95,8 +95,11 @@
           <h2 class="th-card-title">3.申請目的或項目</h2>
         </div>
         <div class="th-card-body grid gap-2">
+          <p v-if="multiPurpose" class="th-field-hint">可複選</p>
           <label v-for="p in area.purposes" :key="p.value" class="flex items-center gap-2">
-            <input type="radio" name="purpose" :value="p.value" v-model="purpose" />{{ p.value }}<span v-if="p.attach" class="th-field-hint">（須附件）</span></label>
+            <input v-if="multiPurpose" type="checkbox" :value="p.value" v-model="purposes" />
+            <input v-else type="radio" name="purpose" :value="p.value" v-model="purpose" />{{ p.value }}<span v-if="p.attach" class="th-field-hint">（須附件 {{ p.attach }} 件）</span></label>
+          <p v-if="attachNeeded" class="th-field-hint" role="alert">所選申請目的須上傳附件（共 {{ attachNeeded }} 件）。正式站於本步驟要求上傳，上傳流程未盤點，雛形未做〔待確認〕。</p>
         </div>
       </section>
 

@@ -118,7 +118,7 @@ thPage({
     return {
       startDate: FC1_MIN_DATE,
       nights: FC1_CABIN.minDays,
-      headcount: 4,
+      headcount: Math.min(4, FC1_CABIN.peopleMax || 12),
       queried: false,
       todayStr: FC1_TODAY,
       minDate: FC1_MIN_DATE,
@@ -136,6 +136,8 @@ thPage({
       return window.thAddDaysToDateValue(this.startDate, this.nights);
     },
     canQuery() { return !!this.startDate && this.headcount >= 1; },
+    /* 人數上限依山屋（正式站 2026-09-30：檜谷 10、其餘 12） */
+    peopleMax() { return this.cabin.peopleMax || 12; },
   },
 
   methods: {
@@ -149,7 +151,7 @@ thPage({
     },
     addHeadcount(d) {
       /* 上限 12 依 notice_b3「每隊人數 1〜12 名」（原寫死 20，無依據） */
-      this.headcount = d < 0 ? Math.max(1, this.headcount - 1) : Math.min(12, this.headcount + 1);
+      this.headcount = d < 0 ? Math.max(1, this.headcount - 1) : Math.min(this.peopleMax, this.headcount + 1);
       this.queried = false;
     },
 

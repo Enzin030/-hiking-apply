@@ -10,7 +10,8 @@
   2026-09-30 新增，由 template/page.html 起手，檔名比照正式站 apply_forest_area_1.aspx。
   依據：02_Spec/05e §二（2026-09-29 實走北插天山）：區域類型標題＋推薦行程、行程天數依區域、
   出發日期最早 5 天後、出發人數 1～15、「最晚須於5天前申請」。
-  區域資料只有北插天山（components/ForestAreaData.js）；其他區域顯示尚未盤點。
+  區域資料只有正式站實走過的四區（北插天山、鴛鴦湖、十八羅漢山、玉里；components/ForestAreaData.js），
+  其他區域顯示尚未盤點。
   ============================================================
 -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +31,7 @@
       <th-fc-stepper :current="1"></th-fc-stepper>
     </template>
 
-    <th-callout v-if="!area">此區域的申請資料尚未盤點〔待確認〕：正式站只實走過「插天山自然保留區 - 北插天山步道及其支線」，其他區域的天數、進入範圍與宣達事項不套用該筆資料。</th-callout>
+    <th-callout v-if="!area">此區域的申請資料尚未盤點〔待確認〕：正式站只實走過北插天山、鴛鴦湖、十八羅漢山、玉里四個區域，其他區域的天數、進入範圍、申請目的與宣達事項各不相同，不套用這四區的資料。</th-callout>
 
     <section v-else class="th-card">
       <div class="th-card-head">
@@ -67,6 +68,7 @@
           </div>
         </div>
         <p class="th-field-hint">＊因作業規定，最晚須於5天前申請。</p>
+        <!-- 正式站各區第 1 步提示文字相同，但可選出發日不一定從 5 天後起（十八羅漢山為 4 天後，〔待確認〕原因） -->
       </div>
     </section>
 

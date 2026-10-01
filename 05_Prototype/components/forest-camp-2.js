@@ -161,6 +161,10 @@ thPage({
       teamName: same ? st.team || "" : "",
       payment: same ? st.payment || "" : "",
       alloc: same ? st.alloc : fc2MakeInitAlloc(),
+      /* 天池限定：停留地點（必填多選）、進入／離山地點（選填） */
+      stayAreas: same ? st.stayAreas || [] : [],
+      inArea: same ? st.inArea || "" : "",
+      outArea: same ? st.outArea || "" : "",
       startDate: FC2_START,
       nights: FC2_NIGHTS,
       headcount: FC2_HEADCOUNT,
@@ -194,8 +198,10 @@ thPage({
       }
       return true;
     },
+    /* 天池「停留地點」必填（正式站未選跳「停留地點未選擇」，2026-09-30）；其他山屋沒有此欄 */
+    stayValid() { return !this.cabin.stayAreas || this.stayAreas.length > 0; },
     canNext() {
-      return this.teamName.trim().length >= 2 && this.payment !== "" && this.nightsValid;
+      return this.teamName.trim().length >= 2 && this.payment !== "" && this.nightsValid && this.stayValid;
     },
   },
 
@@ -250,6 +256,7 @@ thPage({
         payment: this.payment,
         alloc: JSON.parse(JSON.stringify(this.alloc)),
         total: this.grandTotal,
+        stayAreas: this.stayAreas.slice(), inArea: this.inArea, outArea: this.outArea,
       });
       window.location.href = "apply_03.html";
     },

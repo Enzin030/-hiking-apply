@@ -45,11 +45,13 @@
    ------------------------------------------------------------
    1. **假日行事曆**：官網的假日含「國定假日前一晚／農曆連假／收假前一日」，
       且各家定義不同；本檔只做週五六近似，畫面已標明。
-   2. **天池山莊的營位只呈現小營位（3×3m）**：官網另有大營位 4×4m
-      平日 700／假日 800，本雛形未呈現（不做第三種設施，理由見第 3 點）。
-   3. **檜谷山莊的營地未納入雛形**：官網有營地費率（不分假日 400／營地／晚），
-      但本檔檜谷只有山屋床位。加一個 facility 會動到 `facilities[].id` 集合，
-      而那是 forest-camp-2 `alloc` 二維矩陣的鍵——屬另一輪工程。
+   2. ~~天池只呈現小營位~~ → 2026-10-01 依正式站 2026-09-30 補走（02_Spec/05f §七之一）補上 4×4 營位，房型名稱照正式站訂位下拉。
+   3. ~~檜谷營地未納入~~ → 同上補「檜谷山莊周圍營地四人帳篷」（費率依 notice_b4 不分假日 400／營地／晚）。
+      alloc 由 facilities 動態建立，加 facility 不需改 forest-camp-2。
+   11. **人數上限依山屋**（peopleMax）：檜谷 10、其餘 12（正式站 2026-09-30 補走（02_Spec/05f §七之一）第 1 步人數下拉）。
+   12. **房型 label 照正式站訂位下拉原文**（2026-10-01）：嘉明湖與向陽可訂同一組三種（兩山屋共用步道），
+      只是排序不同；天池三種、檜谷兩種。新增項的 max 為示意值（官網未公布）。
+   13. **天池第 2 步有停留地點（必填多選）與進入／離山地點**（stayAreas／gateAreas），其他三間沒有。
    4. **檜谷山莊是「每人每晚」計價**，其餘是「每床／每床位」。本檔統一用
       `unit: "床"`，於是 FC2 的數量 stepper 在檜谷語意上是人數、在別家是床數。
       本輪不改（見 decisions.md 2026-09-16）。
@@ -77,13 +79,13 @@ window.TH_CABIN_DATA = {
     image: "assets/route-nanheng.png",
     /* minDays 由 2 改為 1：notice_b3 全文沒有「至少 2 晚」的規定。
        maxDays 18：注意事項無上限條文，依正式站天數下拉 2～19 天（見檔頭 [待確認] 6）。 */
-    minDays: 1, maxDays: 18,
+    minDays: 1, maxDays: 18, peopleMax: 12,
     facilities: [
       /* notice_b3：「兩山屋床位分別數計70床，營位數計6座營位」
          notice_b6：山屋 假日 600／平日 400 每床位；營地 假日 600／平日 500 每營地
          正式站訂位下拉另有「向陽山屋床位」（2026-09-29 實走嘉明湖），費率同 b6 */
-      { id: "hut",  label: "山屋床位", unit: "床", max: 70, price: { weekday: 400, holiday: 600 }, icon: "ph-bold ph-house" },
-      { id: "camp", label: "營地營位", unit: "頂", max: 6,  price: { weekday: 500, holiday: 600 }, icon: "ph-bold ph-tent" },
+      { id: "hut",  label: "嘉明湖山屋床位", unit: "床", max: 70, price: { weekday: 400, holiday: 600 }, icon: "ph-bold ph-house" },
+      { id: "camp", label: "嘉明湖營地營地", unit: "頂", max: 6,  price: { weekday: 500, holiday: 600 }, icon: "ph-bold ph-tent" },
       { id: "xyhut", label: "向陽山屋床位", unit: "床", max: 70, price: { weekday: 400, holiday: 600 }, icon: "ph-bold ph-house" },
     ],
     priceNotes: [],
@@ -108,13 +110,16 @@ window.TH_CABIN_DATA = {
     manager: "林業及自然保育署臺東分署",
     location: "嘉明湖步道 4.3K",
     image: "assets/route-nanheng.png",
-    minDays: 1, maxDays: 18,   // 同嘉明湖：無上限條文，依正式站天數下拉 2～19 天
+    minDays: 1, maxDays: 18, peopleMax: 12,   // 同嘉明湖：無上限條文，依正式站天數下拉 2～19 天
     facilities: [
       /* notice_b3：向陽山屋 70 床。
          notice_b3 的指定宿營地點只列「向陽山屋、嘉明湖山屋及嘉明湖營地」，
          **向陽沒有營地在該步道系統內**（notice_b6 另提「向陽遊樂區營地」，
          位置與該步道的關係未載），故本項不設營位。 */
-      { id: "hut", label: "山屋床位", unit: "床", max: 70, price: { weekday: 400, holiday: 600 }, icon: "ph-bold ph-house" },
+      { id: "hut",    label: "向陽山屋床位",   unit: "床", max: 70, price: { weekday: 400, holiday: 600 }, icon: "ph-bold ph-house" },
+      /* 正式站向陽的訂位下拉另有嘉明湖兩種（2026-09-30 實走），費率同 notice_b6 */
+      { id: "jmhut",  label: "嘉明湖山屋床位", unit: "床", max: 70, price: { weekday: 400, holiday: 600 }, icon: "ph-bold ph-house" },
+      { id: "jmcamp", label: "嘉明湖營地營地", unit: "頂", max: 6,  price: { weekday: 500, holiday: 600 }, icon: "ph-bold ph-tent" },
     ],
     priceNotes: [
       "本山屋與嘉明湖山屋共用同一份收費基準（notice_b6）。",
@@ -129,16 +134,19 @@ window.TH_CABIN_DATA = {
     manager: "林業及自然保育署南投分署",
     location: "能高越嶺道西段 22K，海拔 2,860m",
     image: "assets/route-qilai.png",
-    minDays: 1, maxDays: 2,    // 正式站注意事項「連續住宿之申請，以2日為限」
+    minDays: 1, maxDays: 2, peopleMax: 12,   // 正式站注意事項「連續住宿之申請，以2日為限」
     facilities: [
-      /* notice_b5：山莊內通鋪 假日 480／非假日 450 每床；
-         小營位 3×3m 假日 600／非假日 500 每座。床位數官網未公布，max 沿用示意值。 */
-      { id: "hut",  label: "山莊內通鋪", unit: "床", max: 64, price: { weekday: 450, holiday: 480 }, icon: "ph-bold ph-house" },
-      { id: "camp", label: "小營位（3×3m）", unit: "座", max: 20, price: { weekday: 500, holiday: 600 }, icon: "ph-bold ph-tent" },
+      /* notice_b5：山莊內通鋪 假日 480／非假日 450 每床；大營位 4×4m 平日 700／假日 800；
+         小營位 3×3m 假日 600／非假日 500 每座。label 與順序照正式站訂位下拉（2026-09-30）。
+         床位、營位數官網未公布，max 為示意值。 */
+      { id: "hut",    label: "天池山莊床位",             unit: "床", max: 64, price: { weekday: 450, holiday: 480 }, icon: "ph-bold ph-house" },
+      { id: "camp44", label: "天池營地帳篷4*4(建議8人)", unit: "座", max: 10, price: { weekday: 700, holiday: 800 }, icon: "ph-bold ph-tent" },
+      { id: "camp",   label: "天池營地帳篷3*3(建議6人)", unit: "座", max: 20, price: { weekday: 500, holiday: 600 }, icon: "ph-bold ph-tent" },
     ],
-    priceNotes: [
-      "官網另有大營位 4×4m（建議 8 人帳）：平日 700 元／假日 800 元每座，本雛形僅呈現小營位。〔待確認〕",
-    ],
+    priceNotes: [],
+    /* 第 2 步停留地點（必填多選）、進入／離山地點（選填），正式站 2026-09-30 原文；天池與太管處併案審查 */
+    stayAreas: ["雲海", "天池", "南華山", "光被八表", "檜林保線所", "奇萊山莊"],
+    gateAreas: ["屯原", "奧萬大", "合歡山", "銅門"],
     notices: [
       "採先到先得制，建議至少提前 7 天申請。",
       "山莊提供熱食，需於申請時預約餐食人數。",
@@ -149,15 +157,16 @@ window.TH_CABIN_DATA = {
     manager: "林業及自然保育署屏東分署",
     location: "北大武山登山口 7.5K，海拔 2,230m",
     image: "assets/route-qilai.png",
-    minDays: 1, maxDays: 3,    // 正式站注意事項「連續住宿之申請，以3日為限」
+    /* 人數上限 10：正式站檜谷第 1 步人數下拉 1～10（2026-09-30 實走），其餘山屋 12 */
+    minDays: 1, maxDays: 3, peopleMax: 10,   // 正式站注意事項「連續住宿之申請，以3日為限」
     facilities: [
-      /* notice_b4：假日 300／平日 250，**每人每晚**（其餘山屋是每床）。
-         床位數官網未公布，max 沿用示意值。 */
-      { id: "hut", label: "山屋床位", unit: "床", max: 48, price: { weekday: 250, holiday: 300 }, icon: "ph-bold ph-house" },
+      /* notice_b4：假日 300／平日 250，**每人每晚**（其餘山屋是每床）；正式站 1 晚 2 人 500 元印證。
+         營地：notice_b4 不分假日 400 元／營地／晚。label 照正式站訂位下拉；數量官網未公布，max 為示意值。 */
+      { id: "hut",  label: "檜谷山莊",                 unit: "床", max: 48, price: { weekday: 250, holiday: 300 }, icon: "ph-bold ph-house" },
+      { id: "camp", label: "檜谷山莊周圍營地四人帳篷", unit: "頂", max: 10, price: { weekday: 400, holiday: 400 }, icon: "ph-bold ph-tent" },
     ],
     priceNotes: [
       "官網的檜谷山莊費率是「每人每晚」，與其他山屋的「每床」計價單位不同。〔待確認〕",
-      "官網另有露營地費率（不分假日 400 元／營地／晚），營地未納入雛形。〔待確認〕",
     ],
     notices: [
       "採線上申請制，開放日期前 60 天受理。",

@@ -85,6 +85,37 @@
           </div>
         </div>
 
+        <!-- 停留地點與進出地點：只有天池（正式站 2026-09-30，其他山屋該區塊隱藏） -->
+        <div v-if="cabin.stayAreas" class="fc-section">
+          <h2 class="fc-section-title">
+            <i class="ph-bold ph-map-pin" aria-hidden="true"></i>停留地點與進出地點
+          </h2>
+          <div class="th-field">
+            <span class="th-label">停留地點 <span class="p-fc2-required">*</span></span>
+            <div class="flex flex-wrap gap-x-4 gap-y-2">
+              <label v-for="a in cabin.stayAreas" :key="a" class="flex items-center gap-2">
+                <input type="checkbox" :value="a" v-model="stayAreas" />{{ a }}</label>
+            </div>
+            <div class="th-field-hint">可複選</div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+            <div class="th-field">
+              <label class="th-label" for="f-in-area">進入地點</label>
+              <th-hybrid-select><select id="f-in-area" class="th-select" v-model="inArea">
+                <option value="">請選擇</option>
+                <option v-for="a in cabin.gateAreas" :key="a" :value="a">{{ a }}</option>
+              </select></th-hybrid-select>
+            </div>
+            <div class="th-field">
+              <label class="th-label" for="f-out-area">離山地點</label>
+              <th-hybrid-select><select id="f-out-area" class="th-select" v-model="outArea">
+                <option value="">請選擇</option>
+                <option v-for="a in cabin.gateAreas" :key="a" :value="a">{{ a }}</option>
+              </select></th-hybrid-select>
+            </div>
+          </div>
+        </div>
+
         <!-- 每晚住宿配置 -->
         <div class="fc-section">
           <h2 class="fc-section-title">
@@ -187,6 +218,9 @@
           </div>
           <div v-if="teamName.trim().length < 2" class="p-fc2-vt-item">
             <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>填寫隊伍名稱
+          </div>
+          <div v-if="!stayValid" class="p-fc2-vt-item">
+            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>選擇停留地點
           </div>
           <div v-if="!nightsValid" class="p-fc2-vt-item">
             <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>每晚至少選 1 個床位或營位
