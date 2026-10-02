@@ -59,6 +59,74 @@ const YUSHAN_PLANNER_GRAPH = {
   ]
 };
 
+/* 非玉山機關沒有節點資料的路線：以玉山三種 badge 的意思組成通用節點圖
+   （綠＝登山口〔起終點〕、藍＝宿營地〔可過夜〕、紅＝途經點），規則同正式站：
+   每晚的終點須為宿營地、最後一天須回到登山口。 */
+const GENERIC_PLANNER_GRAPH = {
+  start: "登山口",
+  starts: ["登山口"],
+  exits: ["登山口"],
+  camps: ["宿營地"],
+  edges: [
+    ["登山口", "途經點"],
+    ["途經點", "宿營地"]
+  ]
+};
+
+/* 依節點圖與天數排出合法行程（必填欄位預設有值，換天數也不會清空）：
+   第 1 天走到最近的宿營地；中間各天由宿營地往返相鄰點；最後一天回登山口。
+   單日則走到最遠可達點再折返登山口。排不出來回傳 null（交給使用者手動規劃）。 */
+function autoPlan(graph, days) {
+  if (!graph || !graph.start) return null;
+  const adj = {};
+  graph.edges.forEach(e => {
+    (adj[e[0]] = adj[e[0]] || []).push(e[1]);
+    (adj[e[1]] = adj[e[1]] || []).push(e[0]);
+  });
+  // 由 from 出發、找第一個符合 ok 的點（不含 from 本身）的最短路徑
+  const path = (from, ok) => {
+    const prev = { [from]: null };
+    const queue = [from];
+    while (queue.length) {
+      const cur = queue.shift();
+      if (cur !== from && ok(cur)) {
+        const out = [];
+        for (let n = cur; n !== null; n = prev[n]) out.unshift(n);
+        return out;
+      }
+      (adj[cur] || []).forEach(n => { if (!(n in prev)) { prev[n] = cur; queue.push(n); } });
+    }
+    return null;
+  };
+  const isCamp = n => graph.camps.includes(n);
+  const isExit = n => graph.exits.includes(n);
+  const n = Number(days) || 1;
+  if (n === 1) {
+    // 單日不過夜：走到最遠的途經點（不選宿營地與登山口），沒有途經點才退而取最遠點
+    const seen = [graph.start];
+    for (let i = 0; i < seen.length; i++) (adj[seen[i]] || []).forEach(x => { if (!seen.includes(x)) seen.push(x); });
+    const plain = seen.filter(x => !isCamp(x) && !isExit(x));
+    const far = plain.length ? plain[plain.length - 1] : seen[seen.length - 1];
+    if (far === graph.start) return null;
+    const go = path(graph.start, x => x === far);
+    const back = isExit(far) ? [far] : path(far, isExit);
+    return go && back ? [go.concat(back.slice(1))] : null;
+  }
+  const first = path(graph.start, isCamp);
+  if (!first) return null;
+  const plan = [first];
+  let camp = first[first.length - 1];
+  for (let d = 1; d < n - 1; d++) {
+    const near = adj[camp] || [];
+    const via = near.find(x => !isCamp(x) && !isExit(x)) || near[0];
+    plan.push([camp, via, camp]);
+  }
+  const last = path(camp, isExit);
+  if (!last) return null;
+  plan.push(last);
+  return plan;
+}
+
 /* 非玉山機關的入園日期：今日＋5 天起連續 57 個（雪霸 2026-10-01 正式站實測，無排除日） */
 function parkDateOptions() {
   const out = [];
@@ -99,13 +167,17 @@ thPage({
       const subs = park.subsOf(main);
       const sub = subs.find(x => x.value === qSub) || subs.find(x => x.value === park.defaultSub) || subs[0] || {};
       const demo = park.demoDays[sub.value];
-      const npaDef = (park.npaDefaults || {})[sub.value];
+      // 入山證預設：該路線有實走值就用，否則沿用該機關第一筆（必填欄位預設有值）
+      const npaAll = park.npaDefaults || {};
+      const npaDef = npaAll[sub.value] || npaAll[Object.keys(npaAll)[0]];
+      const days = demo ? demo.length : ((sub.days || [1])[0]);
+      const plan = demo ? demo.map(d => d.slice()) : autoPlan(park.graphs[sub.value] || GENERIC_PLANNER_GRAPH, days);
       other = {
         npaDef: npaDef,
         main: main, sub: sub.value || "",
-        sumday: String(demo ? demo.length : ((sub.days || [1])[0])),
-        planDays: demo ? demo.map(d => d.slice()) : [[]],
-        finished: !!demo,
+        sumday: String(days),
+        planDays: plan || [[]],
+        finished: !!plan,
       };
     }
 
@@ -247,7 +319,7 @@ thPage({
     /* 路線規劃節點圖：玉山固定一張；其他機關依次路線（無資料的次路線為空圖） */
     graph() {
       if (this.isYushan) return YUSHAN_PLANNER_GRAPH;
-      return this.park.graphs[this.climbline] || { start: "", starts: [], exits: [], camps: [], edges: [] };
+      return this.park.graphs[this.climbline] || GENERIC_PLANNER_GRAPH;
     },
     /* 本頁區塊數（側欄「本頁內容」分母）：無入山證的機關少一塊 */
     sectionCount() { return this.npaOn ? 3 : 2; },
@@ -509,10 +581,11 @@ thPage({
           // 初始化時保留 data() 帶入的示範行程；之後換次路線才重設天數與規劃
           if (old === undefined) { this.updateRouteMap(); this.syncPlanText(); return; }
           const opts = this.sumdayOptions;
-          this.sumday = opts.length ? opts[0].value : "1";
           const demo = this.park.demoDays[val];
-          this.planDays = demo ? demo.map(d => d.slice()) : [[]];
-          this.plannerFinished = !!demo;
+          this.sumday = demo ? String(demo.length) : (opts.length ? opts[0].value : "1");
+          const plan = demo ? demo.map(d => d.slice()) : autoPlan(this.graph, this.sumday);
+          this.planDays = plan || [[]];
+          this.plannerFinished = !!plan;
           this.syncPlanText();
           return;
         }
@@ -551,6 +624,16 @@ thPage({
     sumday(val, old) {
       // 其他機關：換次路線時天數會跟著重設，規劃由 climbline 處理，這裡不再清掉
       if (!this.isYushan && this.planDays.length === Number(val) && this.plannerFinished) return;
+      // 其他機關：換天數時依新天數重排一份合法行程，不清空（必填欄位預設有值）
+      if (!this.isYushan) {
+        const demo = this.park.demoDays[this.climbline];
+        const plan = demo && demo.length === Number(val) ? demo.map(d => d.slice()) : autoPlan(this.graph, val);
+        this.plannerMsg = "";
+        this.planDays = plan || [[]];
+        this.plannerFinished = !!plan;
+        this.syncPlanText();
+        return;
+      }
       if (!this.isSingleDay) {
         this.resetPlanner();
       }

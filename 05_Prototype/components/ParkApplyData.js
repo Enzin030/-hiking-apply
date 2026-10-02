@@ -126,7 +126,10 @@ window.thParkApply = function (key) {
       mains: routes.map(function (r) { return { value: r.id, text: r.name }; }),
       subsOf: function (mainId) {
         var m = routes.find(function (r) { return r.id === mainId; });
-        return (m ? m.subs : []).map(function (x) {
+        if (!m) return [];
+        /* 正式站次路線尚未取得的主路線：以主路線本身當唯一次路線，讓申請流程可走完 */
+        var subs = m.subs.length ? m.subs : [{ id: "m" + m.id, name: m.name }];
+        return subs.map(function (x) {
           return { value: x.id, text: x.name, level: x.level, days: x.days || all30, needsNpa: !!x.needsNpa, notes: notes[x.id] || [] };
         });
       },
