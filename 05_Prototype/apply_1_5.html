@@ -27,8 +27,7 @@
 
   <th-page-shell
     :trail="['登山申請', '登山線上申請', '行程登記及登山申請']"
-    title="行程登記及登山申請"
-    lead="以太魯閣國家公園「南湖大山線」為例，依步驟填寫行程、人員資料並確認送出。">
+    title="行程登記及登山申請">
 
     <template #stepper>
       <th-stepper :current="step" :steps="stepperSteps"></th-stepper>
@@ -419,7 +418,7 @@
       <li v-for="e in errors" :key="e">{{ e }}</li>
     </ul>
     <template #foot>
-      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
     </template>
   </th-modal>
 
@@ -447,7 +446,7 @@
   <th-modal v-if="draftOpen" title="儲存草稿" @close="draftOpen = false">
     <p>草稿已儲存，可至「草稿編輯」繼續填寫。</p>
     <template #foot>
-      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="draftOpen = false">確定</button></div>
+      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="draftOpen = false">確定</button></div>
     </template>
   </th-modal>
 

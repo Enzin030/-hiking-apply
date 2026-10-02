@@ -7380,15 +7380,6 @@ body:where(.p-indexb-body):before {
   margin-bottom: 12px;
 }
 
-.p-apply3-map-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 16px 24px;
-  border-top: 1px solid var(--slate-200);
-}
 
 /* ---------- 雙語欄位標籤 ----------
    正式站每個欄位標籤是「中文<br>English」兩行，英文為輔助說明。

@@ -112,14 +112,14 @@
       <li v-for="e in errors" :key="e">{{ e }}</li>
     </ul>
     <template #foot>
-      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
     </template>
   </th-modal>
 
   <th-modal v-if="draftOpen" title="儲存草稿" @close="draftOpen = false">
     <p>草稿已儲存，可至「草稿編輯」繼續填寫。</p>
     <template #foot>
-      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="draftOpen = false">確定</button></div>
+      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="draftOpen = false">確定</button></div>
     </template>
   </th-modal>
 

@@ -3,6 +3,10 @@
    ------------------------------------------------------------
    對應正式站 apply_1_4.aspx 步驟一（行程規劃）。
    2026-09-21 依正式站實走結果重做，取代原本的四步驟版本。
+
+   2026-10-02：三管處共用本頁（使用者要求一律以玉山元件為準）。網址 park 參數取
+   window.thParkApply(park) 的機關設定（components/ParkApplyData.js）；沒有 park＝玉山，
+   玉山的程式路徑與畫面維持原樣。雪霸（park=shei-pa）對應正式站 apply_1_3.aspx 步驟一。
    ============================================================ */
 
 function getParam(key) {
@@ -55,6 +59,17 @@ const YUSHAN_PLANNER_GRAPH = {
   ]
 };
 
+/* 非玉山機關的入園日期：今日＋5 天起連續 57 個（雪霸 2026-10-01 正式站實測，無排除日） */
+function parkDateOptions() {
+  const out = [];
+  const t = new Date();
+  for (let i = 0; i < 57; i++) {
+    const d = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 5 + i);
+    out.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+  }
+  return out;
+}
+
 thPage({
   data() {
     const qRoute = getParam("route");
@@ -64,7 +79,8 @@ thPage({
     const qClimb = getParam("climbline");
     const qStart = getParam("applystart");
     const qSumday = getParam("sumday");
-    const dateOptions = generateDateOptions();
+    const park = window.thParkApply(getParam("park"));
+    const dateOptions = park.key === "yushan" ? generateDateOptions() : parkDateOptions();
     // 示意入園日 10-15；已不在可選範圍（過了 10 月中）就改取清單第 10 個
     const demoStart = dateOptions.includes("2026-10-15") ? "2026-10-15" : dateOptions[9];
 
@@ -75,7 +91,24 @@ thPage({
       else if (qRoute === "np-2" || qCid === "2") defaultClimb = "2";
     }
 
+    /* 雪霸等非玉山機關：主／次路線取網址 fid／cid，預設帶入示範路線與完整行程（必填欄位預設有值） */
+    let other = null;
+    if (park.key !== "yushan") {
+      const qFid = getParam("fid"), qSub = getParam("cid");
+      const main = park.mains.some(m => m.value === qFid) ? qFid : park.defaultMain;
+      const subs = park.subsOf(main);
+      const sub = subs.find(x => x.value === qSub) || subs.find(x => x.value === park.defaultSub) || subs[0] || {};
+      const demo = park.demoDays[sub.value];
+      other = {
+        main: main, sub: sub.value || "",
+        sumday: String(demo ? demo.length : ((sub.days || [1])[0])),
+        planDays: demo ? demo.map(d => d.slice()) : [[]],
+        finished: !!demo,
+      };
+    }
+
     return {
+      park: park,
       // 卡片展開/收合開關狀態
       accordionOpen: {
         route: true,
@@ -86,13 +119,13 @@ thPage({
 
       // 1. 基本路線控制項
       teams_name: qTeamsName || "天眼1隊",
-      climblinemain: qMainRoute || "1", // 1: 玉山線
-      climbline: defaultClimb,
-      sumday: qSumday || (defaultClimb === "2" ? "2" : "1"),
-      applystart: qStart || demoStart,
+      climblinemain: other ? other.main : (qMainRoute || "1"), // 1: 玉山線
+      climbline: other ? other.sub : defaultClimb,
+      sumday: other ? other.sumday : (qSumday || (defaultClimb === "2" ? "2" : "1")),
+      applystart: other ? dateOptions[2] : (qStart || demoStart),
       dateOptions: dateOptions,
 
-      mainRoutes: [
+      mainRoutes: other ? park.mains : [
         { value: "1", text: "玉山線" },
         { value: "2", text: "南橫三山-庫哈諾辛山/關山線" },
         { value: "28", text: "八通關線" },
@@ -106,17 +139,16 @@ thPage({
       ],
 
       // 2. 路線規劃器狀態（預設帶入 2 天行程）
-      graph: YUSHAN_PLANNER_GRAPH,
-      planDays: [
+      planDays: other ? other.planDays : [
         ["排雲登山服務中心", "塔塔加登山口", "排雲山莊"],
         ["排雲山莊", "玉山主峰", "塔塔加登山口", "排雲登山服務中心"]
       ],
-      plannerFinished: true,
+      plannerFinished: other ? other.finished : true,
       plannerMsg: "",
 
-      // 3. 行前講習與設備
-      seminar: "1", // 1: 網路線上學習, 0: 團體自行辦理講習
-      gps: "1",     // 1: 是, 0: 否
+      // 3. 行前講習與設備（雪霸講習非必填、正式站預設空白；無 GPS 欄位）
+      seminar: other ? "" : "1", // 1: 網路線上學習, 0: 團體自行辦理講習
+      gps: other ? "" : "1",     // 1: 是, 0: 否
       satellitephone: "",
       frequency: "",
       note_user: "",
@@ -208,8 +240,18 @@ thPage({
   },
 
   computed: {
+    isYushan() { return this.park.key === "yushan"; },
+    /* 路線規劃節點圖：玉山固定一張；其他機關依次路線（無資料的次路線為空圖） */
+    graph() {
+      if (this.isYushan) return YUSHAN_PLANNER_GRAPH;
+      return this.park.graphs[this.climbline] || { start: "", starts: [], exits: [], camps: [], edges: [] };
+    },
+    /* 本頁區塊數（側欄「本頁內容」分母）：無入山證的機關少一塊 */
+    sectionCount() { return this.park.hasNpa ? 3 : 2; },
+
     openRow() {
       const rows = window.OPEN_STATUS_ROWS || [];
+      if (!this.isYushan) return rows.find(r => r.cId === this.climbline) || null;
       let targetName = "2~5天(塔塔加 - 玉山線 - 塔塔加)";
       if (this.climbline === "3") targetName = "玉山前峰單日往返";
       else if (this.climbline === "4") targetName = "玉山線單日往返";
@@ -224,6 +266,12 @@ thPage({
     },
 
     trailLevel() {
+      if (!this.isYushan) {
+        const sub = this.subRoutes.find(r => r.value === this.climbline);
+        const lv = sub ? sub.level : undefined;
+        if (lv === undefined || lv === null) return null;
+        return (window.TRAIL_LEVELS || []).find(l => l.level === lv) || null;
+      }
       return {
         level: 4,
         desc: "步道位處偏遠山區，路徑尚稱清晰但部分地形較崎嶇、氣候變化大而有潛在風險，一般行程約3至5天，或約3天以內但有困難地形。",
@@ -248,6 +296,7 @@ thPage({
     },
 
     routeConditionLinks() {
+      if (!this.isYushan) return [];
       return [
         { text: "[登山路線路況]", href: "https://www.ysnp.gov.tw/Trail/7fa5c242-df1a-4a8e-bcab-32dc55b1f7b6?Tab=5" },
         { text: "[園區路況]", href: "https://www.ysnp.gov.tw/Highway/C001300" }
@@ -255,6 +304,7 @@ thPage({
     },
 
     routeMapTabs() {
+      if (!this.isYushan) return [];
       return [
         {
           key: "yushan",
@@ -300,11 +350,13 @@ thPage({
       ];
     },
 
+    /* 玉山單日往返為固定行程；其他機關的單日路線也由使用者逐點規劃（雪霸 2026-10-01 實走） */
     isSingleDay() {
-      return this.climbline === "3" || this.climbline === "4";
+      return this.isYushan && (this.climbline === "3" || this.climbline === "4");
     },
 
     subRoutes() {
+      if (!this.isYushan) return this.park.subsOf(this.climblinemain);
       return [
         { value: "3", text: "玉山前峰單日往返", days: [1] },
         { value: "4", text: "玉山線單日往返", days: [1] },
@@ -313,6 +365,10 @@ thPage({
     },
 
     sumdayOptions() {
+      if (!this.isYushan) {
+        const sub = this.subRoutes.find(r => r.value === this.climbline);
+        return ((sub && sub.days) || [1]).map(n => ({ value: String(n), text: `共${n}天` }));
+      }
       if (this.isSingleDay) {
         return [{ value: "1", text: "共1天" }];
       }
@@ -360,7 +416,7 @@ thPage({
     },
 
     applyCrumb() {
-      return "玉山國家公園";
+      return this.park.crumb;
     },
 
     endDate() {
@@ -393,7 +449,7 @@ thPage({
     options() {
       const here = this.here;
       // 正式站第一步是「請選擇起點：」，只給起點一個選項，由使用者自己點（玉山、雪霸實走皆同）
-      if (!here) return [this.graph.start];
+      if (!here) return this.graph.start ? [this.graph.start] : [];
       const out = [];
       this.graph.edges.forEach(e => {
         if (e[0] === here) out.push(e[1]);
@@ -408,10 +464,11 @@ thPage({
     },
     secPlannerOk() {
       const plannerDone = this.isSingleDay || this.plannerFinished;
-      const equipDone = !!this.seminar && !!this.gps;
+      const equipDone = (!this.park.seminarRequired || !!this.seminar) && (!this.park.hasGps || !!this.gps);
       return plannerDone && equipDone;
     },
     secNpaOk() {
+      if (!this.park.hasNpa) return true;
       return !!this.NpaReasons && this.addedPlaces.length > 0 && !!this.NpaPlan.trim();
     },
 
@@ -419,7 +476,7 @@ thPage({
       let count = 0;
       if (this.secRouteOk) count++;
       if (this.secPlannerOk) count++;
-      if (this.secNpaOk) count++;
+      if (this.park.hasNpa && this.secNpaOk) count++;
       return count;
     },
 
@@ -431,7 +488,17 @@ thPage({
   watch: {
     climbline: {
       immediate: true,
-      handler(val) {
+      handler(val, old) {
+        if (!this.isYushan) {
+          // 初始化時保留 data() 帶入的示範行程；之後換次路線才重設天數與規劃
+          if (old === undefined) return;
+          const opts = this.sumdayOptions;
+          this.sumday = opts.length ? opts[0].value : "1";
+          const demo = this.park.demoDays[val];
+          this.planDays = demo ? demo.map(d => d.slice()) : [[]];
+          this.plannerFinished = !!demo;
+          return;
+        }
         if (val === "3") {
           this.sumday = "1";
           this.NpaPlacesInfo = "玉山前峰(嘉義縣-阿里山鄉)";
@@ -458,7 +525,15 @@ thPage({
       }
     },
 
-    sumday() {
+    climblinemain() {
+      if (this.isYushan) return;
+      const first = this.subRoutes[0];
+      this.climbline = first ? first.value : "";
+    },
+
+    sumday(val, old) {
+      // 其他機關：換次路線時天數會跟著重設，規劃由 climbline 處理，這裡不再清掉
+      if (!this.isYushan && this.planDays.length === Number(val) && this.plannerFinished) return;
       if (!this.isSingleDay) {
         this.resetPlanner();
       }
@@ -487,7 +562,7 @@ thPage({
     // 藍色: 宿營地 (排雲山莊、圓峰山屋、圓峰營地)
     // 紅色: 一般途經節點 / 山峰 / 地標 (塔塔加登山口、玉山主峰、孟祿亭等)
     nodeBadgeType(node) {
-      if (node === "排雲登山服務中心") return "green";
+      if (node === "排雲登山服務中心" || this.graph.exits.includes(node)) return "green";
       if (this.graph.camps.includes(node)) return "blue";
       return "red";
     },
@@ -571,7 +646,7 @@ thPage({
     },
 
     syncPlanText() {
-      if (this.isSingleDay) return;
+      if (this.isSingleDay || !this.park.hasNpa) return;
       const lines = this.planDays.map((d, i) => `D${i + 1}:${d.join("→")}。`);
       this.NpaPlan = lines.join("\n");
     },
@@ -625,7 +700,7 @@ thPage({
       // 取得路線名稱
       const mObj = this.mainRoutes.find(r => r.value === this.climblinemain);
       const sObj = this.subRoutes.find(r => r.value === this.climbline);
-      const mainRouteName = mObj ? mObj.text : "玉山線";
+      const mainRouteName = mObj ? mObj.text : (this.isYushan ? "玉山線" : "");
       const subRouteName = sObj ? sObj.text : (this.isSingleDay ? "玉山前峰單日往返" : "2~5天(塔塔加 - 玉山線 - 塔塔加)");
 
       // 取得逐日行程節點
@@ -651,6 +726,7 @@ thPage({
         : (this.NpaPlacesInfo || "玉山群峰(嘉義縣-阿里山鄉)");
 
       const step3Payload = {
+        park: this.park.key,
         applystart: this.applystart,
         sumday: this.sumday,
         teams_name: this.teams_name,

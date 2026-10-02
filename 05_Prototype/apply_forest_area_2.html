@@ -110,12 +110,12 @@
             <label class="flex items-start gap-2">
               <input v-if="multiPurpose" type="checkbox" :value="p.value" v-model="purposes" class="mt-1" />
               <input v-else type="radio" name="purpose" :value="p.value" v-model="purpose" class="mt-1" />
-              <span>{{ p.value }}<span v-if="p.attach" class="th-field-hint">（須附件 {{ p.attach }} 件）</span>
+              <span>{{ p.value }}
                 <span v-if="p.note || p.template" class="th-field-hint block">{{ p.note }}<a v-if="p.template" class="th-inline-link" :href="p.template.href" download>{{ p.template.label }}</a>{{ p.noteAfter }}</span></span>
             </label>
             <!-- 須附件的目的勾選後出現上傳欄位，件數＝attach（正式站 ForestAreaChk）；雛形只記檔名、不送出檔案 -->
             <div v-if="p.attach && isChosen(p.value)" class="grid gap-2 pl-6">
-              <p class="th-field-hint">檔案格式：PDF,JPG,PNG（單檔 5MB 以內）</p>
+              <p class="th-field-hint">檔案格式：PDF,JPG,PNG</p>
               <div v-for="n in p.attach" :key="n" class="flex flex-wrap items-center gap-3">
                 <input :id="'fa-file-' + pi + '-' + n" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" @change="pickFile(p.value, n - 1, $event)" />
                 <label :for="'fa-file-' + pi + '-' + n" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-paperclip" aria-hidden="true"></i>選擇檔案</label>
@@ -155,7 +155,7 @@
       <li v-for="e in errors" :key="e">{{ e }}</li>
     </ul>
     <template #foot>
-      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
     </template>
   </th-modal>
 

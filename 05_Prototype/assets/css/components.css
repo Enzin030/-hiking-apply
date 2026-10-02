@@ -3372,6 +3372,17 @@ body.th-noscroll {
   line-height: var(--lh-loose);
   white-space: pre-line;
 }
+/* modal 底部按鈕列（th-modal 的 foot 插槽）。2026-10-02 由玉山 apply-3 的 .p-apply3-map-foot 提升
+   （二次即提升；原本其他頁的 foot 沒有內距，按鈕貼齊 modal 邊緣） */
+.bulletin-modal-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--slate-200);
+}
 /* ------------------------------------------------------------
    th-data-table
    ------------------------------------------------------------ */

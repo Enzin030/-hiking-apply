@@ -31,7 +31,7 @@
       <th-fc-stepper :current="1"></th-fc-stepper>
     </template>
 
-    <th-callout v-if="!area">此區域的申請資料尚未盤點〔待確認〕：各區域的天數、進入範圍、申請目的與宣達事項各不相同，不套用其他區域的資料。</th-callout>
+    <th-callout v-if="!area">查無此區域的申請資料，請回路線列表重新選擇。</th-callout>
 
     <section v-else class="th-card">
       <div class="th-card-head">
@@ -83,7 +83,7 @@
       <li v-for="e in errors" :key="e">{{ e }}</li>
     </ul>
     <template #foot>
-      <div class="flex justify-end"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
+      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
     </template>
   </th-modal>
 

@@ -15,6 +15,9 @@
     2. 路線規劃         逐點規劃 ＋ 行前講習與通訊設備（正式站同屬一塊）
     3. 警政署入山證申請 入山事由、前往地點、詞庫、登山計畫書
 
+  2026-10-02：三管處共用本頁，網址 park 參數切換機關設定（components/ParkApplyData.js）；
+  沒有 park＝玉山。差異只用 v-if／綁定表達，不另做版型。
+
   資料來源：
     難度等級 ← OPEN_STATUS_ROWS（open.aspx）
     等級說明 ← TRAIL_LEVELS（linelevel.aspx）
@@ -58,6 +61,7 @@
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
             <div>
               <strong>請注意：</strong>國家公園路線<strong>於每日 23:00 至隔日 07:00 暫停受理申請</strong>。如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。
+              <p v-for="(n, nIdx) in park.notices" :key="nIdx">{{ n.pre }}<a class="th-inline-link" :href="n.link.href" target="_blank" rel="noopener noreferrer">{{ n.link.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>{{ n.post }}</p>
             </div>
           </div>
 
@@ -151,7 +155,7 @@
                   <td class="p-apply3-level-cell">
                     <span :class="'th-level lv-' + trailLevel.level">第 {{ trailLevel.level }} 級</span>
                     <!-- 「玉山線地圖」按鈕，點開看路線圖 -->
-                    <button type="button" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" @click="mapOpen = true">
+                    <button v-if="routeMapTabs.length" type="button" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" @click="mapOpen = true">
                       <i class="fa-solid fa-map mr-2" aria-hidden="true"></i>{{ openRow ? openRow.mainRoute : '玉山線' }}地圖
                     </button>
                   </td>
@@ -210,8 +214,8 @@
                 </a>
               </h2>
               <div class="ml-auto flex items-center gap-3">
-                <a class="th-btn th-btn-brown th-btn-sm" href="https://hike.taiwan.gov.tw/bed_6.aspx" target="_blank" rel="noopener noreferrer" title="查看宿營地（另開新視窗）" @click.stop>
-                  <i class="fa-solid fa-mountain-sun mr-1 text-white" aria-hidden="true"></i>查看宿營地
+                <a class="th-btn th-btn-brown th-btn-sm" :href="park.campLink.href" target="_blank" rel="noopener noreferrer" :title="park.campLink.label + '（另開新視窗）'" @click.stop>
+                  <i class="fa-solid fa-mountain-sun mr-1 text-white" aria-hidden="true"></i>{{ park.campLink.label }}
                 </a>
                 <i class="fa-solid fa-chevron-down p-apply3-accordion-icon" :class="{ 'is-open': accordionOpen.planner }" aria-hidden="true"></i>
               </div>
@@ -316,11 +320,11 @@
           <!-- 行前講習與通訊設備：3 行對 3 行高度對齊 -->
           <div class="p-apply3-grid">
             <div class="th-field">
-              <label class="th-label p-apply3-label-3lines" for="con_seminar">
-                <span class="p-apply3-line-1"><span class="req">*</span>登山行前講習</span>
-                <span class="p-apply3-label-en">General knowledge about hiking</span>
-                <span class="p-apply3-line-3">
-                  <a href="https://www.ysnp.gov.tw/Video/C005200" id="con_hlSeminar" target="_blank" rel="noopener noreferrer" class="p-apply3-video-btn">
+              <label class="th-label" :class="{ 'p-apply3-label-3lines': park.showEn }" for="con_seminar">
+                <span class="p-apply3-line-1"><span v-if="park.seminarRequired" class="req">*</span>登山行前講習</span>
+                <span v-if="park.showEn" class="p-apply3-label-en">General knowledge about hiking</span>
+                <span v-if="park.seminarVideo" class="p-apply3-line-3">
+                  <a :href="park.seminarVideo" id="con_hlSeminar" target="_blank" rel="noopener noreferrer" class="p-apply3-video-btn">
                     <i class="fa-solid fa-video" aria-hidden="true"></i>登山安全影片
                   </a>
                 </span>
@@ -334,7 +338,7 @@
               </th-hybrid-select>
             </div>
 
-            <div class="th-field">
+            <div v-if="park.hasGps" class="th-field">
               <label class="th-label p-apply3-label-3lines" for="con_gps">
                 <span class="p-apply3-line-1"><span class="req">*</span>是否攜帶GPS及可供緊急聯絡之通信設備</span>
                 <span class="p-apply3-line-2">(包含智慧型手機、智慧型手錶、個人數位助理（PDA）等)</span>
@@ -352,7 +356,7 @@
             <div class="th-field" id="con_divGps">
               <label class="th-label" for="con_satellitephone">
                 <span>衛星電話</span>
-                <span class="p-apply3-label-en">Satellite phone number</span>
+                <span v-if="park.showEn" class="p-apply3-label-en">Satellite phone number</span>
               </label>
               <input id="con_satellitephone" type="text" class="th-input" v-model="satellitephone" placeholder="請輸入衛星電話" />
             </div>
@@ -360,7 +364,7 @@
             <div class="th-field" id="con_divWireless">
               <label class="th-label" for="con_frequency">
                 <span>無線電頻</span>
-                <span class="p-apply3-label-en">Radio Frequency</span>
+                <span v-if="park.showEn" class="p-apply3-label-en">Radio Frequency</span>
               </label>
               <input id="con_frequency" type="text" class="th-input" v-model="frequency" placeholder="請輸入無線電頻" />
             </div>
@@ -368,7 +372,7 @@
             <div class="th-field p-apply3-grid-full">
               <label class="th-label" for="con_note_user">
                 <span>備註</span>
-                <span class="p-apply3-label-en">Note</span>
+                <span v-if="park.showEn" class="p-apply3-label-en">Note</span>
               </label>
               <textarea id="con_note_user" class="th-textarea" rows="3" v-model="note_user" placeholder="請填入備註"></textarea>
             </div>
@@ -377,7 +381,7 @@
         </section>
 
         <!-- 區塊 3：警政署入山證申請（入山事由與前往地點並排） -->
-        <section id="sec-npa" class="th-card">
+        <section v-if="park.hasNpa" id="sec-npa" class="th-card">
           <div class="th-card-head">
             <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('npa')">
               <h2 class="th-card-title">警政署入山證申請</h2>
@@ -480,7 +484,7 @@
           <p class="p-apply3-side-head">
             本頁內容
             <span class="p-apply3-side-count" :class="{ 'is-done': canSubmit }">
-              <span class="num">{{ completedSectionsCount }}</span>/3
+              <span class="num">{{ completedSectionsCount }}</span>/{{ sectionCount }}
             </span>
           </p>
           <ol class="p-apply3-side-list">
@@ -496,7 +500,7 @@
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
+            <li v-if="park.hasNpa" :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
               <button type="button" @click="scrollToSection('sec-npa', 2)">
                 <span class="p-apply3-side-text">3. 警政署入山證</span>
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
@@ -563,7 +567,7 @@
     </div>
 
     <template #foot>
-      <div class="p-apply3-map-foot">
+      <div class="bulletin-modal-foot">
         <button type="button" class="th-btn th-btn-ghost" @click="mapOpen = false">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉
         </button>
@@ -580,5 +584,8 @@
 <script src="components/TrailLevelData.js"></script>
 <script src="components/OpenStatusData.js"></script>
 <script src="components/RouteIntroData.js"></script>
+<!-- 三管處機關設定；雪霸的路線與節點資料在 Apply13Data.js（2026-10-02） -->
+<script src="components/Apply13Data.js"></script>
+<script src="components/ParkApplyData.js"></script>
 </body>
 </html>
