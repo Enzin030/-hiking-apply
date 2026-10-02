@@ -65,10 +65,11 @@
         </div>
 
         <!-- 查詢表單 -->
-        <div class="fc-section">
-          <h2 class="fc-section-title">
-            <i class="fa-regular fa-calendar" aria-hidden="true"></i>選擇行程日期與人數
-          </h2>
+        <section class="th-card mb-5">
+          <div class="th-card-head">
+            <h2 class="th-card-title">選擇行程日期與人數</h2>
+          </div>
+          <div class="th-card-body">
 
           <div class="p-fc1-form-grid">
             <!-- 原 ForestCamp1.jsx 自己包了一層 DatePicker，內容與 th-date-picker
@@ -119,13 +120,15 @@
           <button class="th-btn th-btn-secondary p-fc1-query-btn" :disabled="!canQuery" @click="handleQuery">
             <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i>查詢床位 / 營位狀況
           </button>
-        </div>
+          </div>
+        </section>
 
         <!-- 查詢結果 -->
-        <div v-if="queried" class="fc-section p-fc1-avail-section">
-          <h2 class="fc-section-title">
-            <i class="ph-bold ph-calendar-check" aria-hidden="true"></i>{{ startDate }} 出發，共 {{ nights }} 晚 · {{ headcount }} 人
-          </h2>
+        <section v-if="queried" class="th-card mb-5 p-fc1-avail-section">
+          <div class="th-card-head">
+            <h2 class="th-card-title">{{ startDate }} 出發，共 {{ nights }} 晚 · {{ headcount }} 人</h2>
+          </div>
+          <div class="th-card-body">
 
           <p-fc1-avail-bar v-for="f in cabin.facilities" :key="f.id"
                            :facility="f" :date="startDate" :nights="nights"></p-fc1-avail-bar>
@@ -133,7 +136,8 @@
           <div class="p-fc1-avail-note">
             <i class="ph-bold ph-info" aria-hidden="true"></i>以上為即時查詢結果，實際名額以申請後為準。床位/營位數量將於下一步選擇。
           </div>
-        </div>
+          </div>
+        </section>
       </div>
 
       <!-- 右欄：山屋須知摘要 -->
