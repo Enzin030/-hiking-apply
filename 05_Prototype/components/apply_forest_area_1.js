@@ -32,8 +32,6 @@ thPage({
       days: same ? Number(st.days) || 0 : 0,
       start: same ? st.start || "" : "",
       headcount: same ? Number(st.headcount) || 0 : 0,
-      errors: [],
-      errorOpen: false,
     };
   },
   computed: {
@@ -45,7 +43,7 @@ thPage({
       if (!this.days) e.push("請選擇行程天數");
       if (!this.start) e.push("請選擇出發日期");
       if (!this.headcount) e.push("請選擇出發人數");
-      if (e.length) { this.errors = e; this.errorOpen = true; return; }
+      if (e.length) { window.thAlertList(e); return; }
       window.thFcState.save({
         kind: "area",
         title: "自然保護區域申請",

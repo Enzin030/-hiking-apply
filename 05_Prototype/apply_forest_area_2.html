@@ -150,14 +150,6 @@
     </div>
   </th-page-shell>
 
-  <th-modal v-if="errorOpen" title="請確認以下欄位" @close="errorOpen = false">
-    <ul class="list-disc pl-5 grid gap-1">
-      <li v-for="e in errors" :key="e">{{ e }}</li>
-    </ul>
-    <template #foot>
-      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="errorOpen = false">我知道了</button></div>
-    </template>
-  </th-modal>
 
   <th-quick-nav></th-quick-nav>
   <th-back-to-top></th-back-to-top>

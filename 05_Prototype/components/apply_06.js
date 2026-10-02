@@ -53,8 +53,6 @@ thPage({
       vcode: "",
       done: false,
       draftOpen: false,
-      errors: [],
-      errorOpen: false,
     };
   },
 
@@ -119,7 +117,7 @@ thPage({
       if (!(this.st.applicant && this.st.applicant.name)) e.push("尚未填寫申請人資料，請回第 3 步");
       if (!this.st.agreed) e.push("尚未勾選同意聲明，請回第 5 步");
       if (!this.vcode) e.push("請輸入送件驗證碼");
-      if (e.length) { this.errors = e; this.errorOpen = true; return; }
+      if (e.length) { window.thAlertList(e); return; }
       this.done = true;
       window.scrollTo({ top: 0, behavior: "smooth" });
     },

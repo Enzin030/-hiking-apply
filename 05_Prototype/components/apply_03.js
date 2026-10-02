@@ -42,8 +42,6 @@ thPage({
       leaderSame: st.leaderSame !== undefined ? st.leaderSame : true,
       leader: st.leader || { nation: "中華民國" },
       members: members,
-      errors: [],
-      errorOpen: false,
     };
   },
 
@@ -80,7 +78,7 @@ thPage({
     },
     next() {
       const e = this.check();
-      if (e.length) { this.errors = e; this.errorOpen = true; return; }
+      if (e.length) { window.thAlertList(e); return; }
       this.persist();
       window.location.href = "apply_04.html";
     },

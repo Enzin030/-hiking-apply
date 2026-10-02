@@ -294,7 +294,7 @@ thPage({
 
       this.currentQueryUser = { nation: n, sid: sid, email: email };
 
-      window.alert(
+      window.thAlert(
         '雪霸、玉山、太魯閣申請開放申請時間為 07:00-23:00，請您於 07:00 手動重新整理頁面，輸入驗證碼後執行「確認送出」鈕即可將申請案送出。草稿資訊僅保留 30 日，30 日內未異動資料或送出申請，草稿將被移除。'
       );
 
@@ -324,19 +324,20 @@ thPage({
 
     // 刪除草稿
     handleDelete(draft) {
-      var ok = window.confirm('確定要刪除「' + draft.teamName + '」（' + draft.route + '）此筆草稿紀錄嗎？\n\n刪除後資料將無法復原。');
-      if (ok) {
-        var idx = this.draftList.findIndex(function(item) { return item.id === draft.id; });
+      var self = this;
+      window.thConfirm('確定要刪除「' + draft.teamName + '」（' + draft.route + '）此筆草稿紀錄嗎？\n\n刪除後資料將無法復原。').then(function (ok) {
+        if (!ok) return;
+        var idx = self.draftList.findIndex(function(item) { return item.id === draft.id; });
         if (idx !== -1) {
-          this.draftList.splice(idx, 1);
+          self.draftList.splice(idx, 1);
         }
-        window.alert('草稿紀錄已成功刪除！');
-      }
+        window.thAlert('草稿紀錄已成功刪除！', 'success');
+      });
     },
 
     // 儲存草稿
     handleSaveDraft() {
-      window.alert('草稿儲存完成！\n系統已保存您當前的填寫進度。');
+      window.thAlert('草稿儲存完成！\n系統已保存您當前的填寫進度。', 'success');
     },
 
     // 步驟一：下一步
@@ -394,7 +395,7 @@ thPage({
     // 步驟二：刪除隊員
     handleRemoveMember(index) {
       if (this.activeDraft.members.length <= 1) {
-        window.alert('隊伍至少需包含 1 位隊員！');
+        window.thAlert('隊伍至少需包含 1 位隊員！');
         return;
       }
       this.activeDraft.members.splice(index, 1);
@@ -446,22 +447,23 @@ thPage({
         return;
       }
 
-      var ok = window.confirm('請確認申請資料是否均正確無誤，確認送出申請案？！');
-      if (ok) {
+      var self = this;
+      window.thConfirm('請確認申請資料是否均正確無誤，確認送出申請案？！').then(function (ok) {
+        if (!ok) return;
         // 設定完成資料
-        this.finishData = {
+        self.finishData = {
           serial: 'B115091700' + Math.floor(10 + Math.random() * 89),
           applyTime: '2026/09/17 15:10',
-          teamName: this.activeDraft.teamName,
-          membersCount: (this.activeDraft.members.length + 1) + ' 人（含領隊）',
-          route: this.activeDraft.agency + ' / ' + this.activeDraft.mainRoute + '（' + this.activeDraft.subRoute + '）',
-          entryDate: this.activeDraft.entryDate + ' 至 ' + this.activeDraft.exitDate + '（共 ' + this.activeDraft.days + ' 天）'
+          teamName: self.activeDraft.teamName,
+          membersCount: (self.activeDraft.members.length + 1) + ' 人（含領隊）',
+          route: self.activeDraft.agency + ' / ' + self.activeDraft.mainRoute + '（' + self.activeDraft.subRoute + '）',
+          entryDate: self.activeDraft.entryDate + ' 至 ' + self.activeDraft.exitDate + '（共 ' + self.activeDraft.days + ' 天）'
         };
-        this.currentStep = 6;
-        this.$nextTick(function() {
+        self.currentStep = 6;
+        self.$nextTick(function() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-      }
+      });
     },
 
     // 步驟四：列印本頁
@@ -490,12 +492,15 @@ thPage({
 
     // 步驟一：刪除當前草稿
     handleDeleteDraftCurrent() {
-      if (!confirm('確定要刪除此筆草稿紀錄嗎？刪除後無法復原。')) return;
+      window.thConfirm('確定要刪除此筆草稿紀錄嗎？刪除後無法復原。').then(ok => { if (ok) this.deleteDraftCurrent(); });
+    },
+
+    deleteDraftCurrent() {
       var targetId = this.activeDraft.id;
       this.draftList = this.draftList.filter(function(d) {
         return d.id !== targetId;
       });
-      alert('草稿已成功刪除！');
+      window.thAlert('草稿已成功刪除！', 'success');
       this.handleBackToQuery();
     }
   }

@@ -377,25 +377,25 @@ thPage({
         };
 
         localStorage.setItem("th_apply4_yushan_draft", JSON.stringify(draftData));
-        alert(`草稿已成功儲存（儲存時間：${timeStr}）！\n您可隨時至「草稿編輯」或於申請流程中恢復填寫進度。`);
+        window.thAlert(`草稿已成功儲存（儲存時間：${timeStr}）！\n您可隨時至「草稿編輯」或於申請流程中恢復填寫進度。`, "success");
       } catch (e) {
-        alert("儲存草稿時發生錯誤：" + e.message);
+        window.thAlert("儲存草稿時發生錯誤：" + e.message);
       }
     },
 
     submitApply() {
       if (!this.captchaInput) {
-        alert("請輸入驗證碼。");
+        window.thAlert("請輸入驗證碼。");
         return;
       }
       if (this.captchaInput.trim().toUpperCase() !== this.captchaCode) {
-        alert("驗證碼輸入錯誤，請重新輸入。");
+        window.thAlert("驗證碼輸入錯誤，請重新輸入。");
         this.refreshCaptcha();
         return;
       }
       this.isSubmitted = true;
-      alert("【登山申請成功】\n您的申請已成功送出！申請編號為：YUS-" + Date.now().toString().slice(-6) + "\n審核結果將寄發至申請人電子郵件信箱。");
-      window.location.href = "applySearch.html";
+      window.thAlert("【登山申請成功】\n您的申請已成功送出！申請編號為：YUS-" + Date.now().toString().slice(-6) + "\n審核結果將寄發至申請人電子郵件信箱。", "success")
+        .then(() => { window.location.href = "applySearch.html"; });
     }
   }
 });

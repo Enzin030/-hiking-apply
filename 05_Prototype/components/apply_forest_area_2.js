@@ -43,8 +43,6 @@ thPage({
       headcount: Number(st.headcount) || 0,
       confirms: confirms,
       fills: Object.assign({}, saved.fills),   // 空白待填區塊（行程計畫）的內容
-      errors: [],
-      errorOpen: false,
     };
   },
   computed: {
@@ -82,7 +80,7 @@ thPage({
       if (!/(\.|\/)(pdf|jpe?g|png)$/i.test(f.name)) msg = "檔案格式錯誤";
       else if (f.size > 5 * 1024 * 1024) msg = "上傳檔案過大";
       ev.target.value = "";
-      if (msg) { this.errors = [msg]; this.errorOpen = true; return; }
+      if (msg) { window.thAlert(msg); return; }
       const list = (this.attachFiles[v] || []).slice();
       list[i] = f.name;
       this.attachFiles = Object.assign({}, this.attachFiles, { [v]: list });
@@ -114,7 +112,7 @@ thPage({
     },
     next() {
       const e = this.check();
-      if (e.length) { this.errors = e; this.errorOpen = true; return; }
+      if (e.length) { window.thAlertList(e); return; }
       window.thFcState.save({ areaPlan: this.plan() });
       window.location.href = "apply_03.html";
     },

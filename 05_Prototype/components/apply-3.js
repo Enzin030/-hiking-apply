@@ -643,7 +643,7 @@ thPage({
       }
       if (this.isLastDay) {
         if (!this.graph.exits.includes(this.here)) {
-          alert("最後一天行程的點必須為登山口");
+          window.thAlert("最後一天行程的點必須為登山口");
         }
         this.plannerMsg = "";
         this.plannerFinished = true;
@@ -652,7 +652,7 @@ thPage({
       }
       if (!this.isCamp(this.here)) {
         this.plannerMsg = "只有宿營地才能完成今日路線";
-        alert("只有宿營地才能完成今日路線");
+        window.thAlert("只有宿營地才能完成今日路線");
         return;
       }
       this.plannerMsg = "";

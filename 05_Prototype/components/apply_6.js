@@ -247,25 +247,26 @@ thPage({
       for (var i = 0; i < this.members.length; i++) {
         var m = this.members[i];
         if (m.entered && !m.exitDate) {
-          alert('隊員「' + m.name + '」已勾選有入園，請填寫或選擇出園日期！');
+          window.thAlert('隊員「' + m.name + '」已勾選有入園，請填寫或選擇出園日期！');
           return;
         }
         if (!m.entered && !m.notEntered) {
-          alert('隊員「' + m.name + '」請選擇「有入園」或「未入園」！');
+          window.thAlert('隊員「' + m.name + '」請選擇「有入園」或「未入園」！');
           return;
         }
       }
 
       // 依規格彈出確認視窗
-      var confirmed = window.confirm('請確認是否送出出園回報?!');
-      if (confirmed) {
-        window.alert('出園回報完成!!');
-        this.handleReset();
-        this.currentStep = 1;
-        this.$nextTick(function() {
+      var self = this;
+      window.thConfirm('請確認是否送出出園回報?!').then(function (confirmed) {
+        if (!confirmed) return;
+        window.thAlert('出園回報完成!!', 'success');
+        self.handleReset();
+        self.currentStep = 1;
+        self.$nextTick(function() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-      }
+      });
     },
 
     // 返回第一頁（查詢頁）

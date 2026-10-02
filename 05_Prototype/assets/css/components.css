@@ -3372,6 +3372,32 @@ body.th-noscroll {
   line-height: var(--lh-loose);
   white-space: pre-line;
 }
+/* ------------------------------------------------------------
+   th-swal（SweetAlert2 對話框微調，2026-10-02）
+   按鈕已套 .th-btn（buttonsStyling: false），這裡只調字體、間距與錯誤清單。
+   ------------------------------------------------------------ */
+.th-swal {
+  font-family: inherit;
+  border-radius: var(--r-xl);
+}
+.th-swal .swal2-title {
+  font-size: var(--fs-lg);
+  color: var(--fg-1);
+}
+.th-swal .swal2-html-container {
+  font-size: var(--fs-md);
+  color: var(--fg-2);
+}
+.th-swal-actions {
+  gap: 8px;
+}
+.th-swal-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+  text-align: left;
+}
+
 /* modal 底部按鈕列（th-modal 的 foot 插槽）。2026-10-02 由玉山 apply-3 的 .p-apply3-map-foot 提升
    （二次即提升；原本其他頁的 foot 沒有內距，按鈕貼齊 modal 邊緣） */
 .bulletin-modal-foot {

@@ -766,12 +766,15 @@ thPage({
       };
 
       this.captchaInput = this.captchaCode;
-      alert("已成功載入示範資料（申請人、領隊、2名隊員、留守人及驗證碼）。");
+      window.thAlert("已成功載入示範資料（申請人、領隊、2名隊員、留守人及驗證碼）。", "success");
     },
 
     // 重設回空白初始狀態
     clearAllData() {
-      if (!confirm("確定要重設回空白表單狀態嗎？")) return;
+      window.thConfirm("確定要重設回空白表單狀態嗎？").then(ok => { if (ok) this.resetToBlank(); });
+    },
+
+    resetToBlank() {
       this.applyConsent = false;
       this.applicant = createPerson();
       this.leaderSame = false;
@@ -918,9 +921,9 @@ thPage({
 
         localStorage.setItem("th_apply4_yushan_draft", JSON.stringify(draftData));
         this.hasDraftNotice = false;
-        alert(`草稿已成功儲存（儲存時間：${timeStr}）！\n您可隨時至「草稿編輯」或於本頁恢復填寫進度。`);
+        window.thAlert(`草稿已成功儲存（儲存時間：${timeStr}）！\n您可隨時至「草稿編輯」或於本頁恢復填寫進度。`, "success");
       } catch (e) {
-        alert("儲存草稿時發生錯誤：" + e.message);
+        window.thAlert("儲存草稿時發生錯誤：" + e.message);
       }
     },
 
@@ -929,7 +932,7 @@ thPage({
       try {
         const raw = localStorage.getItem("th_apply4_yushan_draft");
         if (!raw) {
-          alert("查無已儲存的草稿資料。");
+          window.thAlert("查無已儲存的草稿資料。");
           return;
         }
         const draft = JSON.parse(raw);
@@ -959,9 +962,9 @@ thPage({
 
         this.hasDraftNotice = false;
         this.savePersonnelToSession();
-        alert(`已成功恢復草稿中的人員資料（儲存時間：${draft.savedAt}）！\n注意：行程日期與宿營地依當前申請行程為準。`);
+        window.thAlert(`已成功恢復草稿中的人員資料（儲存時間：${draft.savedAt}）！\n注意：行程日期與宿營地依當前申請行程為準。`, "success");
       } catch (e) {
-        alert("恢復草稿失敗：" + e.message);
+        window.thAlert("恢復草稿失敗：" + e.message);
       }
     },
 
@@ -987,29 +990,29 @@ thPage({
     goNext() {
       // 1. 檢核委託同意與申請人
       if (!this.applyConsent) {
-        alert("請確認並勾選「申請人委託代理同意書」。");
+        window.thAlert("請確認並勾選「申請人委託代理同意書」。");
         this.scrollToSection("sec-apply", 1);
         return;
       }
       if (!isAdult(this.applicant.birthday, this.summary.applystart)) {
-        alert("申請人須年滿 18 歲（法定成年人），請確認出生日期。");
+        window.thAlert("申請人須年滿 18 歲（法定成年人），請確認出生日期。");
         this.scrollToSection("sec-apply", 1);
         return;
       }
       if (!this.secApplyOk) {
-        alert("申請人資料尚未完整填寫或格式有誤，請確認必填欄位、Email 與手機格式。");
+        window.thAlert("申請人資料尚未完整填寫或格式有誤，請確認必填欄位、Email 與手機格式。");
         this.scrollToSection("sec-apply", 1);
         return;
       }
 
       // 2. 檢核領隊
       if (!isAdult(this.activeLeader.birthday, this.summary.applystart)) {
-        alert("領隊須年滿 18 歲，請確認領隊出生日期。");
+        window.thAlert("領隊須年滿 18 歲，請確認領隊出生日期。");
         this.scrollToSection("sec-leader", 2);
         return;
       }
       if (!this.secLeaderOk) {
-        alert("領隊資料尚未完整填寫或格式有誤，請確認領隊各欄位、Email 與手機格式。");
+        window.thAlert("領隊資料尚未完整填寫或格式有誤，請確認領隊各欄位、Email 與手機格式。");
         this.scrollToSection("sec-leader", 2);
         return;
       }
@@ -1017,13 +1020,13 @@ thPage({
       // 3. 檢核隊員與單人獨攀
       if (this.isSolo) {
         if (!this.soloChecked) {
-          alert("請勾選單人獨攀注意事項。");
+          window.thAlert("請勾選單人獨攀注意事項。");
           this.scrollToSection("sec-member", 3);
           return;
         }
       } else {
         if (!this.secMemberOk) {
-          alert("隊員資料尚未完整填寫或格式有誤，請確認各隊員資料、Email 與手機格式。");
+          window.thAlert("隊員資料尚未完整填寫或格式有誤，請確認各隊員資料、Email 與手機格式。");
           this.scrollToSection("sec-member", 3);
           return;
         }
@@ -1031,14 +1034,14 @@ thPage({
 
       // 4. 檢核留守人
       if (!this.secStayOk) {
-        alert("留守人資料尚未完整填寫，姓名與手機為必填項。");
+        window.thAlert("留守人資料尚未完整填寫，姓名與手機為必填項。");
         this.scrollToSection("sec-stay", 4);
         return;
       }
 
       // 5. 檢核驗證碼
       if (!this.secCaptchaOk) {
-        alert("請輸入正確的送件驗證碼。");
+        window.thAlert("請輸入正確的送件驗證碼。");
         this.scrollToSection("sec-captcha", 6);
         return;
       }

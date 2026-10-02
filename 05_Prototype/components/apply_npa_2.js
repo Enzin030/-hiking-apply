@@ -14,8 +14,6 @@ thPage({
     const st = window.thFcState.load();
     return {
       npa: st.npa || { reason: "登山健行", places: [], lib: "", sub: "", plan: "" },
-      errors: [],
-      errorOpen: false,
     };
   },
   computed: {
@@ -33,7 +31,7 @@ thPage({
     },
     next() {
       const e = this.check();
-      if (e.length) { this.errors = e; this.errorOpen = true; return; }
+      if (e.length) { window.thAlertList(e); return; }
       /* 正式站確認頁不顯示入山證明細：「入山路線」列 id="npaRoute" 為 sethide 且無值（2026-09-29 擷取） */
       window.thFcState.save({ npa: this.npa });
       window.location.href = "apply_03.html";

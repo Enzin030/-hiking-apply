@@ -83,6 +83,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/zh-tw.min.js" integrity="sha384-M3C50s7wSRhBR3R5c5VHbyT00siKSF/Ae1dXHU0BKNGldKmqIJGxrAI44Sm0tTIB" crossorigin="anonymous"></script>
 
 <!--
+  SweetAlert2（2026-10-02）——警告／確認對話框。使用者要求警告類訊息用 SweetAlert
+  （正式站也用 sweet-alert），取代原生 alert()／confirm() 與各頁錯誤清單 modal。
+  CDN＋integrity 釘版，同 Vue、flatpickr；all 版內含樣式。呼叫一律經 th-swal.js 的
+  window.thAlert／thAlertList／thConfirm，按鈕套用 .th-btn，微調見 components.css「th-swal」。
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.14.5/sweetalert2.all.min.js" integrity="sha384-YB/DdIkloKoRpclWB8bNcYXWakt57USgtQPDzvnIDHYU0lasD5eWlXVo1S4ODukY" crossorigin="anonymous"></script>
+
+<!--
   共用元件（階段 2）。一檔一元件，每支只把定義掛進 window.thComponents，
   由 app-boot.js 在 createApp 後一次全域註冊。
 
@@ -126,6 +134,8 @@
 <script src="assets/components/th-npa-permit.js"></script>
 <!-- 2026-10-01：路線規劃器，由 apply_1_5 的頁面元件提升（雪霸 apply_1_3 為第二個消費端） -->
 <script src="assets/components/th-route-planner.js"></script>
+<!-- 2026-10-02：警告／確認對話框（SweetAlert2 包裝） -->
+<script src="assets/components/th-swal.js"></script>
 
 <!--
   app-boot.js：createApp、全域註冊共用元件、掛載 #th-app。
