@@ -1226,6 +1226,74 @@
    已於階段 4 隨該檔一併刪除。
    ############################################################ */
 
+/* 複合申請詢問框（2026-10-02，SweetAlert）：內容左對齊、區塊間距；是／否說明卡、審查單位列 */
+.p-apply1-composite-body {
+  text-align: left;
+}
+.p-apply1-composite {
+  display: grid;
+  gap: 12px;
+  text-align: left;   /* SweetAlert 內容區預設置中 */
+}
+.p-apply1-composite-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.p-apply1-composite-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--slate-50);
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+}
+.p-apply1-composite-choice i {
+  margin-top: 3px;
+}
+.p-apply1-composite-choice strong {
+  display: block;
+  margin-bottom: 2px;
+}
+.p-apply1-composite-choice.is-yes {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+  color: var(--success-fg);
+}
+.p-apply1-composite-orgs {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  background: var(--bg-1);
+}
+.p-apply1-composite-orgs-title {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--fg-3);
+  margin-bottom: 8px;
+}
+.p-apply1-composite-orgs li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+.p-apply1-composite-orgs li + li {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--slate-200);
+}
+@media (max-width: 640px) {
+  .p-apply1-composite-choices {
+    grid-template-columns: 1fr;
+  }
+}
+
 .p-apply1-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -7363,6 +7431,16 @@ body:where(.p-indexb-body):before {
 /* 地圖按鈕靠右：等級徽章留在左，按鈕推到該列尾端 */
 .p-apply3-map-btn {
   margin-left: auto;
+}
+
+/* 目前系統時間標籤：提示框右上方、字放大一級（2026-10-02） */
+.p-apply3-systime {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.p-apply3-systime .th-flag {
+  font-size: var(--fs-sm);
 }
 
 /* 入山證說明 callout 與下方難度表的間距，比照關閉公告（.p-apply3-closure 的 16px） */

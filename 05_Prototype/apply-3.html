@@ -47,6 +47,11 @@
       <div class="p-apply3-main">
 
         <!-- 區塊 1：路線與基本資料 -->
+        <!-- 目前系統時間：正式站接在受理時段那句後面；雛形獨立成標籤、放在第一張卡片標題上方
+             （使用者 2026-10-02：要顯眼、放標題上面） -->
+        <div class="p-apply3-systime">
+          <span class="th-flag is-snow"><i class="fa-regular fa-clock" aria-hidden="true"></i>目前系統時間：{{ nowTime }}</span>
+        </div>
         <section id="sec-route" class="th-card">
           <div class="th-card-head">
             <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('route')">
@@ -60,7 +65,7 @@
           <div class="th-callout">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
             <div>
-              <strong>請注意：</strong>國家公園路線<strong>於每日 23:00 至隔日 07:00 暫停受理申請</strong>。目前系統時間為：<strong>{{ nowTime }}</strong>。{{ park.ecoNote ? '登山路線進入國家公園生態保護區須要申請，非國家公園生態保護區不須申請。' : '' }}如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。
+              <strong>請注意：</strong>國家公園路線<strong>於每日 23:00 至隔日 07:00 暫停受理申請</strong>。{{ park.ecoNote ? '登山路線進入國家公園生態保護區須要申請，非國家公園生態保護區不須申請。' : '' }}如欲修改登山路線、入園日期、隊伍人數，請先儲存為草稿，以免資料遺失。
               <p v-for="(n, nIdx) in park.notices" :key="nIdx">{{ n.pre }}<a class="th-inline-link" :href="n.link.href" target="_blank" rel="noopener noreferrer">{{ n.link.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>{{ n.post }}</p>
             </div>
           </div>

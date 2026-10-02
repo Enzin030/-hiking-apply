@@ -30,29 +30,8 @@
   <!-- 原 JSX 把 SuspendedModal 放在最前面，順序照原樣 -->
   <p-apply1-suspend-modal :route="suspendedRoute" @close="suspendedRoute = null"></p-apply1-suspend-modal>
 
-  <!-- 複合申請詢問框：文字照正式站 OtherRoute 的 sweet-alert（2026-10-01） -->
-  <th-modal v-if="compositeRel" title="是否需要同時申請以下入山/山屋/路線?" @close="compositeRoute = null">
-    <div class="grid gap-3">
-      <div class="th-field">
-        <label class="th-label" for="f-composite">路線選擇</label>
-        <th-hybrid-select><select id="f-composite" class="th-select" v-model.number="compositePick">
-          <option v-for="(o, i) in compositeRel.options" :key="o.cId" :value="i">{{ o.name }}</option>
-        </select></th-hybrid-select>
-      </div>
-      <ul class="th-field-hint list-disc pl-5">
-        <li>是：系統將協助進行複合申請</li>
-        <li>否：直接進行該項目申請流程</li>
-      </ul>
-      <p v-if="compositeOpt">{{ compositeOpt.name }}的審查單位:{{ compositeOpt.orgName }}</p>
-      <p v-if="compositeRel.message" class="th-field-hint">{{ compositeRel.message }}</p>
-    </div>
-    <template #foot>
-      <div class="bulletin-modal-foot">
-        <button type="button" class="th-btn th-btn-ghost" @click="compositeNo">否</button>
-        <button type="button" class="th-btn th-btn-primary" @click="compositeYes">是</button>
-      </div>
-    </template>
-  </th-modal>
+  <!-- 複合申請詢問框改由 SweetAlert 顯示（同正式站 OtherRoute 的 sweet-alert；使用者 2026-10-02），
+       見 components/apply1.js openComposite() -->
 
   <th-header active="apply"></th-header>
 

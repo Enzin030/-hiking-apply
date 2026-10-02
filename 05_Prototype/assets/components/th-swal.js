@@ -13,6 +13,7 @@
      window.thAlert("草稿已儲存", "success");                  // 成功
      window.thAlertList(["申請目的或項目未選擇", "安全聲明未選擇"]); // 多項錯誤，條列
      window.thConfirm("確定要刪除此筆草稿紀錄嗎？").then(ok => { if (ok) ... });
+     window.thSwal({ title, html, showCancelButton: true, ... });  // 自訂內容（2026-10-02 複合申請詢問框）
    SweetAlert2 沒載到時（離線）退回原生 alert／confirm，流程不中斷。
    ============================================================ */
 (function () {
@@ -51,6 +52,15 @@
       title: title || "請確認以下欄位",
       html: '<ul class="th-swal-list">' + list.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul>",
     }));
+  };
+
+  /* 自訂內容的對話框：傳入 SweetAlert2 選項，按鈕與彈窗樣式沿用 BASE。
+     回傳 SweetAlert2 的結果物件（isConfirmed／dismiss）；沒載到時回傳 null。 */
+  window.thSwal = function (opts) {
+    if (!window.Swal) return Promise.resolve(null);
+    var o = Object.assign({}, BASE, opts);
+    o.customClass = Object.assign({}, BASE.customClass, opts && opts.customClass);
+    return window.Swal.fire(o);
   };
 
   window.thConfirm = function (text) {

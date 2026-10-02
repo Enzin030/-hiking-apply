@@ -288,6 +288,14 @@ thPage({
     agencies() { return AGENCIES; },
     compositeRel() { return this.compositeRoute ? (window.TH_ROUTE_RELATIONS || {})[this.compositeRoute.cId] : null; },
     compositeOpt() { return this.compositeRel ? this.compositeRel.options[this.compositePick] : null; },
+    /* 審查單位兩列：所選關聯路線＋起點（message 原文「X的審查單位:Y」拆成名稱與機關） */
+    compositeOrgs() {
+      var rows = [];
+      if (this.compositeOpt) rows.push({ name: this.compositeOpt.name, org: this.compositeOpt.orgName });
+      var m = this.compositeRel && /^(.*)的審查單位[:：](.*)$/.exec(this.compositeRel.message || "");
+      if (m) rows.push({ name: m[1], org: m[2] });
+      return rows;
+    },
 
     /* 原 useMemo filtered，過濾與排序邏輯逐字照搬 */
     filtered() {
@@ -365,9 +373,61 @@ thPage({
       this.diff = this.diff === String(n) ? "all" : String(n);
     },
     groupIcon(agency) { return agencyIcon(agency); },
+    /* 複合申請詢問框：SweetAlert（正式站 OtherRoute 也是 sweet-alert）。文字照正式站；
+       是／否說明卡與審查單位標籤列為雛形版面（使用者 2026-10-02：原本太單調，色系與全站一致）。
+       按「是」＝複合申請、「否」＝走原路線入口；按 × 或點外面＝取消，留在列表。 */
     openComposite(r) {
+      var self = this;
       this.compositePick = 0;
       this.compositeRoute = r;
+      var rel = this.compositeRel;
+      if (!rel) return;
+      var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+      var orgsHtml = function () {
+        return self.compositeOrgs.map(function (o) {
+          return '<li><span class="p-apply1-composite-orgs-name">' + esc(o.name) + '</span><span class="th-flag is-snow"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>' + esc(o.org) + "</span></li>";
+        }).join("");
+      };
+      var html =
+        '<div class="p-apply1-composite">' +
+          '<div class="th-field"><label class="th-label" for="f-composite">路線選擇</label>' +
+            '<select id="f-composite" class="th-select">' +
+              rel.options.map(function (o, i) { return '<option value="' + i + '">' + esc(o.name) + "</option>"; }).join("") +
+            "</select></div>" +
+          '<div class="p-apply1-composite-choices">' +
+            '<div class="p-apply1-composite-choice is-yes"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><div><strong>是</strong><span>系統將協助進行複合申請</span></div></div>' +
+            '<div class="p-apply1-composite-choice is-no"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i><div><strong>否</strong><span>直接進行該項目申請流程</span></div></div>' +
+          "</div>" +
+          '<div class="p-apply1-composite-orgs"><p class="p-apply1-composite-orgs-title">審查單位</p><ul id="f-composite-orgs">' + orgsHtml() + "</ul></div>" +
+        "</div>";
+      var fallback = function () {
+        if (window.confirm("是否需要同時申請以下入山/山屋/路線?\n是：系統將協助進行複合申請\n否：直接進行該項目申請流程")) self.compositeYes();
+        else self.compositeNo();
+      };
+      if (!window.thSwal || !window.Swal) { fallback(); return; }
+      window.thSwal({
+        title: "是否需要同時申請以下入山/山屋/路線?",
+        html: html,
+        width: "40rem",
+        showCancelButton: true,
+        showCloseButton: true,
+        reverseButtons: true,
+        confirmButtonText: "是",
+        cancelButtonText: "否",
+        customClass: { htmlContainer: "p-apply1-composite-body" },
+        didOpen: function (el) {
+          var sel = el.querySelector("#f-composite");
+          sel.addEventListener("change", function () {
+            self.compositePick = Number(sel.value);
+            el.querySelector("#f-composite-orgs").innerHTML = orgsHtml();
+          });
+        },
+      }).then(function (res) {
+        if (!res) return;
+        if (res.isConfirmed) self.compositeYes();
+        else if (res.dismiss === window.Swal.DismissReason.cancel) self.compositeNo();
+        else self.compositeRoute = null;   // × 或點外面：留在列表
+      });
     },
     compositeYes() {
       var url = compositeUrl(this.compositeRoute, this.compositeOpt);
