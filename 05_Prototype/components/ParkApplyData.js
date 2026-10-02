@@ -177,6 +177,7 @@ window.thParkApply = function (key) {
       stayBirthdayRequired: false,
       attachSection: true,
       attachMode: "taroko",
+      attachDocs: ["路線行程規劃計劃書"],   // 附件表格的文件清單（正式站 2026-09-29，選填）
       soloMode: "attach",
       soloDoc: "太魯閣國家公園獨攀申請承諾書",
       queuePref: false,

@@ -706,23 +706,24 @@
                 <input type="checkbox" v-model="soloChecked" id="cbSoloDoc" />
                 <span><span class="req">*</span>獨攀證明說明：已下載且詳閱{{ park.soloDoc }}，並同意相關切結內容。</span>
               </label>
-              <div class="th-field">
-                <span class="th-label">路線行程規劃計劃書</span>
-                <div class="flex flex-wrap items-center gap-2">
-                  <button type="button" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>點選上傳文件</button>
-                </div>
+              <!-- 附件改表格：左文件名稱、右上傳（使用者 2026-10-02），沿用排隊表的表格樣式 -->
+              <div class="p-apply4-queue-table-wrap">
+                <table class="p-apply4-queue-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">文件名稱</th>
+                      <th scope="col">上傳</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="d in park.attachDocs" :key="d">
+                      <td class="text-slate-800">{{ d }}</td>
+                      <td><button type="button" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>點選上傳文件</button></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </template>
-          </div>
-        </section>
-
-        <!-- 承載量狀況（太魯閣，正式站標題原文「承載量隊狀況」） -->
-        <section v-if="showCapacity" id="sec-capacity" class="th-card" aria-labelledby="heading-capacity">
-          <div class="th-card-head">
-            <h2 id="heading-capacity" class="th-card-title">承載量隊狀況</h2>
-          </div>
-          <div class="th-card-body">
-            <p>您申請的行程 承載量：{{ capacityData.total }}，已通過：{{ capacityData.approved }}，待初審：{{ capacityData.pending }}，剩餘：{{ capacityData.remain }}，需求數量：{{ teamsCount }}</p>
           </div>
         </section>
 
@@ -763,6 +764,9 @@
             </div>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.queue">
+            <!-- 承載量狀況（太魯閣，正式站標題原文「承載量隊狀況」）：只有一行，不另立卡片，
+                 併在排隊表上方（使用者 2026-10-02；正式站順序同為承載量→排隊表） -->
+            <th-callout v-if="showCapacity"><strong>承載量隊狀況</strong>：您申請的行程 承載量：{{ capacityData.total }}，已通過：{{ capacityData.approved }}，待初審：{{ capacityData.pending }}，剩餘：{{ capacityData.remain }}，需求數量：{{ teamsCount }}</th-callout>
             <!-- 其他機關（雪霸）：四欄、說明為固定文字，無住宿調查（正式站 apply_1_3 步驟二） -->
             <div v-if="!isYushan" class="p-apply4-queue-table-wrap">
               <table class="p-apply4-queue-table">
