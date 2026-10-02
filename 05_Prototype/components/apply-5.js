@@ -296,11 +296,11 @@ thPage({
         { label: "國籍", value: a.nation || "中華民國" },
         { label: "身分證號／護照號碼", value: a.sid },
         { label: "生日", value: a.birthday },
-        { label: "電話", value: a.tel },
-        { label: "手機", value: a.mobile },
+        // 電話與手機併一欄，比照隊伍資料表（2026-10-02 改表格呈現）
+        { label: "電話 / 手機", value: `${a.tel || ""} / ${a.mobile || ""}` },
         { label: "傳真", value: a.fax },
         { label: "Email", value: a.email },
-        { label: "聯絡地址", value: `${a.country || ""}${a.city || ""}${a.addr || ""}`, wide: true },
+        { label: "聯絡地址", value: `${a.country || ""}${a.city || ""}${a.addr || ""}`, wrap: true },
         { label: "緊急聯絡人", value: a.contactname },
         { label: "緊急聯絡電話", value: a.contacttel }
       ];
@@ -309,9 +309,10 @@ thPage({
     stayFields() {
       const s = this.stay;
       const rows = [{ label: "姓名", value: s.name }];
-      if (s.tel) rows.push({ label: "電話", value: s.tel });
+      // 電話只有雪霸有；有電話時與手機併一欄，比照隊伍資料表
+      if (s.tel) rows.push({ label: "電話 / 手機", value: `${s.tel} / ${s.mobile || ""}` });
+      else rows.push({ label: "手機", value: s.mobile });
       rows.push(
-        { label: "手機", value: s.mobile },
         { label: "傳真", value: s.fax },
         { label: "Email", value: s.email },
         { label: "國籍", value: s.nation || "中華民國" },

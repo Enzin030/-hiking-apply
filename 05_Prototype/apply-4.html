@@ -83,6 +83,7 @@
             </div>
             <!-- 路線承載量（太魯閣，正式站「承載量隊狀況」）：是整條路線的數字、不屬於宿營地，
                  放在行程摘要（使用者 2026-10-02）；沿用摘要列樣式 -->
+            <hr v-if="showCapacity" class="border-t border-slate-200 my-2" />
             <div v-if="showCapacity" class="summary-date-row">
               <span class="date-item">
                 <span class="date-title">路線承載量：</span>
