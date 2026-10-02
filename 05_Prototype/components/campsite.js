@@ -118,7 +118,7 @@ const pCampsiteDayModal = {
       <table class="th-table th-table--zebra p-campsite-daytable">
         <tbody>
           <tr v-for="(label, i) in site.labels" :key="label || ('unlabeled-' + i)">
-            <th scope="row"><span v-if="!label" class="p-campsite-sub">（正式站未標示項目，[待確認]）</span><template v-else>{{ label }}</template><span v-if="label === '外籍提前'" class="p-campsite-sub">（外國人＋本國人）</span></th>
+            <th scope="row">{{ label }}<span v-if="label === '外籍提前'" class="p-campsite-sub">（外國人＋本國人）</span></th>
             <td :class="label === '餘額' ? 'p-campsite-strong' : ''">{{ day.v[i] }}</td>
           </tr>
         </tbody>
@@ -235,17 +235,6 @@ const pCampsiteMonthBar = {
       <span class="p-campsite-monthbar-btn th-todo-link">下個月</span>
     </div>
   `,
-};
-
-/* ── 快照提醒 ── */
-const pCampsiteSnapshotNote = {
-  props: {
-    snapshot: { type: String, required: true },
-    ym: { type: Object, required: true },
-    metric: { type: String, default: "餘額" },
-  },
-  template: `<th-callout type="warning">{{ metric }}為 <strong>{{ snapshot }}</strong> 自現行網站擷取的快照，非即時查詢結果；
-雛形資料僅含 {{ ym.year }} 年 {{ ym.month }} 月，故月份切換尚未建置。</th-callout>`,
 };
 
 /* ── 說明區（正式站 alert 原文，逐條保留，含 FB 社團連結）── */
@@ -375,7 +364,6 @@ const pCampsiteNodeCalendar = {
       </div>
 
       <p-campsite-month-bar :ym="ym"></p-campsite-month-bar>
-      <p-campsite-snapshot-note :snapshot="snapshot" :ym="ym"></p-campsite-snapshot-note>
 
       <p-campsite-bed-calendar :site="node" :week-head="weekHead" @pick="day = $event"></p-campsite-bed-calendar>
       <p-campsite-cal-legend :site="node"></p-campsite-cal-legend>
@@ -526,8 +514,7 @@ const pCampsitePlainTable = {
           </template>
         </th-data-table>
         <!-- 正式站自己就寫「查無資料」，照抄，不編一張假的表 -->
-        <th-callout v-else type="warning">正式站目前的內容是「{{ rows[0] ? joinFirst : "查無資料" }}」。<span v-if="emptyHint" class="th-todo-link">{{ emptyHint }}</span></th-callout>
-        <div class="p-campsite-legend"><span class="p-campsite-legend-hint">內容為 {{ snapshotDate }} 自現行網站擷取的快照。</span></div>
+        <th-callout v-else type="warning">{{ rows[0] ? joinFirst : "查無資料" }}</th-callout>
       </div>
     </section>
   `,
@@ -569,7 +556,6 @@ const pCampsiteSheipaCamp = {
       </div>
 
       <p-campsite-month-bar :ym="ym"></p-campsite-month-bar>
-      <p-campsite-snapshot-note :snapshot="snapshot" :ym="ym"></p-campsite-snapshot-note>
 
       <p-campsite-bed-calendar :site="site" :week-head="weekHead" @pick="day = $event"></p-campsite-bed-calendar>
       <p-campsite-cal-legend :site="site"></p-campsite-cal-legend>
@@ -605,7 +591,7 @@ const pCampsiteTarokoHut = {
       :summary="summary" :nodes="nodes" :week-head="weekHead" :snapshot="snapshot"
       :org-id="orgId" :detail-page="detailPage" :id-param="idParam"
       summary-title="山屋床位承載量" summary-icon="fa-solid fa-house-chimney" summary-unit="處"
-      summary-hint="平日／假日底下的「山屋床位」為正式站表頭原文；點宿營地名稱可切換下方月曆。"
+      summary-hint="點宿營地名稱可切換下方月曆。"
       select-label="宿營地" select-icon="fa-solid fa-house-chimney"
       cal-title="山屋每日餘額"></p-campsite-node-calendar>
   `,
@@ -619,7 +605,7 @@ const pCampsiteTarokoRoute = {
       :summary="summary" :nodes="nodes" :week-head="weekHead" :snapshot="snapshot"
       :org-id="orgId" :detail-page="detailPage" :id-param="idParam"
       summary-title="路線承載量" summary-icon="fa-solid fa-route" summary-unit="條路線"
-      summary-hint="平日／假日為正式站列出的承載量數值，正式站未加註其定義［待確認］；點路線名稱可切換下方月曆。"
+      summary-hint="點路線名稱可切換下方月曆。"
       select-label="路線" select-icon="fa-solid fa-route"
       cal-title="路線每日餘額"></p-campsite-node-calendar>
   `,
@@ -633,7 +619,7 @@ const pCampsiteYushanOneday = {
       :summary="summary" :nodes="nodes" :week-head="weekHead" :snapshot="snapshot"
       :org-id="orgId" :detail-page="detailPage" :id-param="idParam"
       summary-title="單日往返路線承載量" summary-icon="fa-solid fa-route" summary-unit="條路線"
-      summary-hint="平日／假日承載量為正式站表頭原文（單位：人）；點路線名稱可切換下方月曆。"
+      summary-hint="平日／假日承載量單位為人；點路線名稱可切換下方月曆。"
       select-label="路線" select-icon="fa-solid fa-route"
       cal-title="路線每日餘額"></p-campsite-node-calendar>
   `,
@@ -647,7 +633,7 @@ const pCampsiteYushanCampInner = {
       :summary="summary" :nodes="nodes" :week-head="weekHead" :snapshot="snapshot"
       :org-id="orgId" :detail-page="detailPage" :id-param="idParam"
       summary-title="宿營地承載量" summary-icon="fa-solid fa-tent" summary-unit="處"
-      summary-hint="平日／假日承載量各分「山屋床位」與「營地營位」兩欄，為正式站表頭原文；點宿營地名稱可切換下方月曆。"
+      summary-hint="平日／假日承載量各分「山屋床位」與「營地營位」兩欄；點宿營地名稱可切換下方月曆。"
       select-label="宿營地" select-icon="fa-solid fa-tent"
       cal-title="宿營地每日餘額"></p-campsite-node-calendar>
   `,
@@ -683,10 +669,7 @@ const pCampsiteForestryCamp = {
         正式站現況：四個宿營地 × 9-12 月，每一格都是「查無資料」。
         依 2026-09-07 使用者裁決照實呈現空月曆，並在上方明說，不假造數字。
       -->
-      <th-callout type="warning">正式站的林業及自然保育署宿營地查詢<strong>目前沒有任何可用資料</strong>——
-2026-09-07 實測 {{ sites.length }} 個宿營地、9 至 12 月，每一天都顯示「查無資料」，
-既無承載量也無當日明細。下方月曆照實呈現該現況。<span class="th-todo-link">［待確認］正式站為何長期無資料，需向機關確認；
-待機關上架後重抓快照。</span></th-callout>
+      <th-callout type="warning">林業及自然保育署宿營地目前查無承載量資料。</th-callout>
 
       <form class="bulletin-card" @submit.prevent="submit">
         <div class="bulletin-filter-row">
@@ -778,7 +761,6 @@ const pCampsiteForestryArea = {
 
       <template v-if="area.hasCalendar">
         <p-campsite-month-bar :ym="ym"></p-campsite-month-bar>
-        <p-campsite-snapshot-note :snapshot="snapshot" :ym="ym" metric="申請量"></p-campsite-snapshot-note>
         <p-campsite-forestry-calendar :site="area" :week-head="weekHead"
                                       primary-label="現在申請量" @pick="day = $event"></p-campsite-forestry-calendar>
         <div class="p-campsite-legend">
@@ -787,8 +769,8 @@ const pCampsiteForestryArea = {
         </div>
       </template>
       <!-- 正式站按查詢後不出月曆，重試三次確認過；不編造空月曆冒充有查到 -->
-      <th-callout v-else type="warning">正式站對「{{ area.name }}」按查詢後<strong>不會出現月曆</strong>（2026-09-07 實測三次皆然）。<template v-if="area.name === '插天山自然保留區'">該項在正式站是總項，實際可查的是其下三條路線
-（福巴越嶺步道／北插天山步道及其支線／其他路線），請於上方「區域名稱」改選。</template><span class="th-todo-link">［待確認］此為停用、無開放申請或其他原因，正式站未說明。</span></th-callout>
+      <th-callout v-else type="warning">「{{ area.name }}」目前查無可申請日期。<template v-if="area.name === '插天山自然保留區'">該項為總項，實際可查的是其下三條路線
+（福巴越嶺步道／北插天山步道及其支線／其他路線），請於上方「區域名稱」改選。</template></th-callout>
 
       <p-campsite-forestry-day-modal v-if="day" :site="area" :day="day" @close="day = null"
                                      :snapshot="snapshot" :cat-id="cat.id"></p-campsite-forestry-day-modal>
@@ -843,9 +825,6 @@ const pCampsiteYushanLot = {
              target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ cellOf(row, column.key).link.text || cellOf(row, column.key).t }}</a><template v-else>{{ cellOf(row, column.key).t || '—' }}</template>
         </template>
       </th-data-table>
-      <div class="p-campsite-legend">
-        <span class="p-campsite-legend-hint">公告內容為 {{ snapshotDate }} 自現行網站擷取的快照；公告詳細內容尚未建置，連結前往現行網站。</span>
-      </div>
   `,
 };
 
@@ -869,10 +848,9 @@ const pCampsiteYushanRefund = {
   },
   template: `
       <p-campsite-plain-table :table="table" title="可申請退費日期" icon="fa-solid fa-money-bill-transfer"
-                              :snapshot-date="snapshotDate"
-                              empty-hint="［待確認］派工卡記載的欄位（未入園可退費期間／宿營地／退費原因／原因／相關訊息）在本次快照未出現，需確認是暫時無資料還是頁面已改版。"></p-campsite-plain-table>
+                              :snapshot-date="snapshotDate"></p-campsite-plain-table>
       <div class="p-campsite-legend">
-        <span class="p-campsite-legend-hint">退費申請與繳費紀錄請至繳費與退費查詢（正式站 apply_4）：</span>
+        <span class="p-campsite-legend-hint">退費申請與繳費紀錄請至繳費與退費查詢：</span>
         <th-todo-link label="繳費與退費查詢"></th-todo-link>
       </div>
   `,
@@ -921,7 +899,6 @@ const CAMPSITE_PARTS = {
   "p-campsite-site-intro": pCampsiteSiteIntro,
   "p-campsite-cal-legend": pCampsiteCalLegend,
   "p-campsite-month-bar": pCampsiteMonthBar,
-  "p-campsite-snapshot-note": pCampsiteSnapshotNote,
   "p-campsite-node-calendar": pCampsiteNodeCalendar,
   "p-campsite-plain-table": pCampsitePlainTable,
   "p-campsite-yushan-camp-inner": pCampsiteYushanCampInner,

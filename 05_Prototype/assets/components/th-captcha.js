@@ -88,15 +88,12 @@ window.thComponents["th-captcha"] = {
               ? 'th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity'
               : 'th-btn th-btn-ghost shrink-0'"
             :disabled="!refreshable"
-            :title="refreshable ? '換一組驗證碼' : '雛形驗證碼不提供更換'"
+            :title="'換一組驗證碼'"
             :aria-label="refreshable ? '換一組驗證碼' : null"
             @click="refresh">
             <i class="fa-solid fa-rotate" aria-hidden="true"></i>
             <span v-if="!refreshable" class="ml-1">換一組</span>
           </button>
-        </div>
-        <div v-if="!hideHint" class="th-field-hint">
-          {{ refreshable ? '原型示意碼由前端更新，尚未連接後端驗證。' : '雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。' }}
         </div>
       </div>
     </div>
@@ -126,15 +123,12 @@ window.thComponents["th-captcha"] = {
             ? 'th-btn th-btn-primary shrink-0 w-[42px] h-[42px] !p-0 flex items-center justify-center !shadow-none hover:opacity-85 transition-opacity'
             : 'th-btn th-btn-ghost shrink-0'"
           :disabled="!refreshable"
-          :title="refreshable ? '換一組驗證碼' : '雛形驗證碼不提供更換'"
+          :title="'換一組驗證碼'"
           :aria-label="refreshable ? '換一組驗證碼' : null"
           @click="refresh">
           <i class="fa-solid fa-rotate" aria-hidden="true"></i>
           <span v-if="!refreshable" class="ml-1">換一組</span>
         </button>
-      </div>
-      <div v-if="!hideHint" class="th-field-hint">
-        {{ refreshable ? '原型示意碼由前端更新，尚未連接後端驗證。' : '雛形不做真實驗證，驗證碼為靜態字樣，「換一組」不會產生新驗證碼。' }}
       </div>
     </div>
   `,

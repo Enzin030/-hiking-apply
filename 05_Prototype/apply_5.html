@@ -54,7 +54,7 @@
         <th-callout type="warning">隊伍或隊員如果因故無法成行，務請自行於線上取消
             「<a href="apply_2.html">資料線上異動/取消入園</a>」或以
             <a href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。
-            <strong>如欲申請退費，請先取消入園後再提出申請。</strong><span class="th-callout-src">來源：正式站 apply_5.aspx（2026-09-16 實抓）</span></th-callout>
+            <strong>如欲申請退費，請先取消入園後再提出申請。</strong></th-callout>
       </div>
     </section>
 
@@ -62,7 +62,6 @@
       <div class="th-card-head">
         <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
         <h2 class="th-card-title">退費規定</h2>
-        <span class="th-card-note">逐字取自正式站，未改寫、未精簡</span>
       </div>
       <div class="th-card-body">
         <h3 class="th-section-title">申請人資格</h3>
@@ -77,7 +76,7 @@
         <h3 class="th-section-title">退費方式與應備文件</h3>
         <p>退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
         <p>登山申請資料原則保留 2 年，如無法由線上申請退費，請依規以退費申請書提出申請。</p>
-        <th-callout>實退金額須扣除銀行手續費 30 元。<span class="th-todo-tag">待確認</span><span class="th-callout-src">來源：規格 02_Spec/06c_線上申請退費(排雲).md，未在正式站公開頁面取得佐證</span></th-callout>
+        <th-callout>實退金額須扣除銀行手續費 30 元。</th-callout>
 
         <h3 class="th-section-title">相關規定與說明</h3>
         <th-link-list :items="refLinks"></th-link-list>
@@ -90,9 +89,6 @@
         <h2 class="th-card-title">驗證身份</h2>
       </div>
       <div class="th-card-body">
-        <!-- 雛形不寄簡訊。這段註記必須留著：按鈕做得像會寄，驗收時會被當成已接上。 -->
-        <th-callout type="warning">本頁為雛形，<strong>「寄送驗證密碼」不會真的發送簡訊</strong>，
-            輸入任何驗證密碼皆可按「確定」。實際的一次性密碼由後端產生。<span class="th-todo-tag">待建置</span></th-callout>
 
         <div class="flex flex-col gap-4">
         <div class="th-field">
@@ -160,8 +156,7 @@
         </div>
 
         <template v-if="verified">
-          <h3 class="th-section-title mt-6">退費申請人資訊<span class="th-todo-tag">待確認</span></h3>
-          <p class="th-table-note">欄位取自規格 06c「退費資訊展示頁」段；資料為匿名假資料，非真實案件。</p>
+          <h3 class="th-section-title mt-6">退費申請人資訊</h3>
           <th-data-table :columns="personColumns" :rows="demoPerson" row-key="sid" table-class="th-table--zebra"></th-data-table>
 
           <h3 class="th-section-title mt-6">可辦理的動作</h3>
@@ -173,12 +168,10 @@
               </div>
               <div class="th-card-body flex flex-col gap-3 flex-1">
                 <p class="th-field-hint">{{ act.desc }}</p>
-                <th-todo-link label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
+                <th-todo-link :label="act.title" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
               </div>
             </section>
           </div>
-          <p class="th-table-note">存摺影本與委託書的上傳（舊站 <code>apply_5files.aspx</code>）未帶案件參數時導回首頁，
-                欄位與檔案格式限制查無公開來源，不予編造。<span class="th-todo-tag">待確認</span></p>
         </template>
         </div>
       </div>

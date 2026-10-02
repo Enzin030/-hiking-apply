@@ -54,11 +54,8 @@
         <div class="th-chip-row">
           <span class="th-chip" v-for="c in camps" :key="c">{{ c }}</span>
         </div>
-        <th-callout>正式站另有 <code>apply_4t.aspx</code>「列印繳費說明單/線上繳費<strong>(排雲)</strong>」，
-            查詢欄位與本頁完全相同。兩支頁面與上列兩處宿營地的對應關係、以及使用者從何處分流，
-            查無公開來源，雛形暫以單一入口呈現。<span class="th-todo-tag">待確認</span><span class="th-callout-src">來源：正式站 apply_4.aspx／apply_4t.aspx（2026-09-16 實抓原始 HTML）</span></th-callout>
         <th-callout type="warning">未依限繳交或金額不足者，將取消入園許可資格。
-            繳費期限為抽籤日與候補通知日之較晚者加 3 日。<span class="th-callout-src">來源：規格 02_Spec/06b_線上繳費(排雲).md</span></th-callout>
+            繳費期限為抽籤日與候補通知日之較晚者加 3 日。</th-callout>
       </div>
     </section>
 
@@ -119,8 +116,7 @@
         </div>
 
         <template v-if="submitted">
-          <h3 class="th-section-title mt-6">繳費基本資料<span class="th-todo-tag">待確認</span></h3>
-          <p class="th-table-note">欄位取自規格 06b「基本資料展示」段；資料為匿名假資料，非真實案件。</p>
+          <h3 class="th-section-title mt-6">繳費基本資料</h3>
           <th-data-table :columns="baseColumns" :rows="demoBase" row-key="serial" table-class="th-table--zebra">
             <template #cell="{ row, column, value }">
               <span v-if="column.key === 'payState'" :class="['th-flag', row.payState === '未繳費' ? 'is-closed' : 'is-open']">{{ row.payState }}</span>
@@ -129,14 +125,11 @@
           </th-data-table>
 
           <h3 class="th-section-title mt-6">費用明細</h3>
-          <p class="th-table-note">欄位與單價取自規格圖 <code>02_Spec/assets/線上繳費(排雲)-繳費頁.png</code>：
-                排雲山莊規費每人每宿新臺幣 480 元，本國人與外國人同價，小計＝單價 × 人數。
-                資料為匿名假資料，非真實案件。</p>
+          <p class="th-table-note">排雲山莊規費每人每宿新臺幣 480 元，本國人與外國人同價，小計＝單價 × 人數。</p>
           <th-data-table :columns="feeColumns" :rows="demoFees" row-key="date" table-class="th-table--zebra"></th-data-table>
           <p class="th-table-note">總計 {{ feeTotal }} 元。本處不接受外幣轉帳與跨國匯款。</p>
 
           <h3 class="th-section-title mt-6">繳費管道</h3>
-          <p class="th-table-note">六種管道的手續費規則取自規格 06b 與規格圖；實際付款流程不實作進雛形。</p>
           <th-data-table :columns="methodColumns" :rows="payMethods" row-key="no" table-class="th-table--zebra"></th-data-table>
 
           <h3 class="th-section-title mt-6">可辦理的動作</h3>
@@ -148,7 +141,7 @@
               </div>
               <div class="th-card-body flex flex-col gap-3 flex-1">
                 <p class="th-field-hint">{{ act.desc }}</p>
-                <th-todo-link label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
+                <th-todo-link :label="act.title" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
               </div>
             </section>
           </div>

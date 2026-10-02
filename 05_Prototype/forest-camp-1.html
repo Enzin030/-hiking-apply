@@ -162,7 +162,7 @@
             <span>{{ f.label }}</span>
             <span>NT$ {{ f.price.weekday }}（平日）／{{ f.price.holiday }}（假日） / {{ f.unit }} / 晚</span>
           </div>
-          <div class="p-fc1-price-note">假日費率以週五、六估算，連假另計〔待確認〕</div>
+          <div class="p-fc1-price-note">假日費率以週五、六估算，連假另計</div>
           <div v-for="(n, i) in cabin.priceNotes" :key="'pn' + i" class="p-fc1-price-note">{{ n }}</div>
           <div class="p-fc1-price-note">實際費用於確認送出時顯示</div>
         </div>

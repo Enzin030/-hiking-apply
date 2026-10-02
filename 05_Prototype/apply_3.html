@@ -114,9 +114,7 @@
           <!-- 標題與待確認標記之間不可換行：JSX 會把標籤相鄰的換行整段刪掉，
                Vue 卻會折成一個空白，那一個空白會讓後面整行重排
                （見 notice.html 檔內的實測紀錄） -->
-          <h3 class="th-section-title mt-6">查詢結果<span class="th-todo-tag">待確認</span></h3>
-          <p class="th-table-note">以下欄位、狀態值與許可證下載規則皆未取得正式站可公開來源，為示意版面；
-                資料為匿名假資料，非真實申請案。</p>
+          <h3 class="th-section-title mt-6">查詢結果</h3>
           <!-- React 版三個欄位的 render 回傳 JSX；th-data-table 的 render 只收字串，
                要回元素改走 cell slot（見 assets/components/th-data-table.js 檔頭） -->
           <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra">
@@ -129,7 +127,7 @@
           </th-data-table>
           <th-callout>林保署山屋（天池、檜谷、嘉明湖／向陽）的案件可於本區進行繳費與資料異動；
                 入園申請僅提供查詢與許可證下載。國家公園山屋的繳費與退費另走
-                <a href="apply_4.html">線上繳費</a>與<a href="apply_5.html">線上退費</a>。<span class="th-todo-tag">待確認</span><span class="th-callout-src">操作範圍取自舊站 applySearch.aspx 的按鈕說明文字，實際可用功能待業務確認。</span></th-callout>
+                <a href="apply_4.html">線上繳費</a>與<a href="apply_5.html">線上退費</a>。</th-callout>
         </template>
         </div>
       </div>
@@ -142,17 +140,16 @@
       </div>
       <div class="th-card-body ">
         <th-callout type="warning"><strong>國家公園入園許可證</strong>：請領隊於入園日（含）前 5 日內始可列印；
-            入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份。<span class="th-callout-src">來源：正式站 apply_3.aspx（2026-09-07 實抓）</span></th-callout>
+            入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份。</th-callout>
 
         <th-callout>登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前 1 日天氣預報不佳或身體有不適狀況，
             考量不成行請儘速線上取消申請，避免入園當日無法取消。線上取消登山申請請至
-            <a href="apply_2.html">申請資料異動及取消</a>。<span class="th-callout-src">來源：正式站 apply_3.aspx（2026-09-07 實抓）</span></th-callout>
+            <a href="apply_2.html">申請資料異動及取消</a>。</th-callout>
 
         <h3 class="th-section-title">林保署山屋取消住宿申請之退費規定</h3>
         <p class="th-table-note">適用檜谷山莊、天池山莊、嘉明湖／向陽。</p>
         <th-data-table :columns="refundColumns" :rows="refundRows" row-key="when" table-class="th-table--zebra"></th-data-table>
-        <p class="th-table-note">起算日計算標準：單日住宿者，以住宿日為起算日；多日住宿者，以第一天住宿日為起算日。
-            來源：正式站 apply_3.aspx（2026-09-07 實抓）。</p>
+        <p class="th-table-note">起算日計算標準：單日住宿者，以住宿日為起算日；多日住宿者，以第一天住宿日為起算日。</p>
       </div>
     </section>
   </th-page-shell>

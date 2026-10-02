@@ -186,7 +186,7 @@ var pApply1RouteCard = {
     duration() {
       if (this.r.durationLabel) return this.r.durationLabel;
       if (this.r.days) return this.r.days === 1 ? "單日往返" : this.r.days + "天" + (this.r.days - 1) + "夜";
-      return ["yushan", "shei-pa", "taroko"].indexOf(this.r.agency) >= 0 ? "天數待確認" : "";
+      return ["yushan", "shei-pa", "taroko"].indexOf(this.r.agency) >= 0 ? "" : "";
     },
     groupIcon() { return agencyIcon(this.r.agency); },
   },

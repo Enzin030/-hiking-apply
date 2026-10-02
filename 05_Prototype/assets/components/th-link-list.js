@@ -45,7 +45,6 @@ window.thComponents["th-link-list"] = {
         <div v-if="isTodo(it)" class="th-linkrow is-todo">
           <span v-if="numbered" class="th-linkrow-num">{{ i + 1 }}</span>
           <span class="th-linkrow-text">{{ it.label }}</span>
-          <span class="th-todo-tag">待確認</span>
         </div>
         <a v-else class="th-linkrow" :href="it.href"
            :target="newTab(it) ? '_blank' : null"

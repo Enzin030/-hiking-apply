@@ -51,7 +51,6 @@
       <div class="th-card-head">
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         <h2 class="th-card-title">異動與取消的權限範圍</h2>
-        <span class="th-card-note">逐字取自正式站 apply_2.aspx（2026-09-16 實抓）</span>
       </div>
       <div class="th-card-body">
         <!-- 三條權限規則逐字保留。這幾條決定「誰登入、能動到誰」，
@@ -137,8 +136,7 @@
         </div>
 
         <template v-if="submitted">
-          <h3 class="th-section-title mt-6">查詢結果<span class="th-todo-tag">待確認</span></h3>
-          <p class="th-table-note">欄位組成取自規格 06d 的「申請行程資料」段；資料為匿名假資料，非真實申請案。</p>
+          <h3 class="th-section-title mt-6">查詢結果</h3>
           <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra"></th-data-table>
 
           <!-- 卡片要求：異動與取消是兩種結果動作，畫面上必須分開。
@@ -152,8 +150,8 @@
               </div>
               <div class="th-card-body flex flex-col gap-3 flex-1">
                 <p class="th-field-hint">{{ act.desc }}</p>
-                <p class="th-table-note">{{ act.limit }}<span class="th-todo-tag">待確認</span></p>
-                <th-todo-link label="待建置" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
+                <p v-if="act.limit" class="th-table-note">{{ act.limit }}</p>
+                <th-todo-link :label="act.title" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
               </div>
             </section>
           </div>

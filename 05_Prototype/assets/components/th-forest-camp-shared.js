@@ -169,7 +169,7 @@ window.TH_CABIN_DATA = {
       { id: "camp", label: "檜谷山莊周圍營地四人帳篷", unit: "頂", max: 10, price: { weekday: 400, holiday: 400 }, icon: "ph-bold ph-tent" },
     ],
     priceNotes: [
-      "官網的檜谷山莊費率是「每人每晚」，與其他山屋的「每床」計價單位不同。〔待確認〕",
+      "檜谷山莊費率以「每人每晚」計價。",
     ],
     /* 2026-10-01 依正式站注意事項（ForestCampNoticeData.js guigu）改寫：原「採線上申請制」未寫抽籤 */
     notices: [

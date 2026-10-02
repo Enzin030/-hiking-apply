@@ -75,7 +75,7 @@ const RESULT_ACTIONS = [
     id: "pay",
     title: "線上繳費",
     icon: "fa-solid fa-credit-card",
-    desc: "選擇繳費管道並完成付款。共六種管道，各自的手續費不同，詳見規格 06b。",
+    desc: "選擇繳費管道並完成付款。共六種管道，各自的手續費不同。",
   },
   {
     id: "print",
@@ -88,8 +88,8 @@ const RESULT_ACTIONS = [
 /* 相關功能。無 href 者由 th-link-list 自動標為待建置，不給 `#` 假路徑。 */
 const RELATED_LINKS = [
   { label: "線上申請退費（玉山國家公園）", href: "apply_5.html", kind: "internal" },
-  { label: "玉山可申請退費日期查詢（舊站 bed_9.aspx）" },
-  { label: "超商繳款單列印（舊站 apply_4_store.aspx）" },
+  { label: "玉山可申請退費日期查詢" },
+  { label: "超商繳款單列印" },
 ];
 
 thPage({
