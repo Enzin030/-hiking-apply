@@ -108,6 +108,9 @@ window.thParkApply = function (key) {
     soloPdf: "https://hike.taiwan.gov.tw/images/雪霸獨攀登山安全宣導.pdf",
     /* 步驟三：正式站雪霸確認頁不列逐日行程與講習等步驟一欄位（02_Spec/05b §五） */
     confirmPlan: false,
+    /* 確認頁隊員表有 E-mail 欄、留守人表沒有國籍（2026-10-02 正式站與使用者同行實走） */
+    confirmEmailCol: true,
+    confirmStayNation: false,
     hasTeamName: true,
     hasSeminar: true,
     stayTelHint: "※請留臺灣聯絡電話",

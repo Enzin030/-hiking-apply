@@ -258,6 +258,7 @@ thPage({
         birthday: this.leader.birthday,
         tel: `${this.leader.tel || ''} / ${this.leader.mobile || ''}`,
         address: `${this.leader.country || ''}${this.leader.city || ''}${this.leader.addr || ''}`,
+        email: this.leader.email,
         contact: this.leader.contactname,
         contactTel: this.leader.contacttel
       });
@@ -274,6 +275,7 @@ thPage({
           birthday: m.birthday,
           tel: `${m.tel || ''} / ${m.mobile || ''}`,
           address: `${m.country || ''}${m.city || ''}${m.addr || ''}`,
+          email: m.email,
           contact: m.contactname,
           contactTel: m.contacttel
         });
@@ -316,7 +318,8 @@ thPage({
         { label: "身分證號／護照號碼", value: s.sid },
         { label: "生日", value: s.birthday }
       );
-      return rows;
+      // 雪霸正式站確認頁的留守人表沒有國籍欄（2026-10-02 實走）
+      return this.park.confirmStayNation === false ? rows.filter(r => r.label !== "國籍") : rows;
     }
   },
 
