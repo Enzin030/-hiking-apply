@@ -30,17 +30,23 @@
       <th-fc-stepper :current="1"></th-fc-stepper>
     </template>
 
+    <!-- 2026-10-02 使用者要求改為與其他路線（三管處行程規劃頁 apply-3）相同的元件樣式：
+         標題列＋右側系統時間標籤、受理時段提示框、兩欄欄位、置中按鈕。欄位與檢核不變。 -->
     <section class="th-card">
       <div class="th-card-head">
-        <i class="ph-bold ph-shield-check" aria-hidden="true"></i>
-        <h2 class="th-card-title">路線</h2>
+        <h2 class="th-card-title">路線與基本資料</h2>
+        <span class="th-flag is-snow th-systime ml-auto"><i class="fa-regular fa-clock" aria-hidden="true"></i><span class="th-systime-label">目前系統時間：</span>{{ nowTime }}</span>
       </div>
       <div class="th-card-body grid gap-4">
-        <p class="th-field-hint">(請注意：國家公園路線於每日23：00至隔日07：00暫停受理申請)　<strong>目前系統時間為：{{ nowTime }}</strong></p>
-        <dl class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
-          <dt class="th-label">推薦行程</dt><dd>入山證申請</dd>
-        </dl>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="th-callout">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <div><strong>請注意：</strong>國家公園路線<strong>於每日 23:00 至隔日 07:00 暫停受理申請</strong>。</div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="th-field">
+            <label class="th-label" for="f-route">推薦行程</label>
+            <input id="f-route" type="text" class="th-input th-input-readonly" value="入山證申請" readonly />
+          </div>
           <div class="th-field">
             <label class="th-label" for="f-days"><span class="req">*</span>行程天數</label>
             <th-hybrid-select><select id="f-days" class="th-select" v-model.number="days">
@@ -54,6 +60,7 @@
               <option value="">請選擇</option>
               <option v-for="d in dates" :key="d" :value="d">{{ d }}</option>
             </select></th-hybrid-select>
+            <span class="th-field-hint">＊因作業規定，最晚須於3天前申請。</span>
           </div>
           <div class="th-field">
             <label class="th-label" for="f-people"><span class="req">*</span>出發人數</label>
@@ -64,11 +71,11 @@
             <span class="th-field-hint">隊伍人數（含領隊）</span>
           </div>
         </div>
-        <p class="th-field-hint">＊因作業規定，最晚須於3天前申請。</p>
       </div>
     </section>
 
-    <div class="flex flex-wrap justify-between gap-2 mt-6">
+    <!-- 置底按鈕置中，比照 apply-3 -->
+    <div class="flex flex-wrap justify-center gap-3 mt-12">
       <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回路線列表</a>
       <button type="button" class="th-btn th-btn-primary" @click="next">下一步：行程計畫<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>

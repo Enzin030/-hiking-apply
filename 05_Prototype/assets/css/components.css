@@ -718,6 +718,17 @@
   background: var(--warning-bg);
 }
 
+/* 目前系統時間標籤（2026-10-02，apply-3 起用、apply_npa_1 第二頁使用後提升）：
+   卡片標題列靠右的 .th-flag，字放大一級；手機版只留時鐘圖示與時間，避免把標題擠成兩行 */
+.th-systime {
+  font-size: var(--fs-sm);
+}
+@media (max-width: 640px) {
+  .th-systime-label {
+    display: none;
+  }
+}
+
 .th-flag.is-snow {
   color: var(--info-fg);
   border-color: var(--info-border);
