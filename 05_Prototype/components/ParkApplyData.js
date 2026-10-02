@@ -141,6 +141,8 @@ window.thParkApply = function (key) {
       campLink: { href: "bed_4.html", label: "查看宿營地" },
       capacityLink: { href: "campsite.html?org=taroko&kind=route", label: "路線承載量查詢" },
       ecoNote: true,
+      /* 離開園區日期下方紅字（02_Spec/05c §3.1；2026-10-02 實走同） */
+      outdateHint: "請注意，異動日期後，請重新輸入「隊伍人數」，並確認「隊員資料」是否正確。",
       npaSite: "https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList",
       mains: routes.map(function (r) { return { value: r.id, text: r.name }; }),
       subsOf: function (mainId) {
@@ -149,15 +151,21 @@ window.thParkApply = function (key) {
         /* 正式站次路線尚未取得的主路線：以主路線本身當唯一次路線，讓申請流程可走完 */
         var subs = m.subs.length ? m.subs : [{ id: "m" + m.id, name: m.name }];
         return subs.map(function (x) {
-          return { value: x.id, text: x.name, level: x.level, days: x.days || all30, needsNpa: !!x.needsNpa, notes: notes[x.id] || [] };
+          return { value: x.id, text: x.name, level: x.level, days: x.days || all30, needsNpa: !!x.needsNpa, notes: notes[x.id] || [],
+                   closed: x.closed || "", closedRange: x.closedRange || null, npaNote: x.npaNote || "" };
         });
       },
-      graphs: { "667": window.APPLY15_PLANNER || {} },
+      graphs: { "667": window.APPLY15_PLANNER || {}, "675": window.APPLY15_PLANNER_675 || {} },
       /* 南湖大山線示範行程（正式站 2026-09-29 實走） */
       demoDays: { "667": [
         ["思源埡口", "5.1K登山口", "多加屯山登山口", "木杆鞍部", "雲稜山屋"],
         ["雲稜山屋", "審馬陣登山口", "審馬陣山屋"],
         ["審馬陣山屋", "審馬陣登山口", "雲稜山屋", "木杆鞍部", "多加屯山登山口", "5.1K登山口", "思源埡口"],
+      ],
+      /* 奇萊北屏風山線（2026-10-02 正式站同行實走） */
+      "675": [
+        ["奇萊登山口", "黑水塘山屋", "成功山屋", "奇萊北峰", "屏風山南峰", "屏風山", "屏風避難山屋"],
+        ["屏風避難山屋", "屏風山登山口"],
       ] },
       defaultMain: "16",
       defaultSub: "667",

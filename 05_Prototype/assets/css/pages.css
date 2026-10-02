@@ -7365,6 +7365,14 @@ body:where(.p-indexb-body):before {
   margin-left: auto;
 }
 
+/* 太魯閣「路線承載量查詢」是 <a> 按鈕，`.th-table a`（0-1-1）會把字改成連結色加底線，
+   在主色按鈕上看不清楚；以 0-2-1 蓋回主按鈕字色（2026-10-02） */
+.tbl-routeinfo a.p-apply3-map-btn,
+.tbl-routeinfo a.p-apply3-map-btn:hover {
+  color: var(--fg-on-dark);
+  text-decoration: none;
+}
+
 /* ---------- 關閉公告上方的分隔線 ---------- */
 .p-apply3-rule {
   border: 0;

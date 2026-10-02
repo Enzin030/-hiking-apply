@@ -114,7 +114,7 @@
               <th-hybrid-select>
                 <select id="con_applystart" class="th-select" v-model="applystart">
                   <option value="">請選擇入園日</option>
-                  <option v-for="d in dateOptions" :key="d" :value="d">{{ d }}</option>
+                  <option v-for="d in shownDates" :key="d" :value="d">{{ d }}</option>
                 </select>
               </th-hybrid-select>
             </div>
@@ -124,6 +124,7 @@
                 <span>離開園區日期（系統自動計算）</span>
               </label>
               <input type="text" class="th-input th-input-readonly" :value="endDate ? endDate : '請先選擇入園日期與天數'" readonly />
+              <span v-if="park.outdateHint" class="th-field-hint">{{ park.outdateHint }}</span>
             </div>
           </div>
 
@@ -141,12 +142,13 @@
               <p v-if="c.dateRange" class="p-apply3-closure-date">
                 <i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>關閉日期：{{ c.dateRange }}
               </p>
-              <p class="p-apply3-closure-reason">
-                原因：<a class="p-apply3-closure-link" :href="c.href" target="_blank" rel="noopener noreferrer" title="查看公告全文（另開新視窗）">{{ c.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a>
+              <p v-if="c.text" class="p-apply3-closure-reason">
+                原因：<a v-if="c.href" class="p-apply3-closure-link" :href="c.href" target="_blank" rel="noopener noreferrer" title="查看公告全文（另開新視窗）">{{ c.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a><template v-else>{{ c.text }}</template>
               </p>
             </div>
           </div>
 
+          <p v-if="subObj && subObj.npaNote" class="th-field-hint">{{ subObj.npaNote }}</p>
           <div class="th-table-wrap" v-if="trailLevel">
             <table class="th-table tbl-routeinfo">
               <caption>本路線的難度等級與行前準備資訊</caption>

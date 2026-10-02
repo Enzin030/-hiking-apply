@@ -172,7 +172,9 @@ thPage({
       const npaDef = npaAll[sub.value] || npaAll[Object.keys(npaAll)[0]];
       const days = demo ? demo.length : ((sub.days || [1])[0]);
       const plan = demo ? demo.map(d => d.slice()) : autoPlan(park.graphs[sub.value] || GENERIC_PLANNER_GRAPH, days);
+      const okDates = sub.closedRange ? dateOptions.filter(d => d < sub.closedRange[0] || d > sub.closedRange[1]) : dateOptions;
       other = {
+        start: okDates[2] || okDates[0] || "",
         npaDef: npaDef,
         main: main, sub: sub.value || "",
         sumday: String(days),
@@ -197,7 +199,7 @@ thPage({
       climblinemain: other ? other.main : (qMainRoute || "1"), // 1: 玉山線
       climbline: other ? other.sub : defaultClimb,
       sumday: other ? other.sumday : (qSumday || (defaultClimb === "2" ? "2" : "1")),
-      applystart: other ? dateOptions[2] : (qStart || demoStart),
+      applystart: other ? other.start : (qStart || demoStart),
       dateOptions: dateOptions,
 
       mainRoutes: other ? park.mains : [
@@ -343,7 +345,23 @@ thPage({
       return rows.find(r => r.subRoute === targetName || (r.subRoute && r.subRoute.includes(this.routeData.displayName))) || null;
     },
 
+    /* 可選入園日：其他機關排除該路線的關閉期間（太魯閣奇萊北屏風山線 2026-10-02 實走只剩 12-01、12-02） */
+    shownDates() {
+      const r = !this.isYushan && this.subObj && this.subObj.closedRange;
+      return r ? this.dateOptions.filter(d => d < r[0] || d > r[1]) : this.dateOptions;
+    },
+
     routeClosures() {
+      if (!this.isYushan) {
+        // open.aspx 的公告為純文字；關閉日期取自申請頁（次路線資料 closed）
+        const list = ((this.openRow && this.openRow.closures) || []).map(c => typeof c === "string" ? { text: c } : c);
+        const closed = this.subObj && this.subObj.closed;
+        if (closed) {
+          if (list.length) list[0] = Object.assign({ dateRange: closed }, list[0]);
+          else list.push({ dateRange: closed });
+        }
+        return list;
+      }
       if (this.openRow && Array.isArray(this.openRow.closures)) {
         return this.openRow.closures;
       }
@@ -551,7 +569,8 @@ thPage({
     options() {
       const here = this.here;
       // 正式站第一步是「請選擇起點：」，只給起點一個選項，由使用者自己點（玉山、雪霸實走皆同）
-      if (!here) return this.graph.start ? [this.graph.start] : [];
+      // 起點有多個時全部列出（太魯閣奇萊北屏風山線：奇萊登山口、屏風山登山口）
+      if (!here) return this.graph.starts && this.graph.starts.length ? this.graph.starts.slice() : (this.graph.start ? [this.graph.start] : []);
       const out = [];
       this.graph.edges.forEach(e => {
         if (e[0] === here) out.push(e[1]);
@@ -603,6 +622,7 @@ thPage({
           this.planDays = plan || [[]];
           this.plannerFinished = !!plan;
           this.syncPlanText();
+          if (!this.shownDates.includes(this.applystart)) this.applystart = this.shownDates[2] || this.shownDates[0] || "";
           return;
         }
         if (val === "3") {
