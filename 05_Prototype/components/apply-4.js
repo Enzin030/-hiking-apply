@@ -215,6 +215,8 @@ function createQueueRows(startDate, sumday, isSingleDay, planDays) {
 
 thPage({
   data() {
+    /* 2026-10-02：三管處共用本頁，park 參數取機關設定（components/ParkApplyData.js）；沒有 park＝玉山 */
+    const park = window.thParkApply(getParam("park"));
     const qTeams = getParam("teams_name");
     const qMain = getParam("climblinemain");
     const qClimb = getParam("climbline");
@@ -230,6 +232,8 @@ thPage({
     const isSingleDay = String(qDays) === "1" || subName.includes("單日往返");
 
     return {
+      park: park,
+      memberConsent: true,   // 隊員區委託同意（僅 park.memberConsent 的機關顯示；預設帶入勾選）
       citiesData: TAIWAN_CITIES,
       activeNavIndex: 0,
 
@@ -240,6 +244,7 @@ thPage({
         leader: true,
         member: true,
         stay: true,
+        attach: true,
         queue: true
       },
 
@@ -342,7 +347,7 @@ thPage({
 
       // 5. 留守人資料
       staySame: false,
-      stay: {
+      stay: Object.assign(park.stayTel ? { tel: "02-28881234" } : {}, {
         name: "李守護",
         mobile: "0988777666",
         fax: "",
@@ -350,7 +355,7 @@ thPage({
         birthday: "1985-03-25",
         nation: "中華民國",
         sid: "E123456787"
-      },
+      }),
 
       // 6. 宿營地預約查詢排隊狀況（與日期、天數動態連動，多日依天數產生逐日列，預設「不限」）
       isSingleDay: isSingleDay,
@@ -364,7 +369,31 @@ thPage({
 
   computed: {
     applyCrumb() {
-      return "玉山國家公園";
+      return this.park.crumb;
+    },
+    isYushan() { return this.park.key === "yushan"; },
+    /* 摘要卡的路線照片與難度：玉山沿用原值；其他機關取路線清單（RouteData）該次路線 */
+    summaryRoute() {
+      if (this.isYushan) return null;
+      return (window.ROUTE_DATA || []).find(r => r.cId === this.summary.climbline) || {};
+    },
+    /* 其他機關的宿營地表：每晚一列（當天終點），單日往返沒有資料列（雪霸正式站 2026-10-01） */
+    parkQueueRows() {
+      const days = (this.step3Data && this.step3Data.planDays) || [];
+      return days.slice(0, -1).map((d, i) => ({ date: addDaysToDate(this.summary.applystart, i), camp: d[d.length - 1] }));
+    },
+    /* 側欄項目：其他機關多「附件上傳資料」 */
+    sideItems() {
+      const items = [
+        { key: "apply", sec: "sec-apply", label: "申請人資料", ok: this.secApplyOk },
+        { key: "leader", sec: "sec-leader", label: "領隊資料", ok: this.secLeaderOk },
+        { key: "member", sec: "sec-member", label: "隊員資料（如無則免）", ok: this.secMemberOk },
+        { key: "stay", sec: "sec-stay", label: "留守人資料", ok: this.secStayOk },
+      ];
+      if (this.park.attachSection) items.push({ key: "attach", sec: "sec-attach", label: "附件上傳資料", ok: true });
+      items.push({ key: "queue", sec: "sec-queue", label: "宿營地排隊狀況", ok: this.secQueueOk });
+      items.push({ key: "captcha", sec: "sec-captcha", label: "送件驗證碼", ok: this.secCaptchaOk });
+      return items;
     },
 
     // 隊伍總人數（唯讀，領隊 1 人 + 隊員數）
@@ -434,6 +463,7 @@ thPage({
       if (this.isSolo) {
         return this.soloChecked;
       }
+      if (this.park.memberConsent && !this.memberConsent) return false;
       return (
         this.members.length > 0 &&
         this.members.every(m => this.isPersonValid(m))
@@ -442,10 +472,12 @@ thPage({
 
     secStayOk() {
       const s = this.stay;
+      if (this.park.stayTel) return !!s.name.trim() && !!(s.tel || "").trim() && isValidMobile(s.mobile) && !!s.birthday;
       return !!s.name.trim() && isValidMobile(s.mobile);
     },
 
     secQueueOk() {
+      if (!this.isYushan) return true;   // 其他機關單日往返沒有宿營地列，不擋
       return this.queueRows.length > 0;
     },
 
@@ -465,6 +497,7 @@ thPage({
       if (this.secStayOk) c++;
       if (this.secQueueOk) c++;
       if (this.secCaptchaOk) c++;
+      if (this.park.attachSection) c++;
       return c;
     },
 

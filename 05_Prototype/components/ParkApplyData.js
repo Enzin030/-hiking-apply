@@ -27,6 +27,14 @@ window.thParkApply = function (key) {
     seminarVideo: "https://www.ysnp.gov.tw/Video/C005200",
     notices: [],
     campLink: { href: "https://hike.taiwan.gov.tw/bed_6.aspx", label: "查看宿營地" },
+    /* 步驟二（apply-4） */
+    memberConsent: false,     // 隊員區另有委託同意勾選（雪霸 member_keytype）
+    stayTel: false,           // 留守人另有「電話」欄
+    attachSection: false,     // 「附件上傳資料」區
+    queuePref: true,          // 宿營地表「住宿調查」欄
+    soloPdf: "",              // 單人獨攀宣導 PDF
+    /* 步驟三（apply-5） */
+    confirmPlan: true,        // 確認頁列「行程計畫」（逐日行程、講習與設備）
   };
   if (key !== "shei-pa") return yushan;
 
@@ -70,5 +78,14 @@ window.thParkApply = function (key) {
     defaultMain: "4",
     defaultSub: "99",
     teamsName: "天眼1隊",
+    /* 步驟二（正式站 apply_1_3.aspx 步驟二，02_Spec/05b §4） */
+    memberConsent: true,
+    stayTel: true,
+    attachSection: true,
+    queuePref: false,
+    queueLink: { href: "bed_1.html", label: "雪霸宿營地" },
+    soloPdf: "https://hike.taiwan.gov.tw/images/雪霸獨攀登山安全宣導.pdf",
+    /* 步驟三：正式站雪霸確認頁不列逐日行程與講習等步驟一欄位（02_Spec/05b §五） */
+    confirmPlan: false,
   };
 };

@@ -41,10 +41,10 @@
         <!-- 行程摘要卡片（第 4 級在照片，主要路線在卡片右側，入園期間全新排版） -->
         <div class="p-apply4-summary-card">
           <div class="summary-thumb-box">
-            <img src="assets/route-yushan.png" alt="" />
+            <img :src="summaryRoute ? summaryRoute.image : 'assets/route-yushan.png'" alt="" />
             <div class="summary-thumb-overlay"></div>
             <!-- 第 4 級放回照片 -->
-            <span class="summary-diff-tag">第 4 級</span>
+            <span v-if="!summaryRoute || summaryRoute.diff" class="summary-diff-tag">第 {{ summaryRoute ? summaryRoute.diff : 4 }} 級</span>
           </div>
 
           <div class="summary-info-box">
@@ -393,6 +393,17 @@
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.member">
 
+            <!-- 隊員委託同意（雪霸：勾選後才出現「新增隊員」，正式站 member_keytype） -->
+            <label v-if="park.memberConsent" class="p-apply4-consent-clause" :class="{ 'is-acked': memberConsent }">
+              <span class="p-apply4-consent-box" aria-hidden="true">
+                <i class="fa-solid fa-check" v-show="memberConsent"></i>
+              </span>
+              <input type="checkbox" v-model="memberConsent" id="cbMemberConsent" class="p-apply4-consent-native-cb" />
+              <span class="p-apply4-consent-text">
+                請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請，以免違反相關法令。
+              </span>
+            </label>
+
             <!-- 隊員填寫提醒（紅色 Callout 現有樣式） -->
             <div class="th-callout is-danger">
               <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
@@ -548,7 +559,7 @@
                 <i class="fa-solid fa-user-group text-slate-500" aria-hidden="true"></i>
                 <span>隊伍人數（含領隊）：目前 <strong class="p-apply4-team-pill-count">{{ teamsCount }}</strong> 人（申請上限 <strong class="text-slate-900 font-bold">12</strong> 人，下限 <strong class="text-slate-900 font-bold">1</strong> 人）</span>
               </div>
-              <div class="flex items-center justify-center gap-2">
+              <div v-if="!park.memberConsent || memberConsent" class="flex items-center justify-center gap-2">
                 <button
                   type="button"
                   class="th-btn th-btn-secondary px-5"
@@ -569,6 +580,7 @@
                 <span class="block">單人獨攀隊伍(者)應確實規劃登山計畫與風險評估，包含宿營地點、時間、糧食、飲水與裝備等，並辦妥登山或旅遊保險，且攜帶衛星電話、GPS或有效之定位器材。</span>
                 <span class="block">另請依照路線地形審酌攜帶確保繩及安全頭盔等特殊裝備。</span>
                 <span class="block">獨攀者應定期向留守人作安全回報(留守人必須是有效留守)，如本人未依登山計畫時間下山，也已交代留守人於第一時間通知管理處或消防單位以確保救援時效。<span class="req">*</span></span>
+                <span v-if="park.soloPdf" class="block">請詳閱：<a class="th-inline-link" :href="park.soloPdf" target="_blank" rel="noopener noreferrer" @click.stop>獨攀登山安全宣導<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></span>
               </label>
             </div>
           </div>
@@ -610,12 +622,22 @@
                 <input id="con_stay_name" type="text" class="th-input" v-model="stay.name" placeholder="請輸入留守人姓名" required />
               </div>
 
+              <!-- 電話（雪霸另有此欄，正式站 con_stay_tel） -->
+              <div v-if="park.stayTel" class="th-field">
+                <label class="th-label" for="con_stay_tel">
+                  <span><span class="req">*</span>電話</span>
+                </label>
+                <input id="con_stay_tel" type="tel" class="th-input" v-model="stay.tel" placeholder="例：02-12345678" required />
+                <span class="th-field-hint">※請留臺灣聯絡電話</span>
+              </div>
+
               <!-- 手機(或電話) -->
               <div class="th-field">
                 <label class="th-label" for="con_stay_mobile">
-                  <span><span class="req">*</span>手機(或電話)</span>
+                  <span><span class="req">*</span>{{ park.stayTel ? '手機' : '手機(或電話)' }}</span>
                 </label>
                 <input id="con_stay_mobile" type="tel" class="th-input" v-model="stay.mobile" placeholder="例：0912345678" required />
+                <span v-if="park.stayTel" class="th-field-hint">※請留臺灣聯絡電話</span>
               </div>
 
               <!-- 傳真 -->
@@ -637,7 +659,7 @@
               <!-- 生日 -->
               <div class="th-field">
                 <label class="th-label" for="con_stay_birthday">
-                  <span>生日</span>
+                  <span><span v-if="park.stayTel" class="req">*</span>生日</span>
                 </label>
                 <input id="con_stay_birthday" type="date" class="th-input" v-model="stay.birthday" placeholder="格式：YYYY-MM-DD" />
               </div>
@@ -666,12 +688,31 @@
           </div>
         </section>
 
+        <!-- 附件上傳資料（雪霸正式站步驟二有此區；本路線「無需上傳資料」） -->
+        <section v-if="park.attachSection" id="sec-attach" class="th-card" aria-labelledby="heading-attach">
+          <div class="th-card-head">
+            <button type="button" class="p-apply4-accordion-btn" @click="toggleSection('attach')">
+              <h2 id="heading-attach" class="th-card-title">附件上傳資料</h2>
+              <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.attach }" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="th-card-body" v-show="accordionOpen.attach">
+            <p>無需上傳資料</p>
+          </div>
+        </section>
+
         <!-- 區塊 6：宿營地預約查詢排隊狀況 -->
         <section id="sec-queue" class="th-card" aria-labelledby="heading-queue">
           <div class="th-card-head">
             <div class="p-apply4-accordion-btn flex items-center justify-between cursor-pointer w-full" @click="toggleSection('queue')">
               <h2 id="heading-queue" class="th-card-title">宿營地預約查詢排隊狀況</h2>
-              <div class="p-apply4-head-actions flex items-center gap-2.5 ml-auto">
+              <div v-if="!isYushan" class="p-apply4-head-actions flex items-center gap-2.5 ml-auto">
+                <a :href="park.queueLink.href" target="_blank" rel="noopener noreferrer" class="th-btn th-btn-brown th-btn-sm" :title="park.queueLink.label + '查詢（另開新視窗）'" @click.stop>
+                  <i class="fa-solid fa-mountain-sun mr-1" aria-hidden="true"></i>{{ park.queueLink.label }}
+                </a>
+                <i class="fa-solid fa-chevron-down p-apply4-accordion-icon ml-1.5" :class="{ 'is-open': accordionOpen.queue }" aria-hidden="true"></i>
+              </div>
+              <div v-else class="p-apply4-head-actions flex items-center gap-2.5 ml-auto">
                 <a
                   href="bed_6.html"
                   target="_blank"
@@ -697,7 +738,28 @@
             </div>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.queue">
-            <div class="p-apply4-queue-table-wrap">
+            <!-- 其他機關（雪霸）：四欄、說明為固定文字，無住宿調查（正式站 apply_1_3 步驟二） -->
+            <div v-if="!isYushan" class="p-apply4-queue-table-wrap">
+              <table class="p-apply4-queue-table">
+                <thead>
+                  <tr>
+                    <th scope="col">日期</th>
+                    <th scope="col">宿營地點</th>
+                    <th scope="col">數量</th>
+                    <th scope="col">說明</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(q, idx) in parkQueueRows" :key="idx">
+                    <td class="font-medium whitespace-nowrap">{{ q.date }}</td>
+                    <td class="text-slate-800 whitespace-nowrap">{{ q.camp }}</td>
+                    <td class="whitespace-nowrap">{{ teamsCount }}</td>
+                    <td class="text-slate-700 text-sm">(實際順位以送出後為準，並請至本網站「<a class="th-inline-link" :href="park.queueLink.href" target="_blank" rel="noopener noreferrer">宿營地與床位查詢</a>」進行查詢)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div v-else class="p-apply4-queue-table-wrap">
               <table class="p-apply4-queue-table">
                 <thead>
                   <tr>
@@ -783,45 +845,16 @@
         <div class="p-apply4-side-inner">
           <div class="p-apply4-side-head">
             <span>本頁內容</span>
-            <span class="p-apply4-side-count" :class="{ 'is-done': completedSectionsCount === 6 }">
-              <span class="num">{{ completedSectionsCount }}</span> / 6
+            <span class="p-apply4-side-count" :class="{ 'is-done': completedSectionsCount === sideItems.length }">
+              <span class="num">{{ completedSectionsCount }}</span> / {{ sideItems.length }}
             </span>
           </div>
 
+          <!-- 項目由 sideItems 產生（其他機關多「附件上傳資料」，2026-10-02） -->
           <ol class="p-apply4-side-list">
-            <li :class="{ 'is-acked': secApplyOk, 'is-active': activeNavIndex === 0 }">
-              <button type="button" @click="scrollToSection('sec-apply', 0)">
-                <span class="p-apply4-side-text">1. 申請人資料</span>
-                <span class="p-apply4-side-tick" aria-hidden="true"></span>
-              </button>
-            </li>
-            <li :class="{ 'is-acked': secLeaderOk, 'is-active': activeNavIndex === 1 }">
-              <button type="button" @click="scrollToSection('sec-leader', 1)">
-                <span class="p-apply4-side-text">2. 領隊資料</span>
-                <span class="p-apply4-side-tick" aria-hidden="true"></span>
-              </button>
-            </li>
-            <li :class="{ 'is-acked': secMemberOk, 'is-active': activeNavIndex === 2 }">
-              <button type="button" @click="scrollToSection('sec-member', 2)">
-                <span class="p-apply4-side-text">3. 隊員資料（如無則免）</span>
-                <span class="p-apply4-side-tick" aria-hidden="true"></span>
-              </button>
-            </li>
-            <li :class="{ 'is-acked': secStayOk, 'is-active': activeNavIndex === 3 }">
-              <button type="button" @click="scrollToSection('sec-stay', 3)">
-                <span class="p-apply4-side-text">4. 留守人資料</span>
-                <span class="p-apply4-side-tick" aria-hidden="true"></span>
-              </button>
-            </li>
-            <li :class="{ 'is-acked': secQueueOk, 'is-active': activeNavIndex === 4 }">
-              <button type="button" @click="scrollToSection('sec-queue', 4)">
-                <span class="p-apply4-side-text">5. 宿營地排隊狀況</span>
-                <span class="p-apply4-side-tick" aria-hidden="true"></span>
-              </button>
-            </li>
-            <li :class="{ 'is-acked': secCaptchaOk, 'is-active': activeNavIndex === 5 }">
-              <button type="button" @click="scrollToSection('sec-captcha', 5)">
-                <span class="p-apply4-side-text">6. 送件驗證碼</span>
+            <li v-for="(it, i) in sideItems" :key="it.key" :class="{ 'is-acked': it.ok, 'is-active': activeNavIndex === i }">
+              <button type="button" @click="scrollToSection(it.sec, i)">
+                <span class="p-apply4-side-text">{{ i + 1 }}. {{ it.label }}</span>
                 <span class="p-apply4-side-tick" aria-hidden="true"></span>
               </button>
             </li>
@@ -849,5 +882,9 @@
   <th-footer></th-footer>
 </div>
 
+<!-- 三管處機關設定（2026-10-02）：雪霸資料在 Apply13Data.js，路線照片與難度取 RouteData.js -->
+<script src="components/RouteData.js"></script>
+<script src="components/Apply13Data.js"></script>
+<script src="components/ParkApplyData.js"></script>
 </body>
 </html>

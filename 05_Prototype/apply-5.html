@@ -38,9 +38,9 @@
     <!-- 行程摘要卡片（步驟四卡片樣式） -->
     <div class="p-apply4-summary-card" id="sec-summary">
       <div class="summary-thumb-box">
-        <img src="assets/route-yushan.png" alt="" />
+        <img :src="summaryRoute ? summaryRoute.image : 'assets/route-yushan.png'" alt="" />
         <div class="summary-thumb-overlay"></div>
-        <span class="summary-diff-tag">第 4 級</span>
+        <span v-if="!summaryRoute || summaryRoute.diff" class="summary-diff-tag">第 {{ summaryRoute ? summaryRoute.diff : 4 }} 級</span>
       </div>
 
       <div class="summary-info-box">
@@ -78,8 +78,8 @@
       </div>
     </div>
 
-    <!-- 1. 行程計畫詳細 -->
-    <section class="th-card">
+    <!-- 1. 行程計畫詳細（雪霸正式站確認頁不列，park.confirmPlan） -->
+    <section v-if="park.confirmPlan" class="th-card">
       <div class="th-card-head">
         <h2 class="th-card-title">行程計畫</h2>
       </div>
@@ -215,7 +215,7 @@
     </section>
 
     <!-- 4. 警政署入山證申請資訊 -->
-    <section class="th-card" id="sec-npa">
+    <section v-if="park.hasNpa" class="th-card" id="sec-npa">
       <div class="th-card-head">
         <h2 class="th-card-title">警政署入山證申請資訊</h2>
       </div>
@@ -282,5 +282,9 @@
   <th-footer></th-footer>
 </div>
 
+<!-- 三管處機關設定（2026-10-02） -->
+<script src="components/RouteData.js"></script>
+<script src="components/Apply13Data.js"></script>
+<script src="components/ParkApplyData.js"></script>
 </body>
 </html>

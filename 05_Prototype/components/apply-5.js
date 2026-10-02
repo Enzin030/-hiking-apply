@@ -28,6 +28,8 @@ function prefText(p) {
 
 thPage({
   data() {
+    /* 2026-10-02：三管處共用本頁，park 參數取機關設定（components/ParkApplyData.js）；沒有 park＝玉山 */
+    const park = window.thParkApply(getParam("park"));
     const qTeams = getParam("teams_name");
     const qStart = getParam("applystart") || "2026-10-15";
     const qDays = getParam("sumday") || "2";
@@ -162,6 +164,7 @@ thPage({
         ];
 
     return {
+      park: park,
       summary: summary,
       step3: step3,
       applicant: applicant,
@@ -196,7 +199,12 @@ thPage({
 
   computed: {
     applyCrumb() {
-      return "玉山國家公園";
+      return this.park.crumb;
+    },
+    /* 摘要卡的路線照片與難度：玉山沿用原值；其他機關取路線清單（RouteData）該次路線 */
+    summaryRoute() {
+      if (this.park.key === "yushan") return null;
+      return (window.ROUTE_DATA || []).find(r => r.cId === this.summary.climbline) || {};
     },
 
     teamsCount() {
