@@ -163,14 +163,17 @@ thPage({
     let other = null;
     if (park.key !== "yushan") {
       const qFid = getParam("fid"), qSub = getParam("cid");
-      const main = park.mains.some(m => m.value === qFid) ? qFid : park.defaultMain;
+      // 開放狀態頁（open.aspx 照抄）的 fId 等於 cId，不是主路線代碼：對不上時改以次路線反查所屬主路線
+      const owner = qSub ? park.mains.find(m => park.subsOf(m.value).some(x => x.value === qSub)) : null;
+      const main = park.mains.some(m => m.value === qFid) ? qFid : (owner ? owner.value : park.defaultMain);
       const subs = park.subsOf(main);
       const sub = subs.find(x => x.value === qSub) || subs.find(x => x.value === park.defaultSub) || subs[0] || {};
       const demo = park.demoDays[sub.value];
       // 入山證預設：該路線有實走值就用，否則沿用該機關第一筆（必填欄位預設有值）
       const npaAll = park.npaDefaults || {};
       const npaDef = npaAll[sub.value] || npaAll[Object.keys(npaAll)[0]];
-      const days = demo ? demo.length : ((sub.days || [1])[0]);
+      // 沒有實走行程的路線：可選天數有 2 天就預設 2 天（使用者 2026-10-02），否則取最少天數
+      const days = demo ? demo.length : ((sub.days || [1]).includes(2) ? 2 : (sub.days || [1])[0]);
       const plan = demo ? demo.map(d => d.slice()) : autoPlan(park.graphs[sub.value] || GENERIC_PLANNER_GRAPH, days);
       const okDates = sub.closedRange ? dateOptions.filter(d => d < sub.closedRange[0] || d > sub.closedRange[1]) : dateOptions;
       other = {
@@ -617,7 +620,7 @@ thPage({
           if (old === undefined) { this.updateRouteMap(); this.syncPlanText(); return; }
           const opts = this.sumdayOptions;
           const demo = this.park.demoDays[val];
-          this.sumday = demo ? String(demo.length) : (opts.length ? opts[0].value : "1");
+          this.sumday = demo ? String(demo.length) : (opts.some(o => o.value === "2") ? "2" : (opts.length ? opts[0].value : "1"));
           const plan = demo ? demo.map(d => d.slice()) : autoPlan(this.graph, this.sumday);
           this.planDays = plan || [[]];
           this.plannerFinished = !!plan;
