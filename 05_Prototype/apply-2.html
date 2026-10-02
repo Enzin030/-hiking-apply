@@ -106,7 +106,7 @@
            「確認選對路線」的需求由麵包屑的機關名滿足。 -->
 
       <!-- 文案取自正式站 apply_1_2.aspx 原文（2026-09-21 實走擷取） -->
-      <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug p-apply2-lead">
+      <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug th-consent-lead">
         須先點閱以下說明後，始可進行後續之申請作業
       </p>
 
@@ -116,19 +116,19 @@
           <!-- id 必須是 sec-<id>：components/apply-2.js 的 scrollToSection()
                寫死 document.getElementById("sec-" + id)，改前綴會定位不到 -->
           <section v-for="(s, idx) in sections" :key="s.id" :id="'sec-' + s.id"
-                   :class="['p-apply2-item', { 'is-acked': acked[s.id] }]"
+                   :class="['th-consent-item', { 'is-acked': acked[s.id] }]"
                    role="button" tabindex="0"
                    :aria-pressed="acked[s.id] ? 'true' : 'false'"
                    @click="$event.target.closest('a') || toggleAck(s.id)"
                    @keydown.enter="$event.target.closest('a') || ($event.preventDefault(), toggleAck(s.id))"
                    @keydown.space.prevent="toggleAck(s.id)">
-            <div class="p-apply2-item-lead" aria-hidden="true">
-              <span class="p-apply2-item-box">
+            <div class="th-consent-item-lead" aria-hidden="true">
+              <span class="th-consent-item-box">
                 <i class="fa-solid fa-check"></i>
               </span>
             </div>
-            <div class="p-apply2-item-body">
-              <div class="p-apply2-item-text" v-html="clauseHtml(s)"></div>
+            <div class="th-consent-item-body">
+              <div class="th-consent-item-text p-apply2-item-text" v-html="clauseHtml(s)"></div>
             </div>
           </section>
         </div>

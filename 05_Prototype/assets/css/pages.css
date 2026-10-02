@@ -2510,12 +2510,6 @@ button.p-open-filter-badge.is-active {
   line-height: 1.4;
 }
 
-/* 外觀由 HTML 上的 Tailwind utility 決定（使用者指定），
-   這裡只給上方間距，不覆寫字級與顏色 */
-.p-apply2-lead {
-  margin-top: 20px;
-}
-
 /* ---------- 版面：主欄 + 側欄 ---------- */
 .p-apply2-layout {
   display: grid;
@@ -2527,83 +2521,6 @@ button.p-open-filter-badge.is-active {
 /* ---------- 條文：整條可點，靠分隔線區隔 ---------- */
 .p-apply2-main {
   min-width: 0;
-}
-
-.p-apply2-item {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  gap: 16px;
-  padding: 20px 12px 20px 4px;
-  border-bottom: 1px solid var(--slate-100);
-  cursor: pointer;
-  transition: background-color .15s ease;
-}
-
-.p-apply2-item:hover {
-  background: var(--slate-50);
-}
-
-/* 鍵盤操作才顯示焦點框；滑鼠點擊後不留下框線
-   （Chromium 對 tabindex 元素的 :focus-visible 判定較寬，
-   點擊也會命中，所以額外用 :not(:hover) 排除） */
-.p-apply2-item:focus-visible:not(:hover) {
-  outline: 2px solid var(--national-700);
-  outline-offset: -2px;
-}
-
-/* 左側只有勾選框：條文編號已移除，定位交給側欄 */
-.p-apply2-item-lead {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding-top: 2px;
-}
-
-.p-apply2-item-box {
-  width: 22px;
-  height: 22px;
-  border-radius: var(--r-sm);
-  border: 2px solid var(--slate-300);
-  background: var(--bg-1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background-color .15s ease, border-color .15s ease;
-}
-
-.p-apply2-item-box i {
-  font-size: 11px;
-  color: transparent;
-  transition: color .15s ease;
-}
-
-.p-apply2-item:hover .p-apply2-item-box {
-  border-color: var(--national-700);
-}
-
-.p-apply2-item:hover .p-apply2-item-box i {
-  color: var(--national-300);
-}
-
-.p-apply2-item.is-acked .p-apply2-item-box {
-  background: var(--national-700);
-  border-color: var(--national-700);
-}
-
-.p-apply2-item.is-acked .p-apply2-item-box i {
-  color: var(--fg-on-dark);
-}
-
-.p-apply2-item-body {
-  min-width: 0;
-}
-
-.p-apply2-item-text {
-  color: var(--fg-1);
-  font-size: var(--fs-sm);
-  line-height: 1.85;
 }
 
 /* 已確認不改變內文顏色——條文自帶的紅字等編排要保留 */
@@ -2892,12 +2809,6 @@ button.p-open-filter-badge.is-active {
   }
 }
 
-@media (max-width: 640px) {
-  .p-apply2-item {
-    gap: 12px;
-    padding: 16px 0;
-  }
-}
 .p-apply2-sum-routebar {
   display: flex;
   align-items: center;

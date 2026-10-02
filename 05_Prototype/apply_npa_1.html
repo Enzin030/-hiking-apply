@@ -60,15 +60,14 @@
               <option value="">請選擇</option>
               <option v-for="d in dates" :key="d" :value="d">{{ d }}</option>
             </select></th-hybrid-select>
-            <span class="th-field-hint">＊因作業規定，最晚須於3天前申請。</span>
+            <span class="th-field-hint is-accent">＊因作業規定，最晚須於3天前申請。</span>
           </div>
           <div class="th-field">
-            <label class="th-label" for="f-people"><span class="req">*</span>出發人數</label>
+            <label class="th-label" for="f-people"><span class="req">*</span>出發人數（含領隊）</label>
             <th-hybrid-select><select id="f-people" class="th-select" v-model.number="headcount">
               <option :value="0">請選擇</option>
               <option v-for="n in 19" :key="n" :value="n">{{ n }}</option>
             </select></th-hybrid-select>
-            <span class="th-field-hint">隊伍人數（含領隊）</span>
           </div>
         </div>
       </div>
@@ -76,8 +75,8 @@
 
     <!-- 置底按鈕置中，比照 apply-3 -->
     <div class="flex flex-wrap justify-center gap-3 mt-12">
-      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回路線列表</a>
-      <button type="button" class="th-btn th-btn-primary" @click="next">下一步：行程計畫<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</a>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
 

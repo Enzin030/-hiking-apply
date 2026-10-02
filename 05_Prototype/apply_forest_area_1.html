@@ -59,22 +59,21 @@
             </select></th-hybrid-select>
           </div>
           <div class="th-field">
-            <label class="th-label" for="f-people"><span class="req">*</span>出發人數</label>
+            <label class="th-label" for="f-people"><span class="req">*</span>出發人數（含領隊）</label>
             <th-hybrid-select><select id="f-people" class="th-select" v-model.number="headcount">
               <option :value="0">請選擇</option>
               <option v-for="n in area.peopleMax" :key="n" :value="n">{{ n }}</option>
             </select></th-hybrid-select>
-            <span class="th-field-hint">隊伍人數（含領隊）</span>
           </div>
         </div>
-        <p class="th-field-hint">＊因作業規定，最晚須於5天前申請。</p>
+        <p class="th-field-hint is-accent">＊因作業規定，最晚須於5天前申請。</p>
         <!-- 正式站各區第 1 步提示文字相同，但可選出發日不一定從 5 天後起（十八羅漢山為 4 天後，〔待確認〕原因） -->
       </div>
     </section>
 
     <div class="flex flex-wrap justify-between gap-2 mt-6">
-      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>回路線列表</a>
-      <button v-if="area" type="button" class="th-btn th-btn-primary" @click="next">下一步：行程計畫<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</a>
+      <button v-if="area" type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
 

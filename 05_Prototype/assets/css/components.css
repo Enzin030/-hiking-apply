@@ -718,10 +718,110 @@
   background: var(--warning-bg);
 }
 
+/* ############################################################
+   th-consent — 同意書條目（整列可點、左側勾選框）
+   2026-10-02 由 apply-2（.p-apply2-item*）提升：警政署第 5 步同意聲明比照同意書樣式，二次即提升。
+   條文富文本的覆寫（字型、連結、編號）仍是 apply-2 專用，留在 pages.css 的 .p-apply2-item-text。
+   ############################################################ */
+/* 外觀由 HTML 上的 Tailwind utility 決定（使用者指定），
+   這裡只給上方間距，不覆寫字級與顏色 */
+.th-consent-lead {
+  margin-top: 20px;
+}
+
+.th-consent-item {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px 12px 20px 4px;
+  border-bottom: 1px solid var(--slate-100);
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+.th-consent-item:hover {
+  background: var(--slate-50);
+}
+
+/* 鍵盤操作才顯示焦點框；滑鼠點擊後不留下框線
+   （Chromium 對 tabindex 元素的 :focus-visible 判定較寬，
+   點擊也會命中，所以額外用 :not(:hover) 排除） */
+.th-consent-item:focus-visible:not(:hover) {
+  outline: 2px solid var(--national-700);
+  outline-offset: -2px;
+}
+
+/* 左側只有勾選框：條文編號已移除，定位交給側欄 */
+.th-consent-item-lead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.th-consent-item-box {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-sm);
+  border: 2px solid var(--slate-300);
+  background: var(--bg-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.th-consent-item-box i {
+  font-size: 11px;
+  color: transparent;
+  transition: color .15s ease;
+}
+
+.th-consent-item:hover .th-consent-item-box {
+  border-color: var(--national-700);
+}
+
+.th-consent-item:hover .th-consent-item-box i {
+  color: var(--national-300);
+}
+
+.th-consent-item.is-acked .th-consent-item-box {
+  background: var(--national-700);
+  border-color: var(--national-700);
+}
+
+.th-consent-item.is-acked .th-consent-item-box i {
+  color: var(--fg-on-dark);
+}
+
+.th-consent-item-body {
+  min-width: 0;
+}
+
+.th-consent-item-text {
+  color: var(--fg-1);
+  font-size: var(--fs-sm);
+  line-height: 1.85;
+}
+
+@media (max-width: 640px) {
+  .th-consent-item {
+    gap: 12px;
+    padding: 16px 0;
+  }
+}
+
 /* 目前系統時間標籤（2026-10-02，apply-3 起用、apply_npa_1 第二頁使用後提升）：
    卡片標題列靠右的 .th-flag，字放大一級；手機版只留時鐘圖示與時間，避免把標題擠成兩行 */
 .th-systime {
   font-size: var(--fs-sm);
+}
+/* 放在卡片標題列時，.th-card-head i 會把圖示改成主色、放大；圖示跟隨標籤文字 */
+.th-flag.th-systime i {
+  color: inherit;
+  font-size: inherit;
 }
 @media (max-width: 640px) {
   .th-systime-label {
@@ -1648,6 +1748,10 @@
 .th-field-hint {
   font-size: var(--fs-xxs);
   color: var(--fg-3);
+}
+/* 需要提醒的欄位說明（例：「＊因作業規定，最晚須於3天前申請。」，使用者 2026-10-02 指定綠字） */
+.th-field-hint.is-accent {
+  color: var(--national-800);   /* 主色 --national-700 偏灰，小字看起來像灰色；改用連結同色的深綠 */
 }
 /* 欄位錯誤訊息。2026-09-07 隨 th-date-picker 新增（見上方「th-date-picker」段註解），
    09-08 重新複製 input 家族時被整段蓋掉、只剩註解，此後錯誤訊息一直是一般字色
