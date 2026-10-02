@@ -29,7 +29,9 @@ thPage({
       const n = this.npa;
       if (!n.places.length) e.push("請至少加入一個前往地點");
       if (n.places.some(p => !p.desc)) e.push("前往地點描述未填寫");
-      if (!n.lib || !n.sub) e.push("請選擇登山路線圖");
+      // 無圖幅的詞庫（正式站 E00／D00／C00／B00／A00）只需選詞庫
+      const lib = (window.TH_NPA_LIBS || []).find(l => l.id === n.lib);
+      if (!n.lib || (!n.sub && (!lib || lib.subs.length))) e.push("請選擇登山路線圖");
       if (!n.plan) e.push("請填寫登山計畫書");
       return e;
     },

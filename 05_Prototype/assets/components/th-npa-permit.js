@@ -55,14 +55,67 @@
     { code: "S-004", name: "合歡山(南投縣-仁愛鄉)" },
     { code: "S-005", name: "雪山(台中市-和平區)" },
   ];
+  /* 登山路線圖詞庫與圖幅：2026-10-02 正式站 apply_npa_2 逐一切換擷取（Func=NpaPaths）。
+     上河兩個詞庫有圖幅；其餘五個切換後沒有圖幅選項，登山路線圖只取詞庫名稱。 */
   var LIBS = [
-    { id: "TM00", name: "上河文化台灣百岳導遊圖",
-      subs: [{ id: "M15", name: "東郡山彙" }, { id: "TM01", name: "臺灣百岳全圖" }] },
-    { id: "M00", name: "上河文化台灣高山全覽圖",
-      subs: [{ id: "M00-1", name: "玉山群峰" }, { id: "M00-2", name: "南湖中央尖" }] },
-    { id: "E00", name: "玉山國家登山路線導覽圖", subs: [{ id: "E00-1", name: "玉山主峰線" }] },
-    { id: "D00", name: "雪霸國家公園地圖", subs: [{ id: "D00-1", name: "雪山主東線" }] },
+    { id: "TM00", name: "上河文化台灣百岳導遊圖", subs: [
+        { id: "M15", name: "東郡山彙" },
+        { id: "TM01", name: "臺灣百岳全圖" },
+        { id: "TM02", name: "百岳賞花圖鑑圖" },
+        { id: "TM03", name: "百岳登山須知" },
+        { id: "TM04", name: "玉山群峰縱走" },
+        { id: "TM05", name: "郡大山．西巒大山單登" },
+        { id: "TM06", name: "聖稜 Y 型縱走" },
+        { id: "TM07", name: "雪山西．南稜縱走" },
+        { id: "TM08", name: "白姑大山單登" },
+        { id: "TM09", name: "北一段縱走" },
+        { id: "TM10", name: "北二段縱走" },
+        { id: "TM11", name: "合歡．奇萊縱走" },
+        { id: "TM12", name: "太魯閣山列(奇萊東稜)縱走" },
+        { id: "TM13", name: "能高越嶺" },
+        { id: "TM14", name: "能高安東軍縱走" },
+        { id: "TM15", name: "干卓萬群峰縱走" },
+        { id: "TM16", name: "七彩湖．六順山" },
+        { id: "TM17", name: "丹大．東郡橫斷縱走" },
+        { id: "TM18", name: "馬博拉斯橫斷縱走" },
+        { id: "TM19", name: "南二段縱走" },
+        { id: "TM20", name: "新康橫斷縱走" },
+        { id: "TM21", name: "南一段縱走" },
+        { id: "TM22", name: "北大武山登峰" }
+      ] },
+    { id: "M00", name: "上河文化台灣高山全覽圖", subs: [
+        { id: "M01", name: "玉山群峰" },
+        { id: "M02", name: "西巒大山．郡大山" },
+        { id: "M03", name: "北宜屋脊．松蘿湖．阿玉山" },
+        { id: "M04", name: "北桃．桃竹屋脊．司馬庫司" },
+        { id: "M05", name: "雪山聖稜線" },
+        { id: "M06", name: "雪山西．南稜" },
+        { id: "M07", name: "白姑大山．合歡山" },
+        { id: "M08", name: "太平山．翠峰湖．加羅湖" },
+        { id: "M09", name: "北一．北二段" },
+        { id: "M10", name: "二子山．清水山" },
+        { id: "M11", name: "合歡．奇萊．太魯閣山列" },
+        { id: "M12", name: "能高群峰" },
+        { id: "M13", name: "干卓萬山群" },
+        { id: "M14", name: "南三主稜 (丹大山列)" },
+        { id: "M16", name: "馬博拉斯橫貫" },
+        { id: "M17", name: "南二段" },
+        { id: "M18", name: "新康山列" },
+        { id: "M19", name: "南一段" },
+        { id: "M20", name: "中央山脈主脊陷落區" },
+        { id: "M21", name: "卑南東稜．美奈田主山" },
+        { id: "M22", name: "雙鬼湖" },
+        { id: "M23", name: "大武地壘" },
+        { id: "M24", name: "中央山脈大武南主脊" },
+        { id: "M25", name: "台灣百岳全圖" }
+      ] },
+    { id: "E00", name: "玉山國家登山路線導覽圖", subs: [] },
+    { id: "D00", name: "雪霸國家公園地圖", subs: [] },
+    { id: "C00", name: "經建三版地形圖地圖產生器", subs: [] },
+    { id: "B00", name: "台灣地理人文全覽圖南島", subs: [] },
+    { id: "A00", name: "台灣地理人文全覽圖北島", subs: [] }
   ];
+  window.TH_NPA_LIBS = LIBS;
 
   window.thComponents = window.thComponents || {};
   window.thComponents["th-npa-permit"] = {
@@ -95,7 +148,8 @@
         var self = this;
         var lib = LIBS.find(function (l) { return l.id === self.v.lib; });
         var sub = this.subs.find(function (s) { return s.id === self.v.sub; });
-        return lib && sub ? lib.name + "-" + sub.name : "";
+        if (lib && sub) return lib.name + "-" + sub.name;
+        return lib && !lib.subs.length ? lib.name : "";   // 無圖幅的詞庫只取詞庫名稱
       },
     },
     methods: {
