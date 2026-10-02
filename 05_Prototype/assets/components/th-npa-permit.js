@@ -173,7 +173,7 @@
       },
     },
     template: `
-      <div class="th-npa-permit">
+      <div class="th-npa-permit th-npa">
         <dl v-if="readonly" class="grid grid-cols-1 gap-y-3">
           <div class="th-field"><dt class="th-label">入山事由</dt><dd class="th-input th-input-readonly">{{ v.reason }}</dd></div>
           <div class="th-field"><dt class="th-label">前往地點</dt>
@@ -185,39 +185,44 @@
           <div class="th-field"><dt class="th-label">登山計畫書</dt><dd class="th-input th-input-readonly whitespace-pre-line">{{ v.plan || '—' }}</dd></div>
         </dl>
 
-        <div v-else class="grid grid-cols-1 gap-y-5">
+        <!-- 填寫模式：比照玉山行程規劃頁的「警政署入山證申請」卡片（2026-10-02 使用者要求）。
+             兩欄格線；前往地點下拉＋加入地點按鈕相連；地點清單、登山路線圖雙下拉、計畫書範例框（共用 .th-npa-*）。 -->
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
           <div class="th-field">
-            <label class="th-label" :for="fid('reason')">入山事由<span class="th-label-en">Reason for Mountain Entry</span></label>
+            <label class="th-label" :for="fid('reason')"><span>入山事由</span><span class="th-label-en">Reason for Mountain Entry</span></label>
             <th-hybrid-select><select :id="fid('reason')" class="th-select" :value="v.reason" @change="emit({ reason: $event.target.value })">
               <option v-for="r in reasons" :key="r" :value="r">{{ r }}</option>
             </select></th-hybrid-select>
           </div>
 
           <div class="th-field">
-            <label class="th-label" :for="fid('place')"><span class="req">*</span>前往地點<span class="th-label-en">Destination</span></label>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input class="th-input sm:w-40" type="text" placeholder="輸入關鍵字篩選" v-model="keyword" :aria-label="'前往地點關鍵字'" />
-              <th-hybrid-select><select :id="fid('place')" class="th-select flex-1" v-model="picked">
+            <label class="th-label" :for="fid('place')"><span><span class="req">*</span>前往地點</span><span class="th-label-en">Destination</span></label>
+            <div class="th-npa-input-group">
+              <th-hybrid-select class="th-npa-joined-hybrid"><select :id="fid('place')" class="th-select" v-model="picked">
                 <option value="">請選擇前往地點</option>
                 <option v-for="p in filtered" :key="p.code" :value="p.code">{{ p.name }}</option>
               </select></th-hybrid-select>
-              <button type="button" class="th-btn th-btn-primary shrink-0" :disabled="!picked" @click="addPlace">加入地點</button>
+              <button type="button" class="th-btn th-btn-secondary th-btn-sm th-npa-joined-btn" :disabled="!picked" @click="addPlace">加入地點</button>
             </div>
-            <ul v-if="v.places.length" class="mt-3 grid gap-2">
-              <li v-for="(p, i) in v.places" :key="p.code" class="flex flex-col sm:flex-row sm:items-center gap-2">
-                <span class="sm:w-64 shrink-0">{{ p.name }}</span>
-                <input class="th-input flex-1" type="text" placeholder="前往地點描述（必填）" :aria-label="p.name + ' 描述'"
-                       :value="p.desc" @input="setDesc(i, $event.target.value)" />
-                <button type="button" class="th-btn th-btn-ghost th-btn-sm shrink-0" @click="removePlace(i)">
-                  <i class="fa-solid fa-trash-can" aria-hidden="true"></i>移除</button>
-              </li>
-            </ul>
-            <span v-else class="th-field-hint">尚未加入地點，至少需加入一處</span>
+            <span v-if="!v.places.length" class="th-field-hint">尚未加入地點，至少需加入一處</span>
           </div>
 
-          <div class="th-field">
-            <label class="th-label" :for="fid('lib')"><span class="req">*</span>登山路線圖<span class="th-label-en">Route Map</span></label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div v-if="v.places.length" class="th-field sm:col-span-2">
+            <ul class="th-npa-places">
+              <li v-for="(p, i) in v.places" :key="p.code" class="th-npa-place-row">
+                <i class="fa-solid fa-location-dot text-red-500 flex-shrink-0" aria-hidden="true"></i>
+                <span class="th-npa-place-name">{{ p.name }}</span>
+                <input class="th-input th-npa-place-input" type="text" placeholder="前往地點描述（必填）" :aria-label="p.name + ' 描述'"
+                       :value="p.desc" @input="setDesc(i, $event.target.value)" />
+                <button type="button" class="th-npa-place-del" title="刪除地點" @click="removePlace(i)">
+                  <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i>刪除</button>
+              </li>
+            </ul>
+          </div>
+
+          <div class="th-field sm:col-span-2">
+            <label class="th-label" :for="fid('lib')"><span><span class="req">*</span>登山路線圖</span><span class="th-label-en">Route Map</span></label>
+            <div class="th-npa-vocab-row">
               <th-hybrid-select><select :id="fid('lib')" class="th-select" :value="v.lib" @change="emit({ lib: $event.target.value, sub: '' })">
                 <option value="">請選擇詞庫</option>
                 <option v-for="l in libs" :key="l.id" :value="l.id">{{ l.name }}</option>
@@ -227,16 +232,18 @@
                 <option v-for="s in subs" :key="s.id" :value="s.id">{{ s.name }}</option>
               </select></th-hybrid-select>
             </div>
-            <span class="th-input th-input-readonly mt-2">{{ routeMap || '選擇詞庫與圖幅後自動帶入' }}</span>
+            <div class="mt-2">
+              <input type="text" class="th-input th-input-readonly" :value="routeMap" placeholder="選擇詞庫與圖幅後自動帶入" readonly aria-label="登山路線圖" />
+            </div>
           </div>
 
-          <div class="th-field">
-            <label class="th-label" :for="fid('plan')"><span class="req">*</span>登山計畫書<span class="th-label-en">Plan</span></label>
-            <textarea :id="fid('plan')" class="th-textarea" rows="5" placeholder="D1：登山口→…→宿營地。"
+          <div class="th-field sm:col-span-2">
+            <label class="th-label" :for="fid('plan')"><span><span class="req">*</span>登山計畫書</span><span class="th-label-en">Plan</span></label>
+            <textarea :id="fid('plan')" class="th-textarea" rows="5" placeholder="D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。"
                       :value="v.plan" @input="emit({ plan: $event.target.value })"></textarea>
-            <!-- 範例原文取自 2026-09-17 測試站太魯閣步驟一截圖（TAR026_S02_filled） -->
-            <div v-if="!readonly" class="th-field-hint">
-              <p>【登山計畫書填寫範例】</p>
+            <!-- 範例原文取自 2026-09-17 測試站太魯閣步驟一截圖（TAR026_S02_filled），與玉山卡片相同 -->
+            <div class="th-npa-plan-example">
+              <p class="th-npa-plan-example-title">【登山計畫書填寫範例】</p>
               <p>※計畫書內容約300字，請參考範例，簡要述明。</p>
               <p v-for="l in planExample" :key="l">{{ l }}</p>
             </div>

@@ -373,8 +373,8 @@ thPage({
       this.diff = this.diff === String(n) ? "all" : String(n);
     },
     groupIcon(agency) { return agencyIcon(agency); },
-    /* 複合申請詢問框：SweetAlert（正式站 OtherRoute 也是 sweet-alert）。文字照正式站；
-       是／否說明卡與審查單位標籤列為雛形版面（使用者 2026-10-02：原本太單調，色系與全站一致）。
+    /* 複合申請詢問框：SweetAlert，內容維持舊系統（正式站 OtherRoute sweet-alert）的樣式——
+       路線選擇下拉、是／否兩行說明、審查單位文字（使用者 2026-10-02：維持舊系統樣式，色系沿用全站）。
        按「是」＝複合申請、「否」＝走原路線入口；按 × 或點外面＝取消，留在列表。 */
     openComposite(r) {
       var self = this;
@@ -384,9 +384,7 @@ thPage({
       if (!rel) return;
       var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
       var orgsHtml = function () {
-        return self.compositeOrgs.map(function (o) {
-          return '<li><span class="p-apply1-composite-orgs-name">' + esc(o.name) + '</span><span class="th-flag is-snow"><i class="fa-solid fa-building-columns" aria-hidden="true"></i>' + esc(o.org) + "</span></li>";
-        }).join("");
+        return self.compositeOrgs.map(function (o) { return "<p>" + esc(o.name) + "的審查單位:" + esc(o.org) + "</p>"; }).join("");
       };
       var html =
         '<div class="p-apply1-composite">' +
@@ -394,11 +392,8 @@ thPage({
             '<select id="f-composite" class="th-select">' +
               rel.options.map(function (o, i) { return '<option value="' + i + '">' + esc(o.name) + "</option>"; }).join("") +
             "</select></div>" +
-          '<div class="p-apply1-composite-choices">' +
-            '<div class="p-apply1-composite-choice is-yes"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><div><strong>是</strong><span>系統將協助進行複合申請</span></div></div>' +
-            '<div class="p-apply1-composite-choice is-no"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i><div><strong>否</strong><span>直接進行該項目申請流程</span></div></div>' +
-          "</div>" +
-          '<div class="p-apply1-composite-orgs"><p class="p-apply1-composite-orgs-title">審查單位</p><ul id="f-composite-orgs">' + orgsHtml() + "</ul></div>" +
+          '<ul class="th-field-hint list-disc pl-5"><li>是：系統將協助進行複合申請</li><li>否：直接進行該項目申請流程</li></ul>' +
+          '<div id="f-composite-orgs">' + orgsHtml() + "</div>" +
         "</div>";
       var fallback = function () {
         if (window.confirm("是否需要同時申請以下入山/山屋/路線?\n是：系統將協助進行複合申請\n否：直接進行該項目申請流程")) self.compositeYes();

@@ -716,6 +716,145 @@
 }
 
 /* ############################################################
+   th-npa — 警政署入山證申請欄位（入山事由、前往地點＋加入地點、地點清單、登山路線圖雙下拉、計畫書範例）
+   2026-10-02 由 apply-3（玉山行程規劃頁 .p-apply3-*）提升：警政署第 2 步的 th-npa-permit 比照玉山卡片，二次即提升。
+   外層容器加 .th-npa（計畫書範例沿用原本「外層＋範例」的權重）。
+   ############################################################ */
+/* 輸入框與按鈕結合 */
+.th-npa-input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.th-npa-joined-hybrid {
+  flex: 1;
+  min-width: 0;
+}
+
+.th-npa-joined-hybrid .th-select {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.th-npa-joined-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  white-space: nowrap;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+  height: 38px;
+  flex-shrink: 0;
+}
+
+/* 詞庫雙下拉並列 */
+.th-npa-vocab-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .th-npa-vocab-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 地點清單清單項 ---------- */
+.th-npa-places {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.th-npa-place-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm);
+}
+
+.th-npa-place-name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--slate-800);
+  white-space: nowrap;
+}
+
+/* 加 .th-input 提高權重：本段在 components.css 中排在 .th-input 之前，原本在 pages.css 是排在後面勝出 */
+.th-input.th-npa-place-input {
+  flex: 1;
+  min-width: 140px;
+  height: 32px;
+  font-size: var(--fs-sm);
+  padding: 4px 10px;
+}
+
+.th-npa-place-del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  cursor: pointer;
+  padding: 4px 10px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+
+.th-npa-place-del:hover:not(:disabled) {
+  background: var(--red-100, #fee2e2);
+  border-color: var(--danger-fg);
+}
+
+.th-npa-place-del:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* ---------- 登山計畫書填寫範例（統一小字體） ---------- */
+.th-npa .th-npa-plan-example,
+.th-npa .th-npa-plan-example p,
+.th-npa .th-npa-plan-example-title {
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+.th-npa .th-npa-plan-example {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  color: var(--fg-2);
+}
+
+.th-npa .th-npa-plan-example p {
+  margin: 0;
+}
+
+.th-npa .th-npa-plan-example p + p {
+  margin-top: 3px;
+}
+
+.th-npa .th-npa-plan-example-title {
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+/* ############################################################
    th-consent — 同意書條目（整列可點、左側勾選框）
    2026-10-02 由 apply-2（.p-apply2-item*）提升：警政署第 5 步同意聲明比照同意書樣式，二次即提升。
    條文富文本的覆寫（字型、連結、編號）仍是 apply-2 專用，留在 pages.css 的 .p-apply2-item-text。
@@ -1736,11 +1875,13 @@
   margin-right: 2px;
   font-weight: 700;
 }
+/* 欄位英文副標（2026-10-02 改為與玉山 .p-apply3-label-en 相同外觀；目前只有 th-npa-permit 使用） */
 .th-label-en {
-  font-weight: 500;
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 400;
   color: var(--fg-3);
-  font-size: var(--fs-xxs);
-  margin-left: 4px;
+  line-height: var(--lh-snug);
 }
 .th-field-hint {
   font-size: var(--fs-xxs);
