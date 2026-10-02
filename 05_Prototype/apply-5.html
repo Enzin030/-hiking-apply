@@ -49,11 +49,13 @@
 
         <!-- 線下面：隊名、主要路線（同入園期間格式）與入園期間 -->
         <div class="summary-date-row">
+          <template v-if="park.hasTeamName !== false">
           <span class="date-item">
             <span class="date-title">隊名：</span>
             <span class="date-value font-bold text-slate-900">{{ summary.teams_name }}</span>
           </span>
           <span class="summary-meta-sep" aria-hidden="true">|</span>
+          </template>
           <!-- 出發人數（領隊＋隊員）：正式站確認頁在隊名之後即列出（玉山、雪霸 2026-09-24） -->
           <span class="date-item">
             <span class="date-title">出發人數：</span>
@@ -215,7 +217,7 @@
     </section>
 
     <!-- 4. 警政署入山證申請資訊 -->
-    <section v-if="park.hasNpa" class="th-card" id="sec-npa">
+    <section v-if="park.hasNpa && step3.npaOn !== false" class="th-card" id="sec-npa">
       <div class="th-card-head">
         <h2 class="th-card-title">警政署入山證申請資訊</h2>
       </div>
@@ -285,6 +287,7 @@
 <!-- 三管處機關設定（2026-10-02） -->
 <script src="components/RouteData.js"></script>
 <script src="components/Apply13Data.js"></script>
+<script src="components/Apply15Data.js"></script>
 <script src="components/ParkApplyData.js"></script>
 </body>
 </html>

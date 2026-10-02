@@ -66,7 +66,7 @@
           </div>
 
           <div class="p-apply3-grid">
-            <div class="th-field">
+            <div v-if="park.hasTeamName" class="th-field">
               <label class="th-label" for="con_teams_name">
                 <span><span class="req">*</span>隊名</span>
               </label>
@@ -155,6 +155,9 @@
                   <td class="p-apply3-level-cell">
                     <span :class="'th-level lv-' + trailLevel.level">第 {{ trailLevel.level }} 級</span>
                     <!-- 「玉山線地圖」按鈕，點開看路線圖 -->
+                    <a v-if="park.capacityLink" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" :href="park.capacityLink.href" target="_blank" rel="noopener noreferrer" :title="park.capacityLink.label + '（另開新視窗）'">
+                      <i class="fa-solid fa-people-group mr-2" aria-hidden="true"></i>{{ park.capacityLink.label }}
+                    </a>
                     <button v-if="routeMapTabs.length" type="button" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" @click="mapOpen = true">
                       <i class="fa-solid fa-map mr-2" aria-hidden="true"></i>{{ openRow ? openRow.mainRoute : '玉山線' }}地圖
                     </button>
@@ -198,6 +201,18 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- 太魯閣：路線說明與「已詳閱以下說明」必勾（正式站 noteCheck；有說明或需入山證的路線才有） -->
+          <div v-if="hasNoteCheck" class="th-callout">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <div class="grid gap-2">
+              <label class="flex items-start gap-2 font-semibold"><input type="checkbox" v-model="noteChecked" class="mt-1" /><span><span class="req">*</span>已詳閱以下說明，並同意相關注意事項。</span></label>
+              <ul class="list-disc pl-5">
+                <li v-for="n in routeNotes" :key="n">{{ n }}</li>
+                <li v-if="npaOn">警政署入山申辦系統：<a class="th-inline-link break-all" :href="park.npaSite" target="_blank" rel="noopener noreferrer">{{ park.npaSite }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></li>
+              </ul>
+            </div>
           </div>
 
           </div>
@@ -319,7 +334,7 @@
 
           <!-- 行前講習與通訊設備：3 行對 3 行高度對齊 -->
           <div class="p-apply3-grid">
-            <div class="th-field">
+            <div v-if="park.hasSeminar" class="th-field">
               <label class="th-label" :class="{ 'p-apply3-label-3lines': park.showEn }" for="con_seminar">
                 <span class="p-apply3-line-1"><span v-if="park.seminarRequired" class="req">*</span>登山行前講習</span>
                 <span v-if="park.showEn" class="p-apply3-label-en">General knowledge about hiking</span>
@@ -381,7 +396,7 @@
         </section>
 
         <!-- 區塊 3：警政署入山證申請（入山事由與前往地點並排） -->
-        <section v-if="park.hasNpa" id="sec-npa" class="th-card">
+        <section v-if="npaOn" id="sec-npa" class="th-card">
           <div class="th-card-head">
             <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('npa')">
               <h2 class="th-card-title">警政署入山證申請</h2>
@@ -500,7 +515,7 @@
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li v-if="park.hasNpa" :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
+            <li v-if="npaOn" :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
               <button type="button" @click="scrollToSection('sec-npa', 2)">
                 <span class="p-apply3-side-text">3. 警政署入山證</span>
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
@@ -586,6 +601,7 @@
 <script src="components/RouteIntroData.js"></script>
 <!-- 三管處機關設定；雪霸的路線與節點資料在 Apply13Data.js（2026-10-02） -->
 <script src="components/Apply13Data.js"></script>
+<script src="components/Apply15Data.js"></script>
 <script src="components/ParkApplyData.js"></script>
 </body>
 </html>

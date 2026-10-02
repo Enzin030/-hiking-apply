@@ -9,6 +9,9 @@
      玉山  有 GPS、有警政署入山證、講習必填（預設網路線上學習）、欄位有英文副標
      雪霸  無 GPS、無入山證、講習非必填（預設空白）、無英文副標、有無人機空拍公告
            路線規劃第一步同為「請選擇起點」；單日往返也由使用者逐點規劃（玉山單日為固定行程）
+     太魯閣 無隊名、無講習、無 GPS；有路線承載量查詢與「已詳閱以下說明」必勾（有說明的路線）；
+           入山證依路線（南湖要、奇萊北屏風山線不要）；步驟二有承載量狀況、宿營地下拉與剩餘數量、
+           附件區為路線行程規劃計劃書（選填）＋1 人時的獨攀證明說明（02_Spec/05c）
 
    window.thParkApply(key) 回傳該機關設定；key 空白或未知＝玉山（apply-3 原行為，畫面不變）。
    **只在頁面的 data() 裡呼叫**：雪霸設定要讀 Apply13Data.js 與 RouteData.js，
@@ -27,6 +30,8 @@ window.thParkApply = function (key) {
     seminarVideo: "https://www.ysnp.gov.tw/Video/C005200",
     notices: [],
     campLink: { href: "https://hike.taiwan.gov.tw/bed_6.aspx", label: "查看宿營地" },
+    hasTeamName: true,
+    hasSeminar: true,
     /* 步驟二（apply-4） */
     memberConsent: false,     // 隊員區另有委託同意勾選（雪霸 member_keytype）
     stayTel: false,           // 留守人另有「電話」欄
@@ -36,6 +41,7 @@ window.thParkApply = function (key) {
     /* 步驟三（apply-5） */
     confirmPlan: true,        // 確認頁列「行程計畫」（逐日行程、講習與設備）
   };
+  if (key === "taroko") return taroko();
   if (key !== "shei-pa") return yushan;
 
   /* 雪霸：正式站 apply_1_3.aspx（2026-09-24、10-01 實走，02_Spec/05b） */
@@ -87,5 +93,82 @@ window.thParkApply = function (key) {
     soloPdf: "https://hike.taiwan.gov.tw/images/雪霸獨攀登山安全宣導.pdf",
     /* 步驟三：正式站雪霸確認頁不列逐日行程與講習等步驟一欄位（02_Spec/05b §五） */
     confirmPlan: false,
+    hasTeamName: true,
+    hasSeminar: true,
+    stayTelHint: "※請留臺灣聯絡電話",
+    stayMobileHint: "※請留臺灣聯絡電話",
+    stayBirthdayRequired: true,
+    attachMode: "none",
+    soloMode: "callout",
   };
+
+  /* 太魯閣：正式站 apply_1_5.aspx（2026-09-29、10-01 實走，02_Spec/05c）；資料在 Apply15Data.js */
+  function taroko() {
+    var routes = window.APPLY15_ROUTES || [];
+    var notes = window.APPLY15_ROUTE_NOTES || {};
+    var remain = window.APPLY15_CAMP_REMAIN || {};
+    var all30 = range(1, 30);
+    return {
+      key: "taroko",
+      crumb: "太魯閣國家公園",
+      showEn: false,
+      hasGps: false,
+      hasNpa: true,                 // 依路線：subs[].needsNpa
+      npaByRoute: true,
+      hasTeamName: false,
+      hasSeminar: false,
+      seminarRequired: false,
+      seminarVideo: "",
+      notices: [],
+      campLink: { href: "bed_4.html", label: "查看宿營地" },
+      capacityLink: { href: "campsite.html?org=taroko&kind=route", label: "路線承載量查詢" },
+      npaSite: "https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList",
+      mains: routes.map(function (r) { return { value: r.id, text: r.name }; }),
+      subsOf: function (mainId) {
+        var m = routes.find(function (r) { return r.id === mainId; });
+        return (m ? m.subs : []).map(function (x) {
+          return { value: x.id, text: x.name, level: x.level, days: x.days || all30, needsNpa: !!x.needsNpa, notes: notes[x.id] || [] };
+        });
+      },
+      graphs: { "667": window.APPLY15_PLANNER || {} },
+      /* 南湖大山線示範行程（正式站 2026-09-29 實走） */
+      demoDays: { "667": [
+        ["思源埡口", "5.1K登山口", "多加屯山登山口", "木杆鞍部", "雲稜山屋"],
+        ["雲稜山屋", "審馬陣登山口", "審馬陣山屋"],
+        ["審馬陣山屋", "審馬陣登山口", "雲稜山屋", "木杆鞍部", "多加屯山登山口", "5.1K登山口", "思源埡口"],
+      ] },
+      defaultMain: "16",
+      defaultSub: "667",
+      /* 入山證預設（正式站 2026-09-29 南湖大山線：頁面載入即帶入） */
+      npaDefaults: { "667": { place: "南湖北山(宜蘭縣-大同鄉)", paths: "TM00", subPaths: "M15" } },
+      npaPlaces: ["南湖北山(宜蘭縣-大同鄉)"],
+      /* 步驟二 */
+      memberConsent: true,
+      stayTel: true,
+      stayTelHint: "格式：(04)123-4567#12345",
+      stayBirthdayRequired: false,
+      attachSection: true,
+      attachMode: "taroko",
+      soloMode: "attach",
+      soloDoc: "太魯閣國家公園獨攀申請承諾書",
+      queuePref: false,
+      queueSelect: true,            // 宿營地點下拉：當天終點＋自備搭帳
+      queueLink: { href: "bed_4.html", label: "太魯閣山屋" },
+      capacity: window.APPLY15_CAPACITY || null,
+      capacityRoutes: ["667"],      // 承載量狀況只有南湖大山線實走看過（2026-09-29）
+      campNote: function (camp, count) {
+        if (camp === "自備搭帳") return "請自備營帳";
+        var r = remain[camp];
+        if (!r) return "(實際順位以送出後為準)";
+        if (r.kind === "tent") {
+          var four = Math.floor(count / 4), rest = count % 4, two = 0;
+          if (count < 3) { four = 0; two = 1; } else if (rest === 3) { four += 1; } else if (rest) { two = 1; }
+          return "本案需求 4人營位數 =" + four + ", 2人營位數 =" + two + ", 剩餘數量 4人營位數 =" + r.remain4 + ", 2人營位數 =" + r.remain2 + ", 實際順位以送出後為準";
+        }
+        return "剩餘數量：" + r.remain + "，已預約待審：" + r.pending + "，本件需求數量：" + count + "，實際順位以送出後為準";
+      },
+      soloPdf: "",
+      confirmPlan: false,
+    };
+  }
 };

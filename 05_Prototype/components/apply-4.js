@@ -234,6 +234,7 @@ thPage({
     return {
       park: park,
       memberConsent: true,   // 隊員區委託同意（僅 park.memberConsent 的機關顯示；預設帶入勾選）
+      campPick: {},          // 其他機關宿營地表的宿營地點選擇（太魯閣可改自備搭帳）
       citiesData: TAIWAN_CITIES,
       activeNavIndex: 0,
 
@@ -380,7 +381,16 @@ thPage({
     /* 其他機關的宿營地表：每晚一列（當天終點），單日往返沒有資料列（雪霸正式站 2026-10-01） */
     parkQueueRows() {
       const days = (this.step3Data && this.step3Data.planDays) || [];
-      return days.slice(0, -1).map((d, i) => ({ date: addDaysToDate(this.summary.applystart, i), camp: d[d.length - 1] }));
+      return days.slice(0, -1).map((d, i) => {
+        const end = d[d.length - 1];
+        const camp = this.campPick[i] || end;
+        return { index: i, date: addDaysToDate(this.summary.applystart, i), end: end, camp: camp,
+                 note: this.park.campNote ? this.park.campNote(camp, this.teamsCount) : "" };
+      });
+    },
+    /* 太魯閣承載量狀況：只有實走看過的路線（南湖大山線） */
+    showCapacity() {
+      return !!(this.park.capacity && (this.park.capacityRoutes || []).includes(this.summary.climbline));
     },
     /* 側欄項目：其他機關多「附件上傳資料」 */
     sideItems() {
@@ -472,7 +482,7 @@ thPage({
 
     secStayOk() {
       const s = this.stay;
-      if (this.park.stayTel) return !!s.name.trim() && !!(s.tel || "").trim() && isValidMobile(s.mobile) && !!s.birthday;
+      if (this.park.stayTel) return !!s.name.trim() && !!(s.tel || "").trim() && isValidMobile(s.mobile) && (!this.park.stayBirthdayRequired || !!s.birthday);
       return !!s.name.trim() && isValidMobile(s.mobile);
     },
 
@@ -674,6 +684,10 @@ thPage({
       if (this.teamsCount >= this.teamMax) return;
       this.members.push(createPerson());
       this.memberOpenStates.push(true);
+    },
+
+    pickCamp(i, v) {
+      this.campPick = Object.assign({}, this.campPick, { [i]: v });
     },
 
     removeMember(index) {

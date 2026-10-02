@@ -53,11 +53,13 @@
 
             <!-- 線下面：隊名、主要路線（同入園期間格式）與入園期間 -->
             <div class="summary-date-row">
+              <template v-if="park.hasTeamName !== false">
               <span class="date-item">
                 <span class="date-title">隊名：</span>
                 <span class="date-value font-bold text-slate-900">{{ summary.teams_name }}</span>
               </span>
               <span class="summary-meta-sep" aria-hidden="true">|</span>
+              </template>
               <!-- 出發人數（領隊＋隊員）：正式站確認頁在隊名之後即列出（玉山、雪霸 2026-09-24） -->
               <span class="date-item">
                 <span class="date-title">出發人數：</span>
@@ -574,7 +576,7 @@
             </div>
 
             <!-- 單人獨攀特有警示與勾選（嚴格僅在 1 人時出現，2 人以上完全不顯示） -->
-            <div v-if="isSolo" class="th-callout is-warning p-apply4-callout-align" role="alert">
+            <div v-if="isSolo && park.soloMode !== 'attach'" class="th-callout is-warning p-apply4-callout-align" role="alert">
               <input type="checkbox" v-model="soloChecked" id="cbOneMan" class="accent-amber-700 w-4 h-4 flex-shrink-0 mt-1" />
               <label for="cbOneMan" class="p-apply4-callout-text space-y-2 cursor-pointer">
                 <span class="block">單人獨攀隊伍(者)應確實規劃登山計畫與風險評估，包含宿營地點、時間、糧食、飲水與裝備等，並辦妥登山或旅遊保險，且攜帶衛星電話、GPS或有效之定位器材。</span>
@@ -628,7 +630,7 @@
                   <span><span class="req">*</span>電話</span>
                 </label>
                 <input id="con_stay_tel" type="tel" class="th-input" v-model="stay.tel" placeholder="例：02-12345678" required />
-                <span class="th-field-hint">※請留臺灣聯絡電話</span>
+                <span v-if="park.stayTelHint" class="th-field-hint">{{ park.stayTelHint }}</span>
               </div>
 
               <!-- 手機(或電話) -->
@@ -637,7 +639,7 @@
                   <span><span class="req">*</span>{{ park.stayTel ? '手機' : '手機(或電話)' }}</span>
                 </label>
                 <input id="con_stay_mobile" type="tel" class="th-input" v-model="stay.mobile" placeholder="例：0912345678" required />
-                <span v-if="park.stayTel" class="th-field-hint">※請留臺灣聯絡電話</span>
+                <span v-if="park.stayMobileHint" class="th-field-hint">{{ park.stayMobileHint }}</span>
               </div>
 
               <!-- 傳真 -->
@@ -659,7 +661,7 @@
               <!-- 生日 -->
               <div class="th-field">
                 <label class="th-label" for="con_stay_birthday">
-                  <span><span v-if="park.stayTel" class="req">*</span>生日</span>
+                  <span><span v-if="park.stayBirthdayRequired" class="req">*</span>生日</span>
                 </label>
                 <input id="con_stay_birthday" type="date" class="th-input" v-model="stay.birthday" placeholder="格式：YYYY-MM-DD" />
               </div>
@@ -696,8 +698,31 @@
               <i class="fa-solid fa-chevron-down p-apply4-accordion-icon" :class="{ 'is-open': accordionOpen.attach }" aria-hidden="true"></i>
             </button>
           </div>
-          <div class="th-card-body" v-show="accordionOpen.attach">
-            <p>無需上傳資料</p>
+          <div class="th-card-body grid gap-4" v-show="accordionOpen.attach">
+            <p v-if="park.attachMode !== 'taroko'">無需上傳資料</p>
+            <template v-else>
+              <!-- 太魯閣：1 人時的獨攀證明說明（正式站 openweb4_CheckBox，必勾） -->
+              <label v-if="isSolo" class="p-apply4-check-row">
+                <input type="checkbox" v-model="soloChecked" id="cbSoloDoc" />
+                <span><span class="req">*</span>獨攀證明說明：已下載且詳閱{{ park.soloDoc }}，並同意相關切結內容。</span>
+              </label>
+              <div class="th-field">
+                <span class="th-label">路線行程規劃計劃書</span>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button type="button" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>點選上傳文件</button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <!-- 承載量狀況（太魯閣，正式站標題原文「承載量隊狀況」） -->
+        <section v-if="showCapacity" id="sec-capacity" class="th-card" aria-labelledby="heading-capacity">
+          <div class="th-card-head">
+            <h2 id="heading-capacity" class="th-card-title">承載量隊狀況</h2>
+          </div>
+          <div class="th-card-body">
+            <p>您申請的行程 承載量：{{ park.capacity.total }}，已通過：{{ park.capacity.approved }}，待初審：{{ park.capacity.pending }}，剩餘：{{ park.capacity.remain }}，需求數量：{{ teamsCount }}</p>
           </div>
         </section>
 
@@ -752,9 +777,16 @@
                 <tbody>
                   <tr v-for="(q, idx) in parkQueueRows" :key="idx">
                     <td class="font-medium whitespace-nowrap">{{ q.date }}</td>
-                    <td class="text-slate-800 whitespace-nowrap">{{ q.camp }}</td>
+                    <td class="text-slate-800 whitespace-nowrap">
+                      <th-hybrid-select v-if="park.queueSelect"><select class="th-select" :aria-label="q.date + ' 宿營地點'" :value="q.camp" @change="pickCamp(q.index, $event.target.value)">
+                        <option :value="q.end">{{ q.end }}</option>
+                        <option value="自備搭帳">自備搭帳</option>
+                      </select></th-hybrid-select>
+                      <template v-else>{{ q.camp }}</template>
+                    </td>
                     <td class="whitespace-nowrap">{{ teamsCount }}</td>
-                    <td class="text-slate-700 text-sm">(實際順位以送出後為準，並請至本網站「<a class="th-inline-link" :href="park.queueLink.href" target="_blank" rel="noopener noreferrer">宿營地與床位查詢</a>」進行查詢)</td>
+                    <td v-if="q.note" class="text-slate-700 text-sm">{{ q.note }}</td>
+                    <td v-else class="text-slate-700 text-sm">(實際順位以送出後為準，並請至本網站「<a class="th-inline-link" :href="park.queueLink.href" target="_blank" rel="noopener noreferrer">宿營地與床位查詢</a>」進行查詢)</td>
                   </tr>
                 </tbody>
               </table>
@@ -885,6 +917,7 @@
 <!-- 三管處機關設定（2026-10-02）：雪霸資料在 Apply13Data.js，路線照片與難度取 RouteData.js -->
 <script src="components/RouteData.js"></script>
 <script src="components/Apply13Data.js"></script>
+<script src="components/Apply15Data.js"></script>
 <script src="components/ParkApplyData.js"></script>
 </body>
 </html>

@@ -99,7 +99,9 @@ thPage({
       const subs = park.subsOf(main);
       const sub = subs.find(x => x.value === qSub) || subs.find(x => x.value === park.defaultSub) || subs[0] || {};
       const demo = park.demoDays[sub.value];
+      const npaDef = (park.npaDefaults || {})[sub.value];
       other = {
+        npaDef: npaDef,
         main: main, sub: sub.value || "",
         sumday: String(demo ? demo.length : ((sub.days || [1])[0])),
         planDays: demo ? demo.map(d => d.slice()) : [[]],
@@ -109,6 +111,7 @@ thPage({
 
     return {
       park: park,
+      noteChecked: true,   // 太魯閣「已詳閱以下說明，並同意相關注意事項」（預設帶入勾選）
       // 卡片展開/收合開關狀態
       accordionOpen: {
         route: true,
@@ -184,8 +187,8 @@ thPage({
         { value: "9", text: "傳教" }
       ],
 
-      NpaPlacesInfo: "玉山群峰(嘉義縣-阿里山鄉)",
-      addedPlaces: [
+      NpaPlacesInfo: other && other.npaDef ? other.npaDef.place : "玉山群峰(嘉義縣-阿里山鄉)",
+      addedPlaces: other && other.npaDef ? [{ id: 1, optionName: other.npaDef.place, customText: other.npaDef.place }] : [
         { id: 1, optionName: "玉山群峰(嘉義縣-阿里山鄉)", customText: "玉山群峰(嘉義縣-阿里山鄉)" }
       ],
 
@@ -202,7 +205,7 @@ thPage({
         { value: "A00", text: "台灣地理人文全覽圖北島" }
       ],
 
-      NpasubPaths: "TM04",
+      NpasubPaths: other && other.npaDef ? other.npaDef.subPaths : "TM04",
       npaSubPathsOptions: [
         { value: "", text: "請選擇詞庫" },
         { value: "M15", text: "東郡山彙" },
@@ -230,7 +233,7 @@ thPage({
         { value: "TM22", text: "北大武山登峰" }
       ],
 
-      RouteMap_V: "上河文化台灣百岳導遊圖 - 玉山群峰縱走",
+      RouteMap_V: other && other.npaDef ? "" : "上河文化台灣百岳導遊圖 - 玉山群峰縱走",
       NpaPlan: "",
 
       activeNavIndex: 0,
@@ -247,7 +250,17 @@ thPage({
       return this.park.graphs[this.climbline] || { start: "", starts: [], exits: [], camps: [], edges: [] };
     },
     /* 本頁區塊數（側欄「本頁內容」分母）：無入山證的機關少一塊 */
-    sectionCount() { return this.park.hasNpa ? 3 : 2; },
+    sectionCount() { return this.npaOn ? 3 : 2; },
+    subObj() { return this.subRoutes.find(r => r.value === this.climbline) || null; },
+    /* 入山證區塊：玉山固定有、雪霸沒有、太魯閣依路線（needsNpa） */
+    npaOn() {
+      if (!this.park.hasNpa) return false;
+      if (!this.park.npaByRoute) return true;
+      return !!(this.subObj && this.subObj.needsNpa);
+    },
+    /* 太魯閣：有路線說明或需入山證的路線才有「已詳閱以下說明」必勾 */
+    routeNotes() { return (this.subObj && this.subObj.notes) || []; },
+    hasNoteCheck() { return this.park.key === "taroko" && (this.routeNotes.length > 0 || this.npaOn); },
 
     openRow() {
       const rows = window.OPEN_STATUS_ROWS || [];
@@ -325,6 +338,7 @@ thPage({
       return this.routeMapTabs.find(t => t.key === this.mapTabKey) || this.routeMapTabs[0];
     },
     npaPlacesOptions() {
+      if (!this.isYushan) return (this.park.npaPlaces || []).map(p => ({ value: p, text: p }));
       if (this.climbline === "3") {
         return [
           { value: "玉山前峰(嘉義縣-阿里山鄉)", text: "玉山前峰(嘉義縣-阿里山鄉)" },
@@ -460,7 +474,9 @@ thPage({
     },
 
     secRouteOk() {
-      return !!this.teams_name.trim() && !!this.climblinemain && !!this.climbline && !!this.sumday && !!this.applystart;
+      const team = !this.park.hasTeamName || !!this.teams_name.trim();
+      const note = !this.hasNoteCheck || this.noteChecked;
+      return team && note && !!this.climblinemain && !!this.climbline && !!this.sumday && !!this.applystart;
     },
     secPlannerOk() {
       const plannerDone = this.isSingleDay || this.plannerFinished;
@@ -468,7 +484,7 @@ thPage({
       return plannerDone && equipDone;
     },
     secNpaOk() {
-      if (!this.park.hasNpa) return true;
+      if (!this.npaOn) return true;
       return !!this.NpaReasons && this.addedPlaces.length > 0 && !!this.NpaPlan.trim();
     },
 
@@ -476,7 +492,7 @@ thPage({
       let count = 0;
       if (this.secRouteOk) count++;
       if (this.secPlannerOk) count++;
-      if (this.park.hasNpa && this.secNpaOk) count++;
+      if (this.npaOn && this.secNpaOk) count++;
       return count;
     },
 
@@ -491,12 +507,13 @@ thPage({
       handler(val, old) {
         if (!this.isYushan) {
           // 初始化時保留 data() 帶入的示範行程；之後換次路線才重設天數與規劃
-          if (old === undefined) return;
+          if (old === undefined) { this.updateRouteMap(); this.syncPlanText(); return; }
           const opts = this.sumdayOptions;
           this.sumday = opts.length ? opts[0].value : "1";
           const demo = this.park.demoDays[val];
           this.planDays = demo ? demo.map(d => d.slice()) : [[]];
           this.plannerFinished = !!demo;
+          this.syncPlanText();
           return;
         }
         if (val === "3") {
@@ -646,7 +663,7 @@ thPage({
     },
 
     syncPlanText() {
-      if (this.isSingleDay || !this.park.hasNpa) return;
+      if (this.isSingleDay || !this.npaOn) return;
       const lines = this.planDays.map((d, i) => `D${i + 1}:${d.join("→")}。`);
       this.NpaPlan = lines.join("\n");
     },
@@ -727,6 +744,7 @@ thPage({
 
       const step3Payload = {
         park: this.park.key,
+        npaOn: this.npaOn,
         applystart: this.applystart,
         sumday: this.sumday,
         teams_name: this.teams_name,

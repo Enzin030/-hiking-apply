@@ -1,3 +1,8 @@
+/* 2026-10-02：三管處改為共用玉山 apply-3／4／5（decisions.md），本頁（雪霸）不再使用，
+   一進來就帶原網址參數轉到 apply-3.html?park=shei-pa。原內容保留在下方，去留待使用者決定。 */
+(function () { var q = new URLSearchParams(window.location.search); q.set("park", "shei-pa");
+  window.location.replace("apply-3.html?" + q.toString()); })();
+
 /* ============================================================
    apply_1_3.js — 登山線上申請：行程登記及登山申請（雪霸）
    ------------------------------------------------------------
