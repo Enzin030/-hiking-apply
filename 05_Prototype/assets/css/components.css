@@ -450,18 +450,15 @@
   gap: 16px;
 }
 
+/* 山屋第 1、2 步的置底按鈕：2026-10-02 比照玉山（apply-3 的 .p-apply3-actions）改為置中、不加框
+   （原為左右分開的黏底長條，右側「下一步」會被快捷選單浮動鈕壓到） */
 .fc-footbar {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  padding: 16px 24px;
-  margin-top: 24px;
-  background: var(--bg-1);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-xl);
-  box-shadow: var(--sh-card);
-  position: sticky;
-  bottom: 16px;
+  gap: 12px;
+  margin-top: 48px;
 }
 
 .th-chip.is-todo {
