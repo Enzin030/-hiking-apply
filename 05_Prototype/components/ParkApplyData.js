@@ -141,8 +141,6 @@ window.thParkApply = function (key) {
       campLink: { href: "bed_4.html", label: "查看宿營地" },
       capacityLink: { href: "campsite.html?org=taroko&kind=route", label: "路線承載量查詢" },
       ecoNote: true,
-      /* 離開園區日期下方紅字（02_Spec/05c §3.1；2026-10-02 實走同） */
-      outdateHint: "請注意，異動日期後，請重新輸入「隊伍人數」，並確認「隊員資料」是否正確。",
       npaSite: "https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList",
       mains: routes.map(function (r) { return { value: r.id, text: r.name }; }),
       subsOf: function (mainId) {

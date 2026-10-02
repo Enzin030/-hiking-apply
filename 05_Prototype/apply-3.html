@@ -124,7 +124,6 @@
                 <span>離開園區日期（系統自動計算）</span>
               </label>
               <input type="text" class="th-input th-input-readonly" :value="endDate ? endDate : '請先選擇入園日期與天數'" readonly />
-              <span v-if="park.outdateHint" class="th-field-hint">{{ park.outdateHint }}</span>
             </div>
           </div>
 
@@ -148,7 +147,8 @@
             </div>
           </div>
 
-          <p v-if="subObj && subObj.npaNote" class="th-field-hint">{{ subObj.npaNote }}</p>
+          <!-- 入山證說明：改用橘色 callout 加強辨識（使用者 2026-10-02：灰字不夠明顯） -->
+          <th-callout v-if="subObj && subObj.npaNote" type="warning" class="p-apply3-npa-note">{{ subObj.npaNote }}</th-callout>
           <div class="th-table-wrap" v-if="trailLevel">
             <table class="th-table tbl-routeinfo">
               <caption>本路線的難度等級與行前準備資訊</caption>
