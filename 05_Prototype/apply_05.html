@@ -32,26 +32,44 @@
       <th-fc-stepper :current="5"></th-fc-stepper>
     </template>
 
-    <section class="th-card">
+    <!-- 警政署：比照同意書頁（apply-2）——大標＋整列可點的條目，逐項點閱全部勾選才可下一步
+         （使用者 2026-10-02）。條目文字照正式站 apply_05 原文；預設全勾（必填預帶）。 -->
+    <template v-if="st.kind === 'npa'">
+      <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug th-consent-lead">
+        須先點閱以下說明後，始可進行後續之申請作業
+      </p>
+      <div>
+        <section v-for="it in npaItems" :key="it.id"
+                 :class="['th-consent-item', { 'is-acked': acked[it.id] }]"
+                 role="button" tabindex="0"
+                 :aria-pressed="acked[it.id] ? 'true' : 'false'"
+                 @click="$event.target.closest('a,button') || toggleAck(it.id)"
+                 @keydown.enter="$event.target.closest('a,button') || ($event.preventDefault(), toggleAck(it.id))"
+                 @keydown.space.prevent="toggleAck(it.id)">
+          <div class="th-consent-item-lead" aria-hidden="true">
+            <span class="th-consent-item-box"><i class="fa-solid fa-check"></i></span>
+          </div>
+          <div class="th-consent-item-body">
+            <div class="th-consent-item-text">
+              <a v-if="it.type === 'privacy'" class="th-inline-link" :href="npa.privacyUrl" target="_blank" rel="noopener noreferrer" @click="ack(it.id)">隱私權保護政策<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
+              <button v-else-if="it.type === 'manual'" type="button" class="th-inline-link" @click="openManual(it.id)">作業使用說明</button>
+              <template v-else>{{ it.text }}</template>
+            </div>
+          </div>
+        </section>
+      </div>
+      <p v-if="warn" class="th-field-error mt-3" role="alert">請逐項點閱以上說明</p>
+    </template>
+
+    <!-- 自然保護區域、山屋：規定全文 -->
+    <section v-else class="th-card">
       <div class="th-card-head">
         <i :class="icon" aria-hidden="true"></i>
         <h2 class="th-card-title">{{ blockTitle }}</h2>
       </div>
       <div class="th-card-body grid gap-3">
-        <!-- 警政署 -->
-        <template v-if="st.kind === 'npa'">
-          <h3 class="th-section-title">{{ npa.panelTitle }}</h3>
-          <div class="flex flex-wrap gap-4">
-            <a class="th-inline-link" :href="npa.privacyUrl" target="_blank" rel="noopener noreferrer">隱私權保護政策<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
-            <button type="button" class="th-inline-link" @click="manualOpen = true">作業使用說明</button>
-          </div>
-          <p v-for="(t, i) in npa.body" :key="i">{{ t }}</p>
-        </template>
-        <!-- 自然保護區域、山屋：規定全文 -->
-        <template v-else>
-          <h3 v-if="notice.title" class="th-section-title">{{ notice.title }}</h3>
-          <p v-for="(t, i) in notice.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
-        </template>
+        <h3 v-if="notice.title" class="th-section-title">{{ notice.title }}</h3>
+        <p v-for="(t, i) in notice.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
 
         <label class="flex items-start gap-2 th-label mt-2">
           <input type="checkbox" v-model="agreed" class="mt-1" />{{ agreeText }}</label>
@@ -71,7 +89,9 @@
       <p v-for="(t, i) in npa.manual" :key="i">{{ t }}</p>
     </div>
     <template #foot>
-      <div class="bulletin-modal-foot"><button type="button" class="th-btn th-btn-primary" @click="manualOpen = false">關閉</button></div>
+      <div class="bulletin-modal-foot">
+        <button type="button" class="th-btn th-btn-ghost" @click="manualOpen = false"><i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉</button>
+      </div>
     </template>
   </th-modal>
 

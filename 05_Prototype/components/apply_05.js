@@ -23,9 +23,17 @@ thPage({
     } else if (st.kind === "camp") {
       notice = fc[st.route] || fc.jiaming || notice;
     }
+    /* 警政署條目：隱私權保護政策（連結）、作業使用說明（彈窗）、正式站 body 三段（含「我同意並了解以上⋯」） */
+    const npaItems = [{ id: "privacy", type: "privacy" }, { id: "manual", type: "manual" }]
+      .concat(((a6.npa && a6.npa.body) || []).map((t, i) => ({ id: "body" + i, type: "text", text: t })));
+    const allOn = st.agreed !== false;   // 預設全勾（必填預帶）；從後面步驟按上一步回來時沿用
+    const acked = {};
+    npaItems.forEach(it => { acked[it.id] = allOn; });
     return {
       st: st,
       npa: a6.npa,
+      npaItems: npaItems,
+      acked: acked,
       notice: notice,
       areaAgree: a6.areaAgree,
       agreed: st.agreed !== undefined ? !!st.agreed : true,   // 預設帶入勾選（2026-10-02）
@@ -48,7 +56,12 @@ thPage({
     agreeText() { return this.st.kind === "npa" ? this.npa.agree : this.areaAgree; },
   },
   methods: {
+    toggleAck(id) { this.acked[id] = !this.acked[id]; this.warn = false; },
+    ack(id) { this.acked[id] = true; this.warn = false; },
+    openManual(id) { this.ack(id); this.manualOpen = true; },
     next() {
+      // 警政署：條目全部點閱才算同意
+      if (this.st.kind === "npa") this.agreed = this.npaItems.every(it => this.acked[it.id]);
       if (!this.agreed) { this.warn = true; return; }
       window.thFcState.save({ agreed: true });
       window.location.href = "apply_06.html";
