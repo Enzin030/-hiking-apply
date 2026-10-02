@@ -188,6 +188,8 @@ thPage({
 
     return {
       park: park,
+      // 正式站提示句旁的「目前系統時間為：hh:mm」（三管處與警政署皆有，2026-10-02 補）
+      nowTime: new Date().toTimeString().slice(0, 5),
       noteChecked: true,   // 太魯閣「已詳閱以下說明，並同意相關注意事項」（預設帶入勾選）
       // 卡片展開/收合開關狀態
       accordionOpen: {
