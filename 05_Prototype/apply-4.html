@@ -81,35 +81,6 @@
                 <span class="date-days-text">（共 {{ summary.sumday }} 天）</span>
               </span>
             </div>
-            <!-- 路線承載量（太魯閣，正式站「承載量隊狀況」）：是整條路線的數字、不屬於宿營地，
-                 放在行程摘要（使用者 2026-10-02）；沿用摘要列樣式 -->
-            <hr v-if="showCapacity" class="border-t border-slate-200 my-2" />
-            <div v-if="showCapacity" class="summary-date-row">
-              <span class="date-item">
-                <span class="date-title">路線承載量：</span>
-                <span class="date-value">{{ capacityData.total }}</span>
-              </span>
-              <span class="summary-meta-sep" aria-hidden="true">|</span>
-              <span class="date-item">
-                <span class="date-title">已通過：</span>
-                <span class="date-value">{{ capacityData.approved }}</span>
-              </span>
-              <span class="summary-meta-sep" aria-hidden="true">|</span>
-              <span class="date-item">
-                <span class="date-title">待初審：</span>
-                <span class="date-value">{{ capacityData.pending }}</span>
-              </span>
-              <span class="summary-meta-sep" aria-hidden="true">|</span>
-              <span class="date-item">
-                <span class="date-title">剩餘：</span>
-                <span class="date-value">{{ capacityData.remain }}</span>
-              </span>
-              <span class="summary-meta-sep" aria-hidden="true">|</span>
-              <span class="date-item">
-                <span class="date-title">本件需求：</span>
-                <span class="date-value">{{ teamsCount }}</span>
-              </span>
-            </div>
           </div>
         </div>
 
@@ -753,6 +724,17 @@
                 </table>
               </div>
             </template>
+          </div>
+        </section>
+
+        <!-- 承載量狀況（太魯閣，正式站標題原文「承載量隊狀況」）：整條路線的數字，獨立一張卡片
+             （使用者 2026-10-02 試過併入排隊區、改列行程摘要後，裁示改回獨立卡片） -->
+        <section v-if="showCapacity" id="sec-capacity" class="th-card" aria-labelledby="heading-capacity">
+          <div class="th-card-head">
+            <h2 id="heading-capacity" class="th-card-title">承載量隊狀況</h2>
+          </div>
+          <div class="th-card-body">
+            <p>您申請的行程 承載量：{{ capacityData.total }}，已通過：{{ capacityData.approved }}，待初審：{{ capacityData.pending }}，剩餘：{{ capacityData.remain }}，需求數量：{{ teamsCount }}</p>
           </div>
         </section>
 
