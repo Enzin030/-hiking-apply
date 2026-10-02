@@ -184,9 +184,12 @@ window.thParkApply = function (key) {
       queuePref: false,
       queueSelect: true,            // 宿營地點下拉：當天終點＋自備搭帳
       queueExtra: ["自備搭帳"],
+      /* 依路線覆寫：奇萊北屏風山線的宿營地下拉只有當晚山屋、沒有自備搭帳（2026-10-02 正式站實走） */
+      queueExtraByRoute: { "675": [] },
       queueLink: { href: "bed_4.html", label: "太魯閣山屋" },
       capacity: window.APPLY15_CAPACITY || null,
-      capacityRoutes: ["667"],      // 承載量狀況只有南湖大山線實走看過（2026-09-29）
+      capacityByRoute: { "667": window.APPLY15_CAPACITY || null, "675": window.APPLY15_CAPACITY_675 || null },
+      capacityRoutes: ["667", "675"], // 承載量狀況只有實走看過的路線（南湖 2026-09-29、奇萊北屏風山 2026-10-02）
       campNote: function (camp, count) {
         if (camp === "自備搭帳") return "請自備營帳";
         var r = remain[camp];
@@ -196,7 +199,7 @@ window.thParkApply = function (key) {
           if (count < 3) { four = 0; two = 1; } else if (rest === 3) { four += 1; } else if (rest) { two = 1; }
           return "本案需求 4人營位數 =" + four + ", 2人營位數 =" + two + ", 剩餘數量 4人營位數 =" + r.remain4 + ", 2人營位數 =" + r.remain2 + ", 實際順位以送出後為準";
         }
-        return "剩餘數量：" + r.remain + "，已預約待審：" + r.pending + "，本件需求數量：" + count + "，實際順位以送出後為準";
+        return (r.prefix || "") + "剩餘數量：" + r.remain + "，已預約待審：" + r.pending + "，本件需求數量：" + count + "，實際順位以送出後為準";
       },
       soloPdf: "",
       confirmPlan: false,

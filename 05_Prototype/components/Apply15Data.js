@@ -111,6 +111,8 @@ window.APPLY15_PLANNER = {
 
 /* 承載量隊狀況（正式站 2026-09-29 入園日 10-06 的觀察值，示意） */
 window.APPLY15_CAPACITY = { total: 60, approved: 14, pending: 1, remain: 45 };
+/* 奇萊北屏風山線：2026-10-02 正式站同行實走（入園 12-01）觀察值 */
+window.APPLY15_CAPACITY_675 = { total: 40, approved: 0, pending: 1, remain: 39 };
 
 /* 宿營地預約查詢排隊狀況：營位型與山屋型的說明文字不同。
    山屋兩筆為正式站 2026-09-29 觀察值（雲稜山屋 10-06、審馬陣山屋 10-07）；雲稜營地正式站未選，沿用測試站 */
@@ -118,6 +120,8 @@ window.APPLY15_CAMP_REMAIN = {
   "雲稜營地":   { kind: "tent", remain4: 10, remain2: 4 },
   "雲稜山屋":   { kind: "hut", remain: 58, pending: 0 },
   "審馬陣山屋": { kind: "hut", remain: 4, pending: 0 },
+  // 2026-10-02 正式站（12-01）；說明欄開頭多一段「(實際順位以送出後為準)」，原文照抄
+  "屏風避難山屋": { kind: "hut", remain: 25, pending: 3, prefix: "(實際順位以送出後為準)" },
 };
 
 /* 示意人員資料：假名與「過不了檢查碼」的證號，避免看起來像真實個資 */

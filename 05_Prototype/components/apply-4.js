@@ -389,8 +389,17 @@ thPage({
       });
     },
     /* 太魯閣承載量狀況：只有實走看過的路線（南湖大山線） */
+    /* 承載量數字依路線（太魯閣 667／675 各自一組觀察值） */
+    capacityData() {
+      return ((this.park.capacityByRoute || {})[this.summary.climbline]) || this.park.capacity || null;
+    },
+    /* 宿營地點下拉的附加選項：可依路線覆寫（太魯閣奇萊北屏風山線沒有自備搭帳） */
+    queueExtra() {
+      const by = this.park.queueExtraByRoute || {};
+      return by[this.summary.climbline] || this.park.queueExtra || [];
+    },
     showCapacity() {
-      return !!(this.park.capacity && (this.park.capacityRoutes || []).includes(this.summary.climbline));
+      return !!(this.capacityData && (this.park.capacityRoutes || []).includes(this.summary.climbline));
     },
     /* 側欄項目：其他機關多「附件上傳資料」 */
     sideItems() {

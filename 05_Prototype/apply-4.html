@@ -722,7 +722,7 @@
             <h2 id="heading-capacity" class="th-card-title">承載量隊狀況</h2>
           </div>
           <div class="th-card-body">
-            <p>您申請的行程 承載量：{{ park.capacity.total }}，已通過：{{ park.capacity.approved }}，待初審：{{ park.capacity.pending }}，剩餘：{{ park.capacity.remain }}，需求數量：{{ teamsCount }}</p>
+            <p>您申請的行程 承載量：{{ capacityData.total }}，已通過：{{ capacityData.approved }}，待初審：{{ capacityData.pending }}，剩餘：{{ capacityData.remain }}，需求數量：{{ teamsCount }}</p>
           </div>
         </section>
 
@@ -780,7 +780,7 @@
                     <td class="text-slate-800 whitespace-nowrap">
                       <th-hybrid-select v-if="park.queueSelect"><select class="th-select" :aria-label="q.date + ' 宿營地點'" :value="q.camp" @change="pickCamp(q.index, $event.target.value)">
                         <option :value="q.end">{{ q.end }}</option>
-                        <option v-for="o in park.queueExtra" :key="o" :value="o">{{ o }}</option>
+                        <option v-for="o in queueExtra" :key="o" :value="o">{{ o }}</option>
                       </select></th-hybrid-select>
                       <template v-else>{{ q.camp }}</template>
                     </td>
