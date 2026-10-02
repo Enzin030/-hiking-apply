@@ -780,7 +780,7 @@
                     <td class="text-slate-800 whitespace-nowrap">
                       <th-hybrid-select v-if="park.queueSelect"><select class="th-select" :aria-label="q.date + ' 宿營地點'" :value="q.camp" @change="pickCamp(q.index, $event.target.value)">
                         <option :value="q.end">{{ q.end }}</option>
-                        <option value="自備搭帳">自備搭帳</option>
+                        <option v-for="o in park.queueExtra" :key="o" :value="o">{{ o }}</option>
                       </select></th-hybrid-select>
                       <template v-else>{{ q.camp }}</template>
                     </td>

@@ -98,8 +98,12 @@ window.thParkApply = function (key) {
     /* 步驟二（正式站 apply_1_3.aspx 步驟二，02_Spec/05b §4） */
     memberConsent: true,
     stayTel: true,
-    attachSection: true,
+    /* 附件上傳區：正式站本路線顯示「無需上傳資料」；使用者 2026-10-02 裁示無須上傳時整區不出現 */
+    attachSection: false,
     queuePref: false,
+    /* 宿營地點為下拉（正式站 con_lisText_rooms_N，2026-10-02 實走：選項只有當晚宿營地） */
+    queueSelect: true,
+    queueExtra: [],
     queueLink: { href: "bed_1.html", label: "雪霸宿營地" },
     soloPdf: "https://hike.taiwan.gov.tw/images/雪霸獨攀登山安全宣導.pdf",
     /* 步驟三：正式站雪霸確認頁不列逐日行程與講習等步驟一欄位（02_Spec/05b §五） */
@@ -168,6 +172,7 @@ window.thParkApply = function (key) {
       soloDoc: "太魯閣國家公園獨攀申請承諾書",
       queuePref: false,
       queueSelect: true,            // 宿營地點下拉：當天終點＋自備搭帳
+      queueExtra: ["自備搭帳"],
       queueLink: { href: "bed_4.html", label: "太魯閣山屋" },
       capacity: window.APPLY15_CAPACITY || null,
       capacityRoutes: ["667"],      // 承載量狀況只有南湖大山線實走看過（2026-09-29）
