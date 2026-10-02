@@ -7433,14 +7433,15 @@ body:where(.p-indexb-body):before {
   margin-left: auto;
 }
 
-/* 目前系統時間標籤：提示框右上方、字放大一級（2026-10-02） */
+/* 目前系統時間標籤：路線與基本資料卡片標題列靠右，字放大一級（2026-10-02） */
 .p-apply3-systime {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
-.p-apply3-systime .th-flag {
   font-size: var(--fs-sm);
+}
+/* 手機版標題列放不下：只留時鐘圖示與時間，避免把卡片標題擠成兩行 */
+@media (max-width: 640px) {
+  .p-apply3-systime-label {
+    display: none;
+  }
 }
 
 /* 入山證說明 callout 與下方難度表的間距，比照關閉公告（.p-apply3-closure 的 16px） */
