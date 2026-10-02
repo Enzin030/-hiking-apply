@@ -388,8 +388,24 @@ thPage({
       ];
     },
 
+    /* 地圖按鈕與 modal 標題：玉山照原本（開放狀態表的主路線名＋地圖）；其他機關取主路線名 */
+    mapTitle() {
+      if (this.isYushan) return (this.openRow ? this.openRow.mainRoute : "玉山線") + "地圖";
+      const m = this.mainRoutes.find(r => r.value === this.climblinemain);
+      return (m ? m.text : "") + "地圖";
+    },
+
     routeMapTabs() {
-      if (!this.isYushan) return [];
+      if (!this.isYushan) {
+        /* 其他機關：次路線地圖（正式站為頁內展開）與主路線地圖（正式站為直連圖檔）同放一個 modal，以頁籤切換 */
+        const maps = this.park.maps || {};
+        const tabs = [];
+        const sub = this.subObj, main = this.mainRoutes.find(r => r.value === this.climblinemain);
+        const subSrc = (maps.sub || {})[this.climbline], mainSrc = (maps.main || {})[this.climblinemain];
+        if (sub && subSrc) tabs.push({ key: "sub", label: sub.text.trim() + "地圖", images: [{ src: subSrc, alt: sub.text.trim(), caption: sub.text.trim() + "地圖" }] });
+        if (main && mainSrc) tabs.push({ key: "main", label: main.text + "地圖", images: [{ src: mainSrc, alt: main.text, caption: main.text + "地圖" }] });
+        return tabs;
+      }
       return [
         {
           key: "yushan",

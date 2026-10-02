@@ -8,6 +8,8 @@
    **版型照玉山，欄位照各機關正式站**（02_Spec/05a～05c）：
      玉山  有 GPS、有警政署入山證、講習必填（預設網路線上學習）、欄位有英文副標
      雪霸  無 GPS、無入山證、講習非必填（預設空白）、無英文副標、有無人機空拍公告
+     ※ 路線區塊欄位的英文副標（showEn）只有玉山正式站有；雪霸正式站沒有（2026-10-02 實走確認）；
+       太魯閣是否有尚未確認，雛形暫不顯示
            路線規劃第一步同為「請選擇起點」；單日往返也由使用者逐點規劃（玉山單日為固定行程）
      太魯閣 無隊名、無講習、無 GPS；有路線承載量查詢與「已詳閱以下說明」必勾（有說明的路線）；
            入山證依路線（南湖要、奇萊北屏風山線不要）；步驟二有承載量狀況、宿營地下拉與剩餘數量、
@@ -80,7 +82,16 @@ window.thParkApply = function (key) {
     subsOf: subsOf,
     graphs: window.APPLY13_PLANNER || {},
     demoDays: { "99": window.APPLY13_DEMO_DAYS || [],
-                "97": [["雪山登山口", "七卡山莊", "雪山東峰", "七卡山莊", "雪山登山口"]] },
+                "97": [["雪山登山口", "七卡山莊", "雪山東峰", "七卡山莊", "雪山登山口"]],
+                /* 2026-10-02 正式站與使用者同行實走（prod-SHP098） */
+                "98": [["雪山登山口", "雪山東峰", "七卡山莊"], ["七卡山莊", "雪山東峰", "雪山登山口"]] },
+    /* 路線地圖（2026-10-02 正式站：主路線「雪山主峰線地圖」為直連圖檔、次路線地圖為頁內展開），
+       圖檔下載自正式站；比照玉山「玉山線地圖」按鈕＋modal，兩張以頁籤切換 */
+    maps: { main: { "4": "images/sp_雪山主峰線.jpg" }, sub: { "98": "images/sp_七卡雪山東峰.jpg" } },
+    /* 步驟一提示（02_Spec/05b 步驟一；2026-10-02 正式站實走確認） */
+    ecoNote: true,
+    daysHint: "如無適合之天數，請選擇其他路線進行申請",
+    noteHint: "若外籍隊員的手機號碼有開啟語音及簡訊國際漫遊功能並在台灣可收到訊號，可於備註欄說明。若無法煩請提供台灣手機號碼，以利第一時間可以掌握登山訊息。",
     defaultMain: "4",
     defaultSub: "99",
     teamsName: "天眼1隊",
@@ -122,6 +133,7 @@ window.thParkApply = function (key) {
       notices: [],
       campLink: { href: "bed_4.html", label: "查看宿營地" },
       capacityLink: { href: "campsite.html?org=taroko&kind=route", label: "路線承載量查詢" },
+      ecoNote: true,
       npaSite: "https://nv2.npa.gov.tw/NM107-604Client/nV01A01Q_01_Action.do?mode=query&method=doList",
       mains: routes.map(function (r) { return { value: r.id, text: r.name }; }),
       subsOf: function (mainId) {
