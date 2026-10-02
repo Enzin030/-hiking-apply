@@ -23,9 +23,10 @@ thPage({
       nowTime: new Date().toTimeString().slice(0, 5),
       /* 出發日期：今日＋3 起連續 60 個（正式站 2026-09-29 為 10-02～11-30，無排除日） */
       dates: Array.from({ length: 60 }, (_, i) => window.thAddDaysToDateValue(today, 3 + i)),
-      days: same ? Number(st.days) || 0 : 0,
-      start: same ? st.start || "" : "",
-      headcount: same ? Number(st.headcount) || 0 : 0,
+      /* 必填欄位預設帶入示意資料（2026-10-02）：2 天、第 3 個可選日、2 人 */
+      days: same ? Number(st.days) || 2 : 2,
+      start: same && st.start ? st.start : window.thAddDaysToDateValue(today, 3 + 2),
+      headcount: same ? Number(st.headcount) || 2 : 2,
     };
   },
   computed: {

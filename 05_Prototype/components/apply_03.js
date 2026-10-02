@@ -15,6 +15,11 @@
    ============================================================ */
 
 /* 示意申請人：假名與不合檢查碼的證號（同 Apply15Data.js 的做法） */
+const A03_DEMO_MEMBERS = [
+  { name: "林大同", mobile: "0933000222", nation: "中華民國", nationid: "", sid: "C100000000", sex: "男", birthday: "1990-03-03", email: "demo.member1@example.com" },
+  { name: "張雅婷", mobile: "0955000444", nation: "中華民國", nationid: "", sid: "D200000000", sex: "女", birthday: "1993-07-12", email: "demo.member2@example.com" },
+];
+
 const A03_DEMO_APPLICANT = {
   name: "王小明", tel: "02-1234-5678", country: "台北市", city: "大安區", addr: "示意路 100 號",
   mobile: "0912345678", fax: "", email: "demo.applicant@example.com",
@@ -33,7 +38,8 @@ thPage({
     const st = Object.assign({}, A03_FALLBACK, window.thFcState.load());
     const headcount = Number(st.headcount) || 2;
     const saved = Array.isArray(st.members) ? st.members : [];
-    const members = Array.from({ length: Math.max(0, headcount - 1) }, (_, i) => saved[i] || { nation: "中華民國" });
+    /* 必填欄位預設帶入示意隊員（2026-10-02）；有暫存時還原 */
+    const members = Array.from({ length: Math.max(0, headcount - 1) }, (_, i) => saved[i] || Object.assign({}, A03_DEMO_MEMBERS[i % A03_DEMO_MEMBERS.length]));
     return {
       st: st,
       headcount: headcount,

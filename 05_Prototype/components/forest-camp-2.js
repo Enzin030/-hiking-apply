@@ -157,14 +157,18 @@ thPage({
     /* 從第 3 步按上一步回來時，還原已填的隊名／付款／訂位（同一山屋、同出發日、同晚數才還原） */
     const st = window.thFcState.load();
     const same = st.route === FC2_ROUTE_ID && st.start === FC2_START && Number(st.nights) === FC2_NIGHTS && st.alloc;
+    /* 必填欄位預設帶入示意資料（2026-10-02）：隊名、匯款、每晚訂第一種設施（床位＝人數）、天池停留地點 */
+    const demoAlloc = fc2MakeInitAlloc();
+    const first = FC2_CABIN.facilities[0];
+    if (first) Object.keys(demoAlloc).forEach(k => { demoAlloc[k][first.id] = Math.min(FC2_HEADCOUNT, first.max || FC2_HEADCOUNT); });
     return {
-      teamName: same ? st.team || "" : "",
-      payment: same ? st.payment || "" : "",
-      alloc: same ? st.alloc : fc2MakeInitAlloc(),
+      teamName: same ? st.team || "" : "天眼1隊",
+      payment: same ? st.payment || "" : "remit",
+      alloc: same ? st.alloc : demoAlloc,
       /* 天池限定：停留地點（必填多選）、進入／離山地點（選填） */
-      stayAreas: same ? st.stayAreas || [] : [],
-      inArea: same ? st.inArea || "" : "",
-      outArea: same ? st.outArea || "" : "",
+      stayAreas: same ? st.stayAreas || [] : (FC2_CABIN.stayAreas ? [FC2_CABIN.stayAreas[1]] : []),
+      inArea: same ? st.inArea || "" : (FC2_CABIN.gateAreas ? FC2_CABIN.gateAreas[0] : ""),
+      outArea: same ? st.outArea || "" : (FC2_CABIN.gateAreas ? FC2_CABIN.gateAreas[1] : ""),
       startDate: FC2_START,
       nights: FC2_NIGHTS,
       headcount: FC2_HEADCOUNT,

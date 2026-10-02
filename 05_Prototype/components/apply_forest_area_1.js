@@ -29,9 +29,10 @@ thPage({
       crumb: area ? area.name : (route ? route.name : "自然保護區域"),
       nowTime: new Date().toTimeString().slice(0, 5),
       dates: area ? Array.from({ length: area.dateCount }, (_, i) => window.thAddDaysToDateValue(today, area.minDaysAhead + i)) : [],
-      days: same ? Number(st.days) || 0 : 0,
-      start: same ? st.start || "" : "",
-      headcount: same ? Number(st.headcount) || 0 : 0,
+      /* 必填欄位預設帶入示意資料（2026-10-02）：區域第一個天數、第 3 個可選日、2 人 */
+      days: same ? Number(st.days) || (area ? area.days[0] : 0) : (area ? area.days[0] : 0),
+      start: same && st.start ? st.start : (area ? window.thAddDaysToDateValue(today, area.minDaysAhead + 2) : ""),
+      headcount: same ? Number(st.headcount) || 2 : 2,
     };
   },
   computed: {

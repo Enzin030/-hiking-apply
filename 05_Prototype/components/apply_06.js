@@ -50,7 +50,7 @@ thPage({
       bookingColumns: FC6_BOOKING_COLUMNS,
       teamColumns: FC6_TEAM_COLUMNS,
       fileColumns: FC6_FILE_COLUMNS,
-      vcode: "",
+      vcode: "7K4M",   // 預設帶入示意驗證碼（2026-10-02）
       done: false,
       draftOpen: false,
     };

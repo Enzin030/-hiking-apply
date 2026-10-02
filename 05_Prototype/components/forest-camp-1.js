@@ -119,7 +119,7 @@ thPage({
       startDate: FC1_MIN_DATE,
       nights: FC1_CABIN.minDays,
       headcount: Math.min(4, FC1_CABIN.peopleMax || 12),
-      queried: false,
+      queried: true,   // 預設已查詢、顯示可用量與下一步（2026-10-02 必填預帶）
       todayStr: FC1_TODAY,
       minDate: FC1_MIN_DATE,
       maxDate: FC1_MAX_DATE,

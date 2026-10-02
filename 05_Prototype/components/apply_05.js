@@ -28,7 +28,7 @@ thPage({
       npa: a6.npa,
       notice: notice,
       areaAgree: a6.areaAgree,
-      agreed: !!st.agreed,
+      agreed: st.agreed !== undefined ? !!st.agreed : true,   // 預設帶入勾選（2026-10-02）
       warn: false,
       manualOpen: false,
     };

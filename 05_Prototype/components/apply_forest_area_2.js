@@ -20,11 +20,36 @@
    第 3～6 步為家族共用頁 apply_03～06（kind＝area）。
    ============================================================ */
 
+/* 必填欄位預設帶入示意資料（2026-10-02）：沒有暫存時，勾第一段範圍、取對應出入口與時間、
+   選第一個不須附件的目的（都須附件時選第一個並帶示意檔名）、宣達全勾、待填欄位帶示意行程 */
+function fa2Demo(area) {
+  const free = area.purposes.find(p => !p.attach);
+  const pick = free || area.purposes[0];
+  const seg = area.segments[0];
+  const entr = seg ? (area.entrances.find(o => o.value === seg.value) || {}).value || "" : "";
+  const exit = seg ? (area.exits.find(o => o.value === seg.value) || {}).value || "" : "";
+  const confirms = {}, fills = {};
+  area.blocks.forEach(b => {
+    if (b.input === "radio") confirms[b.name] = true;
+    else if (b.input === "textarea" || !b.confirm) fills[b.name] = "第一天 08:00 登山口→12:00 主要步道→16:00 登山口";
+  });
+  const files = {};
+  if (pick && pick.attach) files[pick.value] = Array.from({ length: pick.attach }, (_, i) => "行程計畫書" + (i ? "-" + (i + 1) : "") + ".pdf");
+  return {
+    picked: seg ? [seg.value] : [], notes: area.gateText ? "主要步道" : "",
+    entr: entr, exit: exit, entrTime: area.times[0] || "", exitTime: area.times[area.times.length - 1] || "",
+    entrText: area.gateText ? "登山口" : "", exitText: area.gateText ? "登山口" : "",
+    purpose: area.purposeInput === "checkbox" ? "" : (pick ? pick.value : ""),
+    purposes: area.purposeInput === "checkbox" && pick ? [pick.value] : [],
+    attachFiles: files, confirms: confirms, fills: fills,
+  };
+}
+
 thPage({
   data() {
     const st = window.thFcState.load();
     const area = (window.TH_FOREST_AREAS || {})[st.areaCid || "630"] || window.TH_FOREST_AREAS["630"];
-    const saved = st.areaPlan || {};
+    const saved = st.areaPlan || fa2Demo(area);
     const confirms = {};
     area.blocks.forEach(b => { if (b.input === "radio") confirms[b.name] = !!(saved.confirms && saved.confirms[b.name]); });
     return {
@@ -40,7 +65,7 @@ thPage({
       purpose: saved.purpose || "",
       purposes: saved.purposes || [],
       attachFiles: saved.attachFiles || {},   // { 目的: [第 1 件檔名, 第 2 件檔名…] }
-      headcount: Number(st.headcount) || 0,
+      headcount: Number(st.headcount) || 2,
       confirms: confirms,
       fills: Object.assign({}, saved.fills),   // 空白待填區塊（行程計畫）的內容
     };
