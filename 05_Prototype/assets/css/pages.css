@@ -1226,37 +1226,7 @@
    已於階段 4 隨該檔一併刪除。
    ############################################################ */
 
-/* 複合申請詢問框（2026-10-02 SweetAlert，2026-10-05 依指示放大字體、是選項標綠與按鈕同色、審查單位納入括號） */
-.p-apply1-composite-body {
-  text-align: left;
-}
-.p-apply1-composite {
-  display: grid;
-  gap: 14px;
-  text-align: left;   /* SweetAlert 內容區預設置中 */
-}
-.p-apply1-composite-list {
-  font-size: var(--fs-md, 16px);
-  line-height: 1.8;
-  color: var(--fg-1);
-  margin: 4px 0 0;
-  padding-left: 20px;
-}
-.p-apply1-composite-list li {
-  margin-bottom: 6px;
-}
-.p-apply1-composite-yes {
-  color: var(--national-700);   /* 與確認按鈕 .th-btn-primary 同色 */
-  font-weight: 700;
-}
-.p-apply1-composite-no {
-  color: var(--fg-1);
-  font-weight: 700;
-}
-.p-apply1-composite-org {
-  color: var(--fg-2);
-  font-weight: normal;
-}
+
 
 
 .p-apply1-layout {
@@ -1668,37 +1638,10 @@
 .p-apply1-route-foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;   /* 2026-10-05 底部只剩動作，靠右 */
   margin-top: auto;
   padding-top: 8px;
   gap: 8px;
-}
-.p-apply1-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: var(--r-pill);
-  font-size: var(--fs-xxs);
-  font-weight: 700;
-}
-.p-apply1-status-pill.s-open {
-  background: var(--success-bg);
-  color: var(--success-fg);
-  border: 1px solid var(--success-border);
-}
-.p-apply1-status-pill.s-lottery {
-  background: var(--warning-bg);
-  color: var(--warning-fg);
-  border: 1px solid var(--warning-border);
-}
-.p-apply1-status-pill.s-closed {
-  background: var(--danger-bg);
-  color: var(--danger-fg-hover);
-  border: 1px solid var(--danger-border);
-}
-.p-apply1-status-pill i {
-  font-size: 8px;
 }
 .p-apply1-route-go {
   font-size: var(--fs-xs);

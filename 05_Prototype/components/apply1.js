@@ -57,7 +57,7 @@
 
 /* 機關圖示：分組標頭與路線卡縮圖佔位共用 */
 const agencyIcon = agency => {
-  if (agency === "police") return "ph-bold ph-shield-check";
+  if (agency === "police") return "fa-solid fa-dove";
   if (agency === "forestry-area") return "ph-bold ph-tree";
   if (agency === "forestry-camp") return "ph-bold ph-house-line";
   return "ph-bold ph-mountains";
@@ -156,14 +156,6 @@ var pApply1RouteCard = {
   props: { r: { type: Object, required: true } },
   emits: ["suspended", "composite"],
   computed: {
-    statusInfo() {
-      var map = {
-        open:    { cls: "s-open",    label: "目前可申請", icon: "fa-solid fa-circle" },
-        lottery: { cls: "s-lottery", label: "抽籤期間",   icon: "fa-solid fa-shuffle" },
-        closed:  { cls: "s-closed",  label: "暫停申請",   icon: "fa-solid fa-circle-xmark" },
-      };
-      return map[this.r.status] || map.open;
-    },
     isSuspended() { return this.r.status === "closed" || this.r.unit === "suspended"; },
     goLabel() { return this.isSuspended ? "查看原因" : "進入申請"; },
     goIcon() { return this.isSuspended ? "fa-solid fa-info-circle" : "fa-solid fa-arrow-right"; },
@@ -224,9 +216,9 @@ var pApply1RouteCard = {
         <div class="p-apply1-route-title-row">
           <h3 class="p-apply1-route-title">{{ title }}</h3>
           <div class="p-apply1-route-badges">
-            <span v-if="r.hot" class="badge-hot"><i class="fa-solid fa-fire" aria-hidden="true"></i>熱門</span>
+            <span v-if="r.hot && !isSuspended" class="badge-hot"><i class="fa-solid fa-fire" aria-hidden="true"></i>熱門</span>
             <span v-if="r.status === 'lottery'" class="badge-lottery"><i class="fa-solid fa-shuffle" aria-hidden="true"></i>抽籤</span>
-            <span v-if="isSuspended" class="badge-closed"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>暫停</span>
+            <span v-if="isSuspended" class="badge-closed"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>暫停申請</span>
           </div>
         </div>
         <div v-if="routePath" class="p-apply1-route-sub">{{ routePath }}</div>
@@ -239,10 +231,9 @@ var pApply1RouteCard = {
           <a v-if="r.mapUrl" class="th-inline-link" :href="r.mapUrl" target="_blank" rel="noopener noreferrer"
              title="路線地圖（另開新視窗）" @click.stop><i class="ph-bold ph-image" aria-hidden="true"></i>路線地圖</a>
         </div>
+        <!-- 2026-10-05 狀態只標例外、集中在標題列（熱門／抽籤／暫停申請）；底部只放動作（使用者裁示）。
+             原底部狀態標籤（目前可申請／抽籤期間／暫停申請）與標題列「暫停」重複，已移除 -->
         <div class="p-apply1-route-foot">
-          <span :class="['p-apply1-status-pill', statusInfo.cls]">
-            <i :class="statusInfo.icon" aria-hidden="true"></i>{{ statusInfo.label }}
-          </span>
           <span :class="['p-apply1-route-go', { 'go-muted': isSuspended }]">
             {{ goLabel }}<i :class="goIcon" aria-hidden="true"></i>
           </span>
@@ -383,44 +374,51 @@ thPage({
       var rel = this.compositeRel;
       if (!rel) return;
       var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
-      var orgsHtml = function () {
-        return self.compositeOrgs.map(function (o) { return "<p>" + esc(o.name) + "的審查單位:" + esc(o.org) + "</p>"; }).join("");
+      var currentOrg = function () {
+        return (self.compositeOpt && self.compositeOpt.orgName) || "太管處";
       };
       var html =
-        '<div class="p-apply1-composite">' +
-          '<div class="th-field"><label class="th-label" for="f-composite">路線選擇</label>' +
+        '<div>' +
+          '<div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">' +
+            '<label for="f-composite">路線選擇</label>' +
             '<select id="f-composite" class="th-select">' +
               rel.options.map(function (o, i) { return '<option value="' + i + '">' + esc(o.name) + "</option>"; }).join("") +
-            "</select></div>" +
-          '<ul class="th-field-hint list-disc pl-5"><li>是：系統將協助進行複合申請</li><li>否：直接進行該項目申請流程</li></ul>' +
-          '<div id="f-composite-orgs">' + orgsHtml() + "</div>" +
+            "</select>" +
+          "</div>" +
+          '<div style="font-size: var(--fs-md, 16px); line-height: 1.8; text-align: center;">' +
+            '<div style="color: var(--national-700); font-weight: 700; margin-bottom: 6px;">是（審查單位：<span id="f-composite-org-yes">' + esc(currentOrg()) + '</span>）：系統將協助進行複合申請</div>' +
+            '<div>否（審查單位：警政署）：直接進行該項目申請流程</div>' +
+          "</div>" +
         "</div>";
       var fallback = function () {
-        if (window.confirm("是否需要同時申請以下入山/山屋/路線?\n是：系統將協助進行複合申請\n否：直接進行該項目申請流程")) self.compositeYes();
+        if (window.confirm("是否需要同時申請以下入山/山屋/路線?\n是（審查單位：" + currentOrg() + "）：系統將協助進行複合申請\n否（審查單位：警政署）：直接進行該項目申請流程")) self.compositeYes();
         else self.compositeNo();
       };
       if (!window.thSwal || !window.Swal) { fallback(); return; }
       window.thSwal({
+        icon: "warning",
         title: "是否需要同時申請以下入山/山屋/路線?",
         html: html,
-        width: "40rem",
+        width: "38rem",
         showCancelButton: true,
         showCloseButton: true,
         reverseButtons: true,
         confirmButtonText: "是",
         cancelButtonText: "否",
-        customClass: { htmlContainer: "p-apply1-composite-body" },
         didOpen: function (el) {
           var sel = el.querySelector("#f-composite");
-          sel.addEventListener("change", function () {
-            self.compositePick = Number(sel.value);
-            el.querySelector("#f-composite-orgs").innerHTML = orgsHtml();
-          });
+          if (sel) {
+            sel.addEventListener("change", function () {
+              self.compositePick = Number(sel.value);
+              var orgEl = el.querySelector("#f-composite-org-yes");
+              if (orgEl) orgEl.textContent = currentOrg();
+            });
+          }
         },
       }).then(function (res) {
         if (!res) return;
         if (res.isConfirmed) self.compositeYes();
-        else if (res.dismiss === window.Swal.DismissReason.cancel) self.compositeNo();
+        else if (res.dismiss === (window.Swal ? window.Swal.DismissReason.cancel : "cancel")) self.compositeNo();
         else self.compositeRoute = null;   // × 或點外面：留在列表
       });
     },
