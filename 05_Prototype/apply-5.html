@@ -36,7 +36,7 @@
     <th-callout type="warning">請確認資料正確無誤後，再確認送出！</th-callout>
 
     <!-- 行程摘要卡片（步驟四卡片樣式） -->
-    <div class="p-apply4-summary-card" id="sec-summary">
+    <div class="th-summary-card" id="sec-summary">
       <div class="summary-thumb-box">
         <img :src="summaryRoute ? summaryRoute.image : 'assets/route-yushan.png'" alt="" />
         <div class="summary-thumb-overlay"></div>
@@ -285,7 +285,7 @@
 
     <!-- 置底操作按鈕（參考 apply-4） -->
     <template #actions>
-      <div class="p-apply4-actions">
+      <div class="th-form-actions">
         <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
           <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
         </button>
