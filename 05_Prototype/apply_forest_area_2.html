@@ -34,7 +34,6 @@
       <!-- 1. 進入範圍 -->
       <section class="th-card">
         <div class="th-card-head">
-          <i class="ph-bold ph-map-trifold" aria-hidden="true"></i>
           <h2 class="th-card-title">1.選擇申請區域與進入範圍</h2>
         </div>
         <div class="th-card-body grid gap-3">
@@ -54,7 +53,6 @@
       <!-- 2. 進出入口：勾了範圍才出現對應入口（正式站即時過濾） -->
       <section class="th-card">
         <div class="th-card-head">
-          <i class="ph-bold ph-sign-in" aria-hidden="true"></i>
           <h2 class="th-card-title">2.選擇進出入口與預計抵達時間</h2>
         </div>
         <div class="th-card-body grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -101,7 +99,6 @@
       <!-- 3. 申請目的 -->
       <section class="th-card">
         <div class="th-card-head">
-          <i class="ph-bold ph-target" aria-hidden="true"></i>
           <h2 class="th-card-title">3.申請目的或項目</h2>
         </div>
         <div class="th-card-body grid gap-3">
@@ -129,7 +126,6 @@
       <!-- 4～9. 安全聲明與各項宣達 -->
       <section v-for="b in area.blocks" :key="b.no" class="th-card">
         <div class="th-card-head">
-          <i class="ph-bold ph-megaphone" aria-hidden="true"></i>
           <h2 class="th-card-title">{{ b.no }}.{{ b.title }}</h2>
         </div>
         <div class="th-card-body grid gap-2">
