@@ -1226,15 +1226,38 @@
    已於階段 4 隨該檔一併刪除。
    ############################################################ */
 
-/* 複合申請詢問框（2026-10-02，SweetAlert，內容維持舊系統樣式）：內容左對齊、區塊間距 */
+/* 複合申請詢問框（2026-10-02 SweetAlert，2026-10-05 依指示放大字體、是選項標綠與按鈕同色、審查單位納入括號） */
 .p-apply1-composite-body {
   text-align: left;
 }
 .p-apply1-composite {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   text-align: left;   /* SweetAlert 內容區預設置中 */
 }
+.p-apply1-composite-list {
+  font-size: var(--fs-md, 16px);
+  line-height: 1.8;
+  color: var(--fg-1);
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+.p-apply1-composite-list li {
+  margin-bottom: 6px;
+}
+.p-apply1-composite-yes {
+  color: var(--national-700);   /* 與確認按鈕 .th-btn-primary 同色 */
+  font-weight: 700;
+}
+.p-apply1-composite-no {
+  color: var(--fg-1);
+  font-weight: 700;
+}
+.p-apply1-composite-org {
+  color: var(--fg-2);
+  font-weight: normal;
+}
+
 
 .p-apply1-layout {
   display: grid;
@@ -7777,10 +7800,3 @@ body:where(.p-indexb-body):before {
 /* ---------- apply-5 確認頁：申請人／留守人區塊小標題 ----------
    2026-09-24：申請人與留守人由合併表改為同卡片內兩個區塊，需要卡片內的小標題。
    .th-section-title 是頁面層級（22px、左側色條），放在卡片內太重，故另立頁面專用樣式。 */
-.p-apply5-sub-title {
-  margin: 0 0 12px;
-  /* 比欄位名（dt，16px 粗體）大一級並用主色，否則區塊標題與欄位名分不出層級 */
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--national-800);
-}

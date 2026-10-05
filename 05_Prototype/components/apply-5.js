@@ -190,7 +190,8 @@ thPage({
       navItems: [
         { id: "sec-summary", label: "行程計畫" },
         { id: "sec-team", label: "隊伍資料" },
-        { id: "sec-contacts", label: "申請人與留守人" },
+        { id: "sec-applicant", label: "申請人資料" },
+        { id: "sec-stay", label: "留守人資料" },
         { id: "sec-npa", label: "入山證申請資訊" },
         { id: "sec-captcha", label: "送件驗證碼" }
       ]

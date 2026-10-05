@@ -188,51 +188,50 @@
       </div>
     </section>
 
-    <!-- 3. 申請人／留守人資料表格（11欄，滿版自適應不滾動，字級維持原版） -->
-    <!-- 申請人與留守人：同一張卡片、各自一個區塊（2026-09-24 裁示）。
-         兩者欄位不同，各自一張表、不合併（合成一張時留守人列會空白 4 欄）。
-         2026-10-02 使用者裁示：改用與「隊伍資料」相同的表格呈現（原為欄位格線），三處管理處共用。 -->
-    <section class="th-card" id="sec-contacts">
+    <!-- 3. 申請人、留守人：各自一張卡片、卡片內為表格，比照「隊伍資料」（使用者 2026-10-05）。
+         兩者欄位不同，各自一張表、不合併（合成一張時留守人列會空白 4 欄）。三處管理處共用。 -->
+    <section class="th-card" id="sec-applicant">
       <div class="th-card-head">
-        <h2 class="th-card-title">申請人與留守人資料</h2>
+        <h2 class="th-card-title">申請人資料</h2>
       </div>
-      <div class="th-card-body grid gap-6">
-        <!-- min-w-0：grid 子項預設最小寬度跟內容走，寬表格會把卡片撐出欄寬 -->
-        <div class="min-w-0">
-          <h3 class="p-apply5-sub-title">申請人</h3>
-          <!-- 欄位多，窄螢幕改水平捲動（共用 .th-table-wrap），不裁切 -->
-          <div class="th-table-wrap border border-slate-200 rounded-md">
-            <table class="th-table w-full">
-              <thead class="bg-slate-50 text-slate-800">
-                <tr>
-                  <th v-for="f in applicantFields" :key="'ah-' + f.label" class="py-2.5 px-2 font-bold whitespace-nowrap">{{ f.label }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                <tr>
-                  <td v-for="f in applicantFields" :key="'a-' + f.label" :class="['py-2.5 px-2 text-slate-800', f.wrap ? 'break-words min-w-[160px]' : 'whitespace-nowrap']">{{ f.value || '—' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="th-card-body">
+        <!-- 欄位多，窄螢幕改水平捲動（共用 .th-table-wrap），不裁切 -->
+        <div class="th-table-wrap border border-slate-200 rounded-md">
+          <table class="th-table w-full">
+            <thead class="bg-slate-50 text-slate-800">
+              <tr>
+                <th v-for="f in applicantFields" :key="'ah-' + f.label" class="py-2.5 px-2 font-bold whitespace-nowrap">{{ f.label }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td v-for="f in applicantFields" :key="'a-' + f.label" :class="['py-2.5 px-2 text-slate-800', f.wrap ? 'break-words min-w-[160px]' : 'whitespace-nowrap']">{{ f.value || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="border-t border-slate-200 pt-6 min-w-0">
-          <h3 class="p-apply5-sub-title">留守人</h3>
-          <!-- 欄位多，窄螢幕改水平捲動（共用 .th-table-wrap），不裁切 -->
-          <div class="th-table-wrap border border-slate-200 rounded-md">
-            <table class="th-table w-full">
-              <thead class="bg-slate-50 text-slate-800">
-                <tr>
-                  <th v-for="f in stayFields" :key="'sh-' + f.label" class="py-2.5 px-2 font-bold whitespace-nowrap">{{ f.label }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                <tr>
-                  <td v-for="f in stayFields" :key="'s-' + f.label" :class="['py-2.5 px-2 text-slate-800', f.wrap ? 'break-words min-w-[160px]' : 'whitespace-nowrap']">{{ f.value || '—' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      </div>
+    </section>
+
+    <section class="th-card" id="sec-stay">
+      <div class="th-card-head">
+        <h2 class="th-card-title">留守人資料</h2>
+      </div>
+      <div class="th-card-body">
+        <!-- 欄位多，窄螢幕改水平捲動（共用 .th-table-wrap），不裁切 -->
+        <div class="th-table-wrap border border-slate-200 rounded-md">
+          <table class="th-table w-full">
+            <thead class="bg-slate-50 text-slate-800">
+              <tr>
+                <th v-for="f in stayFields" :key="'sh-' + f.label" class="py-2.5 px-2 font-bold whitespace-nowrap">{{ f.label }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td v-for="f in stayFields" :key="'s-' + f.label" :class="['py-2.5 px-2 text-slate-800', f.wrap ? 'break-words min-w-[160px]' : 'whitespace-nowrap']">{{ f.value || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
