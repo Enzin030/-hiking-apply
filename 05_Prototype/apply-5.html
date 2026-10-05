@@ -140,8 +140,9 @@
         <h2 class="th-card-title">隊伍資料</h2>
       </div>
       <div class="th-card-body">
-        <div class="border border-slate-200 rounded-md overflow-hidden">
-          <table class="th-table w-full">
+        <!-- 欄位多：不換行、窄螢幕水平捲動（共用 .th-table-wrap），比照申請人資料表（使用者 2026-10-05） -->
+        <div class="th-table-wrap border border-slate-200 rounded-md">
+          <table class="th-table w-full whitespace-nowrap">
             <thead class="bg-slate-50 text-slate-800">
               <tr>
                 <th class="py-2.5 px-1 text-center w-10 font-bold">No.</th>
@@ -152,35 +153,26 @@
                 <th class="py-2.5 px-2 w-28 font-bold">證號</th>
                 <th class="py-2.5 px-2 w-24 font-bold">生日</th>
                 <th class="py-2.5 px-2 w-28 font-bold">電話 / 手機</th>
-                <th class="py-2.5 px-2 min-w-[140px] font-bold">聯絡地址</th>
+                <th class="py-2.5 px-2 font-bold">聯絡地址</th>
                 <th v-if="park.confirmEmailCol" class="py-2.5 px-2 font-bold">Email</th>
                 <th class="py-2.5 px-2 w-20 font-bold">緊急聯絡人</th>
                 <th class="py-2.5 px-2 w-28 font-bold">緊急聯絡電話</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
-              <tr v-for="r in teamRows" :key="r.no">
+              <tr v-for="r in teamRows" :key="r.no" :class="{ 'is-leader-row': r.role === '領隊' }">
                 <td class="py-2.5 px-1 text-center font-medium text-slate-600">{{ r.no }}</td>
-                <td class="py-2.5 px-2 text-center">
-                  <!-- 領隊：比照留守人 badge -->
-                  <span v-if="r.role === '領隊'" class="px-2.5 py-0.5 rounded text-xs font-medium inline-block" style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">
-                    領隊
-                  </span>
-                  <!-- 隊員：純文字，不用 badge -->
-                  <span v-else class="text-slate-700">
-                    {{ r.role }}
-                  </span>
-                </td>
+                <td data-label="身分" class="py-2.5 px-2 text-center" :class="r.role === '領隊' ? 'text-national-800 font-normal' : 'text-slate-700'">{{ r.role }}</td>
                 <td class="py-2.5 px-2 text-slate-900 font-normal">{{ r.name }}</td>
                 <td class="py-2.5 px-2 text-center text-slate-800">{{ r.sex }}</td>
                 <td class="py-2.5 px-2 text-center text-slate-800">{{ r.nation }}</td>
                 <td class="py-2.5 px-2 text-slate-800">{{ r.sid }}</td>
                 <td class="py-2.5 px-2 text-slate-800">{{ r.birthday }}</td>
-                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.tel }}</td>
-                <td class="py-2.5 px-2 text-slate-800 break-words leading-relaxed">{{ r.address }}</td>
-                <td v-if="park.confirmEmailCol" class="py-2.5 px-2 text-slate-800 break-all">{{ r.email }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.tel }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.address }}</td>
+                <td v-if="park.confirmEmailCol" class="py-2.5 px-2 text-slate-800">{{ r.email }}</td>
                 <td class="py-2.5 px-2 text-slate-800">{{ r.contact }}</td>
-                <td class="py-2.5 px-2 text-slate-800 break-all">{{ r.contactTel }}</td>
+                <td class="py-2.5 px-2 text-slate-800">{{ r.contactTel }}</td>
               </tr>
             </tbody>
           </table>
