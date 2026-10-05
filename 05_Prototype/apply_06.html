@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>登山線上申請｜確認送出 — 臺灣登山申請一站式服務網</title>
+<title>登山線上申請｜確認資料 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
   apply_06 — 六步驟家族 步驟 6：確認送出（警政署、自然保護區域、山屋共用）
@@ -19,11 +19,11 @@
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="六步驟-06 確認送出">
+<div id="th-app" v-cloak data-screen-label="六步驟-06 確認資料">
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '確認送出']" :title="st.title">
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, done ? '申請完成' : '確認資料']" :title="st.title">
 
     <template #stepper>
       <th-fc-stepper :current="done ? 7 : 6"></th-fc-stepper>
@@ -86,12 +86,17 @@
 
       <th-captcha v-model="vcode" input-id="f-vcode" code="7K4M" layout="col12"></th-captcha>
 
-      <div class="flex flex-wrap justify-between gap-2">
-        <div class="flex gap-2">
-          <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
-          <button type="button" class="th-btn th-btn-secondary" @click="draftOpen = true">儲存草稿</button>
-        </div>
-        <button type="button" class="th-btn th-btn-primary th-btn-lg" @click="submit">確認送出</button>
+      <!-- 置底按鈕置中，比照玉山確認資料頁 apply-5（使用者 2026-10-05） -->
+      <div class="th-form-actions">
+        <button type="button" class="th-btn th-btn-ghost" @click="prev">
+          <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
+        </button>
+        <button type="button" class="th-btn th-btn-secondary" @click="draftOpen = true">
+          <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
+        </button>
+        <button type="button" class="th-btn th-btn-primary" @click="submit">
+          <i class="fa-solid fa-check mr-1.5" aria-hidden="true"></i>確認送出
+        </button>
       </div>
     </div>
 
