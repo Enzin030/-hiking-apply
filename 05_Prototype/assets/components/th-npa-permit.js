@@ -189,14 +189,14 @@
              兩欄格線；前往地點下拉＋加入地點按鈕相連；地點清單、登山路線圖雙下拉、計畫書範例框（共用 .th-npa-*）。 -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
           <div class="th-field">
-            <label class="th-label" :for="fid('reason')"><span>入山事由</span><span class="th-label-en">Reason for Mountain Entry</span></label>
+            <label class="th-label" :for="fid('reason')"><span>入山事由</span></label>
             <th-hybrid-select><select :id="fid('reason')" class="th-select" :value="v.reason" @change="emit({ reason: $event.target.value })">
               <option v-for="r in reasons" :key="r" :value="r">{{ r }}</option>
             </select></th-hybrid-select>
           </div>
 
           <div class="th-field">
-            <label class="th-label" :for="fid('place')"><span><span class="req">*</span>前往地點</span><span class="th-label-en">Destination</span></label>
+            <label class="th-label" :for="fid('place')"><span><span class="req">*</span>前往地點</span></label>
             <div class="th-npa-input-group">
               <th-hybrid-select class="th-npa-joined-hybrid"><select :id="fid('place')" class="th-select" v-model="picked">
                 <option value="">請選擇前往地點</option>
@@ -221,7 +221,7 @@
           </div>
 
           <div class="th-field sm:col-span-2">
-            <label class="th-label" :for="fid('lib')"><span><span class="req">*</span>登山路線圖</span><span class="th-label-en">Route Map</span></label>
+            <label class="th-label" :for="fid('lib')"><span><span class="req">*</span>登山路線圖</span></label>
             <div class="th-npa-vocab-row">
               <th-hybrid-select><select :id="fid('lib')" class="th-select" :value="v.lib" @change="emit({ lib: $event.target.value, sub: '' })">
                 <option value="">請選擇詞庫</option>
@@ -238,7 +238,7 @@
           </div>
 
           <div class="th-field sm:col-span-2">
-            <label class="th-label" :for="fid('plan')"><span><span class="req">*</span>登山計畫書</span><span class="th-label-en">Plan</span></label>
+            <label class="th-label" :for="fid('plan')"><span><span class="req">*</span>登山計畫書</span></label>
             <textarea :id="fid('plan')" class="th-textarea" rows="5" placeholder="D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。"
                       :value="v.plan" @input="emit({ plan: $event.target.value })"></textarea>
             <!-- 範例原文取自 2026-09-17 測試站太魯閣步驟一截圖（TAR026_S02_filled），與玉山卡片相同 -->

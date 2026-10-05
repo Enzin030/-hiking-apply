@@ -1875,14 +1875,6 @@
   margin-right: 2px;
   font-weight: 700;
 }
-/* 欄位英文副標（2026-10-02 改為與玉山 .p-apply3-label-en 相同外觀；目前只有 th-npa-permit 使用） */
-.th-label-en {
-  display: inline-block;
-  font-size: var(--fs-xs);
-  font-weight: 400;
-  color: var(--fg-3);
-  line-height: var(--lh-snug);
-}
 .th-field-hint {
   font-size: var(--fs-xxs);
   color: var(--fg-3);

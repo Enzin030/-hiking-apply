@@ -343,9 +343,8 @@
           <!-- 行前講習與通訊設備：3 行對 3 行高度對齊 -->
           <div class="p-apply3-grid">
             <div v-if="park.hasSeminar" class="th-field">
-              <label class="th-label" :class="{ 'p-apply3-label-3lines': park.showEn }" for="con_seminar">
+              <label class="th-label" :class="{ 'p-apply3-label-stack': park.hasGps }" for="con_seminar">
                 <span class="p-apply3-line-1"><span v-if="park.seminarRequired" class="req">*</span>登山行前講習</span>
-                <span v-if="park.showEn" class="p-apply3-label-en">General knowledge about hiking</span>
                 <span v-if="park.seminarVideo" class="p-apply3-line-3">
                   <a :href="park.seminarVideo" id="con_hlSeminar" target="_blank" rel="noopener noreferrer" class="p-apply3-video-btn">
                     <i class="fa-solid fa-video" aria-hidden="true"></i>登山安全影片
@@ -362,10 +361,9 @@
             </div>
 
             <div v-if="park.hasGps" class="th-field">
-              <label class="th-label p-apply3-label-3lines" for="con_gps">
+              <label class="th-label p-apply3-label-stack" for="con_gps">
                 <span class="p-apply3-line-1"><span class="req">*</span>是否攜帶GPS及可供緊急聯絡之通信設備</span>
                 <span class="p-apply3-line-2">(包含智慧型手機、智慧型手錶、個人數位助理（PDA）等)</span>
-                <span class="p-apply3-label-en">Will you be carrying a GPS device? (i.e. Smart phone)</span>
               </label>
               <th-hybrid-select>
                 <select id="con_gps" class="th-select" v-model="gps">
@@ -379,7 +377,6 @@
             <div class="th-field" id="con_divGps">
               <label class="th-label" for="con_satellitephone">
                 <span>衛星電話</span>
-                <span v-if="park.showEn" class="p-apply3-label-en">Satellite phone number</span>
               </label>
               <input id="con_satellitephone" type="text" class="th-input" v-model="satellitephone" placeholder="請輸入衛星電話" />
             </div>
@@ -387,7 +384,6 @@
             <div class="th-field" id="con_divWireless">
               <label class="th-label" for="con_frequency">
                 <span>無線電頻</span>
-                <span v-if="park.showEn" class="p-apply3-label-en">Radio Frequency</span>
               </label>
               <input id="con_frequency" type="text" class="th-input" v-model="frequency" placeholder="請輸入無線電頻" />
             </div>
@@ -395,7 +391,6 @@
             <div class="th-field p-apply3-grid-full">
               <label class="th-label" for="con_note_user">
                 <span>備註</span>
-                <span v-if="park.showEn" class="p-apply3-label-en">Note</span>
               </label>
               <textarea id="con_note_user" class="th-textarea" rows="3" v-model="note_user" placeholder="請填入備註"></textarea>
               <th-callout v-if="park.noteHint" type="warning">{{ park.noteHint }}</th-callout>
@@ -418,7 +413,6 @@
             <div class="th-field">
               <label class="th-label" for="con_NpaReasons">
                 <span><span class="req">*</span>入山事由</span>
-                <span class="p-apply3-label-en">Reason for Mountain Entry</span>
               </label>
               <th-hybrid-select>
                 <select id="con_NpaReasons" class="th-select" v-model="NpaReasons">
@@ -431,7 +425,6 @@
             <div class="th-field">
               <label class="th-label" for="con_NpaPlacesInfo">
                 <span><span class="req">*</span>前往地點</span>
-                <span class="p-apply3-label-en">Destination</span>
               </label>
               <div class="th-npa-input-group">
                 <th-hybrid-select class="th-npa-joined-hybrid">
@@ -461,7 +454,6 @@
             <div class="th-field p-apply3-grid-full">
               <label class="th-label">
                 <span><span class="req">*</span>登山路線圖</span>
-                <span class="p-apply3-label-en">Route Map</span>
               </label>
               <div class="th-npa-vocab-row">
                 <th-hybrid-select>
@@ -483,7 +475,6 @@
             <div class="th-field p-apply3-grid-full">
               <label class="th-label" for="con_NpaPlan">
                 <span><span class="req">*</span>登山計畫書</span>
-                <span class="p-apply3-label-en">Plan</span>
               </label>
               <textarea id="con_NpaPlan" class="th-textarea" rows="5" v-model="NpaPlan" placeholder="D1：奇萊登山口→奇萊主北岔路口→奇萊北峰→月型池。"></textarea>
               <!-- 範例為正式站原文，逐字保留 -->

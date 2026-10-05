@@ -6,10 +6,9 @@
    取代 09-17「太魯閣開新頁」與 10-01 新增 apply_1_3 的做法（decisions.md 2026-10-02）。
 
    **版型照玉山，欄位照各機關正式站**（02_Spec/05a～05c）：
-     玉山  有 GPS、有警政署入山證、講習必填（預設網路線上學習）、欄位有英文副標
-     雪霸  無 GPS、無入山證、講習非必填（預設空白）、無英文副標、有無人機空拍公告
-     ※ 路線區塊欄位的英文副標（showEn）只有玉山正式站有；雪霸正式站沒有（2026-10-02 實走確認）；
-       太魯閣是否有尚未確認，雛形暫不顯示
+     玉山  有 GPS、有警政署入山證、講習必填（預設網路線上學習）
+     雪霸  無 GPS、無入山證、講習非必填（預設空白）、有無人機空拍公告
+     ※ 欄位英文副標：正式站只有玉山有，雛形三處統一不顯示，警政署入山證區塊比照（使用者 2026-10-05）
            路線規劃第一步同為「請選擇起點」；單日往返也由使用者逐點規劃（玉山單日為固定行程）
      太魯閣 無隊名、無講習、無 GPS；有路線承載量查詢與「已詳閱以下說明」必勾（有說明的路線）；
            入山證依路線（南湖要、奇萊北屏風山線不要）；步驟二有承載量狀況、宿營地下拉與剩餘數量、
@@ -25,7 +24,6 @@ window.thParkApply = function (key) {
   var yushan = {
     key: "yushan",
     crumb: "玉山國家公園",
-    showEn: true,
     hasGps: true,
     hasNpa: true,
     seminarRequired: true,
@@ -68,7 +66,6 @@ window.thParkApply = function (key) {
   return {
     key: "shei-pa",
     crumb: "雪霸國家公園",
-    showEn: false,
     hasGps: false,
     hasNpa: false,
     seminarRequired: false,
@@ -129,7 +126,6 @@ window.thParkApply = function (key) {
     return {
       key: "taroko",
       crumb: "太魯閣國家公園",
-      showEn: false,
       hasGps: false,
       hasNpa: true,                 // 依路線：subs[].needsNpa
       npaByRoute: true,

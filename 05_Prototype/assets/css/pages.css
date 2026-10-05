@@ -6649,31 +6649,25 @@ body:where(.p-indexb-body):before {
   height: 38px;
 }
 
-/* 欄位 3 行對 3 行高度對齊 */
-.p-apply3-main .th-label.p-apply3-label-3lines {
+/* 多行標籤（玉山行前講習＋影片鈕、GPS＋說明）並排時，下拉框對齊同一列底部。
+   2026-10-05 拿掉英文副標後改由標籤撐滿剩餘高度（flex-grow），不再寫死 3 行的 min-height：
+   兩欄時下拉框對齊、單欄時標籤下方不留空白 */
+.p-apply3-main .th-label.p-apply3-label-stack {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 4px;
-  min-height: 72px;
+  flex-grow: 1;
   margin-bottom: 6px;
 }
 
-.p-apply3-main .th-label.p-apply3-label-3lines .p-apply3-line-1,
-.p-apply3-main .th-label.p-apply3-label-3lines .p-apply3-line-2 {
+.p-apply3-main .th-label.p-apply3-label-stack .p-apply3-line-1,
+.p-apply3-main .th-label.p-apply3-label-stack .p-apply3-line-2 {
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--slate-700);
   line-height: 1.35;
-}
-
-.p-apply3-main .th-label.p-apply3-label-3lines .p-apply3-label-en {
-  font-size: var(--fs-xs);
-  font-weight: 400;
-  color: var(--fg-3);
-  line-height: 1.35;
-  margin-top: 0;
 }
 
 /* 登山安全影片小按鈕 */
@@ -7179,14 +7173,6 @@ body:where(.p-indexb-body):before {
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 6px;
-}
-
-.p-apply3-label-en {
-  display: inline-block;
-  font-size: var(--fs-xs);
-  font-weight: 400;
-  color: var(--fg-3);
-  line-height: var(--lh-snug);
 }
 
 /* 卡片標題旁的「操作說明」連結：icon 在左、與標題拉開距離，

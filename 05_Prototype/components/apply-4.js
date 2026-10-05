@@ -5,7 +5,7 @@
      1. 規格與功能對齊：
         - 委託同意預設未勾選，勾選後才顯示申請人輸入欄位。
         - 初始資料由空白、領隊 1 人開始，提供示範資料載入按鈕。
-        - 補齊送件驗證碼（隨機 4 碼、重新整理、檢核）。
+        - 送件驗證碼已拿掉，統一在確認資料（apply-5）輸入（使用者 2026-10-05）。
         - 補齊生日、性別、Email、手機格式檢核，完成度與按鈕狀態嚴格一致。
         - 承接 apply-3 之主次路線、隊名、日期與天數，支援返回時保留已填內容。
         - 宿營地資料隨日期、天數連動：單日往返呈現當日承載量（不顯示床位），
@@ -360,11 +360,7 @@ thPage({
 
       // 6. 宿營地預約查詢排隊狀況（與日期、天數動態連動，多日依天數產生逐日列，預設「不限」）
       isSingleDay: isSingleDay,
-      queueRows: createQueueRows(qStart, qDays, isSingleDay, null),
-
-      // 送件驗證碼（預先填入測試碼）
-      captchaCode: "8F2K",
-      captchaInput: "8F2K"
+      queueRows: createQueueRows(qStart, qDays, isSingleDay, null)
     };
   },
 
@@ -411,7 +407,6 @@ thPage({
       ];
       if (this.park.attachSection) items.push({ key: "attach", sec: "sec-attach", label: "附件上傳資料", ok: true });
       items.push({ key: "queue", sec: "sec-queue", label: "宿營地排隊狀況", ok: this.secQueueOk });
-      items.push({ key: "captcha", sec: "sec-captcha", label: "送件驗證碼", ok: this.secCaptchaOk });
       return items;
     },
 
@@ -500,13 +495,6 @@ thPage({
       return this.queueRows.length > 0;
     },
 
-    secCaptchaOk() {
-      return (
-        !!this.captchaInput &&
-        this.captchaInput.trim().toUpperCase() === this.captchaCode
-      );
-    },
-
     // 側欄完成總數（排除行程計畫，純填寫卡片共 6 項）
     completedSectionsCount() {
       let c = 0;
@@ -515,7 +503,6 @@ thPage({
       if (this.secMemberOk) c++;
       if (this.secStayOk) c++;
       if (this.secQueueOk) c++;
-      if (this.secCaptchaOk) c++;
       if (this.park.attachSection) c++;
       return c;
     },
@@ -527,8 +514,7 @@ thPage({
         this.secLeaderOk &&
         this.secMemberOk &&
         this.secStayOk &&
-        this.secQueueOk &&
-        this.secCaptchaOk
+        this.secQueueOk
       );
     }
   },
@@ -652,14 +638,6 @@ thPage({
       return this.memberOpenStates[index] !== false;
     },
 
-    // 重新產生 4 碼驗證碼
-    refreshCaptcha() {
-      const captcha = this.$refs.captchaField;
-      if (captcha && typeof captcha.refresh === "function") {
-        captcha.refresh();
-      }
-    },
-
     // 縣市變更時連動第一個鄉鎮市區
     onCountryChange(person) {
       const districts = this.citiesData[person.country] || [];
@@ -774,8 +752,7 @@ thPage({
         sid: "E123456787"
       };
 
-      this.captchaInput = this.captchaCode;
-      window.thAlert("已成功載入示範資料（申請人、領隊、2名隊員、留守人及驗證碼）。", "success");
+      window.thAlert("已成功載入示範資料（申請人、領隊、2名隊員、留守人）。", "success");
     },
 
     // 重設回空白初始狀態
@@ -801,8 +778,6 @@ thPage({
         nation: "中華民國",
         sid: ""
       };
-      this.captchaInput = "";
-      this.refreshCaptcha();
     },
 
     // 檢查是否有儲存的草稿
@@ -1045,13 +1020,6 @@ thPage({
       if (!this.secStayOk) {
         window.thAlert("留守人資料尚未完整填寫，姓名與手機為必填項。");
         this.scrollToSection("sec-stay", 4);
-        return;
-      }
-
-      // 5. 檢核驗證碼
-      if (!this.secCaptchaOk) {
-        window.thAlert("請輸入正確的送件驗證碼。");
-        this.scrollToSection("sec-captcha", 6);
         return;
       }
 

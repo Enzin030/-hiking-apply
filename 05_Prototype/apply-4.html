@@ -15,7 +15,7 @@
     5. 隊伍人數與單人獨攀：1 人時出現單人獨攀注意事項切結，2 人以上隱藏。
     6. 留守人資料：留守人與緊急聯絡人不上山說明。
     7. 宿營地資料：單日呈現當日承載量（無床位），多日呈現排雲床位，住宿調查預設「不限」。
-    8. 送件驗證碼：補齊驗證碼輸入欄、圖形展示與重新整理。
+    8. 送件驗證碼：已拿掉，統一在確認資料（apply-5）輸入（使用者 2026-10-05）。
     9. 樣式層全量對齊 apply-3：統一 .th-label、.req、.th-callout、「本頁內容」、16px 密度。
   ============================================================
 -->
@@ -861,24 +861,6 @@
                 </tbody>
               </table>
             </div>
-          </div>
-        </section>
-
-        <!-- 區塊 7：送件驗證碼（送件前確認，精簡呈現） -->
-        <section class="th-card" id="sec-captcha" aria-labelledby="heading-captcha">
-          <div class="th-card-head">
-            <h2 id="heading-captcha" class="th-card-title">送件驗證碼</h2>
-          </div>
-          <div class="th-card-body">
-            <th-captcha
-              v-model="captchaInput"
-              v-model:code="captchaCode"
-              :refreshable="true"
-              input-id="con_captcha"
-              label="驗證碼"
-              layout="stack"
-              hide-hint
-              ref="captchaField" class="w-full sm:w-1/2"></th-captcha>
           </div>
         </section>
 
