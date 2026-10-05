@@ -51,7 +51,9 @@ window.thParkApply = function (key) {
   var subsOf = function (mainId) {
     if (seen[mainId]) return seen[mainId].map(function (s) {
       var r = routes.find(function (x) { return x.cId === s.id; }) || {};
-      return { value: s.id, text: s.name, level: s.level, days: s.days || range(r.days, r.dayMax) };
+      /* notes／capacityNews：正式站次路線下方說明與「單日往返路線承載量及餘額」連結（2026-10-05 逐條讀取） */
+      return { value: s.id, text: s.name, level: s.level, days: s.days || range(r.days, r.dayMax),
+               notes: s.notes || [], capacityNews: s.capacityNews || "" };
     });
     return routes
       .filter(function (r) { return r.fId === mainId && (r.originalName || "").indexOf("外籍提前") < 0; })

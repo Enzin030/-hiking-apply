@@ -339,6 +339,12 @@ thPage({
     },
     /* 太魯閣：有路線說明或需入山證的路線才有「已詳閱以下說明」必勾 */
     routeNotes() { return (this.subObj && this.subObj.notes) || []; },
+    /* 承載量連結：機關固定（太魯閣）或依次路線（雪霸單日往返路線「單日往返路線承載量及餘額」，2026-10-05） */
+    capacityLinkNow() {
+      if (this.park.capacityLink) return this.park.capacityLink;
+      const href = this.subObj && this.subObj.capacityNews;
+      return href ? { href: href, label: "單日往返路線承載量及餘額" } : null;
+    },
     hasNoteCheck() { return this.park.key === "taroko" && (this.routeNotes.length > 0 || this.npaOn); },
 
     openRow() {
@@ -400,6 +406,9 @@ thPage({
     },
 
     routeNoteText() {
+      /* 雪霸：正式站步驟一難度表的「備註」列只有「歡迎下載」，不帶開放狀態頁的路線備註
+         （2026-10-05 逐條讀取 29 條次路線皆同） */
+      if (this.park.key === "shei-pa") return "";
       return this.openRow ? (this.openRow.note || "") : "";
     },
 
@@ -690,6 +699,8 @@ thPage({
   },
 
   methods: {
+    /* 說明段落：太魯閣是字串，雪霸是「文字或 {text, href} 連結」組成的陣列（Apply13Data.js） */
+    noteParts(n) { return Array.isArray(n) ? n : [n]; },
     scrollToSection(id, index) {
       this.activeNavIndex = index;
       const el = document.getElementById(id);

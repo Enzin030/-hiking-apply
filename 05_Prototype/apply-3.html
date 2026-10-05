@@ -163,8 +163,8 @@
                   <td class="p-apply3-level-cell">
                     <span :class="'th-level lv-' + trailLevel.level">第 {{ trailLevel.level }} 級</span>
                     <!-- 「玉山線地圖」按鈕，點開看路線圖 -->
-                    <a v-if="park.capacityLink" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" :href="park.capacityLink.href" target="_blank" rel="noopener noreferrer" :title="park.capacityLink.label + '（另開新視窗）'">
-                      <i class="fa-solid fa-people-group mr-2" aria-hidden="true"></i>{{ park.capacityLink.label }}
+                    <a v-if="capacityLinkNow" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" :href="capacityLinkNow.href" target="_blank" rel="noopener noreferrer" :title="capacityLinkNow.label + '（另開新視窗）'">
+                      <i class="fa-solid fa-people-group mr-2" aria-hidden="true"></i>{{ capacityLinkNow.label }}
                     </a>
                     <button v-if="routeMapTabs.length" type="button" class="th-btn th-btn-primary th-btn-sm p-apply3-map-btn" @click="mapOpen = true">
                       <i class="fa-solid fa-map mr-2" aria-hidden="true"></i>{{ mapTitle }}
@@ -220,6 +220,13 @@
                 <li v-for="n in routeNotes" :key="n">{{ n }}</li>
                 <li v-if="npaOn">警政署入山申辦系統：<a class="th-inline-link break-all" :href="park.npaSite" target="_blank" rel="noopener noreferrer">{{ park.npaSite }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></li>
               </ul>
+            </div>
+          </div>
+          <!-- 雪霸：次路線下方說明（正式站 2026-10-05 逐條讀取），沒有勾選框；段落照正式站分行，連結另開新視窗 -->
+          <div v-else-if="routeNotes.length" class="th-callout">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <div class="grid gap-2">
+              <p v-for="(n, nIdx) in routeNotes" :key="nIdx"><template v-for="(part, pIdx) in noteParts(n)" :key="pIdx"><a v-if="part.href" class="th-inline-link break-all" :href="part.href" target="_blank" rel="noopener noreferrer">{{ part.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a><template v-else>{{ part }}</template></template></p>
             </div>
           </div>
 
