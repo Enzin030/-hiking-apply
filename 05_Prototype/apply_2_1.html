@@ -334,12 +334,8 @@
                 placeholder="請輸入隊名" />
             </div>
             <div class="th-field">
-              <label class="th-label">管轄機關／登山路線</label>
-              <input
-                type="text"
-                class="th-input w-full bg-slate-50 text-slate-600"
-                :value="activeDraft.agency + ' ／ ' + activeDraft.mainRoute"
-                readonly />
+              <span class="th-label">管轄機關／登山路線</span>
+              <p class="py-2 text-base text-slate-900">{{ activeDraft.agency }} ／ {{ activeDraft.mainRoute }}</p>
             </div>
             <div class="th-field">
               <label class="th-label">入園日期</label>

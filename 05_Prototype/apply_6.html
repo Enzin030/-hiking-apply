@@ -217,10 +217,11 @@
           <!-- 出園回報明細表格 -->
           <div>
             <div class="th-table-wrap">
-              <table class="th-table th-table--zebra">
+              <table class="th-table th-table--zebra p-apply6-table">
                 <thead>
                   <tr>
-                    <th scope="col" class="text-center">職稱／姓名</th>
+                    <th scope="col" class="text-center whitespace-nowrap">身分</th>
+                    <th scope="col" class="whitespace-nowrap">姓名</th>
                     <th scope="col">報到時間</th>
                     <th scope="col">出園日期</th>
                     <th scope="col">體溫（℃）</th>
@@ -229,28 +230,23 @@
                 </thead>
                 <tbody>
                   <tr v-for="m in members" :key="m.id">
-                    <!-- 職稱／姓名（僅領隊陳大明顯示 badge，確保樣式出現） -->
-                    <td class="text-center align-middle">
-                      <div class="flex flex-col items-center justify-center gap-1">
-                        <span
-                          v-if="m.role === '領隊'"
-                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold shadow-xs"
-                          style="background-color: var(--national-700); color: var(--fg-on-dark);">
-                          領隊
-                        </span>
-                        <span class="font-medium text-slate-800">{{ m.name }}</span>
-                      </div>
+                    <!-- 身分：比照線上申請確認頁（apply-5）——領隊淡綠 badge、隊員純文字 -->
+                    <td data-label="身分" class="text-center align-middle whitespace-nowrap">
+                      <span v-if="m.role === '領隊'" class="px-2.5 py-0.5 rounded text-xs font-medium inline-block bg-green-50 text-green-700 border border-green-200">領隊</span>
+                      <span v-else class="text-slate-700">{{ m.role }}</span>
                     </td>
+                    <!-- 姓名 -->
+                    <td data-label="姓名" class="align-middle whitespace-nowrap text-slate-900">{{ m.name }}</td>
 
                     <!-- 報到時間（未報到改為 --danger-fg-hover） -->
-                    <td>
+                    <td data-label="報到時間">
                       <span :class="m.checkinTime === '未報到' ? 'text-[color:var(--danger-fg-hover)] font-medium' : 'text-slate-700'">
                         {{ m.checkinTime }}
                       </span>
                     </td>
 
                     <!-- 出園日期（右側補紅字 *） -->
-                    <td>
+                    <td data-label="出園日期">
                       <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-4">
                           <label class="inline-flex items-center gap-1.5 cursor-pointer text-slate-700">
@@ -286,7 +282,7 @@
                     </td>
 
                     <!-- 入園體溫／出園體溫（統一字級大小，高度約 84px） -->
-                    <td>
+                    <td data-label="體溫（℃）">
                       <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                           <span class="text-slate-700 whitespace-nowrap">入園體溫</span>
@@ -310,7 +306,7 @@
                     </td>
 
                     <!-- 備註（多行 textarea，無 placeholder，與體溫等高） -->
-                    <td class="align-middle">
+                    <td data-label="備註" class="align-middle">
                       <textarea
                         rows="3"
                         class="th-input py-1.5 px-2.5 w-full h-[84px] resize-none"

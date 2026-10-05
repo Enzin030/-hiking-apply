@@ -6072,6 +6072,14 @@ body:where(.p-indexb-body):before {
 }
 
 /* ── 出園回報（apply_6）── */
+/* 出園回報明細：沿用 th-table--zebra 的手機卡片版面，但不要雙色列（使用者 2026-10-05） */
+.p-apply6-table.th-table--zebra tbody tr:nth-child(even) {
+  background: var(--bg-1);
+}
+.p-apply6-table.th-table--zebra tbody tr:hover {
+  background: var(--bg-1);
+}
+
 .p-apply6-notice > i {
   margin-top: 0 !important;
   height: 26px !important;
