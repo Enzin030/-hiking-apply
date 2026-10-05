@@ -36,10 +36,8 @@
   <th-header active="apply"></th-header>
 
   <!-- bare：版面自帶 grid，不要 th-page-main 的 flex 包裝 -->
+  <!-- 2026-10-05 拿掉步驟條：列表是所有機關共用的查詢入口，不是申請的一步（見 th-apply-stepper.js 檔頭） -->
   <th-page-shell :trail="['登山申請', '登山線上申請']" title="登山線上申請" :bare="true">
-    <template #stepper>
-      <th-apply-stepper :current="1"></th-apply-stepper>
-    </template>
 
     <div class="p-apply1-layout">
       <!-- SIDEBAR -->

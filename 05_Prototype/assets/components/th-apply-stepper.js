@@ -5,7 +5,11 @@
    apply-3、apply-4、apply-5 各寫一份一模一樣的 :steps，apply-1 還停在 th-stepper
    預設的舊四步驟。依「二次即提升」收成本元件，步驟只在這裡改一次。
 
-   用法：<th-apply-stepper :current="1"></th-apply-stepper>（current 為 1–6）
+   用法：<th-apply-stepper :current="1"></th-apply-stepper>（current 為 1–5）
+
+   2026-10-05 拿掉第 1 步「選擇路線」，路線列表 apply-1 也不再掛步驟條（使用者裁示）：
+   列表是所有機關共用的查詢入口，掛三管處的步驟條對警政署／保護區／山屋（另一套 7 步）是錯的；
+   正式站列表本身也沒有步驟條。改後兩類流程都從「點了路線之後」起算。已列 PM 確認事項。
 
    外觀與結構完全交給 th-stepper，本元件只提供步驟清單。
    **不要改 th-stepper 的預設四步驟**：apply-2 的申請前摘要（林保署區域、警政署）
@@ -19,12 +23,11 @@ window.thComponents["th-apply-stepper"] = {
     /* 唯讀常數，放 computed 而不是 data()，避免被包成 reactive proxy */
     steps() {
       return [
-        { n: 1, title: "選擇路線" },
-        { n: 2, title: "閱讀同意書" },
-        { n: 3, title: "行程規劃" },
-        { n: 4, title: "人員資料" },
-        { n: 5, title: "確認資料" },
-        { n: 6, title: "申請完成" },
+        { n: 1, title: "閱讀同意書" },
+        { n: 2, title: "行程規劃" },
+        { n: 3, title: "人員資料" },
+        { n: 4, title: "確認資料" },
+        { n: 5, title: "申請完成" },
       ];
     },
   },
