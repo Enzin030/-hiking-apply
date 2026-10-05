@@ -2,10 +2,10 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8" />
-<title>登山線上申請｜隊伍資料 — 臺灣登山申請一站式服務網</title>
+<title>登山線上申請｜人員資料 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  apply_03 — 六步驟家族 步驟 3：隊伍資料
+  apply_03 — 六步驟家族 步驟 3：人員資料（正式站稱「隊伍資料」；2026-10-05 統一為三管處的「人員資料」）
   ------------------------------------------------------------
   2026-09-30 新增（原 forest-camp-3，同日依「新頁檔名比照舊站 aspx」改名）。
   正式站 apply_03.aspx 由警政署入山證、林保署自然保護區域、山屋三類共用，
@@ -20,13 +20,13 @@
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="六步驟-03 隊伍資料">
+<div id="th-app" v-cloak data-screen-label="六步驟-03 人員資料">
 
   <th-header active="apply"></th-header>
 
   <!-- 2026-10-05 版面比照玉山人員資料頁 apply-4（使用者要求）：摘要卡、可收合區塊、側欄本頁內容、置中按鈕；
        共用 class 見 components.css「th-summary-card／th-accordion-*／th-form-*」段。欄位與檢核不變。 -->
-  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '隊伍資料']" :title="st.title" :bare="true">
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '人員資料']" :title="st.title" :bare="true">
 
     <template #stepper>
       <th-fc-stepper :current="3"></th-fc-stepper>
