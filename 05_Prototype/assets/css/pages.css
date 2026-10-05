@@ -1519,6 +1519,7 @@
   flex-shrink: 0;
   position: relative;
   background: var(--bg-1);
+  aspect-ratio: 280 / 188;
 }
 .p-apply1-route-thumb img {
   width: 100%;
@@ -1533,7 +1534,6 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  min-height: 120px;
   background: var(--bg-mist);
   color: var(--fg-3);
   font-size: var(--fs-h3);

@@ -66,7 +66,7 @@ const AGENCY_ICONS = {
   taroko: "ph-bold ph-mountains",
   "shei-pa": "ph-bold ph-mountains",
   yushan: "ph-bold ph-mountains",
-  police: "ph-bold ph-shield-check",
+  police: "fa-solid fa-dove",
   "forestry-area": "ph-bold ph-tree",
   "forestry-camp": "ph-bold ph-house-line",
 };

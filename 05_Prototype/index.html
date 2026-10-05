@@ -184,23 +184,32 @@
                   <h2 id="apply-title" class="th-home-panel-title">登山線上申請</h2>
                 </div>
                 <div class="th-home-panel-body">
-                  <div class="th-grid-tiles">
-                    <template v-for="f in applyLinks" :key="f.key">
-                      <!-- action 項開彈窗而非換頁，用 button（語意上不是連結） -->
-                      <button v-if="f.action" type="button" :data-tile="f.key" aria-haspopup="dialog"
-                              class="th-focusable th-tile th-tile-blue" @click="openCalc">
-                        <span class="th-tile-ic">
-                          <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
-                        </span>
-                        <span class="th-tile-label">{{ f.label }}</span>
-                      </button>
-                      <a v-else :href="f.href" class="th-focusable th-tile th-tile-blue">
-                        <span class="th-tile-ic">
-                          <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
-                        </span>
-                        <span class="th-tile-label">{{ f.label }}</span>
-                      </a>
-                    </template>
+                  <div class="th-home-tiles-wrap">
+                    <div class="th-grid-tiles" id="apply-tiles" ref="applyGrid">
+                      <template v-for="f in applyVisible" :key="f.key">
+                        <!-- action 項開彈窗而非換頁，用 button（語意上不是連結） -->
+                        <button v-if="f.action" type="button" :data-tile="f.key" aria-haspopup="dialog"
+                                class="th-focusable th-tile th-tile-blue" @click="openCalc">
+                          <span class="th-tile-ic">
+                            <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
+                          </span>
+                          <span class="th-tile-label">{{ f.label }}</span>
+                        </button>
+                        <a v-else :href="f.href" class="th-focusable th-tile th-tile-blue">
+                          <span class="th-tile-ic">
+                            <i :class="'fa-solid ' + f.icon" aria-hidden="true"></i>
+                          </span>
+                          <span class="th-tile-label">{{ f.label }}</span>
+                        </a>
+                      </template>
+                    </div>
+                    <!-- 2026-09-29 補到 8 個以上：比照左區，預設 8 個、其餘收進「顯示更多」 -->
+                    <button type="button" class="th-focusable th-home-more"
+                            aria-controls="apply-tiles" :aria-expanded="applyExpanded ? 'true' : 'false'"
+                            @click="toggleApply">
+                      <span>{{ applyExpanded ? '顯示較少' : '顯示更多' }}</span>
+                      <i :class="['fa-solid fa-angle-down th-caret', { 'rotate-180': applyExpanded }]" aria-hidden="true"></i>
+                    </button>
                   </div>
                 </div>
               </div>

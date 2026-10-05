@@ -222,7 +222,7 @@ var pApply1RouteCard = {
           </div>
         </div>
         <div v-if="routePath" class="p-apply1-route-sub">{{ routePath }}</div>
-        <div class="p-apply1-route-meta">
+        <div v-if="groupLabel || duration || r.mapUrl" class="p-apply1-route-meta">
           <span v-if="groupLabel"><i class="ph-bold ph-map-trifold" aria-hidden="true"></i>{{ groupLabel }}</span>
           <span v-if="duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ duration }}</span>
           <!-- 正式站卡片的「地圖」鈕（2026-09-24 快照 53／95 條有）。外部連結沿用共用的 th-inline-link

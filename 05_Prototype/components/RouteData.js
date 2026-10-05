@@ -3719,7 +3719,7 @@ window.AGENCIES = [
   {
     "id": "police",
     "name": "警政署入山",
-    "icon": "ph-bold ph-shield-check"
+    "icon": "fa-solid fa-dove"
   },
   {
     "id": "forestry-area",

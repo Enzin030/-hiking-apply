@@ -65,16 +65,29 @@ const EDU_FUNCTIONS = [
    2026-09-24 依會議紀錄（一）4 調整：
    - 原「申請日期查詢」實為申請進度查詢（applySearch.html），改名以免與日期試算混淆。
    - 新增「可申請日期試算」（現行首頁公告右方的同名功能），`action` 項開彈窗而非換頁。
-   - 「旅遊登山資訊」移到登山教育區；「登山須知」移除（與教育區「法令資訊」重複）。 */
+   - 「旅遊登山資訊」移到登山教育區；「登山須知」移除（與教育區「法令資訊」重複）。
+   2026-09-29 使用者要求補到 8 個以上：比照教育區預設 8 個、其餘收進「顯示更多」。
+   新增項取自 th-header.js 既有入口與已建頁面（草稿編輯、出園回報），不自創路徑。
+   玉山繳費／退費、玉山抽籤結果曾一併加入，同日使用者指示不要，已移除。 */
 const APPLY_LINKS = [
   { key: "apply",     label: "登山申請",         icon: "fa-pen-to-square",   href: "apply-1.html" },
+  { key: "draft",     label: "草稿編輯",         icon: "fa-file-pen",        href: "apply_2_1.html" },
   { key: "calc",      label: "可申請日期試算",   icon: "fa-calculator",      action: "calc" },
   { key: "progress",  label: "申請進度查詢",     icon: "fa-calendar-check",  href: "applySearch.html" },
   { key: "violation", label: "違規名單",         icon: "fa-user-xmark",      href: "news_5.html" },
   { key: "faq",       label: "常見問題",         icon: "fa-circle-question", href: "news_7.html" },
   { key: "status",    label: "登山路線開放狀態", icon: "fa-signs-post",      href: "open.html" },
   { key: "bed",       label: "宿營地及床位查詢", icon: "fa-bed",             href: "bed_0.html" },
+  { key: "report",    label: "出園回報",         icon: "fa-flag-checkered",  href: "apply_6.html", more: true },
 ];
+
+/* 收合時只列非 more 項；展開時把 more 項接在後面，而非插回原位——
+   插回原位會讓已看到的 8 個磁磚整批換位置。兩區共用。 */
+function tilesWithMore(list, expanded) {
+  var base = list.filter(function (f) { return !f.more; });
+  if (!expanded) return base;
+  return base.concat(list.filter(function (f) { return f.more; }));
+}
 
 /* 可申請日期試算 — 規則**以正式站首頁同名功能實測為準**（2026-09-29，入園日 2026-12-31／2027-03-31
    ／2026-10-01／2026-10-15 等多組比對；腳本在 scratchpad，未入版控）。
@@ -146,6 +159,7 @@ thPage({
       currentLang: "zh-TW",
       languages: window.TH_LANGUAGES || [],
       eduExpanded: false,
+      applyExpanded: false,
       // 可申請日期試算。ROUTE_DATA 是 body 底部的資料檔，須在 data() 內取（見 CLAUDE.md）
       calcOpen: false,
       calcUnits: CALC_UNITS,
@@ -160,13 +174,8 @@ thPage({
     };
   },
   computed: {
-    /* 收合時只列非 more 項；展開時把 more 項接在後面，而非插回原位——
-       插回原位會讓已看到的 8 個磁磚整批換位置。 */
-    eduVisible() {
-      var base = this.eduFunctions.filter(function (f) { return !f.more; });
-      if (!this.eduExpanded) return base;
-      return base.concat(this.eduFunctions.filter(function (f) { return f.more; }));
-    },
+    eduVisible() { return tilesWithMore(this.eduFunctions, this.eduExpanded); },
+    applyVisible() { return tilesWithMore(this.applyLinks, this.applyExpanded); },
     calcUnitObj() {
       var key = this.calcUnit;
       return this.calcUnits.find(function (u) { return u.key === key; });
@@ -223,13 +232,16 @@ thPage({
   methods: {
     /* 展開後焦點移到第一個新出現的磁磚：新磁磚在 DOM 上位於按鈕之前，
        不移焦點的話鍵盤使用者得倒退 Tab 才找得到。收合時焦點留在按鈕上。 */
-    toggleEdu() {
+    toggleEdu() { this.toggleTiles("eduExpanded", this.eduFunctions, "eduGrid"); },
+    toggleApply() { this.toggleTiles("applyExpanded", this.applyLinks, "applyGrid"); },
+    /* 展開後把焦點移到第一個新出現的磁磚，鍵盤使用者不必倒回去找 */
+    toggleTiles(flag, list, ref) {
       var self = this;
-      var firstNew = this.eduFunctions.filter(function (f) { return !f.more; }).length;
-      this.eduExpanded = !this.eduExpanded;
-      if (!this.eduExpanded) return;
+      var firstNew = list.filter(function (f) { return !f.more; }).length;
+      this[flag] = !this[flag];
+      if (!this[flag]) return;
       this.$nextTick(function () {
-        var tiles = self.$refs.eduGrid ? self.$refs.eduGrid.querySelectorAll(".th-tile") : [];
+        var tiles = self.$refs[ref] ? self.$refs[ref].querySelectorAll(".th-tile") : [];
         if (tiles[firstNew]) tiles[firstNew].focus();
       });
     },

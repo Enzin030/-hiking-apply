@@ -3633,10 +3633,6 @@ body.th-noscroll {
   font-family: inherit;
   border-radius: var(--r-xl);
 }
-.th-swal .swal2-title {
-  font-size: var(--fs-lg);
-  color: var(--fg-1);
-}
 .th-swal .swal2-html-container {
   font-size: var(--fs-md);
   color: var(--fg-2);

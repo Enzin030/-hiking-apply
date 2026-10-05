@@ -49,7 +49,7 @@ thPage({
       return "山屋/營地";
     },
     icon() {
-      if (this.st.kind === "npa") return "ph-bold ph-shield-check";
+      if (this.st.kind === "npa") return "fa-solid fa-dove";
       if (this.st.kind === "area") return "ph-bold ph-tree";
       return "ph-bold ph-house";
     },

@@ -181,7 +181,7 @@ const SUMMARY_CONFIG = {
     ],
   },
   police: {
-    icon: "ph-bold ph-shield-check",
+    icon: "fa-solid fa-dove",
     color: "var(--park-police)",
     agencyName: "內政部警政署",
     title: "入山許可申請前確認",
