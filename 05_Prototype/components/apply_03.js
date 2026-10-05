@@ -48,6 +48,10 @@ thPage({
       leaderSame: st.leaderSame !== undefined ? st.leaderSame : true,
       leader: st.leader || { nation: "中華民國" },
       members: members,
+      /* 版面狀態（2026-10-05 比照 apply-4）：區塊與隊員卡預設展開 */
+      accordionOpen: { apply: true, leader: true, member: true },
+      memberClosed: {},
+      activeNavIndex: 0,
     };
   },
 
@@ -56,9 +60,42 @@ thPage({
     planRows() { return window.thApply6PlanRows(this.st, window.thTodayValue()); },
     /* 正式站 apply_03：警政署、山屋顯示「本案件申請人與領隊須為同一人」，保護區沒有（2026-09-29） */
     leaderLocked() { return this.st.kind !== "area"; },
+    plan() { return this.st.plan || {}; },
+    /* 摘要卡照片：路線列表同一張（警政署 c_id 157、保護區依區域 c_id、山屋依山屋代碼） */
+    summaryImage() {
+      const rows = window.ROUTE_DATA || [];
+      let r = null;
+      if (this.st.kind === "npa") r = rows.find(x => x.cId === "157");
+      else if (this.st.kind === "area") r = rows.find(x => x.cId === String(this.st.areaCid));
+      else r = rows.find(x => x.id === this.st.route);
+      return (r && r.image) || "assets/route-yushan.png";
+    },
+    endDate() {
+      const d = Number(this.st.days) || 0;
+      return this.st.start && d ? window.thAddDaysToDateValue(this.st.start, d - 1) : "";
+    },
+    secApplyOk() { return !!(this.applyConsent && this.applicant.name && this.applicant.sid && this.applicant.mobile); },
+    secLeaderOk() { return this.leaderLocked || this.leaderSame || !!(this.leader.name && this.leader.sid); },
+    secMemberOk() { return this.members.every(m => m.name && m.sid); },
+    sideItems() {
+      return [
+        { key: "apply", sec: "sec-apply", label: "申請人資料", ok: this.secApplyOk },
+        { key: "leader", sec: "sec-leader", label: "領隊資料", ok: this.secLeaderOk },
+        { key: "member", sec: "sec-member", label: "隊員資料（如無則免）", ok: this.secMemberOk },
+      ];
+    },
+    completedSectionsCount() { return this.sideItems.filter(it => it.ok).length; },
   },
 
   methods: {
+    toggleSection(k) { this.accordionOpen[k] = !this.accordionOpen[k]; },
+    isMemberOpen(i) { return !this.memberClosed[i]; },
+    toggleMember(i) { this.memberClosed = Object.assign({}, this.memberClosed, { [i]: !this.memberClosed[i] }); },
+    scrollToSection(id, i) {
+      this.activeNavIndex = i;
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
     setMember(i, v) {
       const list = this.members.slice();
       list[i] = v;

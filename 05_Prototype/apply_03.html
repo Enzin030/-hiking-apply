@@ -24,80 +24,162 @@
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '隊伍資料']" :title="st.title">
+  <!-- 2026-10-05 版面比照玉山人員資料頁 apply-4（使用者要求）：摘要卡、可收合區塊、側欄本頁內容、置中按鈕；
+       共用 class 見 components.css「th-summary-card／th-accordion-*／th-form-*」段。欄位與檢核不變。 -->
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '隊伍資料']" :title="st.title" :bare="true">
 
     <template #stepper>
       <th-fc-stepper :current="3"></th-fc-stepper>
     </template>
 
-    <div class="grid gap-6">
-      <section class="th-card">
-        <div class="th-card-head">
-          <i class="ph-bold ph-mountains" aria-hidden="true"></i>
-          <h2 class="th-card-title">行程計畫</h2>
-        </div>
-        <div class="th-card-body">
-          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
-            <template v-for="r in planRows" :key="r.label">
-              <dt class="th-label">{{ r.label }}</dt><dd>{{ r.value }}</dd>
-            </template>
-          </dl>
-        </div>
-      </section>
+    <div class="th-form-layout mt-6">
+      <main class="th-form-main" role="main">
 
-      <p class="th-field-hint">基本資料填寫（請注意，人員資料必須有：申請人、領隊、隊員（如無則免））<template v-if="leaderLocked"><br /><strong>請注意：本案件申請人與領隊須為同一人</strong></template></p>
-
-      <!-- 申請人 -->
-      <section class="th-card">
-        <div class="th-card-head">
-          <i class="fa-solid fa-user" aria-hidden="true"></i>
-          <h2 class="th-card-title">申請人資料</h2>
-        </div>
-        <div class="th-card-body grid gap-4">
-          <p class="th-field-hint">未成年者不得擔任申請人</p>
-          <label class="flex items-start gap-2 th-label">
-            <input type="checkbox" v-model="applyConsent" class="mt-1" />請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令</label>
-          <th-person-form v-if="applyConsent" role="team" id-prefix="apply" v-model="applicant"></th-person-form>
-        </div>
-      </section>
-
-      <!-- 領隊：警政署、山屋須為申請人本人（鎖定）；保護區可另填 -->
-      <section class="th-card">
-        <div class="th-card-head">
-          <i class="fa-solid fa-flag" aria-hidden="true"></i>
-          <h2 class="th-card-title">領隊資料</h2>
-        </div>
-        <div class="th-card-body grid gap-4">
-          <label class="flex items-center gap-2 th-label">
-            <input v-if="leaderLocked" type="checkbox" checked disabled />
-            <input v-else type="checkbox" v-model="leaderSame" />同申請人<template v-if="leaderLocked">（本案件申請人須為領隊）</template></label>
-          <th-person-form v-if="leaderSame || leaderLocked" role="team" id-prefix="leader-v" :model-value="applicant" readonly></th-person-form>
-          <th-person-form v-else role="team" id-prefix="leader" v-model="leader"></th-person-form>
-        </div>
-      </section>
-
-      <!-- 隊員：人數在第 1 步已決定，依人數預先產生（見 js 檔頭） -->
-      <section class="th-card">
-        <div class="th-card-head">
-          <i class="fa-solid fa-users" aria-hidden="true"></i>
-          <h2 class="th-card-title">隊員資料</h2>
-        </div>
-        <div class="th-card-body grid gap-4">
-          <p class="th-field-hint">(請填個人手機號碼(勿共用)，隊員如非同住家人，e-mail、地址、緊急聯絡人請勿重複，如填寫資料重複會請申請人修改，耽誤您等候審核時間)</p>
-          <p class="th-field-hint">入園時申請出發人數：{{ headcount }}　隊伍人數（含領隊）</p>
-          <div v-for="(m, i) in members" :key="i" class="grid gap-2">
-            <h3 class="th-section-title">No.{{ i + 1 }} 隊員資料</h3>
-            <th-person-form role="team" :id-prefix="'member' + i" :model-value="m" @update:model-value="setMember(i, $event)"></th-person-form>
-            <p class="th-field-hint">「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
+        <!-- 行程摘要（照片取路線列表同一張；使用者 2026-10-05） -->
+        <div class="th-summary-card">
+          <div class="summary-thumb-box">
+            <img :src="summaryImage" alt="" />
+            <div class="summary-thumb-overlay"></div>
           </div>
-          <p v-if="!members.length" class="th-field-hint">出發人數 1 人，只有領隊，無隊員。</p>
+          <div class="summary-info-box">
+            <h2 class="p-fc1-cabin-name">{{ plan.route || plan.main }}</h2>
+            <div class="summary-date-row">
+              <span class="date-item">
+                <span class="date-title">申請單位：</span>
+                <span class="date-value">{{ plan.unit }}</span>
+              </span>
+              <span class="summary-meta-sep" aria-hidden="true">|</span>
+              <span class="date-item">
+                <span class="date-title">出發人數：</span>
+                <span class="date-value">{{ headcount }} 人</span>
+              </span>
+              <span class="summary-meta-sep" aria-hidden="true">|</span>
+              <span class="date-item">
+                <span class="date-title">出發期間：</span>
+                <span class="date-range-text">
+                  <span>{{ st.start || '—' }}</span>
+                  <span class="date-sep">至</span>
+                  <span>{{ endDate || '—' }}</span>
+                </span>
+                <span class="date-days-text">（共 {{ st.days || '—' }} 天）</span>
+              </span>
+            </div>
+          </div>
         </div>
-      </section>
+
+        <div class="th-callout">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <div>基本資料填寫（請注意，人員資料必須有：申請人、領隊、隊員（如無則免））<template v-if="leaderLocked"><br /><strong>請注意：本案件申請人與領隊須為同一人</strong></template></div>
+        </div>
+
+        <!-- 申請人 -->
+        <section id="sec-apply" class="th-card" aria-labelledby="heading-apply">
+          <div class="th-card-head">
+            <button type="button" class="th-accordion-btn" @click="toggleSection('apply')">
+              <h2 id="heading-apply" class="th-card-title">
+                申請人資料<span class="req text-rose-600 ml-1">*</span>
+                <span class="text-rose-600 font-medium text-sm sm:text-base">（未成年者不得擔任申請人）</span>
+              </h2>
+              <i class="fa-solid fa-chevron-down th-accordion-icon" :class="{ 'is-open': accordionOpen.apply }" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="th-card-body grid gap-4" v-show="accordionOpen.apply">
+            <label class="th-agree-clause" :class="{ 'is-acked': applyConsent }">
+              <span class="th-agree-box" aria-hidden="true">
+                <i class="fa-solid fa-check" v-show="applyConsent"></i>
+              </span>
+              <input type="checkbox" v-model="applyConsent" id="cbApplyConsent" class="th-agree-native-cb" />
+              <span class="th-agree-text">
+                請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令
+              </span>
+            </label>
+            <hr v-if="applyConsent" class="th-agree-divider" />
+            <th-person-form v-if="applyConsent" role="team" id-prefix="apply" v-model="applicant"></th-person-form>
+          </div>
+        </section>
+
+        <!-- 領隊：警政署、山屋須為申請人本人（鎖定）；保護區可另填 -->
+        <section id="sec-leader" class="th-card" aria-labelledby="heading-leader">
+          <div class="th-card-head">
+            <button type="button" class="th-accordion-btn" @click="toggleSection('leader')">
+              <h2 id="heading-leader" class="th-card-title">領隊資料<span class="req text-rose-600 ml-1">*</span></h2>
+              <i class="fa-solid fa-chevron-down th-accordion-icon" :class="{ 'is-open': accordionOpen.leader }" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="th-card-body grid gap-4" v-show="accordionOpen.leader">
+            <label class="th-check-row">
+              <input v-if="leaderLocked" type="checkbox" checked disabled id="cbLeaderSame" />
+              <input v-else type="checkbox" v-model="leaderSame" id="cbLeaderSame" />
+              <span><strong>同申請人</strong><template v-if="leaderLocked">（本案件申請人須為領隊）</template></span>
+            </label>
+            <th-person-form v-if="leaderSame || leaderLocked" role="team" id-prefix="leader-v" :model-value="applicant" readonly></th-person-form>
+            <th-person-form v-else role="team" id-prefix="leader" v-model="leader"></th-person-form>
+          </div>
+        </section>
+
+        <!-- 隊員：人數在第 1 步已決定，依人數預先產生（見 js 檔頭） -->
+        <section id="sec-member" class="th-card" aria-labelledby="heading-member">
+          <div class="th-card-head">
+            <button type="button" class="th-accordion-btn" @click="toggleSection('member')">
+              <h2 id="heading-member" class="th-card-title">隊員資料<span class="text-slate-500 font-medium text-sm sm:text-base">（如無則免）</span></h2>
+              <i class="fa-solid fa-chevron-down th-accordion-icon" :class="{ 'is-open': accordionOpen.member }" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="th-card-body grid gap-4" v-show="accordionOpen.member">
+            <div class="th-callout is-danger">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <div>請填個人手機號碼（勿共用），隊員如非同住家人，e-mail、地址、緊急聯絡人請勿重複，如填寫資料重複會請申請人修改，耽誤您等候審核時間。</div>
+            </div>
+            <p class="th-field-hint">入園時申請出發人數：{{ headcount }}　隊伍人數（含領隊）</p>
+            <div v-if="members.length" class="grid gap-3">
+              <div v-for="(m, idx) in members" :key="idx" class="th-member-card">
+                <div class="th-member-head flex items-center justify-between cursor-pointer" @click="toggleMember(idx)">
+                  <h3 class="th-member-title flex items-center">
+                    <i class="fa-solid fa-user text-national-700 mr-1.5" aria-hidden="true"></i>
+                    <span>No.{{ idx + 1 }} 隊員資料</span>
+                    <span v-if="m.name" class="text-slate-500 font-normal text-xs sm:text-sm">（{{ m.name }}）</span>
+                  </h3>
+                  <i :class="['fa-solid', isMemberOpen(idx) ? 'fa-chevron-up' : 'fa-chevron-down', 'text-xs text-slate-400 ml-1']" aria-hidden="true"></i>
+                </div>
+                <div class="th-member-body" v-show="isMemberOpen(idx)">
+                  <th-person-form role="team" :id-prefix="'member' + idx" :model-value="m" @update:model-value="setMember(idx, $event)"></th-person-form>
+                  <p class="th-field-hint mt-3">「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
+                </div>
+              </div>
+            </div>
+            <p v-else class="th-field-hint">出發人數 1 人，只有領隊，無隊員。</p>
+          </div>
+        </section>
+      </main>
+
+      <!-- 右側本頁內容導覽（比照 apply-4） -->
+      <aside class="th-pageside" aria-label="本頁內容導覽">
+        <div class="th-pageside-inner">
+          <div class="th-pageside-head">
+            <span>本頁內容</span>
+            <span class="th-pageside-count" :class="{ 'is-done': completedSectionsCount === sideItems.length }">
+              <span class="num">{{ completedSectionsCount }}</span> / {{ sideItems.length }}
+            </span>
+          </div>
+          <ol class="th-pageside-list">
+            <li v-for="(it, i) in sideItems" :key="it.key" :class="{ 'is-acked': it.ok, 'is-active': activeNavIndex === i }">
+              <button type="button" @click="scrollToSection(it.sec, i)">
+                <span class="th-pageside-text">{{ i + 1 }}. {{ it.label }}</span>
+                <span class="th-pageside-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+          </ol>
+        </div>
+      </aside>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-3 mt-12">
-      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
-      <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    <div class="th-form-actions">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev">
+        <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
+      </button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">
+        下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>
+      </button>
     </div>
   </th-page-shell>
 
@@ -107,5 +189,7 @@
   <th-footer></th-footer>
 
 </div>
+<!-- 摘要卡照片取路線列表同一張（RouteData.js）；頁面腳本只在 computed 裡讀 -->
+<script src="components/RouteData.js"></script>
 </body>
 </html>

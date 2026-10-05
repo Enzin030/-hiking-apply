@@ -155,6 +155,21 @@
           });
       },
       cities() { return CITY[this.modelValue.country] || []; },
+      isForeign() { return this.foreign; },
+      /* 版面列（比照 apply-4 的順序）：身分證號（國籍＋國別＋證號）、地址（縣市＋鄉鎮＋地址）各合成一格 */
+      rows() {
+        var keys = this.conf.keys;
+        var has = function (k) { return keys.indexOf(k) >= 0; };
+        var order = ["name", "tel", "mobile", "fax", "email", "#id", "sex", "birthday", "#addr",
+                     "contactname", "contacttel", "student", "notes"];
+        var out = [];
+        order.forEach(function (k) {
+          if (k === "#id") { if (has("sid")) out.push({ key: "#id", kind: "id" }); return; }
+          if (k === "#addr") { if (has("addr")) out.push({ key: "#addr", kind: "addr" }); return; }
+          if (has(k)) out.push({ key: k, kind: "field", f: F[k] });
+        });
+        return out;
+      },
     },
     data() {
       return { countries: Object.keys(CITY), nations: NATIONS };
@@ -175,62 +190,72 @@
         return v;
       },
     },
+    /* 2026-10-05 版面改比照玉山人員資料頁 apply-4（使用者要求六步驟隊伍資料頁參考玉山）：
+       兩欄 .th-form-grid；身分證號前接國籍（國外再加國別）、縣市＋鄉鎮＋地址同一列全寬。
+       readonly 用同一套版面，輸入框唯讀、下拉停用（取代原本三欄純文字），欄位與資料結構不變。 */
     template: `
       <div class="th-person-form" :data-role="role">
         <p v-if="conf.note && !readonly" class="th-field-hint mb-3">{{ conf.note }}</p>
+        <div class="th-form-grid">
+          <template v-for="row in rows" :key="row.key">
+            <!-- 身分證號：國籍（＋國別）＋證號 -->
+            <div v-if="row.kind === 'id'" class="th-field">
+              <label class="th-label" :for="fid('sid')"><span><span class="req">*</span>身分證號</span></label>
+              <div :class="['grid gap-2', isForeign ? 'grid-cols-[110px_110px_1fr]' : 'grid-cols-[130px_1fr]']">
+                <th-hybrid-select><select :id="fid('nation')" class="th-select" :disabled="readonly" aria-label="國籍"
+                        :value="modelValue.nation || '中華民國'" @change="set('nation', $event.target.value)">
+                  <option value="中華民國">中華民國</option>
+                  <option value="國外">國外</option>
+                </select></th-hybrid-select>
+                <th-hybrid-select v-if="isForeign"><select :id="fid('nationid')" class="th-select" :disabled="readonly" aria-label="國別"
+                        :value="modelValue.nationid || ''" @change="set('nationid', $event.target.value)">
+                  <option value="">請選擇國別</option>
+                  <option v-for="n in nations" :key="n" :value="n">{{ n }}</option>
+                </select></th-hybrid-select>
+                <input :id="fid('sid')" type="text" :class="['th-input uppercase', { 'th-input-readonly': readonly }]" :readonly="readonly"
+                       :placeholder="isForeign ? '請輸入護照或居留證號' : '請輸入身分證號'"
+                       :value="modelValue.sid || ''" @input="set('sid', $event.target.value)" />
+              </div>
+            </div>
 
-        <dl v-if="readonly" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
-          <div v-for="f in fields" :key="f.key" :class="['th-field', { 'sm:col-span-2 lg:col-span-3': f.wide }]">
-            <dt class="th-label">{{ f.label }}</dt>
-            <dd class="th-input th-input-readonly">{{ shown(f) }}</dd>
-          </div>
-        </dl>
+            <!-- 地址：縣市＋鄉鎮市區＋地址，全寬 -->
+            <div v-else-if="row.kind === 'addr'" class="th-field th-form-grid-full">
+              <label class="th-label" :for="fid('country')"><span><span class="req">*</span>地址</span></label>
+              <div class="grid grid-cols-1 md:grid-cols-[140px_140px_1fr] gap-2">
+                <th-hybrid-select><select :id="fid('country')" class="th-select" :disabled="readonly" aria-label="縣市"
+                        :value="modelValue.country || ''" @change="set('country', $event.target.value)">
+                  <option value="">請選擇縣市</option>
+                  <option v-for="c in countries" :key="c" :value="c">{{ c }}</option>
+                </select></th-hybrid-select>
+                <th-hybrid-select><select :id="fid('city')" class="th-select" :disabled="readonly || !cities.length" aria-label="鄉鎮市區"
+                        :value="modelValue.city || ''" @change="set('city', $event.target.value)">
+                  <option value="">請選擇鄉鎮市區</option>
+                  <option v-for="c in cities" :key="c" :value="c">{{ c }}</option>
+                </select></th-hybrid-select>
+                <input :id="fid('addr')" type="text" :class="['th-input', { 'th-input-readonly': readonly }]" :readonly="readonly"
+                       placeholder="請輸入路街巷弄門牌" aria-label="地址" :value="modelValue.addr || ''" @input="set('addr', $event.target.value)" />
+              </div>
+            </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-          <div v-for="f in fields" :key="f.key" :class="['th-field', { 'sm:col-span-2 lg:col-span-3': f.wide }]">
-            <label v-if="f.type !== 'student'" class="th-label" :for="fid(f.key)"><span v-if="f.req" class="req">*</span>{{ f.label }}</label>
-
-            <th-hybrid-select v-if="f.type === 'country'"><select :id="fid(f.key)" class="th-select"
-                    :value="modelValue.country || ''" @change="set('country', $event.target.value)">
-              <option value="">請選擇縣市</option>
-              <option v-for="c in countries" :key="c" :value="c">{{ c }}</option>
-            </select></th-hybrid-select>
-
-            <th-hybrid-select v-else-if="f.type === 'city'"><select :id="fid(f.key)" class="th-select" :disabled="!cities.length"
-                    :value="modelValue.city || ''" @change="set('city', $event.target.value)">
-              <option value="">請選擇</option>
-              <option v-for="c in cities" :key="c" :value="c">{{ c }}</option>
-            </select></th-hybrid-select>
-
-            <th-hybrid-select v-else-if="f.type === 'nation'"><select :id="fid(f.key)" class="th-select"
-                    :value="modelValue.nation || '中華民國'" @change="set('nation', $event.target.value)">
-              <option value="中華民國">中華民國</option>
-              <option value="國外">國外</option>
-            </select></th-hybrid-select>
-
-            <th-hybrid-select v-else-if="f.type === 'nationid'"><select :id="fid(f.key)" class="th-select"
-                    :value="modelValue.nationid || ''" @change="set('nationid', $event.target.value)">
-              <option value="">請選擇國別</option>
-              <option v-for="n in nations" :key="n" :value="n">{{ n }}</option>
-            </select></th-hybrid-select>
-
-            <th-hybrid-select v-else-if="f.type === 'sex'"><select :id="fid(f.key)" class="th-select"
-                    :value="modelValue.sex || ''" @change="set('sex', $event.target.value)">
-              <option value="">請選擇</option>
-              <option value="男">男</option>
-              <option value="女">女</option>
-            </select></th-hybrid-select>
-
-            <label v-else-if="f.type === 'student'" class="flex items-center gap-2 th-label">
-              <input type="checkbox" :id="fid(f.key)" :checked="!!modelValue.student"
-                     @change="set('student', $event.target.checked)" />{{ f.label }}</label>
-
-            <input v-else :id="fid(f.key)" class="th-input" :type="f.type === 'email' ? 'email' : (f.type === 'date' ? 'date' : 'text')"
-                   :placeholder="'請輸入' + f.label" :value="modelValue[f.key] || ''"
-                   @input="set(f.key, $event.target.value)" />
-
-            <span v-if="f.hint" class="th-field-hint">{{ f.hint }}</span>
-          </div>
+            <!-- 一般欄位 -->
+            <div v-else :class="['th-field', { 'th-form-grid-full': row.f.wide }]">
+              <label class="th-label" :for="fid(row.key)"><span><span v-if="row.f.req" class="req">*</span>{{ row.f.label }}</span></label>
+              <th-hybrid-select v-if="row.f.type === 'sex'"><select :id="fid(row.key)" class="th-select" :disabled="readonly"
+                      :value="modelValue.sex || ''" @change="set('sex', $event.target.value)">
+                <option value="">請選擇性別</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select></th-hybrid-select>
+              <label v-else-if="row.f.type === 'student'" class="flex items-center gap-2 th-label">
+                <input type="checkbox" :id="fid(row.key)" :disabled="readonly" :checked="!!modelValue.student"
+                       @change="set('student', $event.target.checked)" />{{ row.f.label }}</label>
+              <input v-else :id="fid(row.key)" :class="['th-input', { 'th-input-readonly': readonly }]" :readonly="readonly"
+                     :type="row.f.type === 'email' ? 'email' : (row.f.type === 'date' ? 'date' : 'text')"
+                     :placeholder="readonly ? '' : '請輸入' + row.f.label" :value="modelValue[row.key] || ''"
+                     @input="set(row.key, $event.target.value)" />
+              <span v-if="row.f.hint && !readonly" class="th-field-hint">{{ row.f.hint }}</span>
+            </div>
+          </template>
         </div>
       </div>
     `,
