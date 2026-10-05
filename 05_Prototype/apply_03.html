@@ -67,11 +67,6 @@
           </div>
         </div>
 
-        <div class="th-callout">
-          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-          <div>基本資料填寫（請注意，人員資料必須有：申請人、領隊、隊員（如無則免））<template v-if="leaderLocked"><br /><strong>請注意：本案件申請人與領隊須為同一人</strong></template></div>
-        </div>
-
         <!-- 申請人 -->
         <section id="sec-apply" class="th-card" aria-labelledby="heading-apply">
           <div class="th-card-head">
@@ -89,16 +84,15 @@
                 <i class="fa-solid fa-check" v-show="applyConsent"></i>
               </span>
               <input type="checkbox" v-model="applyConsent" id="cbApplyConsent" class="th-agree-native-cb" />
-              <span class="th-agree-text">
-                請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令
-              </span>
+              <span class="th-agree-text">{{ consentText }}</span>
             </label>
             <hr v-if="applyConsent" class="th-agree-divider" />
             <th-person-form v-if="applyConsent" role="team" id-prefix="apply" v-model="applicant"></th-person-form>
           </div>
         </section>
 
-        <!-- 領隊：警政署、山屋須為申請人本人（鎖定）；保護區可另填 -->
+        <!-- 領隊：「同申請人」三類都可取消另填（正式站勾選框未鎖、送出檢查也未比對）；
+             山屋另顯示紅字提醒「本案件申請人與領隊須為同一人」（2026-10-05 讀正式站腳本更正） -->
         <section id="sec-leader" class="th-card" aria-labelledby="heading-leader">
           <div class="th-card-head">
             <button type="button" class="th-accordion-btn" @click="toggleSection('leader')">
@@ -108,11 +102,11 @@
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.leader">
             <label class="th-check-row">
-              <input v-if="leaderLocked" type="checkbox" checked disabled id="cbLeaderSame" />
-              <input v-else type="checkbox" v-model="leaderSame" id="cbLeaderSame" />
-              <span><strong>同申請人</strong><template v-if="leaderLocked">（本案件申請人須為領隊）</template></span>
+              <input type="checkbox" v-model="leaderSame" id="cbLeaderSame" />
+              <span><strong>同申請人</strong></span>
             </label>
-            <th-person-form v-if="leaderSame || leaderLocked" role="team" id-prefix="leader-v" :model-value="applicant" readonly></th-person-form>
+            <p v-if="leaderNote" class="th-field-error">請注意：本案件申請人與領隊須為同一人</p>
+            <th-person-form v-if="leaderSame" role="team" id-prefix="leader-v" :model-value="applicant" readonly></th-person-form>
             <th-person-form v-else role="team" id-prefix="leader" v-model="leader"></th-person-form>
           </div>
         </section>
@@ -130,7 +124,6 @@
               <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
               <div>請填個人手機號碼（勿共用），隊員如非同住家人，e-mail、地址、緊急聯絡人請勿重複，如填寫資料重複會請申請人修改，耽誤您等候審核時間。</div>
             </div>
-            <p class="th-field-hint">入園時申請出發人數：{{ headcount }}　隊伍人數（含領隊）</p>
             <div v-if="members.length" class="grid gap-3">
               <div v-for="(m, idx) in members" :key="idx" class="th-member-card">
                 <div class="th-member-head flex items-center justify-between cursor-pointer" @click="toggleMember(idx)">
@@ -143,7 +136,7 @@
                 </div>
                 <div class="th-member-body" v-show="isMemberOpen(idx)">
                   <th-person-form role="team" :id-prefix="'member' + idx" :model-value="m" @update:model-value="setMember(idx, $event)"></th-person-form>
-                  <p class="th-field-hint mt-3">「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
+                  <p class="th-field-hint is-accent mt-3">＊「緊急聯絡人以自己家人為主，否則無法受理，緊急聯絡人或留守人員為不隨隊伍上山之家人」</p>
                 </div>
               </div>
             </div>

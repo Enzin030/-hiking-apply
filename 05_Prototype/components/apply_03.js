@@ -3,8 +3,10 @@
    ------------------------------------------------------------
    2026-09-30 新增（原 forest-camp-3.js）。依據正式站 apply_03.aspx（2026-09-29 實走三類）：
    - 申請人勾「委託同意」後才出現欄位；「未成年者不得擔任申請人」
-   - **警政署、山屋：本案件申請人與領隊須為同一人**——領隊區鎖定帶入申請人；
-     **自然保護區域沒有此限制**——「同申請人」可取消、另填領隊
+   - 領隊「同申請人」三類都可取消、另填領隊。**2026-10-05 更正**：原寫「警政署、山屋須為同一人、鎖定」有誤——
+     正式站腳本在 FormActionKey 回應後隱藏 #NotesStr，只有 TravelKinds 3（山屋）才顯示紅字
+     「本案件申請人與領隊須為同一人」；勾選框未鎖、checkedData() 也未比對。先前擷取在隱藏前拍到，才誤記警政署有
+   - 委託同意文字：有警政署入山資料時為「向警政署提出入山申請」，其餘為頁面預設「向國家公園管理處提出登山申請」（正式站原文）
    - 三區欄位相同（th-person-form role="team"），有備註、**沒有留守人**
    - 隊員列：正式站只預先產生 No.1，其餘按「新增隊員」；
      **雛形依第 1 步人數預先產生「人數－1」列**（設計選擇，見 decisions.md 2026-09-30）
@@ -58,8 +60,13 @@ thPage({
   computed: {
     applyCrumb() { return window.TH_APPLY_CRUMB; },
     planRows() { return window.thApply6PlanRows(this.st, window.thTodayValue()); },
-    /* 正式站 apply_03：警政署、山屋顯示「本案件申請人與領隊須為同一人」，保護區沒有（2026-09-29） */
-    leaderLocked() { return this.st.kind !== "area"; },
+    /* 正式站 apply_03：只有山屋顯示「本案件申請人與領隊須為同一人」（提醒，不鎖定；2026-10-05 更正） */
+    leaderNote() { return this.st.kind === "camp"; },
+    consentText() {
+      return this.st.kind === "npa"
+        ? "請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向警政署提出入山申請相關事宜，以免違反相關法令"
+        : "請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令";
+    },
     plan() { return this.st.plan || {}; },
     /* 摘要卡照片：路線列表同一張（警政署 c_id 157、保護區依區域 c_id、山屋依山屋代碼） */
     summaryImage() {
@@ -75,7 +82,7 @@ thPage({
       return this.st.start && d ? window.thAddDaysToDateValue(this.st.start, d - 1) : "";
     },
     secApplyOk() { return !!(this.applyConsent && this.applicant.name && this.applicant.sid && this.applicant.mobile); },
-    secLeaderOk() { return this.leaderLocked || this.leaderSame || !!(this.leader.name && this.leader.sid); },
+    secLeaderOk() { return this.leaderSame || !!(this.leader.name && this.leader.sid); },
     secMemberOk() { return this.members.every(m => m.name && m.sid); },
     sideItems() {
       return [
@@ -104,7 +111,7 @@ thPage({
     persist() {
       window.thFcState.save({
         applyConsent: this.applyConsent, applicant: this.applicant, members: this.members,
-        leaderSame: this.leaderLocked || this.leaderSame, leader: this.leader,
+        leaderSame: this.leaderSame, leader: this.leader,
       });
     },
     check() {
@@ -113,7 +120,7 @@ thPage({
       if (!this.applicant.name) e.push("申請人姓名為必填");
       if (!this.applicant.sid) e.push("申請人身分證號為必填");
       if (!this.applicant.mobile) e.push("申請人手機為必填");
-      if (!this.leaderLocked && !this.leaderSame && (!this.leader.name || !this.leader.sid)) e.push("領隊的姓名與證號為必填，或勾選「同申請人」");
+      if (!this.leaderSame && (!this.leader.name || !this.leader.sid)) e.push("領隊的姓名與證號為必填，或勾選「同申請人」");
       this.members.forEach((m, i) => {
         if (!m.name || !m.sid) e.push("No." + (i + 1) + " 隊員的姓名與證號為必填");
       });
