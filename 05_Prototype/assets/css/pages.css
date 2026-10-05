@@ -435,13 +435,6 @@
   object-fit: cover;
 }
 
-.p-fc1-cabin-name {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--fg-1);
-  margin-bottom: 6px;
-}
-
 .p-fc1-cabin-meta {
   display: flex;
   flex-wrap: wrap;

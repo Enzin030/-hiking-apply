@@ -5847,3 +5847,12 @@ a.th-linkrow:hover .th-linkrow-icon {
   font-weight: 400;
   white-space: nowrap;
 }
+
+/* th-summary-title — 摘要卡／山屋資訊卡的標題（路線名、山屋名）
+   2026-10-05 由山屋第 1 步 .p-fc1-cabin-name 提升：人員資料、確認資料、六步驟隊伍資料的摘要卡都在用，二次即提升 */
+.th-summary-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--fg-1);
+  margin-bottom: 6px;
+}
