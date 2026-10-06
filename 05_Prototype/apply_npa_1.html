@@ -44,10 +44,6 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="th-field">
-            <label class="th-label" for="f-route">推薦行程</label>
-            <input id="f-route" type="text" class="th-input th-input-readonly" value="入山證申請" readonly />
-          </div>
-          <div class="th-field">
             <label class="th-label" for="f-days"><span class="req">*</span>行程天數</label>
             <th-hybrid-select><select id="f-days" class="th-select" v-model.number="days">
               <option :value="0">請選擇</option>
@@ -61,13 +57,6 @@
               <option v-for="d in dates" :key="d" :value="d">{{ d }}</option>
             </select></th-hybrid-select>
             <span class="th-field-hint is-accent">＊因作業規定，最晚須於3天前申請。</span>
-          </div>
-          <div class="th-field">
-            <label class="th-label" for="f-people"><span class="req">*</span>出發人數（含領隊）</label>
-            <th-hybrid-select><select id="f-people" class="th-select" v-model.number="headcount">
-              <option :value="0">請選擇</option>
-              <option v-for="n in 19" :key="n" :value="n">{{ n }}</option>
-            </select></th-hybrid-select>
           </div>
         </div>
       </div>

@@ -85,14 +85,14 @@
     country:     { label: "縣市",           type: "country", req: true },
     city:        { label: "鄉鎮市區",       type: "city",  req: true },
     addr:        { label: "地址",           type: "text",  req: true, wide: true },
-    mobile:      { label: "手機",           type: "text",  req: true, hint: "格式：0912345678" },
+    mobile:      { label: "手機",           type: "text",  req: true },   // 「格式：0912345678」使用者 2026-10-06 拿掉
     fax:         { label: "傳真",           type: "text",  req: false },
     email:       { label: "電子郵件",       type: "email", req: true },
     nation:      { label: "國籍",           type: "nation", req: true },
     nationid:    { label: "國別",           type: "nationid", req: true, onlyForeign: true },
     sid:         { label: "身分證號",       type: "sid",   req: true },
     sex:         { label: "性別",           type: "sex",   req: true },
-    birthday:    { label: "生日",           type: "date",  req: true, hint: "格式：1980-01-01" },
+    birthday:    { label: "生日",           type: "date",  req: true },   // 「格式：1980-01-01」使用者 2026-10-06 拿掉
     contactname: { label: "緊急聯絡人",     type: "text",  req: true },
     contacttel:  { label: "緊急聯絡人電話", type: "text",  req: true },
     student:     { label: "是否為學生",     type: "student", req: false,
@@ -195,7 +195,7 @@
        readonly 用同一套版面，輸入框唯讀、下拉停用（取代原本三欄純文字），欄位與資料結構不變。 */
     template: `
       <div class="th-person-form" :data-role="role">
-        <p v-if="conf.note && !readonly" class="th-field-hint mb-3">{{ conf.note }}</p>
+        <p v-if="conf.note && !readonly" class="th-field-hint is-accent mb-3">{{ conf.note }}</p>
         <div class="th-form-grid">
           <template v-for="row in rows" :key="row.key">
             <!-- 身分證號：國籍（＋國別）＋證號 -->
@@ -253,7 +253,7 @@
                      :type="row.f.type === 'email' ? 'email' : (row.f.type === 'date' ? 'date' : 'text')"
                      :placeholder="readonly ? '' : '請輸入' + row.f.label" :value="modelValue[row.key] || ''"
                      @input="set(row.key, $event.target.value)" />
-              <span v-if="row.f.hint && !readonly" class="th-field-hint">{{ row.f.hint }}</span>
+              <span v-if="row.f.hint && !readonly" class="th-field-hint is-accent">{{ row.f.hint }}</span>
             </div>
           </template>
         </div>

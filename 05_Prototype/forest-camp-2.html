@@ -82,7 +82,7 @@
               maxlength="40"
               :value="teamName"
               @input="teamName = $event.target.value" />
-            <div class="th-field-hint">2–40 字，供識別申請隊伍使用</div>
+            <div class="th-field-hint is-accent">2–40 字，供識別申請隊伍使用</div>
           </div>
           </div>
         </section>
@@ -99,7 +99,7 @@
               <label v-for="a in cabin.stayAreas" :key="a" class="flex items-center gap-2">
                 <input type="checkbox" :value="a" v-model="stayAreas" />{{ a }}</label>
             </div>
-            <div class="th-field-hint">可複選</div>
+            <div class="th-field-hint is-accent">可複選</div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
             <div class="th-field">

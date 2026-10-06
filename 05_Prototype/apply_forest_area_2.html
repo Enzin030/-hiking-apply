@@ -51,7 +51,7 @@
                 <input type="checkbox" :value="s.value" v-model="picked" class="mt-1" />
                 <span>
                   <strong>{{ s.value }}</strong>
-                  <span v-if="s.desc" class="text-base text-national-800 font-normal block mt-1 leading-relaxed">＊{{ s.desc.startsWith('＊') ? s.desc.slice(1) : s.desc }}</span>
+                  <span v-if="s.desc" class="th-field-hint is-accent block mt-1">＊{{ s.desc.startsWith('＊') ? s.desc.slice(1) : s.desc }}</span>
                 </span>
               </label>
             </div>
@@ -130,7 +130,7 @@
                   <input v-else type="radio" name="purpose" :value="p.value" v-model="purpose" class="mt-1" />
                   <span>
                     <strong>{{ p.value }}</strong>
-                    <span v-if="p.note || p.template" class="th-field-hint block text-rose-600 font-normal mt-0.5">
+                    <span v-if="p.note || p.template" class="th-field-hint is-accent block mt-0.5">
                       {{ p.note }}
                       <a v-if="p.template" class="th-inline-link font-semibold ml-1 underline" :href="p.template.href" download>{{ p.template.label }}</a>
                       {{ p.noteAfter }}
@@ -156,7 +156,7 @@
                           <div class="font-medium text-slate-800">
                             <span class="req">*</span>{{ p.value }}相關證明文件<span v-if="p.attach > 1">（附件 {{ n }}）</span>
                           </div>
-                          <div class="th-field-hint">格式限制：PDF、JPG、PNG，單檔大小不超過 5MB</div>
+                          <div class="th-field-hint is-accent">格式限制：PDF、JPG、PNG，單檔大小不超過 5MB</div>
                         </td>
                         <td class="is-center">
                           <input :id="'fa-file-' + pi + '-' + n" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" @change="pickFile(p.value, n - 1, $event)" />

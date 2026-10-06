@@ -25,7 +25,7 @@ window.thComponents["th-apply-stepper"] = {
       return [
         { n: 1, title: "閱讀同意書" },
         { n: 2, title: "行程規劃" },
-        { n: 3, title: "人員資料" },
+        { n: 3, title: "隊伍資料" },   // 2026-10-06 使用者裁示步驟名稱統一為「隊伍資料」
         { n: 4, title: "確認資料" },
         { n: 5, title: "申請完成" },
       ];

@@ -2,7 +2,7 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
-<title>登山線上申請｜人員資料 — 臺灣登山申請一站式服務網</title>
+<title>登山線上申請｜隊伍資料 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
   apply-4.html — 步驟四「人員資料」
@@ -26,10 +26,10 @@
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="04 人員資料">
+<div id="th-app" v-cloak data-screen-label="04 隊伍資料">
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, '人員資料']" title="人員資料" :bare="true">
+  <th-page-shell :trail="['登山申請', applyCrumb, '隊伍資料']" title="隊伍資料" :bare="true">
     <template #stepper>
       <th-apply-stepper :current="3"></th-apply-stepper>
     </template>
@@ -632,7 +632,7 @@
                   <span><span class="req">*</span>電話</span>
                 </label>
                 <input id="con_stay_tel" type="tel" class="th-input" v-model="stay.tel" placeholder="例：02-12345678" required />
-                <span v-if="park.stayTelHint" class="th-field-hint">{{ park.stayTelHint }}</span>
+                <span v-if="park.stayTelHint" class="th-field-hint is-accent">{{ park.stayTelHint }}</span>
               </div>
 
               <!-- 手機(或電話) -->
@@ -641,7 +641,7 @@
                   <span><span class="req">*</span>{{ park.stayTel ? '手機' : '手機(或電話)' }}</span>
                 </label>
                 <input id="con_stay_mobile" type="tel" class="th-input" v-model="stay.mobile" placeholder="例：0912345678" required />
-                <span v-if="park.stayMobileHint" class="th-field-hint">{{ park.stayMobileHint }}</span>
+                <span v-if="park.stayMobileHint" class="th-field-hint is-accent">{{ park.stayMobileHint }}</span>
               </div>
 
               <!-- 傳真 -->

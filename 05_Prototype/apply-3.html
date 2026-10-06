@@ -109,7 +109,7 @@
                   <option v-for="s in sumdayOptions" :key="s.value" :value="s.value">{{ s.text }}</option>
                 </select>
               </th-hybrid-select>
-              <span v-if="park.daysHint" class="th-field-hint">{{ park.daysHint }}</span>
+              <span v-if="park.daysHint" class="th-field-hint is-accent">{{ park.daysHint }}</span>
             </div>
 
             <div class="th-field">
@@ -124,11 +124,10 @@
               </th-hybrid-select>
             </div>
 
+            <!-- 系統計算、不可修改：改純文字（使用者 2026-10-06），py-2 讓文字與同列輸入框內文對齊 -->
             <div class="th-field">
-              <label class="th-label">
-                <span>離開園區日期（系統自動計算）</span>
-              </label>
-              <input type="text" class="th-input th-input-readonly" :value="endDate ? endDate : '請先選擇入園日期與天數'" readonly />
+              <span class="th-label">離開園區日期（系統自動計算）</span>
+              <p class="py-2 text-base text-slate-900">{{ endDate ? endDate : '請先選擇入園日期與天數' }}</p>
             </div>
           </div>
 
