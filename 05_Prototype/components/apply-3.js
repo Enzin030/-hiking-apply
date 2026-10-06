@@ -406,9 +406,9 @@ thPage({
     },
 
     routeNoteText() {
-      /* 雪霸：正式站步驟一難度表的「備註」列只有「歡迎下載」，不帶開放狀態頁的路線備註
-         （2026-10-05 逐條讀取 29 條次路線皆同） */
-      if (this.park.key === "shei-pa") return "";
+      /* 雪霸、太魯閣：正式站步驟一難度表的「備註」列只有「歡迎下載」，不帶開放狀態頁的路線備註
+         （2026-10-05 逐條讀取雪霸 29 條、太魯閣 19 條次路線皆同） */
+      if (this.park.key === "shei-pa" || this.park.key === "taroko") return "";
       return this.openRow ? (this.openRow.note || "") : "";
     },
 

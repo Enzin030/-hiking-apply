@@ -217,7 +217,7 @@
             <div class="grid gap-2">
               <label class="flex items-start gap-2 font-semibold"><input type="checkbox" v-model="noteChecked" class="mt-1" /><span><span class="req">*</span>已詳閱以下說明，並同意相關注意事項。</span></label>
               <ul class="list-disc pl-5">
-                <li v-for="n in routeNotes" :key="n">{{ n }}</li>
+                <li v-for="(n, nIdx) in routeNotes" :key="nIdx"><template v-for="(part, pIdx) in noteParts(n)" :key="pIdx"><a v-if="part.href" class="th-inline-link break-all" :href="part.href" target="_blank" rel="noopener noreferrer">{{ part.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a><template v-else>{{ part }}</template></template></li>
                 <li v-if="npaOn">警政署入山申辦系統：<a class="th-inline-link break-all" :href="park.npaSite" target="_blank" rel="noopener noreferrer">{{ park.npaSite }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></li>
               </ul>
             </div>

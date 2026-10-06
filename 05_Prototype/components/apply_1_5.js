@@ -300,6 +300,8 @@ thPage({
   },
 
   methods: {
+    /* 說明段落：字串或「文字／{text, href} 連結」陣列（Apply15Data.js，2026-10-06） */
+    noteParts(n) { return Array.isArray(n) ? n : [n]; },
     pickCamp(i, v) {
       var next = Object.assign({}, this.campPick);
       next[i] = v;

@@ -65,7 +65,7 @@
             <label v-if="hasNoteCheck" class="flex items-start gap-2 th-label">
               <input type="checkbox" v-model="noteChecked" class="mt-1" />已詳閱以下說明，並同意相關注意事項。</label>
             <ul v-if="notes.length || needsNpa" class="th-field-hint list-disc pl-5">
-              <li v-for="n in notes" :key="n">{{ n }}</li>
+              <li v-for="(n, nIdx) in notes" :key="nIdx"><template v-for="(part, pIdx) in noteParts(n)" :key="pIdx"><a v-if="part.href" class="th-inline-link break-all" :href="part.href" target="_blank" rel="noopener noreferrer">{{ part.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a><template v-else>{{ part }}</template></template></li>
               <li v-if="needsNpa">警政署入山申辦系統：<a class="th-inline-link break-all" :href="npaSite" target="_blank" rel="noopener noreferrer">{{ npaSite }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></li>
             </ul>
             <dl v-if="levelRow" class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
