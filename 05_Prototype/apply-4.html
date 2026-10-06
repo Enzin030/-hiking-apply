@@ -126,7 +126,7 @@
                 <label class="th-label" for="con_apply_tel">
                   <span><span class="req">*</span>電話</span>
                 </label>
-                <input id="con_apply_tel" type="tel" class="th-input" v-model="applicant.tel" placeholder="例：02-12345678" required />
+                <input id="con_apply_tel" type="tel" class="th-input" v-model="applicant.tel" required />
               </div>
 
               <!-- 手機 -->
@@ -278,7 +278,7 @@
                 <label class="th-label" for="con_leader_tel">
                   <span><span class="req">*</span>電話</span>
                 </label>
-                <input id="con_leader_tel" type="tel" class="th-input" v-model="leader.tel" placeholder="例：02-12345678" required />
+                <input id="con_leader_tel" type="tel" class="th-input" v-model="leader.tel" required />
               </div>
 
               <div class="th-field">
@@ -448,7 +448,7 @@
                       <label class="th-label" :for="'con_lisMem_member_tel_' + idx">
                         <span><span class="req">*</span>電話</span>
                       </label>
-                      <input :id="'con_lisMem_member_tel_' + idx" type="tel" class="th-input" v-model="m.tel" placeholder="例：02-12345678" required />
+                      <input :id="'con_lisMem_member_tel_' + idx" type="tel" class="th-input" v-model="m.tel" required />
                     </div>
 
                     <!-- 手機 -->
@@ -631,7 +631,7 @@
                 <label class="th-label" for="con_stay_tel">
                   <span><span class="req">*</span>電話</span>
                 </label>
-                <input id="con_stay_tel" type="tel" class="th-input" v-model="stay.tel" placeholder="例：02-12345678" required />
+                <input id="con_stay_tel" type="tel" class="th-input" v-model="stay.tel" required />
                 <span v-if="park.stayTelHint" class="th-field-hint is-accent">{{ park.stayTelHint }}</span>
               </div>
 
@@ -640,7 +640,7 @@
                 <label class="th-label" for="con_stay_mobile">
                   <span><span class="req">*</span>{{ park.stayTel ? '手機' : '手機(或電話)' }}</span>
                 </label>
-                <input id="con_stay_mobile" type="tel" class="th-input" v-model="stay.mobile" placeholder="例：0912345678" required />
+                <input id="con_stay_mobile" type="tel" class="th-input" v-model="stay.mobile" required />
                 <span v-if="park.stayMobileHint" class="th-field-hint is-accent">{{ park.stayMobileHint }}</span>
               </div>
 
