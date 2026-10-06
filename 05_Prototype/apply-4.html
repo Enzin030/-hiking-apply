@@ -709,9 +709,9 @@
                 <input type="checkbox" v-model="soloChecked" id="cbSoloDoc" />
                 <span><span class="req">*</span>獨攀證明說明：已下載且詳閱{{ park.soloDoc }}，並同意相關切結內容。</span>
               </label>
-              <!-- 附件改表格：左文件名稱、右上傳（使用者 2026-10-02），沿用排隊表的表格樣式 -->
-              <div class="p-apply4-queue-table-wrap">
-                <table class="p-apply4-queue-table">
+              <!-- 附件改表格：左文件名稱、右上傳（使用者 2026-10-02）；表格樣式比照確認頁（2026-10-06） -->
+              <div class="th-table-wrap border border-slate-200 rounded-md">
+                <table class="th-table w-full p-apply4-queue-table">
                   <thead>
                     <tr>
                       <th scope="col">文件名稱</th>
@@ -779,8 +779,9 @@
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.queue">
             <!-- 其他機關（雪霸）：四欄、說明為固定文字，無住宿調查（正式站 apply_1_3 步驟二） -->
-            <div v-if="!isYushan" class="p-apply4-queue-table-wrap">
-              <table class="p-apply4-queue-table">
+            <!-- 表格樣式比照確認頁（.th-table＋外框圓角，2026-10-06）；說明欄多行，維持可換行 -->
+            <div v-if="!isYushan" class="th-table-wrap border border-slate-200 rounded-md">
+              <table class="th-table w-full p-apply4-queue-table">
                 <thead>
                   <tr>
                     <th scope="col">日期</th>
@@ -792,7 +793,7 @@
                 <tbody>
                   <tr v-for="(q, idx) in parkQueueRows" :key="idx">
                     <td class="font-medium whitespace-nowrap">{{ q.date }}</td>
-                    <td class="text-slate-800 whitespace-nowrap">
+                    <td class="text-slate-800 whitespace-nowrap min-w-[180px]">
                       <th-hybrid-select v-if="park.queueSelect"><select class="th-select" :aria-label="q.date + ' 宿營地點'" :value="q.camp" @change="pickCamp(q.index, $event.target.value)">
                         <option :value="q.end">{{ q.end }}</option>
                         <option v-for="o in queueExtra" :key="o" :value="o">{{ o }}</option>
@@ -800,21 +801,21 @@
                       <template v-else>{{ q.camp }}</template>
                     </td>
                     <td class="whitespace-nowrap">{{ teamsCount }}</td>
-                    <td v-if="q.note" class="text-slate-700 text-sm">{{ q.note }}</td>
-                    <td v-else class="text-slate-700 text-sm">(實際順位以送出後為準，並請至本網站「<a class="th-inline-link" :href="park.queueLink.href" target="_blank" rel="noopener noreferrer">宿營地與床位查詢</a>」進行查詢)</td>
+                    <td v-if="q.note" class="text-slate-700 text-sm min-w-[260px]">{{ q.note }}</td>
+                    <td v-else class="text-slate-700 text-sm min-w-[260px]">(實際順位以送出後為準，並請至本網站「<a class="th-inline-link" :href="park.queueLink.href" target="_blank" rel="noopener noreferrer">宿營地與床位查詢</a>」進行查詢)</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div v-else class="p-apply4-queue-table-wrap">
-              <table class="p-apply4-queue-table">
+            <div v-else class="th-table-wrap border border-slate-200 rounded-md">
+              <table class="th-table w-full p-apply4-queue-table">
                 <thead>
                   <tr>
                     <th scope="col">日期</th>
                     <th scope="col">宿營地點</th>
                     <th scope="col">數量</th>
                     <th scope="col">說明</th>
-                    <th scope="col" style="min-width: 140px;">住宿調查</th>
+                    <th scope="col" class="min-w-[140px]">住宿調查</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -823,7 +824,7 @@
                     <!-- 宿營地點（不要粗體） -->
                     <td class="text-slate-800 whitespace-nowrap">{{ q.camp }}</td>
                     <td class="whitespace-nowrap">{{ teamsCount }}</td>
-                    <td>
+                    <td class="min-w-[260px]">
                       <!-- 說明改條列，不要同列 -->
                       <div class="space-y-1 text-slate-700 text-sm">
                         <div>
