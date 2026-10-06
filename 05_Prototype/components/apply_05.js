@@ -68,7 +68,7 @@ thPage({
     },
     prev() {
       window.thFcState.save({ agreed: this.agreed });
-      window.location.href = "apply_04.html";
+      window.location.href = "apply_03.html";   // 2026-10-06 拿掉附件上傳步驟，回人員資料
     },
   },
 });

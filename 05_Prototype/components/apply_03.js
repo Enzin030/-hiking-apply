@@ -130,7 +130,7 @@ thPage({
       const e = this.check();
       if (e.length) { window.thAlertList(e); return; }
       this.persist();
-      window.location.href = "apply_04.html";
+      window.location.href = "apply_05.html";   // 2026-10-06 拿掉附件上傳步驟，直接到同意聲明
     },
     prev() {
       this.persist();

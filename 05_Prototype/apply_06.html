@@ -26,7 +26,7 @@
   <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, done ? '申請完成' : '確認資料']" :title="st.title">
 
     <template #stepper>
-      <th-fc-stepper :current="done ? 7 : 6"></th-fc-stepper>
+      <th-fc-stepper :current="done ? 6 : 5"></th-fc-stepper>
     </template>
 
     <div v-if="!done" class="grid gap-6">
