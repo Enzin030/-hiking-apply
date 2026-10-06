@@ -137,15 +137,16 @@
                     </span>
                   </span>
                 </label>
-                <!-- 須附件的目的勾選後出現上傳表格：參考 apply-4 的 table 方式 -->
-                <div v-if="p.attach && isChosen(p.value)" class="th-table-wrap mt-1 mb-2">
-                  <table class="th-table">
+                <!-- 須附件的目的勾選後出現上傳表格：比照玉山確認頁表格（外框圓角、不換行、窄螢幕水平捲動，使用者 2026-10-06）；
+                     欄寬原以 inline style 寫死（專案禁用），改由不換行自然撐開 -->
+                <div v-if="p.attach && isChosen(p.value)" class="th-table-wrap border border-slate-200 rounded-md mt-1 mb-2">
+                  <table class="th-table w-full whitespace-nowrap">
                     <thead>
                       <tr>
-                        <th scope="col" style="width: 70px;" class="is-center">項次</th>
+                        <th scope="col" class="is-center">項次</th>
                         <th scope="col">附件名稱與規格</th>
-                        <th scope="col" style="width: 150px;" class="is-center">上傳檔案</th>
-                        <th scope="col" style="width: 200px;">檔案狀態</th>
+                        <th scope="col" class="is-center">上傳檔案</th>
+                        <th scope="col">檔案狀態</th>
                       </tr>
                     </thead>
                     <tbody>
