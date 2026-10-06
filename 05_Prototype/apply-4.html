@@ -151,6 +151,7 @@
                   <span><span class="req">*</span>Email</span>
                 </label>
                 <input id="con_apply_email" type="email" class="th-input" v-model="applicant.email" placeholder="接收審核通知信箱" required />
+                <p v-if="park.emailNote" class="th-field-error">{{ park.emailNote }}</p>
               </div>
 
               <!-- 身分證號/護照號碼(或居留證) -->
@@ -299,6 +300,7 @@
                   <span><span class="req">*</span>Email</span>
                 </label>
                 <input id="con_leader_email" type="email" class="th-input" v-model="leader.email" placeholder="電子信箱" required />
+                <p v-if="park.emailNote" class="th-field-error">{{ park.emailNote }}</p>
               </div>
 
               <div class="th-field">
@@ -656,6 +658,7 @@
                   <span>Email</span>
                 </label>
                 <input id="con_stay_email" type="email" class="th-input" v-model="stay.email" placeholder="電子信箱" />
+                <p v-if="park.emailNote" class="th-field-error">{{ park.emailNote }}</p>
               </div>
 
               <!-- 生日 -->
@@ -717,7 +720,7 @@
                   </thead>
                   <tbody>
                     <tr v-for="d in park.attachDocs" :key="d">
-                      <td class="text-slate-800">{{ d }}</td>
+                      <td class="text-slate-800">{{ d }}<template v-if="attachDocLink"> <a class="th-inline-link" :href="attachDocLink.href" target="_blank" rel="noopener noreferrer" :title="attachDocLink.text + '（另開新視窗）'">{{ attachDocLink.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></template></td>
                       <td><button type="button" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>點選上傳文件</button></td>
                     </tr>
                   </tbody>

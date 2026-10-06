@@ -126,6 +126,8 @@ window.thParkApply = function (key) {
     hasSeminar: true,
     stayTelHint: "※請留臺灣聯絡電話",
     stayMobileHint: "※請留臺灣聯絡電話",
+    /* 申請人、領隊、留守人 Email 下方紅字（正式站雪霸才有，隊員沒有；02_Spec/05b §4.3，2026-10-06 補進雛形） */
+    emailNote: "非常重要！送件後請務必每日確認信件並妥善保管「入園編號」，系統將透過該信箱聯絡隊伍申請進度及補件等訊息。",
     stayBirthdayRequired: true,
     attachMode: "none",
     soloMode: "callout",
@@ -160,7 +162,8 @@ window.thParkApply = function (key) {
         var subs = m.subs.length ? m.subs : [{ id: "m" + m.id, name: m.name }];
         return subs.map(function (x) {
           return { value: x.id, text: x.name, level: x.level, days: x.days || all30, needsNpa: !!x.needsNpa, notes: notes[x.id] || [],
-                   closed: x.closed || "", closedRange: x.closedRange || null, npaNote: x.npaNote || "" };
+                   closed: x.closed || "", closedRange: x.closedRange || null, npaNote: x.npaNote || "",
+                   textPlan: !!x.textPlan, campOptions: x.campOptions || [] };
         });
       },
       /* 節點圖：正式站逐條探索的 APPLY15_GRAPHS（2026-10-06，16 條）為準；舊的實走整理（667、675）只在缺資料時備用 */
@@ -189,6 +192,15 @@ window.thParkApply = function (key) {
       attachSection: true,
       attachMode: "taroko",
       attachDocs: ["路線行程規劃計劃書"],   // 附件表格的文件清單（正式站 2026-09-29，選填）
+      /* 計劃書「說明文件」連結依路線：正式站只有 55 有連結文字（2026-10-05 實走）；667、662 的連結沒有文字（畫面看不到），不列 */
+      attachDocLinks: { "55": { text: "說明文件", href: "https://hike.taiwan.gov.tw/nationpark/manasystem/climb/files/climb/20200702112019187.pdf" } },
+      /* 主路線「其他」三條的文字行程示範值（必填欄位預設有值）：go 去程、back 回程、single 單日、camp 過夜宿營地；
+         55 取正式站說明中的黃金峽谷寫法 */
+      textDemo: {
+        "55": { go: "三棧社區-三棧南溪-黃金峽谷", back: "黃金峽谷-三棧南溪-三棧社區", single: "三棧社區-三棧南溪-黃金峽谷-三棧南溪-三棧社區", stay: "黃金峽谷", camp: "" },
+        "661": { go: "思源埡口-木杆鞍部-雲稜山屋", back: "雲稜山屋-木杆鞍部-思源埡口", single: "思源埡口-木杆鞍部-思源埡口", stay: "雲稜山屋", camp: "雲稜山屋" },
+        "662": { go: "奇萊登山口-黑水塘山屋", back: "黑水塘山屋-奇萊登山口", single: "奇萊登山口-黑水塘山屋-奇萊登山口", stay: "黑水塘山屋", camp: "黑水塘山屋" },
+      },
       soloMode: "attach",
       soloDoc: "太魯閣國家公園獨攀申請承諾書",
       queuePref: false,

@@ -253,8 +253,38 @@
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.planner">
 
+            <!-- 文字行程（太魯閣主路線「其他」）：正式站為每天一列文字輸入，過夜日另有宿營地下拉，沒有節點可點（2026-10-05 實走） -->
+            <div v-if="textPlan" class="th-table-wrap">
+              <table class="th-table">
+                <caption>逐日行程</caption>
+                <thead>
+                  <tr>
+                    <th scope="col" class="whitespace-nowrap">編號</th>
+                    <th scope="col" class="whitespace-nowrap">日期</th>
+                    <th scope="col">路線</th>
+                    <th v-if="textCamps.length" scope="col" class="whitespace-nowrap">宿營地</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in textRows" :key="i">
+                    <td>{{ i + 1 }}</td>
+                    <td class="whitespace-nowrap">{{ dayDate(i) }}</td>
+                    <td><input class="th-input" type="text" maxlength="200" v-model="row.route" :aria-label="'第 ' + (i + 1) + ' 天路線'" /></td>
+                    <td v-if="textCamps.length">
+                      <th-hybrid-select v-if="i < textRows.length - 1">
+                        <select class="th-select" v-model="row.room" :aria-label="'第 ' + (i + 1) + ' 天宿營地'">
+                          <option value="">請選擇</option>
+                          <option v-for="c in textCamps" :key="c" :value="c">{{ c }}</option>
+                        </select>
+                      </th-hybrid-select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <!-- 單日往返模式：自動帶入固定行程 -->
-            <template v-if="isSingleDay">
+            <template v-else-if="isSingleDay">
               <ul class="p-apply3-plan-days">
                 <li class="p-apply3-plan-day-item">
                   <span class="day-tag">第 1 天行程：</span>

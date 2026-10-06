@@ -230,6 +230,7 @@ thPage({
         ["排雲山莊", "玉山主峰", "塔塔加登山口", "排雲登山服務中心"]
       ],
       plannerFinished: other ? other.finished : true,
+      textRows: [],   // 文字行程（太魯閣「其他」）：[{ route, room }]，由 buildTextRows 依天數產生
       plannerMsg: "",
 
       // 3. 行前講習與設備（雪霸講習非必填、正式站預設空白；無 GPS 欄位）
@@ -329,6 +330,9 @@ thPage({
     isYushan() { return this.park.key === "yushan"; },
     /* 玉山線以外的玉山路線（2026-10-06 正式站逐條讀取後改依資料）；generic＝走資料流程（非玉山或玉山其他路線） */
     ysOther() { return this.isYushan && this.climblinemain !== "1"; },
+    /* 文字行程（太魯閣主路線「其他」55／661／662，正式站每天一列文字輸入） */
+    textPlan() { return !!(this.subObj && this.subObj.textPlan); },
+    textCamps() { return (this.subObj && this.subObj.campOptions) || []; },
     generic() { return !this.isYushan || this.ysOther; },
     /* 路線規劃節點圖：玉山固定一張；其他機關依次路線（無資料的次路線為空圖） */
     graph() {
@@ -641,13 +645,14 @@ thPage({
       handler(val, old) {
         if (this.generic) {
           // 初始化時保留 data() 帶入的示範行程；之後換次路線才重設天數與規劃
-          if (old === undefined) { this.updateRouteMap(); this.syncPlanText(); return; }
+          if (old === undefined) { if (this.textPlan) this.buildTextRows(); this.updateRouteMap(); this.syncPlanText(); return; }
           const opts = this.sumdayOptions;
           const demo = this.park.demoDays[val];
           this.sumday = demo ? String(demo.length) : (opts.some(o => o.value === "2") ? "2" : (opts.length ? opts[0].value : "1"));
           const plan = demo ? demo.map(d => d.slice()) : autoPlan(this.graph, this.sumday);
           this.planDays = plan || [[]];
           this.plannerFinished = !!plan;
+          if (this.textPlan) this.buildTextRows();
           this.syncPlanText();
           if (!this.shownDates.includes(this.applystart)) this.applystart = this.shownDates[2] || this.shownDates[0] || "";
           return;
@@ -678,6 +683,11 @@ thPage({
       }
     },
 
+    textRows: {
+      deep: true,
+      handler() { this.syncTextPlan(); }
+    },
+
     climblinemain() {
       /* 玉山：切回玉山線時回到 2~5 天（頁內固定行程）；其他主路線取第一條次路線 */
       if (this.isYushan && !this.ysOther) { if (this.climbline !== "2") this.climbline = "2"; return; }
@@ -686,6 +696,7 @@ thPage({
     },
 
     sumday(val, old) {
+      if (this.textPlan) { this.buildTextRows(); return; }
       // 其他機關：換次路線時天數會跟著重設，規劃由 climbline 處理，這裡不再清掉
       if (this.generic && this.planDays.length === Number(val) && this.plannerFinished) return;
       // 其他機關：換天數時依新天數重排一份合法行程，不清空（必填欄位預設有值）
@@ -715,6 +726,27 @@ thPage({
   methods: {
     /* 說明段落：太魯閣是字串，雪霸是「文字或 {text, href} 連結」組成的陣列（Apply13Data.js） */
     noteParts(n) { return Array.isArray(n) ? n : [n]; },
+    /* 文字行程：依天數產生各列，預帶示範值（ParkApplyData textDemo；必填欄位預設有值） */
+    buildTextRows() {
+      const n = Number(this.sumday) || 1;
+      const demo = (this.park.textDemo || {})[this.climbline] || { go: "", back: "", single: "", stay: "", camp: "" };
+      const camp = this.textCamps.length ? demo.camp : "";
+      this.textRows = n === 1 ? [{ route: demo.single, room: "" }]
+        : Array.from({ length: n }, (_, i) => i === 0 ? { route: demo.go, room: camp }
+          : i === n - 1 ? { route: demo.back, room: "" } : { route: demo.stay, room: camp });
+      // 初始化時 textRows 的 watcher 可能還沒掛上（建立在 climbline 的 immediate watcher 裡），直接同步一次
+      this.syncTextPlan();
+    },
+    /* 文字行程 → planDays（[路線, 宿營地]）與完成狀態；送出資料與人員資料頁的宿營地表都讀 planDays */
+    syncTextPlan() {
+      if (!this.textPlan) return;
+      const rows = this.textRows;
+      this.planDays = rows.map(r => r.room ? [r.route, r.room] : [r.route]);
+      const camps = this.textCamps.length;
+      this.plannerFinished = rows.length > 0 && rows.every((r, i) => r.route.trim() && (!camps || i === rows.length - 1 || r.room));
+      this.syncPlanText();
+    },
+    dayDate(i) { return this.applystart && window.thAddDaysToDateValue ? window.thAddDaysToDateValue(this.applystart, i) : ""; },
     scrollToSection(id, index) {
       this.activeNavIndex = index;
       const el = document.getElementById(id);
@@ -902,6 +934,7 @@ thPage({
         mainRouteName: mainRouteName,
         subRouteName: subRouteName,
         isSingleDay: this.isSingleDay,
+        textPlan: this.textPlan,
         planDays: planDaysData,
         seminar: this.seminar === "1" ? "網路線上學習" : "團體自行辦理講習",
         equipment: {

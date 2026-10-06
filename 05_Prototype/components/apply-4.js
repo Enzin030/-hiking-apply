@@ -377,13 +377,17 @@ thPage({
     /* 其他機關的宿營地表：每晚一列（當天終點），單日往返沒有資料列（雪霸正式站 2026-10-01） */
     parkQueueRows() {
       const days = (this.step3Data && this.step3Data.planDays) || [];
+      /* 文字行程（太魯閣「其他」）：每天是 [路線文字, 宿營地]，沒選宿營地的晚上不列（正式站 55 排隊表只有標題） */
+      const textPlan = !!(this.step3Data && this.step3Data.textPlan);
       return days.slice(0, -1).map((d, i) => {
         const end = d[d.length - 1];
         const camp = this.campPick[i] || end;
         return { index: i, date: addDaysToDate(this.summary.applystart, i), end: end, camp: camp,
                  note: this.park.campNote ? this.park.campNote(camp, this.teamsCount) : "" };
-      });
+      }).filter((r, i) => !textPlan || days[i].length > 1);
     },
+    /* 附件「路線行程規劃計劃書」的說明文件連結（依路線，太魯閣 55） */
+    attachDocLink() { return (this.park.attachDocLinks || {})[this.summary.climbline] || null; },
     /* 太魯閣承載量狀況：只有實走看過的路線（南湖大山線） */
     /* 承載量數字依路線（太魯閣 667／675 各自一組觀察值） */
     capacityData() {
