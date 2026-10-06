@@ -160,9 +160,13 @@ thPage({
     }
 
     /* 雪霸等非玉山機關：主／次路線取網址 fid／cid，預設帶入示範路線與完整行程（必填欄位預設有值） */
+    /* 玉山：玉山線（主路線 1）以外的 9 條主路線比照其他機關依資料處理（Apply14Data.js，2026-10-06） */
+    const ysCid = park.key === "yushan" ? (getParam("cid") || qClimb) : null;
+    const ysOwner = ysCid ? park.mains.find(m => park.subsOf(m.value).some(x => x.value === ysCid)) : null;
+    const ysOther = park.key === "yushan" && ((!!ysOwner && ysOwner.value !== "1") || (!!qMainRoute && qMainRoute !== "1"));
     let other = null;
-    if (park.key !== "yushan") {
-      const qFid = getParam("fid"), qSub = getParam("cid");
+    if (park.key !== "yushan" || ysOther) {
+      const qFid = getParam("fid") || (park.key === "yushan" ? qMainRoute : null), qSub = getParam("cid") || (park.key === "yushan" ? qClimb : null);
       // 開放狀態頁（open.aspx 照抄）的 fId 等於 cId，不是主路線代碼：對不上時改以次路線反查所屬主路線
       const owner = qSub ? park.mains.find(m => park.subsOf(m.value).some(x => x.value === qSub)) : null;
       const main = park.mains.some(m => m.value === qFid) ? qFid : (owner ? owner.value : park.defaultMain);
@@ -229,8 +233,8 @@ thPage({
       plannerMsg: "",
 
       // 3. 行前講習與設備（雪霸講習非必填、正式站預設空白；無 GPS 欄位）
-      seminar: other ? "" : "1", // 1: 網路線上學習, 0: 團體自行辦理講習
-      gps: other ? "" : "1",     // 1: 是, 0: 否
+      seminar: other && !park.seminarRequired ? "" : "1", // 1: 網路線上學習, 0: 團體自行辦理講習（玉山必填，其他路線也預帶）
+      gps: other && !park.hasGps ? "" : "1",     // 1: 是, 0: 否
       satellitephone: "",
       frequency: "",
       note_user: "",
@@ -323,9 +327,12 @@ thPage({
 
   computed: {
     isYushan() { return this.park.key === "yushan"; },
+    /* 玉山線以外的玉山路線（2026-10-06 正式站逐條讀取後改依資料）；generic＝走資料流程（非玉山或玉山其他路線） */
+    ysOther() { return this.isYushan && this.climblinemain !== "1"; },
+    generic() { return !this.isYushan || this.ysOther; },
     /* 路線規劃節點圖：玉山固定一張；其他機關依次路線（無資料的次路線為空圖） */
     graph() {
-      if (this.isYushan) return YUSHAN_PLANNER_GRAPH;
+      if (this.isYushan && !this.ysOther) return YUSHAN_PLANNER_GRAPH;
       return this.park.graphs[this.climbline] || GENERIC_PLANNER_GRAPH;
     },
     /* 本頁區塊數（側欄「本頁內容」分母）：無入山證的機關少一塊 */
@@ -349,7 +356,7 @@ thPage({
 
     openRow() {
       const rows = window.OPEN_STATUS_ROWS || [];
-      if (!this.isYushan) return rows.find(r => r.cId === this.climbline) || null;
+      if (this.generic) return rows.find(r => r.cId === this.climbline) || null;
       let targetName = "2~5天(塔塔加 - 玉山線 - 塔塔加)";
       if (this.climbline === "3") targetName = "玉山前峰單日往返";
       else if (this.climbline === "4") targetName = "玉山線單日往返";
@@ -358,12 +365,12 @@ thPage({
 
     /* 可選入園日：其他機關排除該路線的關閉期間（太魯閣奇萊北屏風山線 2026-10-02 實走只剩 12-01、12-02） */
     shownDates() {
-      const r = !this.isYushan && this.subObj && this.subObj.closedRange;
+      const r = this.generic && this.subObj && this.subObj.closedRange;
       return r ? this.dateOptions.filter(d => d < r[0] || d > r[1]) : this.dateOptions;
     },
 
     routeClosures() {
-      if (!this.isYushan) {
+      if (this.generic) {
         // open.aspx 的公告為純文字；關閉日期取自申請頁（次路線資料 closed）
         const list = ((this.openRow && this.openRow.closures) || []).map(c => typeof c === "string" ? { text: c } : c);
         const closed = this.subObj && this.subObj.closed;
@@ -380,7 +387,7 @@ thPage({
     },
 
     trailLevel() {
-      if (!this.isYushan) {
+      if (this.generic || this.climbline !== "2") {
         const sub = this.subRoutes.find(r => r.value === this.climbline);
         const lv = sub ? sub.level : undefined;
         if (lv === undefined || lv === null) return null;
@@ -409,6 +416,11 @@ thPage({
       /* 雪霸、太魯閣：正式站步驟一難度表的「備註」列只有「歡迎下載」，不帶開放狀態頁的路線備註
          （2026-10-05 逐條讀取雪霸 29 條、太魯閣 19 條次路線皆同） */
       if (this.park.key === "shei-pa" || this.park.key === "taroko") return "";
+      /* 玉山：用正式站申請頁難度表的備註（Apply14Data.js remark，2026-10-06 逐條讀取），沒有資料才退回開放狀態頁 */
+      if (this.isYushan) {
+        const s = Object.values(window.APPLY14_SUBS || {}).flat().find(x => x.id === this.climbline);
+        if (s && typeof s.remark === "string") return s.remark;
+      }
       return this.openRow ? (this.openRow.note || "") : "";
     },
 
@@ -422,13 +434,13 @@ thPage({
 
     /* 地圖按鈕與 modal 標題：玉山照原本（開放狀態表的主路線名＋地圖）；其他機關取主路線名 */
     mapTitle() {
-      if (this.isYushan) return (this.openRow ? this.openRow.mainRoute : "玉山線") + "地圖";
+      if (this.isYushan && !this.ysOther) return (this.openRow ? this.openRow.mainRoute : "玉山線") + "地圖";
       const m = this.mainRoutes.find(r => r.value === this.climblinemain);
       return (m ? m.text : "") + "地圖";
     },
 
     routeMapTabs() {
-      if (!this.isYushan) {
+      if (this.generic) {
         /* 其他機關：次路線地圖（正式站為頁內展開）與主路線地圖（正式站為直連圖檔）同放一個 modal，以頁籤切換 */
         const maps = this.park.maps || {};
         const tabs = [];
@@ -490,16 +502,17 @@ thPage({
     },
 
     subRoutes() {
-      if (!this.isYushan) return this.park.subsOf(this.climblinemain);
+      if (this.generic) return this.park.subsOf(this.climblinemain);
+      /* 玉山線：難度依正式站（2026-10-06 逐條讀取：前峰、單日往返第 3 級，2~5 天第 4 級） */
       return [
-        { value: "3", text: "玉山前峰單日往返", days: [1] },
-        { value: "4", text: "玉山線單日往返", days: [1] },
-        { value: "2", text: "2~5天(塔塔加 - 玉山線 - 塔塔加)", days: [2, 3, 4, 5] }
+        { value: "3", text: "玉山前峰單日往返", days: [1], level: 3 },
+        { value: "4", text: "玉山線單日往返", days: [1], level: 3 },
+        { value: "2", text: "2~5天(塔塔加 - 玉山線 - 塔塔加)", days: [2, 3, 4, 5], level: 4 }
       ];
     },
 
     sumdayOptions() {
-      if (!this.isYushan) {
+      if (this.generic) {
         const sub = this.subRoutes.find(r => r.value === this.climbline);
         return ((sub && sub.days) || [1]).map(n => ({ value: String(n), text: `共${n}天` }));
       }
@@ -626,7 +639,7 @@ thPage({
     climbline: {
       immediate: true,
       handler(val, old) {
-        if (!this.isYushan) {
+        if (this.generic) {
           // 初始化時保留 data() 帶入的示範行程；之後換次路線才重設天數與規劃
           if (old === undefined) { this.updateRouteMap(); this.syncPlanText(); return; }
           const opts = this.sumdayOptions;
@@ -666,16 +679,17 @@ thPage({
     },
 
     climblinemain() {
-      if (this.isYushan) return;
+      /* 玉山：切回玉山線時回到 2~5 天（頁內固定行程）；其他主路線取第一條次路線 */
+      if (this.isYushan && !this.ysOther) { if (this.climbline !== "2") this.climbline = "2"; return; }
       const first = this.subRoutes[0];
       this.climbline = first ? first.value : "";
     },
 
     sumday(val, old) {
       // 其他機關：換次路線時天數會跟著重設，規劃由 climbline 處理，這裡不再清掉
-      if (!this.isYushan && this.planDays.length === Number(val) && this.plannerFinished) return;
+      if (this.generic && this.planDays.length === Number(val) && this.plannerFinished) return;
       // 其他機關：換天數時依新天數重排一份合法行程，不清空（必填欄位預設有值）
-      if (!this.isYushan) {
+      if (this.generic) {
         const demo = this.park.demoDays[this.climbline];
         const plan = demo && demo.length === Number(val) ? demo.map(d => d.slice()) : autoPlan(this.graph, val);
         this.plannerMsg = "";

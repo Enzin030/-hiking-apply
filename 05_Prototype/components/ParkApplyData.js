@@ -40,6 +40,18 @@ window.thParkApply = function (key) {
     soloPdf: "",              // 單人獨攀宣導 PDF
     /* 步驟三（apply-5） */
     confirmPlan: true,        // 確認頁列「行程計畫」（逐日行程、講習與設備）
+    /* 路線資料（Apply14Data.js，2026-10-06 正式站逐條讀取）：apply-3 的玉山線（主路線 1）仍用頁內寫死的
+       次路線、節點圖與固定行程；其餘 9 條主路線比照雪霸、太魯閣依本資料切換 */
+    mains: (window.APPLY14_MAINS || []).map(function (m) { return { value: m.id, text: m.name }; }),
+    subsOf: function (mainId) {
+      return ((window.APPLY14_SUBS || {})[mainId] || []).map(function (s) {
+        return { value: s.id, text: s.name, level: s.level, days: s.days, closed: s.closed || "" };
+      });
+    },
+    graphs: window.APPLY14_GRAPHS || {},
+    demoDays: {},
+    defaultMain: "1",
+    defaultSub: "2",
   };
   if (key === "taroko") return taroko();
   if (key !== "shei-pa") return yushan;
