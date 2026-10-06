@@ -345,6 +345,7 @@ thPage({
       memberOpenStates: [true, true],
       teamMax: 12,
       soloChecked: false, // cbOneMan 單人獨攀切結確認
+      attachFiles: {},    // 附件上傳表（th-attach-table）：{ 文件名稱: 檔名 }，雛形只記檔名
 
       // 5. 留守人資料
       staySame: false,
@@ -388,6 +389,10 @@ thPage({
     },
     /* 附件「路線行程規劃計劃書」的說明文件連結（依路線，太魯閣 55） */
     attachDocLink() { return (this.park.attachDocLinks || {})[this.summary.climbline] || null; },
+    /* 附件上傳表的列（太魯閣：路線行程規劃計劃書，選填；55 有「說明文件」連結） */
+    attachItems() {
+      return (this.park.attachDocs || []).map(d => ({ key: d, name: d, required: false, link: this.attachDocLink }));
+    },
     /* 太魯閣承載量狀況：只有實走看過的路線（南湖大山線） */
     /* 承載量數字依路線（太魯閣 667／675 各自一組觀察值） */
     capacityData() {
@@ -409,7 +414,7 @@ thPage({
         { key: "member", sec: "sec-member", label: "隊員資料（如無則免）", ok: this.secMemberOk },
         { key: "stay", sec: "sec-stay", label: "留守人資料", ok: this.secStayOk },
       ];
-      if (this.park.attachSection) items.push({ key: "attach", sec: "sec-attach", label: "附件上傳資料", ok: true });
+      if (this.park.attachSection) items.push({ key: "attach", sec: "sec-attach", label: "附件上傳", ok: true });
       items.push({ key: "queue", sec: "sec-queue", label: "宿營地排隊狀況", ok: this.secQueueOk });
       return items;
     },

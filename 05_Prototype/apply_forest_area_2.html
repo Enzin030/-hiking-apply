@@ -124,7 +124,7 @@
               <span><span class="req">*</span>申請目的或項目</span>
             </label>
             <div class="grid gap-3">
-              <div v-for="(p, pi) in area.purposes" :key="p.value" class="grid gap-2">
+              <div v-for="p in area.purposes" :key="p.value" class="grid gap-2">
                 <label class="flex items-start gap-2 cursor-pointer">
                   <input v-if="multiPurpose" type="checkbox" :value="p.value" v-model="purposes" class="mt-1" />
                   <input v-else type="radio" name="purpose" :value="p.value" v-model="purpose" class="mt-1" />
@@ -137,76 +137,50 @@
                     </span>
                   </span>
                 </label>
-                <!-- 須附件的目的勾選後出現上傳表格：比照玉山確認頁表格（外框圓角、不換行、窄螢幕水平捲動，使用者 2026-10-06）；
-                     欄寬原以 inline style 寫死（專案禁用），改由不換行自然撐開 -->
-                <div v-if="p.attach && isChosen(p.value)" class="th-table-wrap border border-slate-200 rounded-md mt-1 mb-2">
-                  <table class="th-table w-full whitespace-nowrap">
-                    <thead>
-                      <tr>
-                        <th scope="col" class="is-center">項次</th>
-                        <th scope="col">附件名稱與規格</th>
-                        <th scope="col" class="is-center">上傳檔案</th>
-                        <th scope="col">檔案狀態</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="n in p.attach" :key="n">
-                        <td class="is-center">{{ n }}</td>
-                        <td>
-                          <div class="font-medium text-slate-800">
-                            <span class="req">*</span>{{ p.value }}相關證明文件<span v-if="p.attach > 1">（附件 {{ n }}）</span>
-                          </div>
-                          <div class="th-field-hint is-accent">格式限制：PDF、JPG、PNG，單檔大小不超過 5MB</div>
-                        </td>
-                        <td class="is-center">
-                          <input :id="'fa-file-' + pi + '-' + n" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" @change="pickFile(p.value, n - 1, $event)" />
-                          <label :for="'fa-file-' + pi + '-' + n" class="th-btn th-btn-secondary th-btn-sm cursor-pointer whitespace-nowrap">
-                            <i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>選擇檔案
-                          </label>
-                        </td>
-                        <td>
-                          <span v-if="fileName(p.value, n - 1)" class="text-emerald-700 font-medium text-sm inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-check text-emerald-600" aria-hidden="true"></i>
-                            <span class="truncate max-w-[150px]" :title="fileName(p.value, n - 1)">{{ fileName(p.value, n - 1) }}</span>
-                          </span>
-                          <span v-else class="text-rose-600 font-medium text-sm inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-exclamation text-rose-500" aria-hidden="true"></i>尚未上傳
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 4～9. 安全聲明與各項宣達 -->
+      <!-- 4. 附件上傳：與目的拆開、獨立一張卡（共用 th-attach-table，與三管處統一，使用者 2026-10-06）；
+           所選目的須附件時才出現，其後宣達編號順延一號 -->
+      <section v-if="attachRows.length" class="th-card">
+        <div class="th-card-head">
+          <h2 class="th-card-title">4. 附件上傳</h2>
+        </div>
+        <div class="th-card-body">
+          <th-attach-table id-prefix="fa" :items="attachRows" v-model="attachFiles" accept=".pdf,.jpg,.jpeg,.png" :max-mb="5"></th-attach-table>
+        </div>
+      </section>
+
+      <!-- 4～9（有附件卡時 5～10）. 安全聲明與各項宣達 -->
       <section v-for="b in area.blocks" :key="b.no" class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">{{ b.no }}. {{ b.title }}</h2>
+          <h2 class="th-card-title">{{ blockNo(b) }}. {{ b.title }}</h2>
         </div>
-        <div class="th-card-body grid gap-3">
-          <p class="whitespace-pre-line text-slate-700 leading-relaxed">{{ b.text }}</p>
-          <div v-if="b.input === 'radio'" class="th-field pt-1">
-            <label class="flex items-start gap-2 font-semibold cursor-pointer">
-              <input type="checkbox" v-model="confirms[b.name]" class="mt-1" />
-              <span><span class="req">*</span>{{ b.confirm }}</span>
-            </label>
-          </div>
-          <!-- 空白待填（例：行程計畫，出雲山 textarea、翡翠水庫空白 text）；正式站未標必填〔待確認〕 -->
-          <div v-else-if="isFillIn(b)" class="th-field pt-1">
-            <label class="th-label">
+        <!-- 待填的行程計畫（出雲山、甲仙四德、翡翠水庫）比照警政署登山計畫書：欄位在上，填寫說明與範例在下方範例框
+             （使用者 2026-10-06；.th-npa 本身無樣式，只是範例框 .th-npa-plan-example 的外層範圍）；正式站未標必填〔待確認〕 -->
+        <div v-if="isFillIn(b)" class="th-card-body th-npa">
+          <div class="th-field">
+            <label class="th-label" :for="'fa-fill-' + b.no">
               <span><span class="req">*</span>{{ b.title }}</span>
             </label>
-            <textarea class="th-textarea" rows="5" v-model="fills[b.name]" :placeholder="'請輸入' + b.title" :aria-label="b.title"></textarea>
+            <textarea :id="'fa-fill-' + b.no" class="th-textarea" rows="5" v-model="fills[b.name]" :placeholder="'請輸入' + b.title"></textarea>
+            <div class="th-npa-plan-example">
+              <p class="th-npa-plan-example-title">{{ planLines(b)[0] }}</p>
+              <p v-for="l in planLines(b).slice(1)" :key="l">{{ l }}</p>
+            </div>
           </div>
-          <!-- 正式站這類為唯讀已帶入的文字欄（OtherName7／8），不需勾選 -->
-          <div v-else class="th-field pt-1">
-            <label class="th-label"><span>宣達事項說明</span></label>
-            <input type="text" class="th-input th-input-readonly" :value="b.confirm" readonly />
+        </div>
+        <!-- 宣達一律勾選確認（使用者 2026-10-06 統一）；正式站部分區塊（OtherName7／8）為唯讀已帶入的文字欄 -->
+        <div v-else class="th-card-body grid gap-3">
+          <p class="whitespace-pre-line text-slate-700 leading-relaxed">{{ b.text }}</p>
+          <div class="th-field pt-1">
+            <label class="flex items-start gap-2 font-semibold cursor-pointer">
+              <input type="checkbox" v-model="confirms[b.name]" class="mt-1" />
+              <span><span class="req">*</span>{{ confirmText(b) }}</span>
+            </label>
           </div>
         </div>
       </section>

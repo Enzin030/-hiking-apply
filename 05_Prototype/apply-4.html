@@ -693,11 +693,11 @@
           </div>
         </section>
 
-        <!-- 附件上傳資料（雪霸正式站步驟二有此區；本路線「無需上傳資料」） -->
+        <!-- 附件上傳（正式站標題「附件上傳資料」，2026-10-06 使用者裁示與保護區統一稱「附件上傳」） -->
         <section v-if="park.attachSection" id="sec-attach" class="th-card" aria-labelledby="heading-attach">
           <div class="th-card-head">
             <button type="button" class="th-accordion-btn" @click="toggleSection('attach')">
-              <h2 id="heading-attach" class="th-card-title">附件上傳資料</h2>
+              <h2 id="heading-attach" class="th-card-title">附件上傳</h2>
               <i class="fa-solid fa-chevron-down th-accordion-icon" :class="{ 'is-open': accordionOpen.attach }" aria-hidden="true"></i>
             </button>
           </div>
@@ -709,23 +709,9 @@
                 <input type="checkbox" v-model="soloChecked" id="cbSoloDoc" />
                 <span><span class="req">*</span>獨攀證明說明：已下載且詳閱{{ park.soloDoc }}，並同意相關切結內容。</span>
               </label>
-              <!-- 附件改表格：左文件名稱、右上傳（使用者 2026-10-02）；表格樣式比照確認頁（2026-10-06） -->
-              <div class="th-table-wrap border border-slate-200 rounded-md">
-                <table class="th-table w-full p-apply4-queue-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">文件名稱</th>
-                      <th scope="col">上傳</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="d in park.attachDocs" :key="d">
-                      <td class="text-slate-800">{{ d }}<template v-if="attachDocLink"> <a class="th-inline-link" :href="attachDocLink.href" target="_blank" rel="noopener noreferrer" :title="attachDocLink.text + '（另開新視窗）'">{{ attachDocLink.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></template></td>
-                      <td><button type="button" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>點選上傳文件</button></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <!-- 附件表改用共用 th-attach-table，與保護區第 2 步統一（使用者 2026-10-06）；
+                   正式站計劃書為選填、未寫格式限制，故不標必填、不檢查格式 -->
+              <th-attach-table id-prefix="con-attach" :items="attachItems" v-model="attachFiles"></th-attach-table>
             </template>
           </div>
         </section>
