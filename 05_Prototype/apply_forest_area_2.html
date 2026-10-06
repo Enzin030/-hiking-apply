@@ -51,7 +51,7 @@
                 <input type="checkbox" :value="s.value" v-model="picked" class="mt-1" />
                 <span>
                   <strong>{{ s.value }}</strong>
-                  <span v-if="s.desc" class="th-field-hint is-accent block mt-1">＊{{ s.desc.startsWith('＊') ? s.desc.slice(1) : s.desc }}</span>
+                  <span v-if="s.desc" class="th-field-hint is-accent block mt-1">※{{ s.desc.replace(/^[＊※]/, '') }}</span>
                 </span>
               </label>
             </div>

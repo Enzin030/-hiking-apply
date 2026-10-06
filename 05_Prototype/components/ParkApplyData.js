@@ -187,7 +187,6 @@ window.thParkApply = function (key) {
       /* 步驟二 */
       memberConsent: true,
       stayTel: true,
-      stayTelHint: "格式：(04)123-4567#12345",
       stayBirthdayRequired: false,
       attachSection: true,
       attachMode: "taroko",
