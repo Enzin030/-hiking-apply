@@ -30,25 +30,42 @@
     </template>
 
     <div v-if="!done" class="grid gap-6">
-      <th-callout>請確認資料正確無誤後，再確認送出！</th-callout>
+      <th-callout type="warning">請確認資料正確無誤後，再確認送出！</th-callout>
 
-      <section class="th-card">
-        <div class="th-card-head">
-          <i class="ph-bold ph-mountains" aria-hidden="true"></i>
-          <h2 class="th-card-title">{{ planTitle }}</h2>
+      <!-- 行程摘要（照片取路線列表同一張；警政署入山行程計畫摘要卡片） -->
+      <div class="th-summary-card">
+        <div class="summary-thumb-box">
+          <img :src="summaryImage" alt="" />
+          <div class="summary-thumb-overlay"></div>
         </div>
-        <div class="th-card-body">
-          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2">
-            <template v-for="r in planRows" :key="r.label">
-              <dt class="th-label">{{ r.label }}</dt><dd>{{ r.value }}</dd>
-            </template>
-          </dl>
+        <div class="summary-info-box">
+          <h2 class="th-summary-title">{{ summaryTitle }}</h2>
+          <div class="summary-date-row">
+            <span class="date-item">
+              <span class="date-title">申請單位：</span>
+              <span class="date-value">{{ plan.unit }}</span>
+            </span>
+            <span class="summary-meta-sep" aria-hidden="true">|</span>
+            <span class="date-item">
+              <span class="date-title">出發人數：</span>
+              <span class="date-value">{{ headcount }} 人</span>
+            </span>
+            <span class="summary-meta-sep" aria-hidden="true">|</span>
+            <span class="date-item">
+              <span class="date-title">出發期間：</span>
+              <span class="date-range-text">
+                <span>{{ st.start || '—' }}</span>
+                <span class="date-sep">至</span>
+                <span>{{ endDate || '—' }}</span>
+              </span>
+              <span class="date-days-text">（共 {{ st.days || '—' }} 天）</span>
+            </span>
+          </div>
         </div>
-      </section>
+      </div>
 
       <section v-if="st.kind === 'camp'" class="th-card">
         <div class="th-card-head">
-          <i class="ph-bold ph-bed" aria-hidden="true"></i>
           <h2 class="th-card-title">山屋及營地申請單明細（林業及自然保育署）</h2>
         </div>
         <div class="th-card-body grid gap-3">
@@ -64,9 +81,9 @@
         </div>
       </section>
 
-      <section class="th-card">
+      <!-- 隊伍資料 -->
+      <section class="th-card" id="sec-team">
         <div class="th-card-head">
-          <i class="fa-solid fa-users" aria-hidden="true"></i>
           <h2 class="th-card-title">隊伍資料</h2>
         </div>
         <div class="th-card-body">
@@ -74,9 +91,58 @@
         </div>
       </section>
 
+      <!-- 申請人資料（比照 apply-5 獨立卡片；使用者 2026-10-05） -->
+      <section class="th-card" id="sec-applicant">
+        <div class="th-card-head">
+          <h2 class="th-card-title">申請人資料</h2>
+        </div>
+        <div class="th-card-body">
+          <div class="th-table-wrap border border-slate-200 rounded-md">
+            <table class="th-table w-full">
+              <thead class="bg-slate-50 text-slate-800">
+                <tr>
+                  <th v-for="f in applicantFields" :key="'ah-' + f.label" class="py-2.5 px-2 font-bold whitespace-nowrap">{{ f.label }}</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr>
+                  <td v-for="f in applicantFields" :key="'a-' + f.label" :class="['py-2.5 px-2 text-slate-800', f.wrap ? 'break-words min-w-[160px]' : 'whitespace-nowrap']">{{ f.value || '—' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 警政署入山證申請資訊（警政署流程顯示；比照 apply-5 規格） -->
+      <section v-if="hasNpa" class="th-card" id="sec-npa">
+        <div class="th-card-head">
+          <h2 class="th-card-title">警政署入山證申請資訊</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+            <div>
+              <dt class="text-base text-slate-700 font-bold">入山事由</dt>
+              <dd class="text-base text-slate-900 mt-1">{{ npaDisplay.reason }}</dd>
+            </div>
+            <div>
+              <dt class="text-base text-slate-700 font-bold">前往地點</dt>
+              <dd class="text-base text-slate-900 mt-1">{{ npaDisplay.places }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-base text-slate-700 font-bold">登山路線圖</dt>
+              <dd class="text-base text-slate-900 mt-1">{{ npaDisplay.routeMap }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-base text-slate-700 font-bold">登山計畫書</dt>
+              <dd class="text-base whitespace-pre-line bg-slate-50 p-3 rounded border border-slate-200 text-slate-800 mt-1">{{ npaDisplay.plan }}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       <section class="th-card">
         <div class="th-card-head">
-          <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
           <h2 class="th-card-title">附件資料</h2>
         </div>
         <div class="th-card-body">
@@ -84,7 +150,20 @@
         </div>
       </section>
 
-      <th-captcha v-model="vcode" input-id="f-vcode" code="7K4M" layout="col12"></th-captcha>
+      <!-- 送件驗證碼（獨立卡片） -->
+      <section class="th-card" id="sec-captcha">
+        <div class="th-card-head">
+          <h2 class="th-card-title">送件驗證碼</h2>
+        </div>
+        <div class="th-card-body">
+          <th-captcha
+            v-model="vcode"
+            v-model:code="captchaCode"
+            :refreshable="true"
+            input-id="f-vcode"
+            class="w-full sm:w-1/2"></th-captcha>
+        </div>
+      </section>
 
       <!-- 置底按鈕置中，比照玉山確認資料頁 apply-5（使用者 2026-10-05） -->
       <div class="th-form-actions">
@@ -102,7 +181,6 @@
 
     <section v-else class="th-card">
       <div class="th-card-head">
-        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
         <h2 class="th-card-title">申請完成</h2>
       </div>
       <div class="th-card-body grid gap-3">
@@ -125,5 +203,8 @@
   <th-footer></th-footer>
 
 </div>
+<!-- 摘要卡照片取路線列表同一張（RouteData.js）；入山詞庫（th-npa-permit.js） -->
+<script src="components/RouteData.js"></script>
+<script src="assets/components/th-npa-permit.js"></script>
 </body>
 </html>

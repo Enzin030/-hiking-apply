@@ -3737,6 +3737,27 @@ body.th-noscroll {
 .th-table tbody tr:hover {
   background: var(--bg-mist);
 }
+/* 隊伍資料表領隊列淡綠／灰底色與「領隊」文字深綠色（不加粗；使用者 2026-10-05） */
+.th-table tbody tr.is-leader-row,
+.th-table tr.is-leader-row,
+tr.is-leader-row {
+  background-color: #f4f7f5;
+}
+.th-table tbody tr.is-leader-row td,
+.th-table tr.is-leader-row td,
+tr.is-leader-row td {
+  background-color: #f4f7f5;
+}
+.th-table tbody tr.is-leader-row:hover td,
+.th-table tr.is-leader-row:hover td,
+tr.is-leader-row:hover td {
+  background-color: #eaf0ec;
+}
+.th-table tr.is-leader-row td[data-label="身分"],
+tr.is-leader-row td[data-label="身分"] {
+  font-weight: 400;
+  color: var(--national-800, #166534);
+}
 .th-table--zebra tbody tr {
   background: var(--bg-1);
 }

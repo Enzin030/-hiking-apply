@@ -12,6 +12,13 @@
 tailwind.config = {
   theme: {
     extend: {
+      colors: {
+        national: {
+          700: "#587a68",
+          800: "#166534",
+          900: "#14532d",
+        },
+      },
       fontFamily: {
         sans: ["Noto Sans TC", "sans-serif"],
         serif: ["Noto Serif TC", "serif"],

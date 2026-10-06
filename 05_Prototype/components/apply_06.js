@@ -41,9 +41,24 @@ function fc6Mask(sid) {
   return sid[0] + "*".repeat(sid.length - 4) + sid.slice(-3);
 }
 
+const A06_DEMO_APPLICANT = {
+  name: "王小明", tel: "02-1234-5678", country: "台北市", city: "大安區", addr: "示意路 100 號",
+  mobile: "0912345678", fax: "", email: "demo.applicant@example.com",
+  nation: "中華民國", nationid: "", sid: "A100000000", sex: "男", birthday: "1985-05-20",
+  contactname: "陳美玲", contacttel: "0922000111", notes: "",
+};
+
+/* 直接開本頁（沒經前面步驟）時的補值：山屋嘉明湖 */
+const A06_FALLBACK = {
+  kind: "camp", title: "山屋住宿申請", crumb: "嘉明湖山屋",
+  plan: { unit: "國家步道(山屋/營地)", main: "嘉明湖山屋", route: "嘉明湖山屋" },
+  days: 2, nights: 1, headcount: 2,
+  applicant: A06_DEMO_APPLICANT,
+};
+
 thPage({
   data() {
-    const st = Object.assign({ kind: "camp", title: "山屋住宿申請", crumb: "嘉明湖山屋" }, window.thFcState.load());
+    const st = Object.assign({}, A06_FALLBACK, window.thFcState.load());
     return {
       st: st,
       cabin: window.TH_CABIN_DATA[st.route] || window.TH_CABIN_DATA.jiaming,
@@ -51,6 +66,7 @@ thPage({
       teamColumns: FC6_TEAM_COLUMNS,
       fileColumns: FC6_FILE_COLUMNS,
       vcode: "7K4M",   // 預設帶入示意驗證碼（2026-10-02）
+      captchaCode: "7K4M",
       done: false,
       draftOpen: false,
     };
@@ -59,7 +75,43 @@ thPage({
   computed: {
     applyCrumb() { return window.TH_APPLY_CRUMB; },
     planRows() { return window.thApply6PlanRows(this.st, window.thTodayValue()); },
-    planTitle() { return this.st.kind === "npa" ? "警政署入山行程計畫" : "行程計畫"; },
+    plan() {
+      const p = this.st.plan || {};
+      if (this.st.kind === "npa") {
+        return {
+          unit: p.unit || "警政署入山",
+          main: "入山證申請",
+          route: "入山證申請",
+        };
+      }
+      return {
+        unit: p.unit || "國家步道(山屋/營地)",
+        main: p.main || "嘉明湖山屋",
+        route: p.route || "嘉明湖山屋",
+      };
+    },
+    summaryTitle() {
+      if (this.st.kind === "npa") {
+        return "入山證申請";
+      }
+      return this.plan.route || this.plan.main || "入山證申請";
+    },
+    headcount() {
+      return Number(this.st.headcount) || (this.st.members ? this.st.members.length + 1 : 1);
+    },
+    /* 摘要卡照片：路線列表同一張（警政署 c_id 157、保護區依區域 c_id、山屋依山屋代碼） */
+    summaryImage() {
+      const rows = window.ROUTE_DATA || [];
+      let r = null;
+      if (this.st.kind === "npa") r = rows.find(x => x.cId === "157");
+      else if (this.st.kind === "area") r = rows.find(x => x.cId === String(this.st.areaCid));
+      else r = rows.find(x => x.id === this.st.route);
+      return (r && r.image) || (this.st.kind === "npa" ? "assets/route-police.svg" : "assets/route-yushan.png");
+    },
+    endDate() {
+      const d = Number(this.st.days) || 0;
+      return this.st.start && d ? window.thAddDaysToDateValue(this.st.start, d - 1) : "";
+    },
     /* 送出後說明：依類別的後續流程（各規格／注意事項原文），雛形示意 */
     doneText() {
       if (this.st.kind === "npa") return "您的入山申請已送出。審核通過後，請至「進度查詢與取消作業」或電子郵件下載入山許可證及名冊（以自行列印為原則）。";
@@ -96,16 +148,76 @@ thPage({
       const p = window.TH_FC_PAYMENTS.find(x => x.id === this.st.payment);
       return p ? p.label : "—";
     },
+    applicant() {
+      return this.st.applicant || A06_DEMO_APPLICANT;
+    },
+    applicantFields() {
+      const a = this.applicant;
+      const telMobile = [a.tel, a.mobile].filter(Boolean).join(" / ") || "—";
+      const addr = [a.country, a.city, a.addr].filter(Boolean).join("") || "—";
+      return [
+        { label: "姓名", value: a.name || "—" },
+        { label: "性別", value: a.sex || "男" },
+        { label: "國籍", value: a.nation || "中華民國" },
+        { label: "身分證號／護照號碼", value: fc6Mask(a.sid) },
+        { label: "生日", value: a.birthday || "—" },
+        { label: "電話 / 手機", value: telMobile },
+        { label: "Email", value: a.email || "—" },
+        { label: "聯絡地址", value: addr, wrap: true },
+        { label: "緊急聯絡人", value: a.contactname || "—" },
+        { label: "緊急聯絡電話", value: a.contacttel || "—" },
+      ];
+    },
     teamRows() {
-      const a = this.st.applicant || {};
+      const a = this.applicant;
       /* 保護區可另填領隊（apply_03 的 leaderSame） */
       const leader = this.st.leaderSame === false && this.st.leader ? this.st.leader : a;
-      const people = [["申請人", a], ["領隊", leader]].concat((this.st.members || []).map(m => ["隊員", m]));
+      const people = [["領隊", leader]].concat((this.st.members || []).map(m => ["隊員", m]));
       return people.map(([role, p], i) => ({
-        no: i + 1, name: p.name || "—", role: role, sid: fc6Mask(p.sid), tel: p.tel || "—",
+        no: i + 1, name: p.name || "—", role: role, sid: fc6Mask(p.sid),
+        tel: [p.tel, p.mobile].filter(Boolean).join(" / ") || p.tel || p.mobile || "—",
         addr: [p.country, p.city, p.addr].filter(Boolean).join("") || "—",
         contact: p.contactname || "—", contacttel: p.contacttel || "—",
       }));
+    },
+    hasNpa() {
+      return this.st.kind === "npa" || !!this.st.npa;
+    },
+    npaDisplay() {
+      const n = this.st.npa || {
+        reason: "登山健行",
+        places: [{ name: "南湖北山(宜蘭縣-大同鄉)", desc: "南湖大山線，經雲稜山屋、審馬陣山屋" }],
+        lib: "TM00",
+        sub: "M15",
+        plan: "D1:思源埡口→5.1K登山口→多加屯山登山口→木杆鞍部→雲稜山屋。\nD2:雲稜山屋→審馬陣登山口→審馬陣山屋。\nD3:審馬陣山屋→審馬陣登山口→雲稜山屋→木杆鞍部→多加屯山登山口→5.1K登山口→思源埡口。"
+      };
+      let placesStr = "—";
+      if (Array.isArray(n.places)) {
+        placesStr = n.places.map(p => {
+          if (typeof p === "string") return p;
+          return p.name ? (p.desc ? `${p.name}（${p.desc}）` : p.name) : "—";
+        }).join("、");
+      } else if (typeof n.places === "string") {
+        placesStr = n.places;
+      }
+
+      let routeMapStr = n.routeMap || "";
+      if (!routeMapStr && n.lib) {
+        const libs = window.TH_NPA_LIBS || [];
+        const lib = libs.find(l => l.id === n.lib);
+        if (lib) {
+          const sub = (lib.subs || []).find(s => s.id === n.sub);
+          routeMapStr = lib.name + (sub ? ` - ${sub.name}` : "");
+        }
+      }
+      if (!routeMapStr) routeMapStr = "上河文化台灣百岳導遊圖 - 南湖、中央尖山";
+
+      return {
+        reason: n.reason || "登山健行",
+        places: placesStr || "—",
+        routeMap: routeMapStr,
+        plan: n.plan || "—",
+      };
     },
   },
 

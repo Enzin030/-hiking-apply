@@ -104,7 +104,7 @@ window.thComponents["th-data-table"] = {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="r in rows" :key="r[keyOf]">
+          <tr v-for="r in rows" :key="r[keyOf]" :class="{ 'is-leader-row': r.role === '領隊' }">
             <td v-for="c in columns" :key="c.key" :data-label="c.label" :class="alignClass(c)">
               <slot name="cell" :row="r" :column="c" :value="valueOf(r, c)">{{ valueOf(r, c) }}</slot>
             </td>

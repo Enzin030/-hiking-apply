@@ -34,60 +34,77 @@
       <!-- 1. 進入範圍 -->
       <section class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">1.選擇申請區域與進入範圍</h2>
+          <h2 class="th-card-title">1. 選擇申請區域與進入範圍</h2>
         </div>
-        <div class="th-card-body grid gap-3">
-          <dl class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
-            <dt class="th-label">申請區域</dt><dd>{{ area.type }}/{{ area.name }}</dd>
-          </dl>
-          <span class="th-label"><span class="req">*</span>進入範圍</span>
-          <label v-for="s in area.segments" :key="s.id" class="flex items-start gap-2">
-            <input type="checkbox" :value="s.value" v-model="picked" class="mt-1" />
-            <span><strong>{{ s.value }}</strong><br /><span class="th-field-hint">{{ s.desc }}</span></span>
-          </label>
+        <div class="th-card-body grid gap-4">
+          <div class="th-field">
+            <label class="th-label"><span>申請區域</span></label>
+            <div class="text-base text-slate-900">{{ area.type }}／{{ area.name }}</div>
+          </div>
+
+          <div class="th-field">
+            <label class="th-label">
+              <span><span class="req">*</span>進入範圍</span>
+            </label>
+            <div class="grid gap-2">
+              <label v-for="s in area.segments" :key="s.id" class="flex items-start gap-2 cursor-pointer">
+                <input type="checkbox" :value="s.value" v-model="picked" class="mt-1" />
+                <span>
+                  <strong>{{ s.value }}</strong>
+                  <span v-if="s.desc" class="text-base text-national-800 font-normal block mt-1 leading-relaxed">＊{{ s.desc.startsWith('＊') ? s.desc.slice(1) : s.desc }}</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
           <!-- 沒勾任何範圍時此欄必填（正式站 ForestAreaNext）；沒有預設範圍的區域只有這一欄 -->
-          <input class="th-input" type="text" :placeholder="area.notesPlaceholder" v-model="notes" aria-label="其他範圍或備註" />
+          <div class="th-field">
+            <label class="th-label" for="f-notes">
+              <span>其他範圍或備註</span>
+            </label>
+            <input id="f-notes" class="th-input" type="text" :placeholder="area.notesPlaceholder" v-model="notes" />
+          </div>
         </div>
       </section>
 
       <!-- 2. 進出入口：勾了範圍才出現對應入口（正式站即時過濾） -->
       <section class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">2.選擇進出入口與預計抵達時間</h2>
+          <h2 class="th-card-title">2. 選擇進出入口與預計抵達時間</h2>
         </div>
         <div class="th-card-body grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- 沒有預設範圍的區域（gateText）：入口、出口為必填文字欄「請自行填寫」 -->
           <div v-if="area.gateText" class="th-field">
-            <label class="th-label" for="f-entr-text"><span class="req">*</span>入口</label>
+            <label class="th-label" for="f-entr-text"><span><span class="req">*</span>入口</span></label>
             <input id="f-entr-text" class="th-input" type="text" placeholder="請自行填寫" v-model="entrText" />
           </div>
           <div v-else class="th-field">
-            <label class="th-label" for="f-entr"><span class="req">*</span>入口</label>
+            <label class="th-label" for="f-entr"><span><span class="req">*</span>入口</span></label>
             <th-hybrid-select><select id="f-entr" class="th-select" v-model="entr">
               <option value="">請選擇</option>
               <option v-for="o in entrOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
             </select></th-hybrid-select>
           </div>
           <div class="th-field">
-            <label class="th-label" for="f-entr-time"><span class="req">*</span>抵達入口時間</label>
+            <label class="th-label" for="f-entr-time"><span><span class="req">*</span>抵達入口時間</span></label>
             <th-hybrid-select><select id="f-entr-time" class="th-select" v-model="entrTime">
               <option value="">請選擇</option>
               <option v-for="t in area.times" :key="t" :value="t">{{ t }}</option>
             </select></th-hybrid-select>
           </div>
           <div v-if="area.gateText" class="th-field">
-            <label class="th-label" for="f-exit-text"><span class="req">*</span>出口</label>
+            <label class="th-label" for="f-exit-text"><span><span class="req">*</span>出口</span></label>
             <input id="f-exit-text" class="th-input" type="text" placeholder="請自行填寫" v-model="exitText" />
           </div>
           <div v-else class="th-field">
-            <label class="th-label" for="f-exit"><span class="req">*</span>出口</label>
+            <label class="th-label" for="f-exit"><span><span class="req">*</span>出口</span></label>
             <th-hybrid-select><select id="f-exit" class="th-select" v-model="exit">
               <option value="">請選擇</option>
               <option v-for="o in exitOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
             </select></th-hybrid-select>
           </div>
           <div class="th-field">
-            <label class="th-label" for="f-exit-time"><span class="req">*</span>抵達出口時間</label>
+            <label class="th-label" for="f-exit-time"><span><span class="req">*</span>抵達出口時間</span></label>
             <th-hybrid-select><select id="f-exit-time" class="th-select" v-model="exitTime">
               <option value="">請選擇</option>
               <option v-for="t in area.times" :key="t" :value="t">{{ t }}</option>
@@ -99,24 +116,66 @@
       <!-- 3. 申請目的 -->
       <section class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">3.申請目的或項目</h2>
+          <h2 class="th-card-title">3. 申請目的或項目</h2>
         </div>
-        <div class="th-card-body grid gap-3">
-          <p v-if="multiPurpose" class="th-field-hint">可複選</p>
-          <div v-for="(p, pi) in area.purposes" :key="p.value" class="grid gap-2">
-            <label class="flex items-start gap-2">
-              <input v-if="multiPurpose" type="checkbox" :value="p.value" v-model="purposes" class="mt-1" />
-              <input v-else type="radio" name="purpose" :value="p.value" v-model="purpose" class="mt-1" />
-              <span>{{ p.value }}
-                <span v-if="p.note || p.template" class="th-field-hint block">{{ p.note }}<a v-if="p.template" class="th-inline-link" :href="p.template.href" download>{{ p.template.label }}</a>{{ p.noteAfter }}</span></span>
+        <div class="th-card-body grid gap-4">
+          <div class="th-field">
+            <label class="th-label">
+              <span><span class="req">*</span>申請目的或項目</span>
             </label>
-            <!-- 須附件的目的勾選後出現上傳欄位，件數＝attach（正式站 ForestAreaChk）；雛形只記檔名、不送出檔案 -->
-            <div v-if="p.attach && isChosen(p.value)" class="grid gap-2 pl-6">
-              <p class="th-field-hint">檔案格式：PDF,JPG,PNG</p>
-              <div v-for="n in p.attach" :key="n" class="flex flex-wrap items-center gap-3">
-                <input :id="'fa-file-' + pi + '-' + n" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" @change="pickFile(p.value, n - 1, $event)" />
-                <label :for="'fa-file-' + pi + '-' + n" class="th-btn th-btn-secondary th-btn-sm"><i class="fa-solid fa-paperclip" aria-hidden="true"></i>選擇檔案</label>
-                <span class="th-field-hint">{{ fileName(p.value, n - 1) || ('附件 ' + n + '：尚未上傳') }}</span>
+            <div class="grid gap-3">
+              <div v-for="(p, pi) in area.purposes" :key="p.value" class="grid gap-2">
+                <label class="flex items-start gap-2 cursor-pointer">
+                  <input v-if="multiPurpose" type="checkbox" :value="p.value" v-model="purposes" class="mt-1" />
+                  <input v-else type="radio" name="purpose" :value="p.value" v-model="purpose" class="mt-1" />
+                  <span>
+                    <strong>{{ p.value }}</strong>
+                    <span v-if="p.note || p.template" class="th-field-hint block text-rose-600 font-normal mt-0.5">
+                      {{ p.note }}
+                      <a v-if="p.template" class="th-inline-link font-semibold ml-1 underline" :href="p.template.href" download>{{ p.template.label }}</a>
+                      {{ p.noteAfter }}
+                    </span>
+                  </span>
+                </label>
+                <!-- 須附件的目的勾選後出現上傳表格：參考 apply-4 的 table 方式 -->
+                <div v-if="p.attach && isChosen(p.value)" class="th-table-wrap mt-1 mb-2">
+                  <table class="th-table">
+                    <thead>
+                      <tr>
+                        <th scope="col" style="width: 70px;" class="is-center">項次</th>
+                        <th scope="col">附件名稱與規格</th>
+                        <th scope="col" style="width: 150px;" class="is-center">上傳檔案</th>
+                        <th scope="col" style="width: 200px;">檔案狀態</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="n in p.attach" :key="n">
+                        <td class="is-center">{{ n }}</td>
+                        <td>
+                          <div class="font-medium text-slate-800">
+                            <span class="req">*</span>{{ p.value }}相關證明文件<span v-if="p.attach > 1">（附件 {{ n }}）</span>
+                          </div>
+                          <div class="th-field-hint">格式限制：PDF、JPG、PNG，單檔大小不超過 5MB</div>
+                        </td>
+                        <td class="is-center">
+                          <input :id="'fa-file-' + pi + '-' + n" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" @change="pickFile(p.value, n - 1, $event)" />
+                          <label :for="'fa-file-' + pi + '-' + n" class="th-btn th-btn-secondary th-btn-sm cursor-pointer whitespace-nowrap">
+                            <i class="fa-solid fa-upload mr-1" aria-hidden="true"></i>選擇檔案
+                          </label>
+                        </td>
+                        <td>
+                          <span v-if="fileName(p.value, n - 1)" class="text-emerald-700 font-medium text-sm inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600" aria-hidden="true"></i>
+                            <span class="truncate max-w-[150px]" :title="fileName(p.value, n - 1)">{{ fileName(p.value, n - 1) }}</span>
+                          </span>
+                          <span v-else class="text-rose-600 font-medium text-sm inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-exclamation text-rose-500" aria-hidden="true"></i>尚未上傳
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -126,16 +185,28 @@
       <!-- 4～9. 安全聲明與各項宣達 -->
       <section v-for="b in area.blocks" :key="b.no" class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">{{ b.no }}.{{ b.title }}</h2>
+          <h2 class="th-card-title">{{ b.no }}. {{ b.title }}</h2>
         </div>
-        <div class="th-card-body grid gap-2">
-          <p class="whitespace-pre-line">{{ b.text }}</p>
-          <label v-if="b.input === 'radio'" class="flex items-start gap-2 th-label">
-            <input type="checkbox" v-model="confirms[b.name]" class="mt-1" />{{ b.confirm }}</label>
+        <div class="th-card-body grid gap-3">
+          <p class="whitespace-pre-line text-slate-700 leading-relaxed">{{ b.text }}</p>
+          <div v-if="b.input === 'radio'" class="th-field pt-1">
+            <label class="flex items-start gap-2 font-semibold cursor-pointer">
+              <input type="checkbox" v-model="confirms[b.name]" class="mt-1" />
+              <span><span class="req">*</span>{{ b.confirm }}</span>
+            </label>
+          </div>
           <!-- 空白待填（例：行程計畫，出雲山 textarea、翡翠水庫空白 text）；正式站未標必填〔待確認〕 -->
-          <textarea v-else-if="isFillIn(b)" class="th-textarea" rows="4" v-model="fills[b.name]" :aria-label="b.title"></textarea>
+          <div v-else-if="isFillIn(b)" class="th-field pt-1">
+            <label class="th-label">
+              <span><span class="req">*</span>{{ b.title }}</span>
+            </label>
+            <textarea class="th-textarea" rows="5" v-model="fills[b.name]" :placeholder="'請輸入' + b.title" :aria-label="b.title"></textarea>
+          </div>
           <!-- 正式站這類為唯讀已帶入的文字欄（OtherName7／8），不需勾選 -->
-          <p v-else class="th-input th-input-readonly">{{ b.confirm }}</p>
+          <div v-else class="th-field pt-1">
+            <label class="th-label"><span>宣達事項說明</span></label>
+            <input type="text" class="th-input th-input-readonly" :value="b.confirm" readonly />
+          </div>
         </div>
       </section>
     </div>
