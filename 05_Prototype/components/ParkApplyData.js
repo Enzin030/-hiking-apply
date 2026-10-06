@@ -151,7 +151,8 @@ window.thParkApply = function (key) {
                    closed: x.closed || "", closedRange: x.closedRange || null, npaNote: x.npaNote || "" };
         });
       },
-      graphs: { "667": window.APPLY15_PLANNER || {}, "675": window.APPLY15_PLANNER_675 || {} },
+      /* 節點圖：正式站逐條探索的 APPLY15_GRAPHS（2026-10-06，16 條）為準；舊的實走整理（667、675）只在缺資料時備用 */
+      graphs: Object.assign({ "667": window.APPLY15_PLANNER || {}, "675": window.APPLY15_PLANNER_675 || {} }, window.APPLY15_GRAPHS || {}),
       /* 南湖大山線示範行程（正式站 2026-09-29 實走） */
       demoDays: { "667": [
         ["思源埡口", "5.1K登山口", "多加屯山登山口", "木杆鞍部", "雲稜山屋"],
