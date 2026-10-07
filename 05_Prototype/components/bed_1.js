@@ -13,6 +13,9 @@
    - 換宿營地**不再重設月份**（原本會跳回快照首月，比較兩地點的同一天要重翻月）。
    - 日期明細由 th-modal 改為月曆下方就地展開，內容一項不減（七項計數＋fs 紅字＋名單連結）。
    零新增：不加衍生欄位、不加新按鈕、不加狀態色。
+   2026-10-07 新增「入住試算」（使用者要求，正式站沒有）：入住日期＋晚數＋多選宿營地，逐晚列餘額／申請數
+   （申請數＝待處理＋補件＋已通過＋待系統排定＋宿營地不足候補；雪霸正式站沒有「申請數」欄位，此為加總，定義〔待確認〕），
+   每晚餘額最多者標橘底（原綠底、最少餘額列、推薦標記已拿掉）；日期為查詢期間（起訖都含，不用晚數換算）。資料同月曆；trial* 為其狀態與計算。
    ============================================================ */
 
 thPage({
@@ -45,6 +48,12 @@ thPage({
       year: first.y,
       month: first.m,
       day: null,
+      /* 入住試算：預設查詢 7～9 天後（3 天），比較雪山主峰／聖稜一帶 5 個宿營地（使用者 2026-10-07：預設 5 個） */
+      trialStart: window.thAddDaysToDateValue(window.thTodayValue(), 7),
+      trialEndDate: window.thAddDaysToDateValue(window.thTodayValue(), 9),   // 查詢期間迄日（含）
+      trialIds: ["七卡山莊", "七卡營地", "三六九臨時營地", "雪北山屋", "翠池山屋"].map((n) => (sites.find((s) => s.name === n) || {}).id).filter(Boolean),
+      /* 查詢模式（右上角切換）：calendar＝月曆查詢（原頁面）、trial＝入住試算 */
+      mode: "calendar",
     };
   },
 
@@ -101,6 +110,51 @@ thPage({
         cap: rec ? rec.cap : null,
       };
     },
+    /* 入住試算：快照有資料的日期範圍（給日期挑選器的 min／max） */
+    trialRange() {
+      let min = "", max = "";
+      this.sites.forEach((s) => s.months.forEach((m) => m.days.forEach((e, i) => {
+        if (!e) return;
+        const d = `${m.y}-${String(m.m).padStart(2, "0")}-${String(i + 1).padStart(2, "0")}`;
+        if (!min || d < min) min = d;
+        if (!max || d > max) max = d;
+      })));
+      return { min, max };
+    },
+    /* 查詢期間迄日最早＝起日（可同一天） */
+    trialEndMin() { return this.trialStart || this.trialRange.min; },
+    /* 查詢天數＝迄日－起日＋1（起訖都含；未選齊或倒置為 0） */
+    trialDays() {
+      if (!this.trialStart || !this.trialEndDate) return 0;
+      const n = Math.round((new Date(this.trialEndDate + "T00:00:00") - new Date(this.trialStart + "T00:00:00")) / 86400000) + 1;
+      return n > 0 ? n : 0;
+    },
+    /* 勾選的宿營地，依總表順序 */
+    trialSites() { return this.sites.filter((s) => this.trialIds.includes(s.id)); },
+    /* 每晚一列：各宿營地 {remain, applied} 或 null（快照外／該日無數字）；best＝當晚餘額最多者（同額取申請數少者） */
+    trialRows() {
+      const iRemain = this.labels.indexOf("餘額");
+      const iApplied = ["待處理", "補件", "已通過", "待系統排定", "宿營地不足候補"].map((k) => this.labels.indexOf(k));
+      const week = ["日", "一", "二", "三", "四", "五", "六"];
+      const rows = [];
+      for (let k = 0; k < this.trialDays; k++) {
+        const date = window.thAddDaysToDateValue(this.trialStart, k);
+        const [y, m, d] = date.split("-").map(Number);
+        const cells = this.trialSites.map((s) => {
+          const md = s.months.find((x) => x.y === y && x.m === m);
+          const e = md && md.days[d - 1];
+          return e ? { remain: Number(e.v[iRemain]), applied: iApplied.reduce((t, i) => t + (Number(e.v[i]) || 0), 0) } : null;
+        });
+        let best = null, bi = -1;
+        cells.forEach((c, i) => {
+          if (!c || c.remain <= 0) return;
+          if (bi < 0 || c.remain > cells[bi].remain || (c.remain === cells[bi].remain && c.applied < cells[bi].applied)) bi = i;
+        });
+        if (bi >= 0) best = this.trialSites[bi].id;
+        rows.push({ date, label: `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}（${week[new Date(date + "T00:00:00").getDay()]}）`, cells, best });
+      }
+      return rows;
+    },
     /* 外籍提前拆成兩張統計卡（2026-09-18 使用者指示）。
        原始值格式固定為「外國人+本國人」（實測 10 種相異值，除空字串外皆含 +，
        例 9+2）。拆不開時兩格都給「—」，不猜。
@@ -123,6 +177,15 @@ thPage({
     pickSite(id) {
       this.siteId = id;
       this.day = null;
+    },
+    /* 入住試算：改起日時，迄日若早於起日，改為與起日同一天 */
+    setTrialStart(v) {
+      this.trialStart = v;
+      if (v && (!this.trialEndDate || this.trialEndDate < v)) this.trialEndDate = v;
+    },
+    /* 入住試算：切換要比較的宿營地 */
+    toggleTrial(id) {
+      this.trialIds = this.trialIds.includes(id) ? this.trialIds.filter((x) => x !== id) : this.trialIds.concat(id);
     },
     /* 正式站狀態字樣 → 既有 .th-flag 修飾 class（與 bed_1main 同一份） */
     statusClass(s) { return (window.BED1MAIN_STATUS || {})[s] || ""; },

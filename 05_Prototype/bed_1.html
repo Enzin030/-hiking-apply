@@ -49,6 +49,18 @@
     title="雪霸宿營地查詢"
     :bare="true">
 
+    <!-- 模式切換（2026-10-07 使用者：入住試算改為模式切換、放右上角）：月曆查詢／入住試算，v-show 切換保留各自狀態 -->
+    <template #title-right>
+      <div class="th-chip-row ml-auto" role="tablist" aria-label="查詢模式">
+        <button type="button" role="tab" :aria-selected="mode === 'calendar' ? 'true' : 'false'"
+                :class="['th-chip', { 'is-active': mode === 'calendar' }]" @click="mode = 'calendar'">
+          <i class="fa-regular fa-calendar mr-1" aria-hidden="true"></i>月曆查詢</button>
+        <button type="button" role="tab" :aria-selected="mode === 'trial' ? 'true' : 'false'"
+                :class="['th-chip', { 'is-active': mode === 'trial' }]" @click="mode = 'trial'">
+          <i class="fa-solid fa-calculator mr-1" aria-hidden="true"></i>入住試算</button>
+      </div>
+    </template>
+
     <!--
       正式站 .alert 原文逐條；紅字段落照正式站標紅。
       2026-09-17 一度拿掉 th-callout 外框，同日使用者決定用回 callout（比照正式站也是 .alert）。
@@ -68,7 +80,7 @@
       （2026-09-18 15:44 使用者指示「滾動列表跟月曆並排，景點卡片維持下方」）
       ≤1100px 收成單欄（規則在 pages.css 的 .p-bed1-layout）。
     -->
-    <div class="p-bed1-layout" :class="{ 'is-compact': !showCaps }">
+    <div v-show="mode === 'calendar'" class="p-bed1-layout" :class="{ 'is-compact': !showCaps }">
 
         <!--
           承載量總表：欄位為 Bed1Data 的 cap 既有五欄，不加衍生欄位。
@@ -169,6 +181,71 @@
       </div><!-- /.p-bed1-main -->
 
     </div><!-- /.p-bed1-layout -->
+
+    <!--
+      入住試算（2026-10-07 使用者要求，正式站沒有；右上角切到「入住試算」模式時取代月曆區顯示）：輸入查詢期間（起訖都含）、勾選宿營地（預設 5 個），
+      逐晚列出各宿營地的餘額與申請數（申請數＝待處理＋補件＋已通過＋待系統排定＋宿營地不足候補，額滿時仍看得出需求；樣式同月曆 th-bedcal-*），
+      每晚餘額最多的宿營地標橘底（使用者 2026-10-07；原綠底、最下列「最少餘額」與「推薦」標記拿掉），讓民眾對比怎麼申請較有機會。
+      資料同月曆（Bed1Data.js 正式站快照）；快照外或該日無數字顯示「—」。
+    -->
+    <section v-show="mode === 'trial'" class="th-card mt-4" aria-labelledby="bed1-trial-title">
+      <div class="th-card-head">
+        <h2 id="bed1-trial-title" class="th-card-title">入住試算</h2>
+      </div>
+      <div class="th-card-body grid gap-4">
+        <!-- 查詢期間（使用者 2026-10-07：入住／離開改「查詢期間」，起訖都含在內，不用晚數換算）：
+             兩支 picker，迄日 min 綁起日（th-date-picker 檔頭的區間用法） -->
+        <div class="th-field">
+          <span class="th-label">查詢期間</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="w-full sm:w-56"><th-date-picker :model-value="trialStart" :min="trialRange.min" :max="trialRange.max"
+                            @update:model-value="setTrialStart($event)"></th-date-picker></div>
+            <span class="text-slate-500" aria-hidden="true">～</span>
+            <div class="w-full sm:w-56"><th-date-picker :model-value="trialEndDate" :min="trialEndMin" :max="trialRange.max"
+                            @update:model-value="trialEndDate = $event"></th-date-picker></div>
+          </div>
+        </div>
+        <div class="th-field">
+          <span class="th-label">宿營地</span>
+          <!-- 搜尋框拿掉（使用者 2026-10-07），34 個宿營地直接列出 -->
+          <div class="flex flex-wrap gap-2">
+            <button v-for="s in sites" :key="s.id" type="button"
+                    :class="['th-chip', { 'is-active': trialIds.includes(s.id) }]"
+                    :aria-pressed="trialIds.includes(s.id) ? 'true' : 'false'"
+                    @click="toggleTrial(s.id)">{{ s.name }}</button>
+          </div>
+        </div>
+
+        <div v-if="trialSites.length" class="th-table-wrap border border-slate-200 rounded-md">
+          <table class="th-table w-full whitespace-nowrap">
+            <caption class="sr-only">入住試算：各晚各宿營地的餘額與申請數</caption>
+            <thead>
+              <tr>
+                <th scope="col">日期</th>
+                <th v-for="s in trialSites" :key="s.id" scope="col" class="is-center">{{ s.name }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in trialRows" :key="row.date">
+                <th scope="row" class="font-semibold text-slate-800">{{ row.label }}</th>
+                <td v-for="(c, k) in row.cells" :key="trialSites[k].id" class="is-center" :class="{ 'bg-orange-100': c && row.best === trialSites[k].id }">
+                  <template v-if="c">
+                    <span class="th-bedcal-main justify-center">
+                      <template v-if="c.remain > 0"><span class="th-bedcal-unit">餘額</span><b class="th-bedcal-num">{{ c.remain }}</b></template>
+                      <b v-else class="th-bedcal-num is-text">額滿</b>
+                    </span>
+                    <span class="th-bedcal-sub block">申請數 {{ c.applied }}</span>
+                  </template>
+                  <span v-else class="text-slate-400">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p v-else class="text-slate-500">請選擇宿營地。</p>
+        <p v-if="trialSites.length" class="th-field-hint is-accent">※橘底為當晚餘額最多的宿營地。申請數＝待處理＋補件＋已通過＋待系統排定＋宿營地不足候補。</p>
+      </div>
+    </section>
 
   </th-page-shell>
 
