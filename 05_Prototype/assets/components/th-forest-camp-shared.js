@@ -196,7 +196,7 @@ window.thFcPriceOf = function (facility, dateValue) {
    apply_04.html 保留但不再連入。 */
 window.TH_FC_STEPS = [
   { n: 1, label: "日期確認" },
-  { n: 2, label: "行程計畫" },
+  { n: 2, label: "行程規劃" },   // 正式站「行程計畫」；2026-10-07 使用者裁示與三管處統一為「行程規劃」（列 PM 確認事項）
   { n: 3, label: "隊伍資料" },   // 正式站原文；2026-10-06 使用者裁示三管處與六步驟統一為「隊伍資料」
   { n: 4, label: "同意聲明" },   // 正式站步驟條原文（2026-09-29），原寫「申請須知」；正式站為第 5 步
   /* 2026-10-05 使用者裁示：正式站第 6 步「確認送出」本身就是確認資料頁，但進度條沒有送出後的一格；
@@ -236,6 +236,29 @@ window.TH_FC_STEPS = [
     },
   };
 })();
+
+/* 元件總覽（2026-10-06，使用者要一頁看完山屋元件再一次調樣式；調整完會移除）：
+   forest-camp-1.html?showcase=1、forest-camp-2.html?showcase=1 共用這份「全變體」山屋。
+   以天池為底（停留地點與進出地點、三種設施），設施依「單位＋圖示」去重（床／頂／座），
+   費用備註取各山屋的聯集（天池本身沒有）。文字都取自 TH_CABIN_DATA 的真實資料。 */
+window.thFcIsShowcase = function () { return new URLSearchParams(window.location.search).has("showcase"); };
+window.thFcShowcaseCabin = function () {
+  var all = Object.keys(window.TH_CABIN_DATA).map(function (k) { return window.TH_CABIN_DATA[k]; });
+  var seen = {};
+  var facilities = [];
+  all.forEach(function (c) {
+    c.facilities.forEach(function (f) {
+      var k = f.unit + "|" + f.icon;
+      if (!seen[k]) { seen[k] = 1; facilities.push(Object.assign({}, f, { id: "sc" + facilities.length })); }
+    });
+  });
+  var priceNotes = [];
+  all.forEach(function (c) { (c.priceNotes || []).forEach(function (n) { if (priceNotes.indexOf(n) < 0) priceNotes.push(n); }); });
+  return Object.assign({}, window.TH_CABIN_DATA.tianchi, {
+    name: "元件總覽", facilities: facilities, priceNotes: priceNotes,
+    maxDays: Math.max.apply(null, all.map(function (c) { return c.maxDays; })),
+  });
+};
 
 /* 付款方式（第 2 步選、第 6 步顯示共用同一份）：照正式站只有匯款／線上刷卡 */
 window.TH_FC_PAYMENTS = [

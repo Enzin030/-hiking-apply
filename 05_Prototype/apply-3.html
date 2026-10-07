@@ -284,9 +284,9 @@
 
             <!-- 單日往返模式：自動帶入固定行程 -->
             <template v-else-if="isSingleDay">
-              <ul class="p-apply3-plan-days">
-                <li class="p-apply3-plan-day-item">
-                  <span class="day-tag">第 1 天行程：</span>
+              <ul class="th-plan-days">
+                <li class="th-plan-day">
+                  <span class="th-plan-day-tag">第 1 天行程：</span>
                   <div class="p-apply3-plan-nodes" v-if="climbline === '3'">
                     <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
                     <span class="p-apply3-node-arrow">→</span>
@@ -317,10 +317,10 @@
 
             <!-- 多日模式（2~5天）：互動式逐點手選 -->
             <div v-else class="space-y-0">
-              <ul class="p-apply3-plan-days !mb-0">
+              <ul class="th-plan-days !mb-0">
                 <!-- 還沒選起點的那天不顯示（正式站選起點前沒有「第 1 天行程」這列） -->
-                <li v-for="(dayNodes, idx) in planDays" v-show="dayNodes.length" :key="idx" class="p-apply3-plan-day-item">
-                  <span class="day-tag">第 {{ idx + 1 }} 天行程：</span>
+                <li v-for="(dayNodes, idx) in planDays" v-show="dayNodes.length" :key="idx" class="th-plan-day">
+                  <span class="th-plan-day-tag">第 {{ idx + 1 }} 天行程：</span>
                   <div class="p-apply3-plan-nodes">
                     <template v-for="(node, nIdx) in dayNodes" :key="nIdx">
                       <span :class="['p-apply3-node-badge', 'is-' + nodeBadgeType(node)]">
@@ -357,6 +357,10 @@
                   <button type="button" class="th-btn th-btn-primary th-btn-sm" id="con_btnover" @click="finishDay">
                     <i class="fa-solid fa-check mr-1" aria-hidden="true"></i>完成路線
                   </button>
+                  <!-- 正式站 stopdate：查看宿營地部份關閉日期（有資料的次路線才顯示，見 ParkApplyData.campClosures） -->
+                  <button v-if="campClosures.length" type="button" class="th-btn th-btn-ghost th-btn-sm" id="con_stopdate" @click="campClosureOpen = true">
+                    <i class="fa-solid fa-calendar-xmark mr-1" aria-hidden="true"></i>查看宿營地部份關閉日期
+                  </button>
                 </div>
 
                 <div v-if="plannerMsg" class="p-apply3-planner-alert" role="alert">
@@ -369,6 +373,9 @@
               <div v-else class="p-apply3-planner-interactive flex flex-wrap items-center justify-center gap-3 !mt-0 !pt-2">
                 <button type="button" class="th-btn th-btn-ghost th-btn-sm" id="con_btnreset" @click="resetPlanner">
                   <i class="fa-solid fa-rotate-left mr-1" aria-hidden="true"></i>重新規劃
+                </button>
+                <button v-if="campClosures.length" type="button" class="th-btn th-btn-ghost th-btn-sm" @click="campClosureOpen = true">
+                  <i class="fa-solid fa-calendar-xmark mr-1" aria-hidden="true"></i>查看宿營地部份關閉日期
                 </button>
               </div>
             </div>
@@ -432,6 +439,19 @@
               <th-callout v-if="park.noteHint" type="warning">{{ park.noteHint }}</th-callout>
             </div>
           </div>
+          </div>
+        </section>
+
+        <!-- 登山安全管理（共用 th-hiking-safety）：ParkApplyData.hikingSafety 有設定的管理處才出現（雪霸全部次路線） -->
+        <section v-if="safetyOn" id="sec-safety" class="th-card">
+          <div class="th-card-head">
+            <button type="button" class="p-apply3-accordion-btn" @click="toggleSection('safety')">
+              <h2 class="th-card-title">登山安全管理</h2>
+              <i class="fa-solid fa-chevron-down p-apply3-accordion-icon" :class="{ 'is-open': accordionOpen.safety }" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="th-card-body" v-show="accordionOpen.safety">
+            <th-hiking-safety :days="safetyDays" v-model="safety" :hint="park.hikingSafety.hint" :example="park.hikingSafety.example"></th-hiking-safety>
           </div>
         </section>
 
@@ -551,9 +571,15 @@
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
               </button>
             </li>
-            <li v-if="npaOn" :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === 2 }">
-              <button type="button" @click="scrollToSection('sec-npa', 2)">
-                <span class="p-apply3-side-text">3. 警政署入山證</span>
+            <li v-if="safetyOn" :class="{ 'is-acked': secSafetyOk, 'is-active': activeNavIndex === 2 }">
+              <button type="button" @click="scrollToSection('sec-safety', 2)">
+                <span class="p-apply3-side-text">3. 登山安全管理</span>
+                <span class="p-apply3-side-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+            <li v-if="npaOn" :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === (safetyOn ? 3 : 2) }">
+              <button type="button" @click="scrollToSection('sec-npa', safetyOn ? 3 : 2)">
+                <span class="p-apply3-side-text">{{ safetyOn ? 4 : 3 }}. 警政署入山證</span>
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
               </button>
             </li>
@@ -620,6 +646,36 @@
     <template #foot>
       <div class="bulletin-modal-foot">
         <button type="button" class="th-btn th-btn-ghost" @click="mapOpen = false">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉
+        </button>
+      </div>
+    </template>
+  </th-modal>
+
+  <!-- 宿營地部份關閉日期（正式站 close_list_modal：標題「主路線＋次路線＋宿營地部份關閉日期」，
+       表格「節點名稱｜關閉日期｜關閉說明」；表格樣式比照確認頁，使用者 2026-10-06 提供正式站截圖） -->
+  <th-modal v-if="campClosureOpen" :title="campClosureTitle" @close="campClosureOpen = false">
+    <div class="th-table-wrap border border-slate-200 rounded-md">
+      <table class="th-table w-full whitespace-nowrap">
+        <thead>
+          <tr>
+            <th scope="col" class="is-center">節點名稱</th>
+            <th scope="col" class="is-center">關閉日期</th>
+            <th scope="col" class="is-center">關閉說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="c in campClosures" :key="c.node + c.dates">
+            <td class="is-center">{{ c.node }}</td>
+            <td class="is-center">{{ c.dates }}</td>
+            <td class="is-center">{{ c.note }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <template #foot>
+      <div class="bulletin-modal-foot">
+        <button type="button" class="th-btn th-btn-ghost" @click="campClosureOpen = false">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉
         </button>
       </div>

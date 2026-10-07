@@ -61,18 +61,22 @@
       <p v-if="warn" class="th-field-error mt-3" role="alert">請逐項點閱以上說明</p>
     </template>
 
-    <!-- 自然保護區域、山屋：規定全文 -->
+    <!-- 自然保護區域、山屋：規定全文。山屋的注意事項名稱直接當卡片標題（使用者 2026-10-07，原為「山屋/營地」＋卡內小標）；
+         勾選列比照保護區宣達「＊我已確認並會向團員宣達」的寫法（粗體＋紅色星號），兩類共用 -->
     <section v-else class="th-card">
       <div class="th-card-head">
         <i :class="icon" aria-hidden="true"></i>
-        <h2 class="th-card-title">{{ blockTitle }}</h2>
+        <h2 class="th-card-title">{{ notice.title || blockTitle }}</h2>
       </div>
       <div class="th-card-body grid gap-3">
-        <h3 v-if="notice.title" class="th-section-title">{{ notice.title }}</h3>
         <p v-for="(t, i) in notice.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
 
-        <label class="flex items-start gap-2 th-label mt-2">
-          <input type="checkbox" v-model="agreed" class="mt-1" />{{ agreeText }}</label>
+        <div class="th-field pt-1">
+          <label class="flex items-start gap-2 font-semibold cursor-pointer">
+            <input type="checkbox" v-model="agreed" class="mt-1" />
+            <span><span class="req">*</span>{{ agreeText }}</span>
+          </label>
+        </div>
         <p v-if="warn" class="th-field-hint" role="alert">請確認已勾選同意聲明</p>
       </div>
     </section>

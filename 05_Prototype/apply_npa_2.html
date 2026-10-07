@@ -5,7 +5,7 @@
 <title>登山線上申請｜警政署入山證申請 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  apply_npa_2 — 警政署入山證申請 步驟 2：行程計畫
+  apply_npa_2 — 警政署入山證申請 步驟 2：行程規劃（正式站稱行程計畫）
   ------------------------------------------------------------
   2026-09-30 新增，由 template/page.html 起手，檔名比照正式站 apply_npa_2.aspx。
   依據：02_Spec/05d §三：入山事由、前往地點（加入清單＋描述必填）、登山路線圖詞庫、
@@ -20,29 +20,54 @@
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="警政署-02 行程計畫">
+<div id="th-app" v-cloak data-screen-label="警政署-02 行程規劃">
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, '警政署入山證', '行程計畫']" title="警政署入山證申請">
+  <th-page-shell :trail="['登山申請', applyCrumb, '警政署入山證', '行程規劃']" title="警政署入山證申請" :bare="true">
 
     <template #stepper>
       <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
-    <section class="th-card">
-      <div class="th-card-head">
-        <h2 class="th-card-title">警政署入山證申請</h2>
-      </div>
-      <div class="th-card-body">
-        <th-npa-permit id-prefix="npa" v-model="npa"></th-npa-permit>
-      </div>
-    </section>
+    <div class="th-form-layout mt-6">
+      <main class="th-form-main" role="main">
+        <section class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">警政署入山證申請</h2>
+          </div>
+          <div class="th-card-body">
+            <th-npa-permit id-prefix="npa" v-model="npa"></th-npa-permit>
+          </div>
+        </section>
+      </main>
 
-    <div class="flex flex-wrap justify-center gap-3 mt-12">
-      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
-      <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <!-- 右側本頁內容導覽（只有一張卡，項目列卡內四個欄位；比照隊伍資料頁 apply_03／apply-4，使用者 2026-10-07：六步驟各填寫頁統一加，確認頁不加） -->
+      <aside class="th-pageside" aria-label="本頁內容導覽">
+        <div class="th-pageside-inner">
+          <div class="th-pageside-head">
+            <span>本頁內容</span>
+            <span class="th-pageside-count" :class="{ 'is-done': completedSectionsCount === sideItems.length }">
+              <span class="num">{{ completedSectionsCount }}</span> / {{ sideItems.length }}
+            </span>
+          </div>
+          <ol class="th-pageside-list">
+            <li v-for="(it, i) in sideItems" :key="it.key" :class="{ 'is-acked': it.ok, 'is-active': activeNavIndex === i }">
+              <button type="button" @click="scrollToSection(it.sec, i)">
+                <span class="th-pageside-text">{{ i + 1 }}. {{ it.label }}</span>
+                <span class="th-pageside-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+          </ol>
+        </div>
+      </aside>
     </div>
+
+    <div class="th-form-actions">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i></button>
+    </div>
+
   </th-page-shell>
 
 

@@ -5,7 +5,7 @@
 <title>登山線上申請｜自然保護區域申請 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
-  apply_forest_area_2 — 林保署自然保護區域申請 步驟 2：行程計畫
+  apply_forest_area_2 — 林保署自然保護區域申請 步驟 2：行程規劃（正式站稱行程計畫）
   ------------------------------------------------------------
   2026-09-30 新增，由 template/page.html 起手，檔名比照正式站 apply_forest_area_2.aspx。
   依據：02_Spec/05e §三（2026-09-29 實走北插天山）九個區塊：
@@ -20,19 +20,20 @@
 </head>
 <body>
 
-<div id="th-app" v-cloak data-screen-label="保護區-02 行程計畫">
+<div id="th-app" v-cloak data-screen-label="保護區-02 行程規劃">
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, area.name, '行程計畫']" title="自然保護區域申請">
+  <th-page-shell :trail="['登山申請', applyCrumb, area.name, '行程規劃']" title="自然保護區域申請" :bare="true">
 
     <template #stepper>
       <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
-    <div class="grid gap-6">
+    <div class="th-form-layout mt-6">
+      <main class="th-form-main grid gap-6" role="main">
       <!-- 1. 進入範圍 -->
-      <section class="th-card">
+      <section id="sec-range" class="th-card">
         <div class="th-card-head">
           <h2 class="th-card-title">1. 選擇申請區域與進入範圍</h2>
         </div>
@@ -68,7 +69,7 @@
       </section>
 
       <!-- 2. 進出入口：勾了範圍才出現對應入口（正式站即時過濾） -->
-      <section class="th-card">
+      <section id="sec-gate" class="th-card">
         <div class="th-card-head">
           <h2 class="th-card-title">2. 選擇進出入口與預計抵達時間</h2>
         </div>
@@ -114,7 +115,7 @@
       </section>
 
       <!-- 3. 申請目的 -->
-      <section class="th-card">
+      <section id="sec-purpose" class="th-card">
         <div class="th-card-head">
           <h2 class="th-card-title">3. 申請目的或項目</h2>
         </div>
@@ -145,7 +146,7 @@
 
       <!-- 4. 附件上傳：與目的拆開、獨立一張卡（共用 th-attach-table，與三管處統一，使用者 2026-10-06）；
            所選目的須附件時才出現，其後宣達編號順延一號 -->
-      <section v-if="attachRows.length" class="th-card">
+      <section v-if="attachRows.length" id="sec-attach" class="th-card">
         <div class="th-card-head">
           <h2 class="th-card-title">4. 附件上傳</h2>
         </div>
@@ -155,7 +156,7 @@
       </section>
 
       <!-- 4～9（有附件卡時 5～10）. 安全聲明與各項宣達 -->
-      <section v-for="b in area.blocks" :key="b.no" class="th-card">
+      <section v-for="b in area.blocks" :key="b.no" :id="'sec-b' + b.no" class="th-card">
         <div class="th-card-head">
           <h2 class="th-card-title">{{ blockNo(b) }}. {{ b.title }}</h2>
         </div>
@@ -184,11 +185,32 @@
           </div>
         </div>
       </section>
+      </main>
+
+      <!-- 右側本頁內容導覽（比照隊伍資料頁 apply_03／apply-4，使用者 2026-10-07：六步驟各填寫頁統一加，確認頁不加） -->
+      <aside class="th-pageside" aria-label="本頁內容導覽">
+        <div class="th-pageside-inner">
+          <div class="th-pageside-head">
+            <span>本頁內容</span>
+            <span class="th-pageside-count" :class="{ 'is-done': completedSectionsCount === sideItems.length }">
+              <span class="num">{{ completedSectionsCount }}</span> / {{ sideItems.length }}
+            </span>
+          </div>
+          <ol class="th-pageside-list">
+            <li v-for="(it, i) in sideItems" :key="it.key" :class="{ 'is-acked': it.ok, 'is-active': activeNavIndex === i }">
+              <button type="button" @click="scrollToSection(it.sec, i)">
+                <span class="th-pageside-text">{{ i + 1 }}. {{ it.label }}</span>
+                <span class="th-pageside-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+          </ol>
+        </div>
+      </aside>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-3 mt-12">
-      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</button>
-      <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    <div class="th-form-actions">
+      <button type="button" class="th-btn th-btn-ghost" @click="prev"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
 

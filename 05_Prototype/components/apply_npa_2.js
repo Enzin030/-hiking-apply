@@ -1,5 +1,5 @@
 /* ============================================================
-   apply_npa_2.js — 警政署入山證申請 步驟 2：行程計畫
+   apply_npa_2.js — 警政署入山證申請 步驟 2：行程規劃（正式站稱行程計畫）
    ------------------------------------------------------------
    2026-09-30 新增。依據 02_Spec/05d §三（正式站 2026-09-29）：
    - 入山事由（預設登山健行）、前往地點（加入清單，每筆描述**必填**）、登山路線圖（兩層詞庫）、
@@ -18,12 +18,30 @@ thPage({
         places: [{ code: "532+10002+10002110+1+0", name: "南湖北山(宜蘭縣-大同鄉)", desc: "南湖大山線，經雲稜山屋、審馬陣山屋" }],
         lib: "TM00", sub: "M15",
         plan: "D1:思源埡口→5.1K登山口→多加屯山登山口→木杆鞍部→雲稜山屋。\nD2:雲稜山屋→審馬陣登山口→審馬陣山屋。\nD3:審馬陣山屋→審馬陣登山口→雲稜山屋→木杆鞍部→多加屯山登山口→5.1K登山口→思源埡口。" },
+      activeNavIndex: 0,   // 本頁內容導覽目前項目
     };
   },
   computed: {
+    /* 本頁內容導覽（2026-10-07）：卡內四個欄位（th-npa-permit 的 id 為 npa-reason／-place／-lib／-plan）；完成條件同 check() */
+    sideItems() {
+      const n = this.npa;
+      return [
+        { key: "reason", sec: "npa-reason", label: "入山事由", ok: !!n.reason },
+        { key: "place", sec: "npa-place", label: "前往地點", ok: n.places.length > 0 && n.places.every(p => p.desc) },
+        { key: "lib", sec: "npa-lib", label: "登山路線圖", ok: !!(n.lib && n.sub) },
+        { key: "plan", sec: "npa-plan", label: "登山計畫書", ok: !!n.plan },
+      ];
+    },
+    completedSectionsCount() { return this.sideItems.filter(it => it.ok).length; },
     applyCrumb() { return window.TH_APPLY_CRUMB; },
   },
   methods: {
+    /* 本頁內容導覽：捲到區塊（欄位則捲到所在 .th-field），同 apply_03 */
+    scrollToSection(id, i) {
+      this.activeNavIndex = i;
+      const el = document.getElementById(id);
+      if (el) (el.closest(".th-field") || el).scrollIntoView({ behavior: "smooth", block: "start" });
+    },
     check() {
       const e = [];
       const n = this.npa;

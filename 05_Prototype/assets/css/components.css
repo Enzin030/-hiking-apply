@@ -5870,3 +5870,33 @@ a.th-linkrow:hover .th-linkrow-icon {
   color: var(--fg-1);
   margin-bottom: 6px;
 }
+
+/* ---------- 逐日列（2026-10-07 由 apply-3 的 .p-apply3-plan-days／-plan-day-item／.day-tag 提升，宣告不變）----------
+   行程規劃頁路線規劃、確認頁行程、山屋第 2 步每晚房型共用：「第 N 天行程：」標籤＋該日內容一行 */
+.th-plan-days {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.th-plan-day {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  color: var(--slate-800);
+}
+
+.th-plan-day-tag {
+  font-weight: 700;
+  color: var(--national-700);
+  white-space: nowrap;
+}

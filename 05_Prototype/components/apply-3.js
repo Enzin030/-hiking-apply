@@ -199,6 +199,7 @@ thPage({
       accordionOpen: {
         route: true,
         planner: true,
+        safety: true,
         npa: true
       },
       allAccordionExpanded: true,
@@ -322,6 +323,14 @@ thPage({
 
       activeNavIndex: 0,
       mapOpen: false,
+      campClosureOpen: false,   // 宿營地部份關閉日期彈窗
+      /* 登山安全管理（th-hiking-safety）；必填預帶示意值（2026-10-02 通則），到達時間由 fillSafetyTimes 依規劃結果補 */
+      safety: {
+        checks: { assess: true, contact: true, change: true, law: true }, selfNote: "", times: {},
+        emergencyRoute: "13:00 未到雪山主峰，則往雪山登山口撤退",
+        safetyAssessment: "隊員攜帶急救包與保暖衣物；有人受傷時由領隊評估就近撤退並通報留守人",
+        lostHours: "4", lastDayHours: "5", stayNote: "",
+      },
       mapTabKey: ""
     };
   },
@@ -340,7 +349,11 @@ thPage({
       return this.park.graphs[this.climbline] || GENERIC_PLANNER_GRAPH;
     },
     /* 本頁區塊數（側欄「本頁內容」分母）：無入山證的機關少一塊 */
-    sectionCount() { return this.npaOn ? 3 : 2; },
+    sectionCount() { return 2 + (this.safetyOn ? 1 : 0) + (this.npaOn ? 1 : 0); },
+    /* 登山安全管理：管理處設定了 ParkApplyData.hikingSafety 才出現（雪霸全部次路線，is_hiking_safety 見該檔） */
+    safetyOn() { return !this.textPlan && !!this.park.hikingSafety; },
+    safetyDays() { return this.planDays.filter(d => d.length).map((d, i) => ({ date: this.dayDate(i), nodes: d })); },
+    secSafetyOk() { return !this.safetyOn || window.thHikingSafetyErrors(this.safety, this.safetyDays).length === 0; },
     subObj() { return this.subRoutes.find(r => r.value === this.climbline) || null; },
     /* 入山證區塊：玉山固定有、雪霸沒有、太魯閣依路線（needsNpa） */
     npaOn() {
@@ -437,6 +450,12 @@ thPage({
     },
 
     /* 地圖按鈕與 modal 標題：玉山照原本（開放狀態表的主路線名＋地圖）；其他機關取主路線名 */
+    /* 宿營地部份關閉日期：目前次路線的資料（ParkApplyData.campClosures）；標題照正式站「主路線＋次路線＋宿營地部份關閉日期」 */
+    campClosures() { return ((this.park.campClosures || {})[this.climbline]) || []; },
+    campClosureTitle() {
+      const m = this.mainRoutes.find(r => r.value === this.climblinemain);
+      return (m ? m.text : "") + (this.subObj ? this.subObj.text : "") + "宿營地部份關閉日期";
+    },
     mapTitle() {
       if (this.isYushan && !this.ysOther) return (this.openRow ? this.openRow.mainRoute : "玉山線") + "地圖";
       const m = this.mainRoutes.find(r => r.value === this.climblinemain);
@@ -630,16 +649,20 @@ thPage({
       let count = 0;
       if (this.secRouteOk) count++;
       if (this.secPlannerOk) count++;
+      if (this.safetyOn && this.secSafetyOk) count++;
       if (this.npaOn && this.secNpaOk) count++;
       return count;
     },
 
     canSubmit() {
-      return this.secRouteOk && this.secPlannerOk && this.secNpaOk;
+      return this.secRouteOk && this.secPlannerOk && this.secSafetyOk && this.secNpaOk;
     }
   },
 
   watch: {
+    /* 登山安全管理：規劃結果或路線變動時補上到達時間的預帶值 */
+    planDays: { deep: true, handler() { this.fillSafetyTimes(); } },
+    safetyOn: { immediate: true, handler() { this.fillSafetyTimes(); } },
     climbline: {
       immediate: true,
       handler(val, old) {
@@ -747,6 +770,16 @@ thPage({
       this.syncPlanText();
     },
     dayDate(i) { return this.applystart && window.thAddDaysToDateValue ? window.thAddDaysToDateValue(this.applystart, i) : ""; },
+    /* 登山安全管理的到達時間預帶示意值：每天 05:00 起每個節點加 2 小時（最晚 23:00），已填的不動 */
+    fillSafetyTimes() {
+      if (!this.safetyOn) return;
+      const t = Object.assign({}, this.safety.times);
+      this.safetyDays.forEach((d, di) => d.nodes.forEach((n, ni) => {
+        const k = di + "-" + ni;
+        if (!t[k]) t[k] = String(Math.min(5 + ni * 2, 23)).padStart(2, "0") + ":00";
+      }));
+      this.safety = Object.assign({}, this.safety, { times: t });
+    },
     scrollToSection(id, index) {
       this.activeNavIndex = index;
       const el = document.getElementById(id);

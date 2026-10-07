@@ -91,9 +91,9 @@
         <div>
           <dt class="text-base font-bold text-slate-800 mb-2">路線規劃</dt>
           <dd>
-            <ul class="p-apply3-plan-days !mb-0">
-              <li v-for="(dayNodes, idx) in planDaysNodes" :key="idx" class="p-apply3-plan-day-item">
-                <span class="day-tag">第 {{ idx + 1 }} 天行程：</span>
+            <ul class="th-plan-days !mb-0">
+              <li v-for="(dayNodes, idx) in planDaysNodes" :key="idx" class="th-plan-day">
+                <span class="th-plan-day-tag">第 {{ idx + 1 }} 天行程：</span>
                 <div class="p-apply3-plan-nodes">
                   <template v-for="(node, nIdx) in dayNodes" :key="nIdx">
                     <span :class="['p-apply3-node-badge', 'is-' + getNodeType(node)]">

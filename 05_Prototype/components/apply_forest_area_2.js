@@ -1,5 +1,5 @@
 /* ============================================================
-   apply_forest_area_2.js — 林保署自然保護區域申請 步驟 2：行程計畫
+   apply_forest_area_2.js — 林保署自然保護區域申請 步驟 2：行程規劃（正式站稱行程計畫）
    ------------------------------------------------------------
    2026-09-30 新增。依據 02_Spec/05e §三（正式站 2026-09-29 實走北插天山）：
    - 進入範圍可多選；**入口、出口選項只列已勾選範圍的對應入口**（正式站即時過濾，純前端）
@@ -89,6 +89,7 @@ thPage({
       headcount: Number(st.headcount) || 2,
       confirms: confirms,
       fills: Object.assign({}, saved.fills),   // 空白待填區塊（行程計畫）的內容
+      activeNavIndex: 0,   // 本頁內容導覽目前項目
     };
   },
   computed: {
@@ -98,6 +99,22 @@ thPage({
     multiPurpose() { return this.area.purposeInput === "checkbox"; },
     /* 附件上傳卡的列 */
     attachRows() { return this.attachItems(); },
+    /* 本頁內容導覽（2026-10-07）：順序同卡片編號；完成條件同 check() */
+    sideItems() {
+      const a = this.area;
+      const gateOk = a.gateText ? !!(this.entrText.trim() && this.exitText.trim() && this.entrTime && this.exitTime)
+        : !!(this.entr && this.exit && this.entrTime && this.exitTime);
+      const items = [
+        { key: "range", sec: "sec-range", label: "選擇申請區域與進入範圍", ok: !!(this.picked.length || this.notes.trim()) },
+        { key: "gate", sec: "sec-gate", label: "選擇進出入口與預計抵達時間", ok: gateOk },
+        { key: "purpose", sec: "sec-purpose", label: "申請目的或項目", ok: this.chosenPurposes.length > 0 },
+      ];
+      if (this.attachRows.length) items.push({ key: "attach", sec: "sec-attach", label: "附件上傳", ok: this.attachMissing === 0 });
+      a.blocks.forEach(b => items.push({ key: "b" + b.no, sec: "sec-b" + b.no, label: b.title,
+        ok: fa2IsFillIn(b) ? !!String(this.fills[b.name] || "").trim() : !!this.confirms[b.name] }));
+      return items;
+    },
+    completedSectionsCount() { return this.sideItems.filter(it => it.ok).length; },
     chosenPurposes() { return this.multiPurpose ? this.purposes : (this.purpose ? [this.purpose] : []); },
     /* 所選目的中，還沒選檔的附件件數 */
     attachMissing() {
@@ -112,6 +129,12 @@ thPage({
     },
   },
   methods: {
+    /* 本頁內容導覽：捲到區塊（欄位則捲到所在 .th-field），同 apply_03 */
+    scrollToSection(id, i) {
+      this.activeNavIndex = i;
+      const el = document.getElementById(id);
+      if (el) (el.closest(".th-field") || el).scrollIntoView({ behavior: "smooth", block: "start" });
+    },
     isChosen(v) { return this.chosenPurposes.indexOf(v) >= 0; },
     isFillIn(b) { return fa2IsFillIn(b); },
     /* 宣達卡編號：資料為 4 起；有附件上傳卡（4.）時順延一號 */

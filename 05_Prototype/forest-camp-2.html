@@ -30,49 +30,55 @@
 <body>
 
 <!-- 掛載契約見 assets/app-boot.js。data-screen-label 沿用原 JSX 最外層那個 div -->
-<div id="th-app" v-cloak data-screen-label="FC-02 行程計畫">
+<div id="th-app" v-cloak data-screen-label="FC-02 行程規劃">
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '行程計畫']" title="山屋住宿申請" :bare="true">
+  <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '行程規劃']" title="山屋住宿申請" :bare="true">
 
     <template #stepper>
       <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
-    <div class="fc-layout">
-      <!-- 左欄：主表單 -->
-      <div class="fc-main">
-
-        <!-- 行程摘要 banner -->
-        <div class="p-fc2-summary-bar">
-          <div class="p-fc2-summary-item">
-            <i class="ph-bold ph-house" aria-hidden="true"></i>
-            <span>{{ cabin.name }}</span>
+    <!-- 2026-10-07 使用者：單欄；費用表放上面、下面逐晚選床位／營位與數量（原右欄費用試算移到上方，
+         「尚需完成」改為按下一步時提示，同其他六步驟頁） -->
+    <div class="th-form-layout mt-6">
+      <main class="th-form-main" role="main">
+        <!-- 行程摘要：改用摘要卡，與隊伍資料／確認頁同一張（th-summary-card，照片取路線列表同一張；使用者 2026-10-07）；
+             出發人數改在隊伍資料決定，摘要不列 -->
+        <div class="th-summary-card mb-5">
+          <div class="summary-thumb-box">
+            <img :src="summaryImage" alt="" />
+            <div class="summary-thumb-overlay"></div>
           </div>
-          <div class="p-fc2-summary-sep"></div>
-          <div class="p-fc2-summary-item">
-            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
-            <span>{{ fmtDate(startDate) }}</span>
-          </div>
-          <div class="p-fc2-summary-sep"></div>
-          <div class="p-fc2-summary-item">
-            <i class="ph-bold ph-moon" aria-hidden="true"></i>
-            <span>{{ nights }} 晚</span>
-          </div>
-          <div class="p-fc2-summary-sep"></div>
-          <div class="p-fc2-summary-item">
-            <i class="ph-bold ph-users" aria-hidden="true"></i>
-            <span>{{ headcount }} 人</span>
+          <div class="summary-info-box">
+            <h2 class="th-summary-title">{{ cabin.name }}</h2>
+            <div class="summary-date-row">
+              <span class="date-item">
+                <span class="date-title">申請單位：</span>
+                <span class="date-value">國家步道(山屋/營地)</span>
+              </span>
+              <span class="summary-meta-sep" aria-hidden="true">|</span>
+              <span class="date-item">
+                <span class="date-title">出發期間：</span>
+                <span class="date-range-text">
+                  <span>{{ startDate }}</span>
+                  <span class="date-sep">至</span>
+                  <span>{{ endDate }}</span>
+                </span>
+                <span class="date-days-text">（共 {{ nights + 1 }} 天）</span>
+              </span>
+            </div>
           </div>
         </div>
 
-        <!-- 隊伍名稱 -->
-        <section class="th-card mb-5">
+        <!-- 路線與基本資料（原「隊伍基本資料」，使用者 2026-10-07 改名）：隊名＋（天池）停留地點與進出地點合併為一張卡；
+             停留地點等欄位只有天池（正式站 2026-09-30，其他山屋該區塊隱藏） -->
+        <section id="sec-basic" class="th-card mb-5">
           <div class="th-card-head">
-            <h2 class="th-card-title">隊伍基本資料</h2>
+            <h2 class="th-card-title">路線與基本資料</h2>
           </div>
-          <div class="th-card-body">
+          <div class="th-card-body grid gap-4">
           <div class="th-field p-fc2-team-field">
             <label class="th-label">隊伍名稱 <span class="p-fc2-required">*</span></label>
             <input
@@ -82,26 +88,16 @@
               maxlength="40"
               :value="teamName"
               @input="teamName = $event.target.value" />
-            <div class="th-field-hint is-accent">2–40 字，供識別申請隊伍使用</div>
           </div>
-          </div>
-        </section>
-
-        <!-- 停留地點與進出地點：只有天池（正式站 2026-09-30，其他山屋該區塊隱藏） -->
-        <section v-if="cabin.stayAreas" class="th-card mb-5">
-          <div class="th-card-head">
-            <h2 class="th-card-title">停留地點與進出地點</h2>
-          </div>
-          <div class="th-card-body">
+          <template v-if="cabin.stayAreas">
           <div class="th-field">
             <span class="th-label">停留地點 <span class="p-fc2-required">*</span></span>
             <div class="flex flex-wrap gap-x-4 gap-y-2">
               <label v-for="a in cabin.stayAreas" :key="a" class="flex items-center gap-2">
                 <input type="checkbox" :value="a" v-model="stayAreas" />{{ a }}</label>
             </div>
-            <div class="th-field-hint is-accent">可複選</div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="th-field">
               <label class="th-label" for="f-in-area">進入地點</label>
               <th-hybrid-select><select id="f-in-area" class="th-select" v-model="inArea">
@@ -117,52 +113,95 @@
               </select></th-hybrid-select>
             </div>
           </div>
+          </template>
           </div>
         </section>
 
-        <!-- 每晚住宿配置 -->
-        <section class="th-card mb-5">
+        <!-- 費用參考：只列單價（使用者 2026-10-07：費用拆成「參考」在上、「計算」在逐晚選擇之下）；表格樣式同確認頁 -->
+        <section id="sec-fee" class="th-card mb-5">
           <div class="th-card-head">
-            <h2 class="th-card-title">每日住宿床位 / 營位</h2>
+            <h2 class="th-card-title">費用參考</h2>
           </div>
           <div class="th-card-body">
-          <p class="p-fc2-section-desc">每晚擇一種床位或營位並填寫數量；同一住宿日內不得同時申請山屋與營地。</p>
-
-          <div v-for="i in nightIndexes" :key="i"
-               :class="['p-fc2-night-block', { 'is-filled': nightTotal(i) > 0 }]">
-            <div class="p-fc2-night-head">
-              <div class="p-fc2-night-badge">第 {{ i + 1 }} 晚</div>
-              <div class="p-fc2-night-date">{{ fmtDate(nightDate(i)) }}</div>
-              <div v-if="nightTotal(i) > 0" class="p-fc2-night-ok">
-                <i class="fa-solid fa-check" aria-hidden="true"></i> 已填寫
-              </div>
+            <div class="th-table-wrap border border-slate-200 rounded-md">
+              <table class="th-table w-full whitespace-nowrap">
+                <thead>
+                  <tr>
+                    <th scope="col">床位／營位</th>
+                    <th scope="col" class="is-center">平日</th>
+                    <th scope="col" class="is-center">假日</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="f in cabin.facilities" :key="f.id">
+                    <td>{{ f.label }}</td>
+                    <td class="is-center">NT$ {{ f.price.weekday }} / 晚</td>
+                    <td class="is-center">NT$ {{ f.price.holiday }} / 晚</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="p-fc2-night-rows">
-              <div v-for="f in cabin.facilities" :key="f.id" class="p-fc2-facility-row">
-                <div class="p-fc2-facility-left">
-                  <span class="p-fc2-facility-icon">
-                    <i :class="f.icon" aria-hidden="true"></i>
-                  </span>
-                  <div>
-                    <div class="p-fc2-facility-name">{{ f.label }}</div>
-                    <!-- 二價（2026-09-16）：單價按**當夜日期**取，走 priceOf() 不直接讀 price.weekday。
-                         假日只認週五六（近似），旁邊的 is-holiday 標記讓使用者看得出這一夜算哪個級距。 -->
-                    <div class="p-fc2-facility-price">NT$ {{ priceOf(f, i) }} / {{ f.unit }}<span v-if="isHoliday(i)" class="p-fc2-facility-holiday">假日</span><span v-if="qtyOf(i, f.id) > 0" class="p-fc2-facility-subtotal">= NT$ {{ qtyOf(i, f.id) * priceOf(f, i) }}</span></div>
-                  </div>
-                </div>
-                <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"
-                               :max="otherUsed(i, f.id) ? 0 : Math.min(f.max, headcount)"
-                               @change="setQty(i, f.id, $event)"></p-fc2-stepper>
-              </div>
+          </div>
+        </section>
+
+        <!-- 山屋及營地申請（使用者 2026-10-07）：表格化，每晚一列；欄位「晚次｜日期｜山屋／營地（下拉）｜床位數量（±）｜單價｜小計」，
+             金額靠右、小計綠色粗體；每晚只能選一種房型（同正式站 CampRoom）。表格下方獨立的「預估總費用」靠右（無外框）。表格樣式同確認頁 -->
+        <section id="sec-room" class="th-card mb-5">
+          <div class="th-card-head">
+            <h2 class="th-card-title">山屋及營地申請</h2>
+          </div>
+          <div class="th-card-body">
+          <div class="th-table-wrap border border-slate-200 rounded-md">
+            <table class="th-table w-full whitespace-nowrap">
+              <thead>
+                <tr>
+                  <th scope="col" class="is-center">晚次</th>
+                  <th scope="col">日期</th>
+                  <th scope="col">山屋／營地</th>
+                  <th scope="col" class="is-center">床位數量</th>
+                  <th scope="col" class="is-right">單價</th>
+                  <th scope="col" class="is-right">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="i in nightIndexes" :key="i">
+                  <td class="is-center">第 {{ i + 1 }} 晚</td>
+                  <td>{{ fmtDate(nightDate(i)) }}</td>
+                  <template v-for="f in cabin.facilities.filter(x => x.id === roomOf(i))" :key="f.id">
+                    <td class="min-w-[220px]">
+                      <th-hybrid-select><select class="th-select w-full" :value="f.id" @change="setRoom(i, $event.target.value)" :aria-label="'第 ' + (i + 1) + ' 晚山屋或營地'">
+                        <option v-for="o in cabin.facilities" :key="o.id" :value="o.id">{{ o.label }}</option>
+                      </select></th-hybrid-select>
+                    </td>
+                    <td>
+                      <!-- 數量上限：設施上限與山屋人數上限取小（第 1 步不再選出發人數，2026-10-07） -->
+                      <div class="flex justify-center">
+                        <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"
+                                       :max="Math.min(f.max, peopleMax)"
+                                       @change="setQty(i, f.id, $event)"></p-fc2-stepper>
+                      </div>
+                    </td>
+                    <!-- 二價（2026-09-16）：單價按**當夜日期**取，走 priceOf() 不直接讀 price.weekday -->
+                    <td class="is-right">NT$ {{ priceOf(f, i).toLocaleString() }} / {{ f.unit }}<span v-if="isHoliday(i)" class="p-fc2-facility-holiday">假日</span></td>
+                    <td class="is-right font-bold text-national-800">{{ qtyOf(i, f.id) > 0 ? 'NT$ ' + (qtyOf(i, f.id) * priceOf(f, i)).toLocaleString() : '—' }}</td>
+                  </template>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex justify-end mt-4">
+            <div class="inline-flex items-baseline gap-4">
+              <span class="font-semibold text-slate-800">預估總費用</span>
+              <span class="text-xl font-bold text-national-800">NT$ {{ grandTotal.toLocaleString() }}</span>
             </div>
           </div>
           </div>
         </section>
 
-        <!-- 付款方式 -->
-        <section class="th-card mb-5">
+        <!-- 付款方式：選項說明拿掉，「訂房後不可更改」紅字放標題（使用者 2026-10-07） -->
+        <section id="sec-pay" class="th-card mb-5">
           <div class="th-card-head">
-            <h2 class="th-card-title">付款方式</h2>
+            <h2 class="th-card-title">付款方式<span class="req text-rose-600 ml-1">*</span><span class="text-rose-600 text-base font-medium ml-2">（訂房後不可更改）</span></h2>
           </div>
           <div class="th-card-body">
           <div class="p-fc2-payment-grid">
@@ -176,7 +215,6 @@
                 <i :class="opt.icon" aria-hidden="true"></i>
               </div>
               <div class="p-fc2-payment-label">{{ opt.label }}</div>
-              <div class="p-fc2-payment-note">{{ opt.note }}</div>
               <div v-if="payment === opt.id" class="p-fc2-payment-check">
                 <i class="fa-solid fa-check" aria-hidden="true"></i>
               </div>
@@ -184,68 +222,33 @@
           </div>
           </div>
         </section>
-      </div>
+      </main>
 
-      <!-- 右欄：費用小計 -->
-      <aside class="fc-aside">
-        <div class="p-fc2-cost-card">
-          <div class="th-sidebar-head">
-            <i class="ph-bold ph-receipt" aria-hidden="true"></i>
-            <span>費用試算</span>
+      <!-- 右側本頁內容導覽（比照隊伍資料頁 apply_03／apply-4，使用者 2026-10-07：六步驟各填寫頁統一加，確認頁不加） -->
+      <aside class="th-pageside" aria-label="本頁內容導覽">
+        <div class="th-pageside-inner">
+          <div class="th-pageside-head">
+            <span>本頁內容</span>
+            <span class="th-pageside-count" :class="{ 'is-done': completedSectionsCount === sideItems.length }">
+              <span class="num">{{ completedSectionsCount }}</span> / {{ sideItems.length }}
+            </span>
           </div>
-          <div class="p-fc2-cost-body">
-            <div v-for="f in subtotals" :key="f.id" class="p-fc2-cost-row">
-              <div class="p-fc2-cost-label">
-                <i :class="f.icon" aria-hidden="true"></i>{{ f.label }}
-              </div>
-              <div class="p-fc2-cost-amount"><template v-if="f.total > 0">NT$ {{ f.total.toLocaleString() }}</template><span v-else class="p-fc2-cost-dash">—</span></div>
-            </div>
-
-            <!-- 每晚明細 -->
-            <div v-if="grandTotal > 0" class="p-fc2-cost-detail">
-              <template v-for="i in nightIndexes" :key="i">
-                <div v-if="nightCost(i) > 0" class="p-fc2-cost-detail-row">
-                  <span>{{ fmtDate(nightDate(i)) }}</span>
-                  <span>NT$ {{ nightCost(i).toLocaleString() }}</span>
-                </div>
-              </template>
-            </div>
-
-            <div class="p-fc2-cost-total">
-              <span>預估總費用</span>
-              <span class="p-fc2-cost-total-num">NT$ {{ grandTotal.toLocaleString() }}</span>
-            </div>
-            <div class="p-fc2-cost-note">實際費用以審核通過後帳單為準。場地費不含膳食。</div>
-          </div>
-        </div>
-
-        <!-- 驗證提示 -->
-        <div v-if="!canNext" class="p-fc2-validation-tips">
-          <div class="p-fc2-vt-head">
-            <i class="ph-bold ph-list-checks" aria-hidden="true"></i>尚需完成
-          </div>
-          <div v-if="teamName.trim().length < 2" class="p-fc2-vt-item">
-            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>填寫隊伍名稱
-          </div>
-          <div v-if="!stayValid" class="p-fc2-vt-item">
-            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>選擇停留地點
-          </div>
-          <div v-if="!nightsValid" class="p-fc2-vt-item">
-            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>每晚至少選 1 個床位或營位
-          </div>
-          <div v-if="payment === ''" class="p-fc2-vt-item">
-            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>選擇付款方式
-          </div>
+          <ol class="th-pageside-list">
+            <li v-for="(it, i) in sideItems" :key="it.key" :class="{ 'is-acked': it.ok, 'is-active': activeNavIndex === i }">
+              <button type="button" @click="scrollToSection(it.sec, i)">
+                <span class="th-pageside-text">{{ i + 1 }}. {{ it.label }}</span>
+                <span class="th-pageside-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+          </ol>
         </div>
       </aside>
     </div>
 
-    <!-- 底部操作列 -->
-    <div class="fc-footbar">
-      <button class="th-btn th-btn-ghost" @click="goBack">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
-      </button>
-      <button class="th-btn th-btn-primary" :disabled="!canNext" @click="handleNext">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+    <!-- 底部操作列：下一步不再停用，按下時列出未完成項目（同其他六步驟頁） -->
+    <div class="th-form-actions">
+      <button type="button" class="th-btn th-btn-ghost" @click="goBack"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步</button>
+      <button type="button" class="th-btn th-btn-primary" @click="handleNext">下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
 
@@ -256,5 +259,7 @@
 </div>
 
 <!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
+<!-- 摘要卡照片取路線列表同一張（2026-10-07）；頁面腳本只在 computed 裡讀 -->
+<script src="components/RouteData.js"></script>
 </body>
 </html>

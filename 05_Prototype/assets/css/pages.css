@@ -6535,33 +6535,8 @@ body:where(.p-indexb-body):before {
   background: var(--bg-1);
 }
 
-.p-apply3-plan-days {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.p-apply3-plan-day-item {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--slate-50);
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-sm);
-  font-size: var(--fs-sm);
-  color: var(--slate-800);
-}
-
-.p-apply3-plan-day-item .day-tag {
-  font-weight: 700;
-  color: var(--national-700);
-  white-space: nowrap;
-}
+/* 逐日列 .p-apply3-plan-days／-plan-day-item／.day-tag 於 2026-10-07 提升為共用 .th-plan-days／.th-plan-day／.th-plan-day-tag
+   （components.css；apply-3、apply-5、山屋第 2 步三處使用，宣告不變） */
 
 /* 節點徽章鏈 */
 .p-apply3-plan-nodes {
