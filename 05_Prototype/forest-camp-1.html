@@ -63,7 +63,7 @@
               <option v-for="n in dayOptions" :key="n" :value="n">{{ n }}</option>
             </select></th-hybrid-select>
           </div>
-          <!-- 欄位：行程天數、出發日期、預計回程日；出發人數拿掉，改在第 2 步逐晚選數量、隊伍資料決定人數（使用者 2026-10-07） -->
+          <!-- 欄位：行程天數、出發日期、離開日期；出發人數拿掉，改在第 2 步逐晚選數量、隊伍資料決定人數（使用者 2026-10-07） -->
           <div class="th-field">
             <label class="th-label" for="f-start"><span class="req">*</span>出發日期</label>
             <th-hybrid-select><select id="f-start" class="th-select" v-model="startDate">
@@ -72,9 +72,9 @@
             <span class="th-field-hint is-accent">※因作業規定，最晚須於5天前申請。</span>
           </div>
           <div class="th-field">
-            <!-- 系統計算、不可修改：純文字，比照行程規劃頁的離開園區日期（使用者 2026-10-06） -->
-            <span class="th-label">預計回程日</span>
-            <p class="py-2 text-base text-slate-900">{{ endDate }}</p>
+            <!-- 系統計算、不可修改：純文字（使用者 2026-10-06）；2026-10-07 四類統一為「離開日期」，未選日期前顯示「──（系統自動計算）」 -->
+            <span class="th-label">離開日期</span>
+            <p class="py-2 text-base text-slate-900">{{ endDate || '──（系統自動計算）' }}</p>
           </div>
         </div>
       </div>

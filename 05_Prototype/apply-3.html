@@ -126,8 +126,9 @@
 
             <!-- 系統計算、不可修改：改純文字（使用者 2026-10-06），py-2 讓文字與同列輸入框內文對齊 -->
             <div class="th-field">
-              <span class="th-label">離開園區日期（系統自動計算）</span>
-              <p class="py-2 text-base text-slate-900">{{ endDate ? endDate : '請先選擇入園日期與天數' }}</p>
+              <!-- 2026-10-07 四類第 1 步統一為「離開日期」，未選日期前顯示「──（系統自動計算）」 -->
+              <span class="th-label">離開日期</span>
+              <p class="py-2 text-base text-slate-900">{{ endDate || '──（系統自動計算）' }}</p>
             </div>
           </div>
 

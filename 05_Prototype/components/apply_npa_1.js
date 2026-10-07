@@ -30,6 +30,8 @@ thPage({
     };
   },
   computed: {
+    /* 離開日期（2026-10-07）：出發日＋天數－1 */
+    endDate() { return this.start && this.days ? window.thAddDaysToDateValue(this.start, this.days - 1) : ""; },
     applyCrumb() { return window.TH_APPLY_CRUMB; },
   },
   methods: {

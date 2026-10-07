@@ -47,14 +47,6 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="th-field">
-            <label class="th-label" for="f-route">推薦行程</label>
-            <input id="f-route" type="text" class="th-input th-input-readonly" :value="area.name" readonly />
-          </div>
-          <div class="th-field">
-            <label class="th-label" for="f-type">區域類型</label>
-            <input id="f-type" type="text" class="th-input th-input-readonly" :value="area.type" readonly />
-          </div>
-          <div class="th-field">
             <label class="th-label" for="f-days"><span class="req">*</span>行程天數</label>
             <th-hybrid-select><select id="f-days" class="th-select" v-model.number="days">
               <option :value="0">請選擇</option>
@@ -69,6 +61,12 @@
             </select></th-hybrid-select>
             <!-- 正式站各區第 1 步提示文字相同，但可選出發日不一定從 5 天後起（十八羅漢山為 4 天後，〔待確認〕原因） -->
             <span class="th-field-hint is-accent">※因作業規定，最晚須於5天前申請。</span>
+          </div>
+          <div class="th-field">
+            <!-- 離開日期：系統計算、不可修改（使用者 2026-10-07 統一四類第 1 步：三管處原「離開園區日期（系統自動計算）」、山屋原「預計回程日」；
+                 未選日期前顯示「──（系統自動計算）」） -->
+            <span class="th-label">離開日期</span>
+            <p class="py-2 text-base text-slate-900">{{ endDate || '──（系統自動計算）' }}</p>
           </div>
         </div>
       </div>
