@@ -152,6 +152,11 @@ function parkDateOptions() {
 const A3_CAMPS = (getParam("camps") || "").split(",").filter(k => k && window.TH_CABIN_DATA && window.TH_CABIN_DATA[k]);
 const A3_PARK_AGENCY = { yushan: "玉山國家公園管理處", "shei-pa": "雪霸國家公園管理處", taroko: "太魯閣國家公園管理處" };
 
+/* 草稿模式（2026-10-08 使用者：草稿編輯的步驟改同線上申請，除了那幾顆按鈕）：草稿清單 apply_2_1 按「編輯」帶 ?draft=<編號> 進來，
+   頁面與線上申請相同，只有置底按鈕換成草稿原本的「返回／刪除草稿／儲存草稿／下一步」（規格 07 §三）；
+   隊伍資料、確認資料頁的按鈕本來就與草稿相同（上一步／儲存草稿／下一步、確認送出），draft 參數隨網址帶過去。 */
+const A3_DRAFT = getParam("draft");
+
 thPage({
   data() {
     const qRoute = getParam("route");
@@ -225,6 +230,8 @@ thPage({
       sumday: other ? other.sumday : (qSumday || (defaultClimb === "2" ? "2" : "1")),
       applystart: other ? other.start : (qStart || demoStart),
       dateOptions: dateOptions,
+
+      isDraft: !!A3_DRAFT,   // 草稿模式（見模組層說明）
 
       // 複合：林保署山屋（見模組層說明）；初值在 created() 依入園日產生，從隊伍資料回來時沿用暫存
       camps: [],
@@ -613,8 +620,9 @@ thPage({
       };
     },
 
+    /* 草稿模式（?draft=，2026-10-08 草稿編輯步驟改同線上申請）：麵包屑第二層為「草稿編輯」，連回草稿清單 */
     applyCrumb() {
-      return this.park.crumb;
+      return getParam("draft") ? { label: "草稿編輯", href: "apply_2_1.html?list=1" } : this.park.crumb;
     },
 
     endDate() {
@@ -988,6 +996,16 @@ thPage({
     /* 複合山屋 */
     cabinOf(c) { return window.TH_CABIN_DATA[c.route]; },
     circled(n) { return "①②③④⑤⑥⑦⑧⑨"[n - 1] || n + "."; },
+
+    /* 草稿模式按鈕（見模組層說明） */
+    draftBack() { window.location.href = "apply_2_1.html?list=1"; },
+    draftDelete() {
+      window.thConfirm("確定要刪除此筆草稿紀錄嗎？刪除後無法復原。").then(ok => {
+        if (!ok) return;
+        window.thAlert("草稿已成功刪除！", "success").then(() => { window.location.href = "apply_2_1.html?list=1&deleted=" + encodeURIComponent(A3_DRAFT); });
+      });
+    },
+    draftSave() { window.thAlert("草稿儲存完成", "success"); },
 
     goPrev() {
       const q = new URLSearchParams(window.location.search);

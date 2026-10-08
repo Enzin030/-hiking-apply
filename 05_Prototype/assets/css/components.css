@@ -166,6 +166,18 @@
   color: var(--national-700);
 }
 
+/* 危險操作的外框按鈕（2026-10-08，草稿模式「刪除草稿」）：原草稿頁以 Tailwind ! 修飾（等同 !important）硬蓋紅色，
+   改為修飾 class，靠 .th-btn-ghost.is-danger 的權重勝出，顏色只用既有 danger token */
+.th-btn-ghost.is-danger {
+  color: var(--danger-fg-hover);
+  border-color: var(--danger-fg-hover);
+}
+.th-btn-ghost.is-danger:hover {
+  background: var(--danger-bg);
+  color: var(--danger-fg-hover);
+  border-color: var(--danger-fg-hover);
+}
+
 .th-btn-lg {
   min-height: 48px;
 }

@@ -639,7 +639,22 @@
     </div>
 
     <!-- 置底列：隨頁面流動，按鈕置中、無上方分隔線 -->
-    <div class="p-apply3-actions">
+    <!-- 草稿模式（?draft=，2026-10-08）：按鈕照草稿原本的「返回／刪除草稿／儲存草稿／下一步」，其餘同線上申請 -->
+    <div v-if="isDraft" class="p-apply3-actions">
+      <button class="th-btn th-btn-ghost" @click="draftBack">
+        <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>返回
+      </button>
+      <button class="th-btn th-btn-ghost is-danger" @click="draftDelete">
+        <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i>刪除草稿
+      </button>
+      <button class="th-btn th-btn-ghost" @click="draftSave">
+        <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
+      </button>
+      <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">
+        下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div v-else class="p-apply3-actions">
       <button class="th-btn th-btn-ghost" @click="goPrev">
         <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
       </button>
