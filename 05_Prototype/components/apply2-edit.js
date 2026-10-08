@@ -64,12 +64,9 @@ thPage({
       nation: "",
       sid: "",
       vcode: "",
+      vcodeCode: "7K4M",   // 驗證碼顯示碼（th-captcha 可換碼模式，同線上申請確認頁）
       submitted: false,
 
-      navItems: [
-        { id: "notes", label: "異動與取消的權限範圍" },
-        { id: "query", label: "查詢申請資料" },
-      ],
 
       columns: [
         { key: "serial", label: "申請編號" },

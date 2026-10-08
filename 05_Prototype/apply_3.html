@@ -92,7 +92,8 @@
 
         <!-- 2026-09-16：這一段原本是逐字寫死的驗證碼區塊，apply_2／apply_4 也要用，
              依「二次即提升」搬進共用元件 th-captcha，輸出的 DOM 與提升前相同。 -->
-        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
+        <!-- 驗證碼設定同線上申請確認頁（apply-5／apply_06）：可換碼、上下排列、不顯示提示（使用者 2026-10-08） -->
+        <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
         <div class="flex justify-end mt-2">
           <button type="button" class="th-btn th-btn-primary" @click="submitted = true">

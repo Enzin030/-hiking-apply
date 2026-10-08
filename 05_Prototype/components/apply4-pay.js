@@ -67,6 +67,7 @@ thPage({
       serial: "",
       teamName: "",
       vcode: "",
+      vcodeCode: "7K4M",   // 驗證碼顯示碼（th-captcha 可換碼模式，同線上申請確認頁）
       submitted: false,
       method: "",
     };

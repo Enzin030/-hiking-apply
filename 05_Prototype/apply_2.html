@@ -37,30 +37,19 @@
 
   <th-header active="apply"></th-header>
 
+  <!-- 2026-10-08 使用者：拿掉導言與更新日期；三條權限規則合成一塊 callout；拿掉查詢說明句、欄位提示與清除鈕；
+       國籍與身分證號同列（同 apply_3）；驗證碼設定同線上申請確認頁 -->
   <th-page-shell
     :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '資料線上異動/取消入園']"
-    title="資料線上異動/取消入園"
-    lead="查詢已送出的登山申請，辦理隊職員資料異動、取消個人入園或整隊取消。"
-    updated="2026-09-16">
+    title="資料線上異動/取消入園">
 
-    <template #nav>
-      <th-page-nav :items="navItems"></th-page-nav>
-    </template>
-
-    <section class="th-card" id="notes">
-      <div class="th-card-head">
-        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-        <h2 class="th-card-title">異動與取消的權限範圍</h2>
-      </div>
-      <div class="th-card-body">
-        <!-- 三條權限規則逐字保留。這幾條決定「誰登入、能動到誰」，
-             改寫成摘要會讓驗收的人看不出領隊與隊員的差別。 -->
-        <th-callout type="warning">領隊如點選 取消入園，將取消整個隊伍之所有資料。</th-callout>
-        <th-callout>隊員可自行「取消個人入園」，僅取消個人之申請資料。
-            欲取消隊員，請以該員身分證字號及登山申請編號登入，方可取消該員入園資格。</th-callout>
-        <th-callout>申請人可以申請領隊異動。</th-callout>
-      </div>
-    </section>
+    <!-- 三條權限規則逐字保留（決定「誰登入、能動到誰」） -->
+    <th-callout type="warning" id="notes">
+      領隊如點選 取消入園，將取消整個隊伍之所有資料。<br />
+      隊員可自行「取消個人入園」，僅取消個人之申請資料。<br />
+      欲取消隊員，請以該員身分證字號及登山申請編號登入，方可取消該員入園資格。<br />
+      申請人可以申請領隊異動。
+    </th-callout>
 
     <section class="th-card" id="query">
       <div class="th-card-head">
@@ -68,8 +57,6 @@
         <h2 class="th-card-title">查詢申請資料</h2>
       </div>
       <div class="th-card-body">
-        <p>請輸入您的<strong>登山申請編號</strong>及<strong>身分證號（居留證）</strong>來進行資料查詢。</p>
-
         <div class="flex flex-col gap-4">
         <div class="th-field">
           <label class="th-label" for="f-serial">
@@ -87,52 +74,42 @@
             @input="serial = $event.target.value" />
         </div>
 
-        <!-- 舊站本頁的國籍是**獨立一列**（con_nation），與 apply_3 把國籍併進
-             身分證那一列（con_apply_nation）不同。照實抓做，不統一。 -->
-        <div class="th-field">
-          <label class="th-label" for="f-nation">
-            <span class="req">*</span>國籍
-          </label>
-          <select
-            id="f-nation"
-            name="nation"
-            class="th-select sm:w-60"
-            :value="nation"
-            @change="nation = $event.target.value">
-            <option value="">請選擇</option>
-            <option value="中華民國">中華民國</option>
-            <option value="國外">國外</option>
-          </select>
-        </div>
-
+        <!-- 國籍與身分證號同列（同 apply_3，使用者 2026-10-08；舊站本頁國籍為獨立一列 con_nation） -->
         <div class="th-field">
           <label class="th-label" for="f-sid">
             <span class="req">*</span>身分證號／護照號碼（居留證）
           </label>
-          <input
-            id="f-sid"
-            name="sid"
-            type="text"
-            class="th-input"
-            autocomplete="off"
-            :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
-            :value="sid"
-            @input="sid = $event.target.value" />
-          <div class="th-field-hint">要取消某位隊員時，請填該員本人的身分證號，不是領隊的。</div>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <select
+              id="f-nation"
+              name="nation"
+              class="th-select basis-full sm:basis-44 grow-0 shrink-0"
+              aria-label="國籍"
+              :value="nation"
+              @change="nation = $event.target.value">
+              <option value="">請選擇</option>
+              <option value="中華民國">中華民國</option>
+              <option value="國外">國外</option>
+            </select>
+            <input
+              id="f-sid"
+              name="sid"
+              type="text"
+              class="th-input flex-1"
+              autocomplete="off"
+              :placeholder="nation === '國外' ? '請輸入護照號碼或居留證號碼' : '請輸入身分證字號'"
+              :value="sid"
+              @input="sid = $event.target.value" />
+          </div>
         </div>
 
-        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
+        <!-- 驗證碼設定同線上申請確認頁（apply-5／apply_06）：可換碼、上下排列、不顯示提示（使用者 2026-10-08） -->
+        <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
-          <p class="th-field-hint">查詢結果僅顯示與輸入身分相符的申請案。</p>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" class="th-btn th-btn-secondary" @click="reset">
-              清除
-            </button>
-            <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
-              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
-            </button>
-          </div>
+        <div class="flex justify-end mt-2">
+          <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
         </div>
 
         <template v-if="submitted">

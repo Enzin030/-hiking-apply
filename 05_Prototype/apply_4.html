@@ -40,9 +40,7 @@
        原「適用範圍」「可辦理的動作」「相關功能」為截圖沒有的內容，拿掉；查詢表單依規格文字保留。 -->
   <th-page-shell
     :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '列印繳費說明單/線上繳費(排雲)']"
-    title="列印繳費說明單/線上繳費(排雲)"
-    lead="查詢排雲山莊的應繳規費，列印繳費說明單或進行線上繳費。"
-    updated="2026-09-16">
+    title="列印繳費說明單/線上繳費(排雲)">
 
     <section class="th-card" id="query">
       <div class="th-card-head">
@@ -50,8 +48,6 @@
         <h2 class="th-card-title">查詢繳費資料</h2>
       </div>
       <div class="th-card-body">
-        <p>請輸入您的<strong>（一站式／入園）申請編號</strong>及<strong>隊伍名稱</strong>來查詢繳費資料。</p>
-
         <div class="flex flex-col gap-4">
         <div class="th-field">
           <label class="th-label" for="f-serial">
@@ -86,7 +82,8 @@
             @input="teamName = $event.target.value" />
         </div>
 
-        <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
+        <!-- 驗證碼設定同線上申請確認頁（apply-5／apply_06）：可換碼、上下排列、不顯示提示（使用者 2026-10-08） -->
+        <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
         <div class="flex justify-end mt-2">
           <button type="button" class="th-btn th-btn-primary" @click="search">
