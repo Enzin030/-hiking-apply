@@ -34,7 +34,7 @@
   <th-header active="apply"></th-header>
 
   <!-- 2026-10-08 使用者：內容照規格截圖調整（02_Spec/06c「線上申請退費(排雲)-查詢頁／退費資訊」），用現有元件——
-       標題照截圖「(排雲)」；說明依截圖順序逐段（退費原因改編號清單，保留雛形既有的 5 天／14 天新舊制）、兩個規定連結回到原位；
+       標題照截圖「(排雲)」；說明依截圖順序逐段（同日使用者：選單路徑與兩個網址改為文字連結，連結文字用原文字句）（退費原因改編號清單，保留雛形既有的 5 天／14 天新舊制）、兩個規定連結回到原位；
        驗證身份補欄位檢核（訊息照規格 06c）；提醒＋「退費申請流程操作說明」為卡片下方的提醒區塊；
        驗證後為「退費申請人資訊」＋「新增退費申請／回查詢頁」＋退費紀錄表（每列匯款帳戶維護／退款明細維護）。
        原「申請前必須先完成的事」「退費規定」分卡、「實退金額須扣除銀行手續費 30 元」callout、清除鈕、欄位提示、
@@ -46,7 +46,7 @@
     <template v-if="!verified">
     <section class="th-card" id="rules">
       <div class="th-card-body grid gap-4">
-        <p>隊伍或隊員如果因故無法成行，務請自行於線上取消「\ 登山申請 \ <a href="apply_2.html">資料線上異動/取消入園</a>」或以<a href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。</p>
+        <p>隊伍或隊員如果因故無法成行，務請自行於線上取消「<a class="th-inline-link" href="apply_2.html">資料線上異動/取消入園</a>」或以<a class="th-inline-link" href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。</p>
         <p>如欲申請退還「排雲山莊使用規費」，請先取消入園後再提出申請。</p>
         <p>退費申請人應為原登山申請案之申請人、領隊或隊員等之任一員。如多個登山申請案之退費申請人及退費帳戶相同，得併案提出申請。</p>
         <div>
@@ -59,8 +59,8 @@
         </div>
         <p>退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
         <p>登山申請資料原則保留2年，如無法由線上申請退費，請依規以退費申請書提出申請。</p>
-        <p>申請退還「排雲山莊」使用規費相關規定：<br /><a :href="refLinks.rule" target="_blank" rel="noopener noreferrer">{{ refLinks.rule }}</a></p>
-        <p>排雲山莊供餐及睡袋租賃等服務，因委外經營，相關退費規定請逕洽該公司。參考網址：<br /><a :href="refLinks.meal" target="_blank" rel="noopener noreferrer">{{ refLinks.meal }}</a></p>
+        <p><a class="th-inline-link" :href="refLinks.rule" target="_blank" rel="noopener noreferrer">申請退還「排雲山莊」使用規費相關規定<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+        <p>排雲山莊供餐及睡袋租賃等服務，因委外經營，相關退費規定請逕洽該公司。<a class="th-inline-link" :href="refLinks.meal" target="_blank" rel="noopener noreferrer">參考網址<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
       </div>
     </section>
 
