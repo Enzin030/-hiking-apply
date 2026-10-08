@@ -27,11 +27,15 @@
   <th-page-shell :trail="['登山申請', applyCrumb, '警政署入山證', '行程規劃']" title="警政署入山證申請" :bare="true">
 
     <template #stepper>
-      <th-fc-stepper :current="3"></th-fc-stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
     <div class="th-form-layout mt-6">
       <main class="th-form-main" role="main">
+        <!-- 路線與基本資料（2026-10-08 日期確認併入行程規劃，原 apply_npa_1 的日期卡，共用元件 th-trip-basics） -->
+        <th-trip-basics id="sec-basic" class="mb-5" v-model:days="days" v-model:start="start"
+                        :day-options="dayOptions" :date-options="dates"
+                        start-hint="※因作業規定，最晚須於3天前申請。"></th-trip-basics>
         <section class="th-card">
           <div class="th-card-head">
             <h2 class="th-card-title">警政署入山證申請</h2>

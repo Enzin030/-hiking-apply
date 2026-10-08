@@ -225,9 +225,9 @@ thPage({
     prev() { window.location.href = "apply_03.html"; },   // 2026-10-08 同意聲明移到第一步，上一步回隊伍資料
     submit() {
       const e = [];
-      /* 2026-10-08 步驟改為 閱讀同意書→日期確認→行程規劃→隊伍資料→確認資料；同意聲明是進入申請的關卡，這裡不再檢查 */
-      if (this.st.kind === "camp" && !this.bookingRows.length) e.push("尚未選擇床位或營位，請回第 3 步");
-      if (!(this.st.applicant && this.st.applicant.name)) e.push("尚未填寫申請人資料，請回第 4 步");
+      /* 2026-10-08 步驟改為 閱讀同意書→行程規劃→隊伍資料→確認資料→申請完成；同意聲明是進入申請的關卡，這裡不再檢查 */
+      if (this.st.kind === "camp" && !this.bookingRows.length) e.push("尚未選擇床位或營位，請回第 2 步");
+      if (!(this.st.applicant && this.st.applicant.name)) e.push("尚未填寫申請人資料，請回第 3 步");
       if (!this.vcode) e.push("請輸入送件驗證碼");
       if (e.length) { window.thAlertList(e); return; }
       this.done = true;

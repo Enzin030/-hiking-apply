@@ -88,6 +88,17 @@
    是 **UTC 路徑**；th-date-utils 的 thAddDaysToDateValue 是拆 Y/M/D 的
    **本地路徑**。兩者在多數情況下同值，但換掉就是改行為，屬改善不是遷移。
    fmtDate 同理（用 UTC 解析出來的 Date 取本地 getMonth／getDate／getDay）。
+
+   ------------------------------------------------------------
+   2026-10-08 日期確認併入行程規劃（使用者裁示）
+   ------------------------------------------------------------
+   原第 1 步 forest-camp-1 的日期卡（行程天數、出發日期、離開日期）改用共用元件 th-trip-basics，
+   與隊名、（天池）停留地點同在「路線與基本資料」卡；其下接原第 1 步的「山屋/營地概況」月表。
+   因此**晚數不再只從網址讀一次**：days 進 data()、nights＝days－1 為 computed，
+   改天數時 alloc 依晚數增減（保留仍存在的晚上已選數量；新增的晚上沿用前一晚的房型與數量）——
+   上面「nights／cabin 都只從網址讀一次」的敘述自此不成立。網址的 start／nights 仍當初值
+   （從隊伍資料按上一步回來的 backUrl 會帶）。同意書頁帶 ?new=1 進來＝新的一張申請。
+   元件總覽（?showcase=1）也一併在本頁：日期卡與概況表用總覽山屋。
    ============================================================ */
 
 /* 付款方式照正式站 apply_forest_camp_2（2026-09-29 實走）：只有匯款／線上刷卡，畫面註明「訂房後不可更改」。
@@ -123,14 +134,24 @@ function fc2ShowcaseStart() {
   }
   return window.thAddDaysToDateValue(today, 7);
 }
-/* 直接開本頁（未經第一步）時 start 會是空的，而 addDays("") 產生 Invalid Date、
-   後續 toISOString() 拋 RangeError 讓整頁白畫面；比照第一步預設為今天。 */
-const FC2_START = FC2_SHOWCASE ? fc2ShowcaseStart() : FC2_P.get("start") || window.thTodayValue();
-const FC2_NIGHTS = parseInt(FC2_P.get("nights") || "2", 10);
-/* 第 1 步不再選出發人數（2026-10-07）：headcount 只當示意預帶的每晚數量，人數改在隊伍資料決定 */
-const FC2_HEADCOUNT = parseInt(FC2_P.get("headcount") || "4", 10);
 const FC2_CABIN = FC2_SHOWCASE ? window.thFcShowcaseCabin()
   : window.TH_CABIN_DATA[FC2_ROUTE_ID] || window.TH_CABIN_DATA["jiaming"];
+/* 只取一次：分兩次呼叫會在跨午夜時拿到不同的日期 */
+const FC2_TODAY = window.thTodayValue();
+/* 可選出發日（原第 1 步）：今日＋5 天起，至約 2 個月後（正式站 apply_forest_camp_1 的 TravelStep01StartDate：
+   StartDay＝今日＋5、EndDay＝AddMonths(StartDay−5, 2)；注意事項「一般申請：住宿日前60日至前5日」） */
+const FC2_MIN_DATE = window.thAddDaysToDateValue(FC2_TODAY, 5);
+const FC2_MAX_DATE = window.thAddDaysToDateValue(FC2_TODAY, 60);
+/* 出發日、晚數的初值：網址有就用（從隊伍資料回來），否則照原第 1 步預設——最早可選日、行程天數 3（天池上限 3）。
+   直接開本頁時 start 不可為空：addDays("") 產生 Invalid Date、toISOString() 拋 RangeError 會讓整頁白畫面。 */
+const FC2_START = FC2_SHOWCASE ? fc2ShowcaseStart() : FC2_P.get("start") || FC2_MIN_DATE;
+const FC2_NIGHTS = parseInt(FC2_P.get("nights") || "0", 10) || Math.min(2, FC2_CABIN.maxDays);
+/* 第 1 步不再選出發人數（2026-10-07）：headcount 只當示意預帶的每晚數量，人數改在隊伍資料決定 */
+const FC2_HEADCOUNT = parseInt(FC2_P.get("headcount") || "4", 10);
+
+/* 山屋/營地概況（原第 1 步，2026-10-07 改版）：原型用固定種子模擬每日剩餘數量與申請數，不是隨機——重新整理數字要一樣 */
+function fc2Seed(dateStr, fid) { return (dateStr + fid).split("").reduce((a, c) => a + c.charCodeAt(0), 0); }
+const FC2_WEEK = ["日", "一", "二", "三", "四", "五", "六"];
 
 /* 二維矩陣的初值：所有夜次 × 所有設施都補 0，不留稀疏洞（理由見檔頭） */
 function fc2MakeInitAlloc() {
@@ -167,6 +188,7 @@ thPage({
   components: { "p-fc2-stepper": pFc2Stepper },
 
   data() {
+    window.thFcState.enter();
     /* 從第 3 步按上一步回來時，還原已填的隊名／付款／訂位（同一山屋、同出發日、同晚數才還原） */
     const st = window.thFcState.load();
     const same = st.route === FC2_ROUTE_ID && st.start === FC2_START && Number(st.nights) === FC2_NIGHTS && st.alloc;
@@ -177,7 +199,7 @@ thPage({
     if (FC2_SHOWCASE) {   // 總覽：第 1 晚已訂、其餘未訂；隊名留空
       Object.keys(demoAlloc).forEach(k => { if (k !== "0") FC2_CABIN.facilities.forEach(f => { demoAlloc[k][f.id] = 0; }); });
       return { teamName: "", payment: "remit", alloc: demoAlloc, stayAreas: [FC2_CABIN.stayAreas[1]], inArea: FC2_CABIN.gateAreas[0], outArea: FC2_CABIN.gateAreas[1],
-               startDate: FC2_START, nights: FC2_NIGHTS, room: {}, activeNavIndex: 0 };
+               startDate: FC2_START, days: FC2_NIGHTS + 1, month: FC2_START.slice(0, 7), room: {}, activeNavIndex: 0 };
     }
     return {
       teamName: same ? st.team || "" : "天眼1隊",
@@ -188,7 +210,8 @@ thPage({
       inArea: same ? st.inArea || "" : (FC2_CABIN.gateAreas ? FC2_CABIN.gateAreas[0] : ""),
       outArea: same ? st.outArea || "" : (FC2_CABIN.gateAreas ? FC2_CABIN.gateAreas[1] : ""),
       startDate: FC2_START,
-      nights: FC2_NIGHTS,
+      days: FC2_NIGHTS + 1,   // 行程天數（含下山日）；晚數＝天數－1（computed nights）
+      month: FC2_START.slice(0, 7),   // 概況表目前顯示的月份 YYYY-MM
       room: {},   // 第 i 晚下拉選的房型（尚未填數量時記住選擇）
       activeNavIndex: 0,   // 本頁內容導覽目前項目
     };
@@ -202,14 +225,31 @@ thPage({
       const r = (window.ROUTE_DATA || []).find(x => x.id === FC2_ROUTE_ID);
       return (r && r.image) || "assets/route-yushan.png";
     },
+    nights() { return this.days - 1; },
     endDate() { return window.thAddDaysToDateValue(this.startDate, this.nights); },
+    /* 路線與基本資料（原第 1 步）：行程天數 2 起（含下山日），上限依山屋（天池 3、檜谷 4、嘉明湖／向陽 19） */
+    dayOptions() { const out = []; for (let n = this.cabin.minDays + 1; n <= this.cabin.maxDays + 1; n++) out.push(n); return out; },
+    dateOptions() {
+      const out = [];
+      for (let d = FC2_MIN_DATE; d <= FC2_MAX_DATE; d = window.thAddDaysToDateValue(d, 1)) out.push(d);
+      return out;
+    },
+    /* 山屋/營地概況（原第 1 步）：只列可申請的日期（今日＋5～60） */
+    monthDates() {
+      const [y, m] = this.month.split("-").map(Number);
+      const n = new Date(y, m, 0).getDate();
+      return Array.from({ length: n }, (_, i) => this.month + "-" + String(i + 1).padStart(2, "0")).filter(d => this.inRange(d));
+    },
+    monthLabel() { const [y, m] = this.month.split("-"); return y + " 年 " + Number(m) + " 月"; },
+    canPrevMonth() { return this.month > FC2_MIN_DATE.slice(0, 7); },
+    canNextMonth() { return this.month < FC2_MAX_DATE.slice(0, 7); },
     paymentOptions() { return PAYMENT_OPTIONS; },
     /* 每晚數量上限（山屋人數上限：檜谷 10、其餘 12） */
     peopleMax() { return this.cabin.peopleMax || 12; },
     /* 本頁內容導覽（2026-10-07）：只列需要填寫的區塊、完成條件同 handleNext 的檢查（費用參考不是填寫項，不列，使用者同日裁示） */
     sideItems() {
       return [
-        { key: "basic", sec: "sec-basic", label: "路線與基本資料", ok: this.teamName.trim().length >= 2 && this.stayValid },
+        { key: "basic", sec: "sec-basic", label: "路線與基本資料", ok: !!this.startDate && this.teamName.trim().length >= 2 && this.stayValid },
         { key: "room", sec: "sec-room", label: "山屋及營地申請", ok: this.nightsValid },
         { key: "pay", sec: "sec-pay", label: "付款方式", ok: this.payment !== "" },
       ];
@@ -248,7 +288,39 @@ thPage({
     },
   },
 
+  watch: {
+    /* 改出發日時概況表切到該月（原第 1 步「選完即查詢」） */
+    startDate(v) { if (v) this.month = v.slice(0, 7); },
+    /* 改天數時 alloc 依晚數增減：保留仍存在的晚上；新增的晚上沿用前一晚（沒有前一晚則照示意預帶第一種設施） */
+    nights(n) {
+      const first = this.cabin.facilities[0];
+      for (let i = 0; i < n; i++) {
+        if (this.alloc[i]) continue;
+        const row = {};
+        this.cabin.facilities.forEach(f => { row[f.id] = 0; });
+        const prev = this.alloc[i - 1];
+        if (prev) Object.assign(row, prev);
+        else if (first) row[first.id] = Math.min(FC2_HEADCOUNT, first.max || FC2_HEADCOUNT);
+        this.alloc[i] = row;
+      }
+      Object.keys(this.alloc).forEach(k => { if (Number(k) >= n) delete this.alloc[k]; });
+    },
+  },
+
   methods: {
+    /* 山屋/營地概況（原第 1 步） */
+    shiftMonth(d) {
+      const [y, m] = this.month.split("-").map(Number);
+      const t = new Date(y, m - 1 + d, 1);
+      this.month = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0");
+    },
+    fmtDay(d) { return d.slice(5).replace("-", "/") + "（" + FC2_WEEK[new Date(d + "T00:00:00").getDay()] + "）"; },
+    inRange(d) { return d >= FC2_MIN_DATE && d <= FC2_MAX_DATE; },
+    /* 選中區間：出發日～離開日（共「行程天數」天，使用者 2026-10-07） */
+    inTrip(d) { return !!this.startDate && d >= this.startDate && d <= this.endDate; },
+    remain(f, d) { return Math.max(0, f.max - (fc2Seed(d, f.id) % (f.max + 1))); },
+    applied(f, d) { return fc2Seed(d + "a", f.id) % (f.max * 2 + 1); },
+
     /* 本頁內容導覽：捲到區塊（欄位則捲到所在 .th-field），同 apply_03 */
     scrollToSection(id, i) {
       this.activeNavIndex = i;
@@ -329,14 +401,9 @@ thPage({
       window.location.href = "apply_03.html";
     },
 
+    /* 上一步回第一步「閱讀同意書」（2026-10-08 同意聲明移到第一步、日期確認併入本頁） */
     goBack() {
-      const params = new URLSearchParams({
-        route: FC2_ROUTE_ID,
-        start: this.startDate,
-        nights: this.nights,
-        headcount: this.headcount,
-      });
-      window.location.href = `forest-camp-1.html?${params}`;
+      window.location.href = "apply-2.html?" + new URLSearchParams({ kind: "camp", route: FC2_ROUTE_ID });
     },
   },
 });

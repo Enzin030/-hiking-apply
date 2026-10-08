@@ -1,3 +1,8 @@
+/* 2026-10-08：日期確認併入行程規劃（使用者裁示），本頁不再使用，一進來就帶原網址參數轉到 apply_npa_2.html；
+   帶 unit（舊的路線列表入口）視為新的一張申請，補 new=1。原內容保留在下方，去留待使用者決定。 */
+(function () { var q = new URLSearchParams(window.location.search); if (q.get("unit")) q.set("new", "1");
+  window.location.replace("apply_npa_2.html" + (q.toString() ? "?" + q.toString() : "")); })();
+
 /* ============================================================
    apply_npa_1.js — 警政署入山證申請 步驟 1：日期確認
    ------------------------------------------------------------

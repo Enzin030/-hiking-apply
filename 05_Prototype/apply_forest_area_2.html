@@ -27,15 +27,21 @@
   <th-page-shell :trail="['登山申請', applyCrumb, area.name, '行程規劃']" title="自然保護區域申請" :bare="true">
 
     <template #stepper>
-      <th-fc-stepper :current="3"></th-fc-stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
     <div class="th-form-layout mt-6">
       <main class="th-form-main grid gap-6" role="main">
+      <!-- 1. 路線與基本資料（2026-10-08 日期確認併入行程規劃，原 apply_forest_area_1 的日期卡，共用元件 th-trip-basics；
+           本頁卡片有編號、側欄依序編號，故此卡為 1.，其後卡片順延一號；
+           原第 1 步註記：正式站各區提示文字相同，但可選出發日不一定從 5 天後起（十八羅漢山為 4 天後，〔待確認〕原因）） -->
+      <th-trip-basics id="sec-basic" title="1. 路線與基本資料" v-model:days="days" v-model:start="start"
+                      :day-options="area.days" :date-options="dates"
+                      start-hint="※因作業規定，最晚須於5天前申請。"></th-trip-basics>
       <!-- 1. 進入範圍 -->
       <section id="sec-range" class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">1. 選擇申請區域與進入範圍</h2>
+          <h2 class="th-card-title">2. 選擇申請區域與進入範圍</h2>
         </div>
         <div class="th-card-body grid gap-4">
           <div class="th-field">
@@ -71,7 +77,7 @@
       <!-- 2. 進出入口：勾了範圍才出現對應入口（正式站即時過濾） -->
       <section id="sec-gate" class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">2. 選擇進出入口與預計抵達時間</h2>
+          <h2 class="th-card-title">3. 選擇進出入口與預計抵達時間</h2>
         </div>
         <div class="th-card-body grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- 沒有預設範圍的區域（gateText）：入口、出口為必填文字欄「請自行填寫」 -->
@@ -117,7 +123,7 @@
       <!-- 3. 申請目的 -->
       <section id="sec-purpose" class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">3. 申請目的或項目</h2>
+          <h2 class="th-card-title">4. 申請目的或項目</h2>
         </div>
         <div class="th-card-body grid gap-4">
           <div class="th-field">
@@ -148,7 +154,7 @@
            所選目的須附件時才出現，其後宣達編號順延一號 -->
       <section v-if="attachRows.length" id="sec-attach" class="th-card">
         <div class="th-card-head">
-          <h2 class="th-card-title">4. 附件上傳</h2>
+          <h2 class="th-card-title">5. 附件上傳</h2>
         </div>
         <div class="th-card-body">
           <th-attach-table id-prefix="fa" :items="attachRows" v-model="attachFiles" accept=".pdf,.jpg,.jpeg,.png" :max-mb="5"></th-attach-table>

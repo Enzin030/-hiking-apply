@@ -22,6 +22,11 @@
      **雛形只記檔名，不讀取、不送出檔案內容。** 正式站選檔即壓縮後以 Func=FilesUpload 上傳，
      上傳後畫面、以及第 4／6 步是否列出這些附件，盤點環境禁止上傳而未實見〔待確認〕。
    第 3～6 步為家族共用頁 apply_03～06（kind＝area）。
+
+   2026-10-08 使用者裁示「日期確認併入行程規劃」：原第 1 步 apply_forest_area_1 的日期卡（天數依區域、出發日期依區域
+   最早天數與日期數、離開日期）改用共用元件 th-trip-basics 放在本頁頂端，不編號（其後 1.～N. 編號不變）；
+   原第 1 步的狀態寫入（kind、title、crumb、areaCid、areaType、plan、days、start、headcount）搬到本頁 next()／prev()。
+   區域取 ?tmpc_id（同意書頁帶來），從隊伍資料按上一步回來網址沒有 tmpc_id，改取暫存的 areaCid。
    ============================================================ */
 
 /* 宣達區塊分兩類（2026-10-06）：待填的「行程計畫」（textarea，或翡翠水庫的空白 text）與其餘宣達（一律勾選確認）。
@@ -68,13 +73,22 @@ function fa2Demo(area) {
 
 thPage({
   data() {
+    window.thFcState.enter();
     const st = window.thFcState.load();
-    const area = (window.TH_FOREST_AREAS || {})[st.areaCid || "630"] || window.TH_FOREST_AREAS["630"];
+    const P = new URLSearchParams(window.location.search);
+    const want = P.get("tmpc_id") || st.areaCid || "630";
+    const cid = (window.TH_FOREST_AREAS || {})[want] ? want : "630";   // 區域資料的鍵（cId），物件本身沒有存
+    const area = window.TH_FOREST_AREAS[cid];
+    /* 同一區域才沿用暫存（換區域＝新的一張） */
+    const sameArea = st.kind === "area" && st.areaCid === cid;
+    if (!sameArea) delete st.areaPlan;
+    const today = window.thTodayValue();
     const saved = st.areaPlan || fa2Demo(area);
     const confirms = {};
     area.blocks.forEach(b => { if (!fa2IsFillIn(b)) confirms[b.name] = !!(saved.confirms && saved.confirms[b.name]); });
     return {
       area: area,
+      cid: cid,
       picked: saved.picked || [],
       notes: saved.notes || "",
       entr: saved.entr || "",
@@ -86,7 +100,11 @@ thPage({
       purpose: saved.purpose || "",
       purposes: saved.purposes || [],
       attachFiles: fa2NormalizeFiles(saved.attachFiles),   // { "目的#第幾件": 檔名 }
-      headcount: Number(st.headcount) || 2,
+      headcount: sameArea ? Number(st.headcount) || 2 : 2,
+      /* 路線與基本資料（原第 1 步）：必填欄位預設帶入示意資料（2026-10-02）：區域第一個天數、第 3 個可選日 */
+      dates: Array.from({ length: area.dateCount }, (_, i) => window.thAddDaysToDateValue(today, area.minDaysAhead + i)),
+      days: sameArea ? Number(st.days) || area.days[0] : area.days[0],
+      start: sameArea && st.start ? st.start : window.thAddDaysToDateValue(today, area.minDaysAhead + 2),
       confirms: confirms,
       fills: Object.assign({}, saved.fills),   // 空白待填區塊（行程計畫）的內容
       activeNavIndex: 0,   // 本頁內容導覽目前項目
@@ -105,6 +123,7 @@ thPage({
       const gateOk = a.gateText ? !!(this.entrText.trim() && this.exitText.trim() && this.entrTime && this.exitTime)
         : !!(this.entr && this.exit && this.entrTime && this.exitTime);
       const items = [
+        { key: "basic", sec: "sec-basic", label: "路線與基本資料", ok: !!(this.days && this.start) },
         { key: "range", sec: "sec-range", label: "選擇申請區域與進入範圍", ok: !!(this.picked.length || this.notes.trim()) },
         { key: "gate", sec: "sec-gate", label: "選擇進出入口與預計抵達時間", ok: gateOk },
         { key: "purpose", sec: "sec-purpose", label: "申請目的或項目", ok: this.chosenPurposes.length > 0 },
@@ -137,8 +156,8 @@ thPage({
     },
     isChosen(v) { return this.chosenPurposes.indexOf(v) >= 0; },
     isFillIn(b) { return fa2IsFillIn(b); },
-    /* 宣達卡編號：資料為 4 起；有附件上傳卡（4.）時順延一號 */
-    blockNo(b) { return b.no + (this.attachRows.length ? 1 : 0); },
+    /* 宣達卡編號：資料為 4 起；2026-10-08 起前面多「1. 路線與基本資料」再順延一號，有附件上傳卡（5.）時再順延一號 */
+    blockNo(b) { return b.no + 1 + (this.attachRows.length ? 1 : 0); },   // ＋1：2026-10-08 起「1. 路線與基本資料」在最前
     /* 確認文字照區域資料；插天山（631）「禁止行為」正式站預設值空白，沿用同保留區（629／630）同一條的「我已確認並會向團員宣達」 */
     confirmText(b) { return b.confirm || "我已確認並會向團員宣達"; },
     /* 行程計畫的填寫說明拆行放進範例框：第一行為標題，其後在「第N天」「範例：」「1、」前斷行（文字照正式站） */
@@ -164,6 +183,8 @@ thPage({
     },
     check() {
       const e = [];
+      if (!this.days) e.push("請選擇行程天數");
+      if (!this.start) e.push("請選擇出發日期");
       /* 訊息照正式站 js/HSTS/Swal.js：沒勾範圍且備註空白＝-60「進入範圍未選擇」；必填文字欄空白＝-4 */
       if (!this.picked.length && !this.notes.trim()) e.push("進入範圍未選擇");
       if (this.area.gateText) {
@@ -184,12 +205,30 @@ thPage({
     next() {
       const e = this.check();
       if (e.length) { window.thAlertList(e); return; }
-      window.thFcState.save({ areaPlan: this.plan() });
+      window.thFcState.save(this.stateOf());
       window.location.href = "apply_03.html";
     },
+    /* 上一步回第一步「閱讀同意書」，已填內容先存起來 */
     prev() {
-      window.thFcState.save({ areaPlan: this.plan() });
-      window.location.href = "apply_forest_area_1.html";
+      window.thFcState.save(this.stateOf());
+      const q = new URLSearchParams(window.location.search);
+      q.set("kind", "area");
+      if (!q.get("tmpc_id")) q.set("tmpc_id", this.cid);
+      window.location.href = "apply-2.html?" + q.toString();
+    },
+    /* 交給第 3～6 步的狀態（原 apply_forest_area_1 next() 寫的欄位＋行程規劃） */
+    stateOf() {
+      return {
+        kind: "area",
+        title: "自然保護區域申請",
+        crumb: this.area.name,
+        backUrl: "apply_forest_area_2.html",
+        areaCid: this.cid,
+        areaType: this.area.typeCode,
+        plan: { unit: this.area.type, main: this.area.name, route: this.area.name },
+        days: this.days, start: this.start, headcount: this.headcount,
+        areaPlan: this.plan(),
+      };
     },
   },
 });

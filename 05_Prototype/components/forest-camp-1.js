@@ -1,3 +1,9 @@
+/* 2026-10-08：日期確認併入行程規劃（使用者裁示），本頁不再使用，一進來就帶原網址參數轉到 forest-camp-2.html
+   （日期卡與山屋/營地概況已搬過去，元件總覽 ?showcase=1 也在那頁）；沒有 start（舊的路線列表入口）視為新的一張申請，補 new=1。
+   原內容保留在下方，去留待使用者決定。 */
+(function () { var q = new URLSearchParams(window.location.search); if (!q.get("start") && !q.has("showcase")) q.set("new", "1");
+  window.location.replace("forest-camp-2.html" + (q.toString() ? "?" + q.toString() : "")); })();
+
 /* ============================================================
    forest-camp-1.js — 山屋住宿申請 步驟 1：日期確認
    ------------------------------------------------------------

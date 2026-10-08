@@ -1,3 +1,8 @@
+/* 2026-10-08：日期確認併入行程規劃（使用者裁示），本頁不再使用，一進來就帶原網址參數轉到 apply_forest_area_2.html；
+   帶 unit（舊的路線列表入口）視為新的一張申請，補 new=1。原內容保留在下方，去留待使用者決定。 */
+(function () { var q = new URLSearchParams(window.location.search); if (q.get("unit")) q.set("new", "1");
+  window.location.replace("apply_forest_area_2.html" + (q.toString() ? "?" + q.toString() : "")); })();
+
 /* ============================================================
    apply_forest_area_1.js — 林保署自然保護區域申請 步驟 1：日期確認
    ------------------------------------------------------------

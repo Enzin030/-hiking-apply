@@ -37,7 +37,7 @@
   <th-page-shell :trail="['登山申請', applyCrumb, cabin.name, '行程規劃']" title="山屋住宿申請" :bare="true">
 
     <template #stepper>
-      <th-fc-stepper :current="3"></th-fc-stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
     <!-- 2026-10-07 使用者：單欄；費用表放上面、下面逐晚選床位／營位與數量（原右欄費用試算移到上方，
@@ -73,12 +73,11 @@
         </div>
 
         <!-- 路線與基本資料（原「隊伍基本資料」，使用者 2026-10-07 改名）：隊名＋（天池）停留地點與進出地點合併為一張卡；
-             停留地點等欄位只有天池（正式站 2026-09-30，其他山屋該區塊隱藏） -->
-        <section id="sec-basic" class="th-card mb-5">
-          <div class="th-card-head">
-            <h2 class="th-card-title">路線與基本資料</h2>
-          </div>
-          <div class="th-card-body grid gap-4">
+             停留地點等欄位只有天池（正式站 2026-09-30，其他山屋該區塊隱藏）。
+             2026-10-08 日期確認併入行程規劃：原 forest-camp-1 的日期卡改用共用元件 th-trip-basics，隊名與停留地點放在其 slot -->
+        <th-trip-basics id="sec-basic" class="mb-5" v-model:days="days" v-model:start="startDate"
+                        :day-options="dayOptions" :date-options="dateOptions" :placeholder="false"
+                        start-hint="※因作業規定，最晚須於5天前申請。">
           <div class="th-field p-fc2-team-field">
             <label class="th-label">隊伍名稱 <span class="p-fc2-required">*</span></label>
             <input
@@ -114,6 +113,42 @@
             </div>
           </div>
           </template>
+        </th-trip-basics>
+
+        <!-- 山屋/營地概況（原 forest-camp-1，2026-10-08 併入）：選完日期／天數即更新（比照正式站 #CampsInfo）；
+             選中區間（出發日～離開日）標底色；格內比照 bed_1 月曆（th-bedcal-*：小字「剩餘」＋大數字、副行「現在申請數 N」、0 為「額滿」） -->
+        <section id="sec-overview" class="th-card mb-5">
+          <div class="th-card-head">
+            <h2 class="th-card-title">山屋/營地概況</h2>
+            <div class="ml-auto flex items-center gap-2">
+              <button type="button" class="th-btn th-btn-ghost th-btn-sm" :disabled="!canPrevMonth" @click="shiftMonth(-1)" aria-label="上個月"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+              <span class="text-sm font-semibold text-slate-700">{{ monthLabel }}</span>
+              <button type="button" class="th-btn th-btn-ghost th-btn-sm" :disabled="!canNextMonth" @click="shiftMonth(1)" aria-label="下個月"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <div class="th-card-body">
+            <div class="th-table-wrap border border-slate-200 rounded-md">
+              <table class="th-table w-full whitespace-nowrap">
+                <thead>
+                  <tr>
+                    <th scope="col">山屋/營地</th>
+                    <th v-for="d in monthDates" :key="d" scope="col" class="is-center">{{ fmtDay(d) }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="f in cabin.facilities" :key="f.id">
+                    <th scope="row" class="font-semibold text-slate-800">{{ f.label }}</th>
+                    <td v-for="d in monthDates" :key="d" class="is-center" :class="{ 'bg-emerald-50': inTrip(d) }">
+                      <span class="th-bedcal-main justify-center">
+                        <template v-if="remain(f, d) > 0"><span class="th-bedcal-unit">剩餘</span><b class="th-bedcal-num">{{ remain(f, d) }}</b></template>
+                        <b v-else class="th-bedcal-num is-text">額滿</b>
+                      </span>
+                      <span class="th-bedcal-sub block">現在申請數 {{ applied(f, d) }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 

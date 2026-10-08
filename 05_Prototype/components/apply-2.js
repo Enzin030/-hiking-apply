@@ -170,13 +170,14 @@ const A2_PARK_UNITS = ["shei-pa", "taroko"];
 /* ------------------------------------------------------------
    notice 模式（2026-10-08 使用者裁示：同意聲明移到第一步，與國家公園同意書整合在本頁）
    ------------------------------------------------------------
-   ?kind=npa|area|camp 進入，其餘參數原樣轉給該類別的第 1 步（日期確認）：
-     npa  ：?unit=<機關代碼>                         → apply_npa_1.html
-     area ：?unit=&tmpc_id=<cId>&tmpf_id=<fId>       → apply_forest_area_1.html
-     camp ：?route=<山屋鍵>                          → forest-camp-1.html
+   ?kind=npa|area|camp 進入，其餘參數原樣轉給該類別的行程規劃頁（同日再裁示「日期確認併入行程規劃」），
+   另加 new=1 表示新的一張申請（行程規劃頁 thFcState.enter() 據此清掉上一張的暫存）：
+     npa  ：?unit=<機關代碼>                         → apply_npa_2.html
+     area ：?unit=&tmpc_id=<cId>&tmpf_id=<fId>       → apply_forest_area_2.html
+     camp ：?route=<山屋鍵>                          → forest-camp-2.html
    聲明內容與勾選照原第 5 步 apply_05（現已不連入）。內容以 blocks[] 呈現，
    一個區塊對一個子申請——日後複合申請（一趟多個項目）只是多幾個區塊。
-   **本頁不寫 thFcState**：各類別第 1 步帶 unit／route 進來時會 reset，寫了也會被清掉；
+   **本頁不寫 thFcState**：行程規劃頁收到 new=1 會 reset，寫了也會被清掉；
    同意是進入申請的關卡，同國家公園，後續步驟不再檢查。
    取代原本到不了的「申請前摘要」模式（?unit=police／forestry-area，自創文案、正式站沒有）。 */
 const A2_NOTICE_KINDS = ["npa", "area", "camp"];
@@ -187,6 +188,7 @@ const A2_KIND = A2_NOTICE_KINDS.includes(getParam("kind")) ? getParam("kind") : 
 function a2NoticeBlocks(kind) {
   const q = new URLSearchParams(window.location.search);
   q.delete("kind");
+  q.set("new", "1");
   const a6 = window.TH_APPLY6_NOTICES || { npa: {}, area: {}, areaAgree: "" };
   if (kind === "npa") {
     /* 警政署條目：隱私權保護政策（連結）、作業使用說明（彈窗）、正式站 body 三段（含「我同意並了解以上⋯」） */
@@ -194,7 +196,7 @@ function a2NoticeBlocks(kind) {
       .concat(((a6.npa && a6.npa.body) || []).map((t, i) => ({ id: "body" + i, type: "text", text: t })));
     return {
       crumb: "警政署入山證",
-      next: "apply_npa_1.html?" + q.toString(),
+      next: "apply_npa_2.html?" + q.toString(),
       blocks: [{ id: "npa", kind: "npa", items: items }],
     };
   }
@@ -205,7 +207,7 @@ function a2NoticeBlocks(kind) {
     const n = a6.area[area ? area.typeCode : "85"] || a6.area["85"] || { lines: [], title: "" };
     return {
       crumb: area ? area.name : (route ? route.name : "自然保護區域"),
-      next: "apply_forest_area_1.html?" + q.toString(),
+      next: "apply_forest_area_2.html?" + q.toString(),
       blocks: [{
         id: "area", kind: "area", icon: "ph-bold ph-tree",
         title: (area && area.type) || "自然保護區域",
@@ -221,7 +223,7 @@ function a2NoticeBlocks(kind) {
   const cabin = (window.TH_CABIN_DATA || {})[routeId];
   return {
     crumb: cabin ? cabin.name : "山屋住宿申請",
-    next: "forest-camp-1.html?" + q.toString(),
+    next: "forest-camp-2.html?" + q.toString(),
     blocks: [{
       id: "camp", kind: "camp", icon: "ph-bold ph-house",
       title: notice.title || "山屋/營地",   // 山屋注意事項全名直接當卡片標題（使用者 2026-10-07）

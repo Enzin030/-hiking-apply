@@ -195,16 +195,16 @@ window.thFcPriceOf = function (facility, dateValue) {
    保護區的附件已在第 2 步依申請目的上傳，太魯閣也併在人員資料頁——獨立一步沒有內容。改為 6 步，已列 PM 確認事項。
    apply_04.html 保留但不再連入。 */
 /* 2026-10-08 使用者裁示：同意聲明（正式站第 5 步）移到第一步，與國家公園「閱讀同意書」整合在同一頁
-   （apply-2.html?kind=npa|area|camp），步驟名稱與國家公園統一。已列 PM 確認事項第 9 題。 */
+   （apply-2.html?kind=npa|area|camp）；同日再裁示「日期確認併入行程規劃」（日期卡 th-trip-basics 放在行程規劃頁頂端）。
+   步驟因此與國家公園（th-apply-stepper）完全相同。已列 PM 確認事項第 9、10 題。 */
 window.TH_FC_STEPS = [
   { n: 1, label: "閱讀同意書" },
-  { n: 2, label: "日期確認" },
-  { n: 3, label: "行程規劃" },   // 正式站「行程計畫」；2026-10-07 使用者裁示與三管處統一為「行程規劃」（列 PM 確認事項）
-  { n: 4, label: "隊伍資料" },   // 正式站原文；2026-10-06 使用者裁示三管處與六步驟統一為「隊伍資料」
+  { n: 2, label: "行程規劃" },   // 正式站「行程計畫」；2026-10-07 使用者裁示與三管處統一為「行程規劃」（列 PM 確認事項）
+  { n: 3, label: "隊伍資料" },   // 正式站原文；2026-10-06 使用者裁示三管處與六步驟統一為「隊伍資料」
   /* 2026-10-05 使用者裁示：正式站第 6 步「確認送出」本身就是確認資料頁，但進度條沒有送出後的一格；
      改名「確認資料」並加「申請完成」，與三管處（…→確認資料→申請完成）結尾對齊。已列 PM 確認事項。 */
-  { n: 5, label: "確認資料" },
-  { n: 6, label: "申請完成" },
+  { n: 4, label: "確認資料" },
+  { n: 5, label: "申請完成" },
 ];
 
 /* ------------------------------------------------------------
@@ -215,7 +215,7 @@ window.TH_FC_STEPS = [
    ------------------------------------------------------------
    第 1、2 步沿用查詢字串；第 2 步按下一步起，訂位、隊伍資料等存成**單一**
    sessionStorage key。人員資料不放網址（個資、長度）。
-   **第 1 步載入時一律 reset**：正式站同分頁連續申請會殘留上一張的暫存
+   **新的一張申請一律 reset**（2026-10-08 起由行程規劃頁 thFcState.enter() 依 ?new=1 判斷；原為第 1 步載入時）：正式站同分頁連續申請會殘留上一張的暫存
    （02_Spec/05e §7 缺陷），雛形不重蹈。sessionStorage 不可用時退回記憶體，
    頁面照常可操作（重新整理會遺失，雛形可接受）。 */
 (function () {
@@ -235,6 +235,16 @@ window.TH_FC_STEPS = [
     reset: function () {
       mem = null;
       try { window.sessionStorage.removeItem(KEY); } catch (e) { /* 無 storage 時略過 */ }
+    },
+    /* 新的一張申請（2026-10-08）：同意書頁按「同意」帶 ?new=1 進行程規劃，在這裡 reset 並把 new 從網址拿掉，
+       之後重新整理、從隊伍資料按上一步回來都不會再清掉已填內容。回傳是否為新申請。 */
+    enter: function () {
+      var q = new URLSearchParams(window.location.search);
+      if (!q.has("new")) return false;
+      this.reset();
+      q.delete("new");
+      try { window.history.replaceState(null, "", window.location.pathname + (q.toString() ? "?" + q.toString() : "")); } catch (e) { /* 略過 */ }
+      return true;
     },
   };
 })();
