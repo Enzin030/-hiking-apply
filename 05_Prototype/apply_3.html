@@ -46,7 +46,8 @@
         <h2 class="th-card-title">申請進度查詢</h2>
       </div>
       <div class="th-card-body ">
-        <div class="flex flex-col gap-4">
+        <!-- 查詢欄位桌機兩欄、手機一欄（使用者 2026-10-08）；驗證碼佔左半，按鈕與提醒跨兩欄 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="th-field">
           <label class="th-label" for="f-serial">
             <span class="req">*</span>（一站式／入園）申請編號
@@ -95,20 +96,20 @@
         <!-- 驗證碼設定同線上申請確認頁（apply-5／apply_06）：可換碼、上下排列、不顯示提示（使用者 2026-10-08） -->
         <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
-        <div class="flex justify-center mt-2">
+        <div class="flex justify-center mt-2 sm:col-span-2">
           <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
 
         <!-- 查詢鈕下方提醒，分三塊（使用者 2026-10-08）：國家公園（許可證列印、天氣）／林保署（三處山屋取消住宿退費規定）／線上取消登山申請 -->
-        <th-callout type="warning">
+        <th-callout class="sm:col-span-2" type="warning">
           <strong class="block mb-1">國家公園</strong>
           <strong>入園許可證：請領隊於入園日(含)前5日內始可列印；</strong><br />
           <strong>入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份，謝謝。</strong><br />
           登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前1日天氣預報不佳或身體有不適狀況，考量不成行請儘速線上取消申請，避免入園當日無法取消。
         </th-callout>
-        <th-callout icon="ph-bold ph-tree">
+        <th-callout class="sm:col-span-2" icon="ph-bold ph-tree">
           <strong class="block mb-1">林保署</strong>
           <span class="block mb-1">檜谷山莊、天池山莊、嘉明湖/向陽</span>
           取消住宿申請之退費規定：
@@ -119,7 +120,7 @@
             <li>在起算日前3日內申請取消及住宿當日未到者，不退還已付之金額。</li>
           </ul>
         </th-callout>
-        <th-callout icon="fa-solid fa-ban">
+        <th-callout class="sm:col-span-2" icon="fa-solid fa-ban">
           <strong>線上取消登山申請：</strong><a href="apply_2.html">申請資料異動及取消</a>
         </th-callout>
         </div>

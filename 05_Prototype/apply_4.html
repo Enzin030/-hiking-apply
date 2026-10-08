@@ -48,7 +48,8 @@
         <h2 class="th-card-title">查詢繳費資料</h2>
       </div>
       <div class="th-card-body">
-        <div class="flex flex-col gap-4">
+        <!-- 查詢欄位桌機兩欄、手機一欄（使用者 2026-10-08）；驗證碼佔左半，按鈕與提醒跨兩欄 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="th-field">
           <label class="th-label" for="f-serial">
             <span class="req">*</span>（一站式／入園）申請編號
@@ -85,7 +86,7 @@
         <!-- 驗證碼設定同線上申請確認頁（apply-5／apply_06）：可換碼、上下排列、不顯示提示（使用者 2026-10-08） -->
         <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
-        <div class="flex justify-center mt-2">
+        <div class="flex justify-center mt-2 sm:col-span-2">
           <button type="button" class="th-btn th-btn-primary" @click="search">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
