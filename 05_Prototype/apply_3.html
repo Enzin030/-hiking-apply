@@ -34,8 +34,7 @@
 
   <th-page-shell
     :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '申請進度查詢/許可證下載']"
-    title="申請進度查詢/許可證下載"
-    lead="查詢已送出的登山申請進度並下載入園許可證。">
+    title="申請進度查詢/許可證下載">
 
     <!-- 2026-10-08 使用者：內容照規格截圖調整（02_Spec/06a 截圖「申請進度查詢-已通過／待處理」），用現有元件——
          查詢鈕正下方紅字提醒；結果為案件表頭＋項目表（項目單位｜項目案件編號｜狀態｜功能）＋表內附註、
@@ -47,8 +46,6 @@
         <h2 class="th-card-title">申請進度查詢</h2>
       </div>
       <div class="th-card-body ">
-        <p>請輸入您的<strong>登山申請編號</strong>及<strong>身分證號／護照號碼（居留證）</strong>來進行資料查詢。</p>
-
         <div class="flex flex-col gap-4">
         <div class="th-field">
           <label class="th-label" for="f-serial">
@@ -103,11 +100,25 @@
           </button>
         </div>
 
-        <!-- 查詢鈕下方提醒（截圖原文） -->
+        <!-- 查詢鈕下方提醒，分三塊（使用者 2026-10-08）：國家公園（許可證列印、天氣）／林保署（三處山屋取消住宿退費規定）／線上取消登山申請 -->
         <th-callout type="warning">
+          <strong class="block mb-1">國家公園</strong>
           <strong>入園許可證：請領隊於入園日(含)前5日內始可列印；</strong><br />
           <strong>入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份，謝謝。</strong><br />
-          ●登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前1日天氣預報不佳或身體有不適狀況，考量不成行請儘速線上取消申請，避免入園當日無法取消。<br />
+          登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前1日天氣預報不佳或身體有不適狀況，考量不成行請儘速線上取消申請，避免入園當日無法取消。
+        </th-callout>
+        <th-callout icon="ph-bold ph-tree">
+          <strong class="block mb-1">林保署</strong>
+          <span class="block mb-1">檜谷山莊、天池山莊、嘉明湖/向陽</span>
+          取消住宿申請之退費規定：
+          <ul class="list-disc pl-5 mt-1 grid gap-0.5">
+            <li>起算日計算標準，單日住宿者，以住宿日為起算日；多日住宿者，以第一天住宿日為起算日。</li>
+            <li>在起算日前5日前取消成功者，全額退還已付金額。</li>
+            <li>在起算日前4日取消成功者，退還已付金額百分之五十。</li>
+            <li>在起算日前3日內申請取消及住宿當日未到者，不退還已付之金額。</li>
+          </ul>
+        </th-callout>
+        <th-callout icon="fa-solid fa-ban">
           <strong>線上取消登山申請：</strong><a href="apply_2.html">申請資料異動及取消</a>
         </th-callout>
         </div>
