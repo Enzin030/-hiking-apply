@@ -66,7 +66,7 @@ thPage({
   data() {
     return {
       serial: "",
-      nation: "",
+      nation: "中華民國",   // 預設中華民國（使用者 2026-10-08）
       sid: "",
       vcode: "",
       vcodeCode: "7K4M",   // 驗證碼顯示碼（th-captcha 可換碼模式，同線上申請確認頁）

@@ -17,7 +17,8 @@
    | ctl00$con$vcode         | vcode     | 驗證碼，走 th-captcha |
 
    注意 apply_3（申請進度查詢）的國籍控制項是 `con_apply_nation` 且**併在身分證那一列**，
-   本頁是 `con_nation` 且獨立一列。兩頁看起來像但不同構，不要為了統一而改任何一邊。
+   本頁是 `con_nation` 且獨立一列。兩頁看起來像但不同構。
+   **2026-10-08 使用者裁示改為與 apply_3 相同：國籍併在身分證那一列，預設「中華民國」**（以上為舊站對照紀錄）。
    ============================================================ */
 
 /* 大宗唯讀常數放模組層，不進 data()（進 data() 會被遞迴轉成 reactive proxy，白付代價） */
@@ -61,7 +62,7 @@ thPage({
   data() {
     return {
       serial: "",
-      nation: "",
+      nation: "中華民國",   // 預設中華民國（使用者 2026-10-08）
       sid: "",
       vcode: "",
       vcodeCode: "7K4M",   // 驗證碼顯示碼（th-captcha 可換碼模式，同線上申請確認頁）
@@ -91,7 +92,7 @@ thPage({
   methods: {
     reset() {
       this.serial = "";
-      this.nation = "";
+      this.nation = "中華民國";
       this.sid = "";
       this.vcode = "";
       this.submitted = false;
