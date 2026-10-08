@@ -34,30 +34,15 @@
 
   <th-header active="apply"></th-header>
 
+  <!-- 2026-10-08 使用者：內容照規格截圖調整（02_Spec/06b「線上繳費(排雲)-繳費頁／過期提示」），用現有元件——
+       標題照截圖「(排雲)」；查詢通過後為「線上繳費(玉管處)」：基本資料（2×3 鍵值）、費用明細（兩層表頭、總計列）、
+       繳費方式單選＋繳納金額（方式五行內「產生超商繳費單」）、※ 說明；過期案件以 SweetAlert 提示（示意編號見 apply4-pay.js）。
+       原「適用範圍」「可辦理的動作」「相關功能」為截圖沒有的內容，拿掉；查詢表單依規格文字保留。 -->
   <th-page-shell
-    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '列印繳費說明單/線上繳費']"
-    title="列印繳費說明單/線上繳費（玉山國家公園）"
-    lead="查詢玉山國家公園宿營地的應繳規費，列印繳費說明單或進行線上繳費。"
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '列印繳費說明單/線上繳費(排雲)']"
+    title="列印繳費說明單/線上繳費(排雲)"
+    lead="查詢排雲山莊的應繳規費，列印繳費說明單或進行線上繳費。"
     updated="2026-09-16">
-
-    <template #nav>
-      <th-page-nav :items="navItems"></th-page-nav>
-    </template>
-
-    <section class="th-card" id="scope">
-      <div class="th-card-head">
-        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-        <h2 class="th-card-title">適用範圍</h2>
-      </div>
-      <div class="th-card-body">
-        <p>本功能適用玉山國家公園需繳納規費的宿營地：</p>
-        <div class="th-chip-row">
-          <span class="th-chip" v-for="c in camps" :key="c">{{ c }}</span>
-        </div>
-        <th-callout type="warning">未依限繳交或金額不足者，將取消入園許可資格。
-            繳費期限為抽籤日與候補通知日之較晚者加 3 日。</th-callout>
-      </div>
-    </section>
 
     <section class="th-card" id="query">
       <div class="th-card-head">
@@ -103,63 +88,110 @@
 
         <th-captcha v-model="vcode" input-id="f-vcode"></th-captcha>
 
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2">
-          <p class="th-field-hint">查詢結果僅顯示與輸入申請編號及隊名相符的案件。</p>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" class="th-btn th-btn-secondary" @click="reset">
-              清除
-            </button>
-            <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
-              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
-            </button>
-          </div>
+        <div class="flex justify-end mt-2">
+          <button type="button" class="th-btn th-btn-primary" @click="search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
+          </button>
         </div>
-
-        <template v-if="submitted">
-          <h3 class="th-section-title mt-6">繳費基本資料</h3>
-          <th-data-table :columns="baseColumns" :rows="demoBase" row-key="serial" table-class="th-table--zebra">
-            <template #cell="{ row, column, value }">
-              <span v-if="column.key === 'payState'" :class="['th-flag', row.payState === '未繳費' ? 'is-closed' : 'is-open']">{{ row.payState }}</span>
-              <template v-else>{{ value }}</template>
-            </template>
-          </th-data-table>
-
-          <h3 class="th-section-title mt-6">費用明細</h3>
-          <p class="th-table-note">排雲山莊規費每人每宿新臺幣 480 元，本國人與外國人同價，小計＝單價 × 人數。</p>
-          <th-data-table :columns="feeColumns" :rows="demoFees" row-key="date" table-class="th-table--zebra"></th-data-table>
-          <p class="th-table-note">總計 {{ feeTotal }} 元。本處不接受外幣轉帳與跨國匯款。</p>
-
-          <h3 class="th-section-title mt-6">繳費管道</h3>
-          <th-data-table :columns="methodColumns" :rows="payMethods" row-key="no" table-class="th-table--zebra"></th-data-table>
-
-          <h3 class="th-section-title mt-6">可辦理的動作</h3>
-          <div class="th-notice-grid items-stretch">
-            <section class="th-card flex flex-col" v-for="act in resultActions" :key="act.id">
-              <div class="th-card-head">
-                <i :class="act.icon" aria-hidden="true"></i>
-                <h4 class="th-card-title">{{ act.title }}</h4>
-              </div>
-              <div class="th-card-body flex flex-col gap-3 flex-1">
-                <p class="th-field-hint">{{ act.desc }}</p>
-                <th-todo-link :label="act.title" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
-              </div>
-            </section>
-          </div>
-        </template>
         </div>
       </div>
     </section>
 
-    <section class="th-card" id="links">
-      <div class="th-card-head">
-        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-        <h2 class="th-card-title">相關功能</h2>
-      </div>
-      <div class="th-card-body">
-        <!-- kind 未給且無 href 者，th-link-list 自動視為 todo 並標記，不給假路徑 -->
-        <th-link-list :items="relatedLinks"></th-link-list>
-      </div>
-    </section>
+    <template v-if="submitted">
+      <h3 class="th-section-title mt-6">線上繳費(玉管處)</h3>
+
+      <section class="th-card" id="base">
+        <div class="th-card-head">
+          <h2 class="th-card-title">基本資料</h2>
+        </div>
+        <div class="th-card-body">
+          <dl class="grid grid-cols-1 sm:grid-cols-[9rem_1fr_9rem_1fr] gap-x-4 gap-y-2">
+            <dt class="th-label">入園日期</dt><dd>{{ base.dateIn }}</dd>
+            <dt class="th-label">繳費狀態</dt><dd><span :class="['th-flag', base.payState === '未繳費' ? 'is-closed' : 'is-open']">{{ base.payState }}</span></dd>
+            <dt class="th-label">登山申請編號</dt><dd>{{ base.serial }}</dd>
+            <dt class="th-label">隊伍名稱</dt><dd>{{ base.team }}</dd>
+            <dt class="th-label">領隊</dt><dd>{{ base.leader }}</dd>
+            <dt class="th-label">隊伍人數(含領隊)</dt><dd>{{ base.members }}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section class="th-card mt-6" id="fee">
+        <div class="th-card-head">
+          <h2 class="th-card-title">費用明細</h2>
+        </div>
+        <div class="th-card-body grid gap-4">
+          <!-- 兩層表頭（中華民國人費用／外國人費用各跨三欄）：th-data-table 只支援單層，這張表直接用 .th-table（同 forest-camp-2 表格） -->
+          <div class="th-table-wrap border border-slate-200 rounded-md">
+            <table class="th-table w-full whitespace-nowrap">
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">住宿日期</th>
+                  <th scope="col" rowspan="2">宿營地</th>
+                  <th scope="colgroup" colspan="3" class="is-center">中華民國人費用</th>
+                  <th scope="colgroup" colspan="3" class="is-center">外國人費用</th>
+                  <th scope="col" rowspan="2" class="is-right">單日合計</th>
+                </tr>
+                <tr>
+                  <th scope="col" class="is-center">單價</th>
+                  <th scope="col" class="is-center">人數</th>
+                  <th scope="col" class="is-center">小計</th>
+                  <th scope="col" class="is-center">單價</th>
+                  <th scope="col" class="is-center">人數</th>
+                  <th scope="col" class="is-center">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="f in fees" :key="f.date">
+                  <td>{{ f.date }}</td>
+                  <td>{{ f.camp }}</td>
+                  <td class="is-center">{{ f.priceLocal }}</td>
+                  <td class="is-center">{{ f.peopleLocal }}</td>
+                  <td class="is-center">{{ f.subLocal }}</td>
+                  <td class="is-center">{{ f.priceForeign }}</td>
+                  <td class="is-center">{{ f.peopleForeign }}</td>
+                  <td class="is-center">{{ f.subForeign }}</td>
+                  <td class="is-right">{{ f.dayTotal.toLocaleString() }}</td>
+                </tr>
+                <tr>
+                  <th scope="row" colspan="8" class="is-right">總計</th>
+                  <td class="is-right font-bold">{{ feeTotal.toLocaleString() }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 繳費方式：單選，每個方式顯示繳納金額（總計＋該方式內含手續費） -->
+          <div class="th-table-wrap border border-slate-200 rounded-md">
+            <table class="th-table w-full">
+              <thead>
+                <tr>
+                  <th scope="col">請選擇繳費方式：<span class="text-rose-600">(本處不接受外幣轉帳與跨國匯款)</span></th>
+                  <th scope="col" class="is-right whitespace-nowrap">繳納金額</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="m in payMethods" :key="m.no">
+                  <td>
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      <input type="radio" name="pay-method" class="mt-1" :value="m.no" v-model="method" />
+                      <span>{{ m.no }}：{{ m.name }}<span v-if="m.feeNote" :class="{ 'text-rose-600': m.noteAccent }">{{ m.feeNote }}</span>
+                        <template v-if="m.cvs"> <span class="th-todo-link">產生超商繳費單</span></template></span>
+                    </label>
+                  </td>
+                  <td class="is-right whitespace-nowrap">{{ (feeTotal + m.add).toLocaleString() }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid gap-1 text-sm text-slate-700">
+            <p>※務請於規定期限內寄達或繳交正確之「宿營地使用規費總額」，未依限繳交或金額不足者將取消入園許可資格，敬請見諒。</p>
+            <p>※繳款成功後，收據一律存玉管處，收據編號可至「登山申請 &gt;&gt; 申請進度查詢/許可證下載」查詢。</p>
+          </div>
+        </div>
+      </section>
+    </template>
   </th-page-shell>
 
   <th-quick-nav></th-quick-nav>

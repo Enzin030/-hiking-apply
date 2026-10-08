@@ -1,5 +1,5 @@
 /* ============================================================
-   apply4-pay.js — 列印繳費說明單/線上繳費（玉山國家公園）（舊站 apply_4.aspx）
+   apply4-pay.js — 列印繳費說明單/線上繳費(排雲)（舊站 apply_4.aspx）
    ------------------------------------------------------------
    對應頁面 `apply_4.html`。版面在該檔的 in-DOM template，本檔只放資料與行為。
 
@@ -15,7 +15,7 @@
    **第二個查詢鍵是隊名不是身分證號**，與 apply_2／apply_3 不同：繳費對整案不對個人。
 
    ------------------------------------------------------------
-   為什麼沒有山屋選擇器
+   為什麼沒有山屋選擇器（2026-10-08 起標題照規格截圖為「(排雲)」）
    ------------------------------------------------------------
    applySearch 的「國家公園線上繳費」卡片寫著排雲山莊與觀高山屋兩處，看起來該有選擇器，
    但正式站 apply_4.aspx 的查詢頁**沒有**任何山屋欄位；VIEWSTATE 內註冊了
@@ -24,73 +24,42 @@
    查無公開來源，因此雛形不做分流 UI，改在「適用範圍」區塊標 [待確認]。
    ============================================================ */
 
-/* 適用宿營地。取自 applySearch.aspx 該卡片的說明文字（2026-09-16 實抓）。 */
-const CAMPS = ["排雲山莊", "觀高山屋"];
+/* ------------------------------------------------------------
+   2026-10-08 依規格截圖（02_Spec/06b「線上繳費(排雲)-繳費頁」）改內容：
+   基本資料 2×3 鍵值（入園日期、繳費狀態／登山申請編號、隊伍名稱／領隊、隊伍人數(含領隊)）、
+   費用明細兩層表頭＋表內總計、繳費方式單選＋繳納金額、※ 說明；原「適用範圍」「可辦理的動作」「相關功能」拿掉。
+   截圖下緣第二條 ※（收據）被裁掉，規格文字也沒有全文，只放看得到的完整第一句——全文待對正式站補上。
+   過期提示（「線上繳費(排雲)-過期提示」）：以 SweetAlert 呈現；示意上查詢編號為 DEMO_EXPIRED_SERIAL 時出現。
+   ------------------------------------------------------------ */
 
-/* 繳費基本資料示意（匿名假資料）。欄位取自規格 06b「基本資料展示」段。 */
-const DEMO_BASE = [
-  {
-    serial: "115090300127",
-    dateIn: "2026-10-05",
-    team: "晨曦登山隊",
-    leader: "王小明",
-    members: 6,
-    payState: "未繳費",
-  },
-];
+/* 繳費基本資料示意（匿名假資料） */
+const DEMO_BASE = {
+  serial: "115090300127",
+  dateIn: "2026-10-05",
+  team: "晨曦登山隊",
+  leader: "王小明",
+  members: 6,
+  payState: "未繳費",
+};
 
-/* 費用明細示意。欄位結構與單價取自規格圖 `02_Spec/assets/線上繳費(排雲)-繳費頁.png`：
-   中華民國人與外國人**各自一組**（單價／人數／小計），再加單日合計。
-   實際畫面上兩組單價同為 480 元，不是只有本國人有價。
-   宿營地是這張表的**資料欄**，不是使用者要選的東西——這也是本頁沒有山屋選擇器的佐證。 */
+/* 費用明細示意。欄位結構與單價取自規格圖：中華民國人與外國人各一組（單價／人數／小計），再加單日合計；兩組單價同為 480 元 */
 const DEMO_FEES = [
-  {
-    date: "2026-10-05",
-    camp: "排雲山莊",
-    priceLocal: "480", peopleLocal: "5", subLocal: "2,400",
-    priceForeign: "480", peopleForeign: "1", subForeign: "480",
-    dayTotal: "2,880",
-  },
+  { date: "2026-10-05", camp: "排雲山莊", priceLocal: 480, peopleLocal: 5, subLocal: 2400, priceForeign: 480, peopleForeign: 1, subForeign: 480, dayTotal: 2880 },
 ];
 
-/* 總計。示意資料只有一列，仍以常數寫死避免在 template 內算術。 */
-const FEE_TOTAL = "2,880";
-
-/* 六種繳費管道。文字與手續費金額取自規格 06b，並與規格圖逐項核對過
-   （方式一與方式四各含彰銀代收手續費 10 元、方式五超商 15 元由繳款人自負、
-   方式六信用卡交易手續費 39 元；方式二郵政匯票與方式三現金無系統手續費）。 */
+/* 繳費方式（文字照規格圖原文）：add＝繳納金額比總計多出的手續費（方式一、四彰銀代收 10 元、方式六信用卡 39 元；
+   方式五超商 15 元由繳款人在超商自付，繳納金額不含） */
 const PAY_METHODS = [
-  { no: "方式一", name: "金融機構轉帳", fee: "內含彰化銀行專屬匯款帳號代收手續費 10 元" },
-  { no: "方式二", name: "郵政匯票", fee: "無系統手續費" },
-  { no: "方式三", name: "現金", fee: "無系統手續費" },
-  { no: "方式四", name: "臺灣PAY（信用卡或金融卡）", fee: "內含彰化銀行專屬匯款帳號代收手續費 10 元" },
-  { no: "方式五", name: "超商繳費", fee: "超商代收手續費 15 元由繳款人自負；須於期限內上傳蓋章繳費單與熱感應紙收據" },
-  { no: "方式六", name: "信用卡繳費", fee: "內含信用卡交易手續費 39 元" },
+  { no: "方式一", name: "「金融機構轉帳」", feeNote: "(內含彰化銀行專屬匯款帳號代收手續費10元)", add: 10 },
+  { no: "方式二", name: "「郵政匯票」", add: 0 },
+  { no: "方式三", name: "「現金」", add: 0 },
+  { no: "方式四", name: "臺灣PAY(信用卡或金融卡)", feeNote: "(內含彰化銀行專屬匯款帳號代收手續費10元)", add: 10 },
+  { no: "方式五", name: "超商繳費 ", feeNote: "(超商代收手續費15元，由繳款人自行負擔。需於繳費期限內上傳超商繳費憑證：超商蓋章後的繳費單及熱感應紙收據)", add: 0, cvs: true },
+  { no: "方式六", name: "「信用卡繳費」", feeNote: "(內含信用卡交易手續費39元)", noteAccent: true, add: 39 },
 ];
 
-/* 查詢通過後的兩個動作。舊站把「線上繳費」與「列印繳費說明單」放在同一頁，
-   任務卡要求兩個入口都要有，故並列兩張卡。實際付款流程不實作進雛形。 */
-const RESULT_ACTIONS = [
-  {
-    id: "pay",
-    title: "線上繳費",
-    icon: "fa-solid fa-credit-card",
-    desc: "選擇繳費管道並完成付款。共六種管道，各自的手續費不同。",
-  },
-  {
-    id: "print",
-    title: "列印繳費說明單",
-    icon: "fa-solid fa-print",
-    desc: "依選定管道出具繳費說明單（現金、郵政匯票、金融機構轉帳三種格式），供臨櫃或匯款時備查。",
-  },
-];
-
-/* 相關功能。無 href 者由 th-link-list 自動標為待建置，不給 `#` 假路徑。 */
-const RELATED_LINKS = [
-  { label: "線上申請退費（玉山國家公園）", href: "apply_5.html", kind: "internal" },
-  { label: "玉山可申請退費日期查詢" },
-  { label: "超商繳款單列印" },
-];
+/* 過期提示示意：查詢這個申請編號時跳出正式站的過期訊息（規格圖原文） */
+const DEMO_EXPIRED_SERIAL = "Y111219602";
 
 thPage({
   data() {
@@ -99,62 +68,27 @@ thPage({
       teamName: "",
       vcode: "",
       submitted: false,
-
-      navItems: [
-        { id: "scope", label: "適用範圍" },
-        { id: "query", label: "查詢繳費資料" },
-        { id: "links", label: "相關功能" },
-      ],
-
-      baseColumns: [
-        { key: "serial", label: "登山申請編號" },
-        { key: "dateIn", label: "入園日期" },
-        { key: "team", label: "隊伍名稱" },
-        { key: "leader", label: "領隊" },
-        { key: "members", label: "隊伍人數（含領隊）" },
-        { key: "payState", label: "繳費狀態" },
-      ],
-
-      /* 規格圖的表頭是兩層（中華民國人費用／外國人費用各跨三欄），
-         th-data-table 只支援單層表頭，故把群組名寫進各欄 label，不改元件。 */
-      feeColumns: [
-        { key: "date", label: "住宿日期" },
-        { key: "camp", label: "宿營地" },
-        { key: "priceLocal", label: "本國人單價（元）" },
-        { key: "peopleLocal", label: "本國人人數" },
-        { key: "subLocal", label: "本國人小計（元）" },
-        { key: "priceForeign", label: "外國人單價（元）" },
-        { key: "peopleForeign", label: "外國人人數" },
-        { key: "subForeign", label: "外國人小計（元）" },
-        { key: "dayTotal", label: "單日合計（元）" },
-      ],
-
-      methodColumns: [
-        { key: "no", label: "選項" },
-        { key: "name", label: "繳費管道" },
-        { key: "fee", label: "手續費與注意事項" },
-      ],
+      method: "",
     };
   },
 
   computed: {
-    camps() { return CAMPS; },
-    demoBase() { return DEMO_BASE; },
-    demoFees() { return DEMO_FEES; },
-    feeTotal() { return FEE_TOTAL; },
+    base() { return DEMO_BASE; },
+    fees() { return DEMO_FEES; },
+    feeTotal() { return DEMO_FEES.reduce((s, f) => s + f.dayTotal, 0); },
     payMethods() { return PAY_METHODS; },
-    resultActions() { return RESULT_ACTIONS; },
-    relatedLinks() { return RELATED_LINKS; },
     /* window.* 一律在這裡取，不在模組層（載入先後無保證） */
     applyCrumb() { return window.TH_APPLY_CRUMB; },
   },
 
   methods: {
-    reset() {
-      this.serial = "";
-      this.teamName = "";
-      this.vcode = "";
-      this.submitted = false;
+    search() {
+      if (this.serial.trim().toUpperCase() === DEMO_EXPIRED_SERIAL) {
+        this.submitted = false;
+        window.thAlert("本案件已超過繳費期限，並不允許繳費，本案件將予退件。");
+        return;
+      }
+      this.submitted = true;
     },
   },
 });

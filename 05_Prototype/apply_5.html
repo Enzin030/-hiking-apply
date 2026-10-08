@@ -33,53 +33,36 @@
 
   <th-header active="apply"></th-header>
 
+  <!-- 2026-10-08 使用者：內容照規格截圖調整（02_Spec/06c「線上申請退費(排雲)-查詢頁／退費資訊」），用現有元件——
+       標題照截圖「(排雲)」；說明依截圖順序逐段（退費原因改編號清單，保留雛形既有的 5 天／14 天新舊制）、兩個規定連結回到原位；
+       驗證身份補欄位檢核（訊息照規格 06c）；提醒＋「退費申請流程操作說明」為卡片下方的提醒區塊；
+       驗證後為「退費申請人資訊」＋「新增退費申請／回查詢頁」＋退費紀錄表（每列匯款帳戶維護／退款明細維護）。
+       原「申請前必須先完成的事」「退費規定」分卡、「實退金額須扣除銀行手續費 30 元」callout、清除鈕、欄位提示、
+       「可辦理的動作」卡為截圖沒有的組織方式或內容，拿掉。 -->
   <th-page-shell
-    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '線上申請退費']"
-    title="線上申請退費（玉山國家公園）"
-    lead="已取消入園者，於此驗證身分後申請退還排雲山莊、觀高山屋已繳之使用規費。"
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '線上申請退費(排雲)']"
+    title="線上申請退費(排雲)"
+    lead="已取消入園者，於此驗證身分後申請退還排雲山莊已繳之使用規費。"
     updated="2026-09-16">
 
-    <template #nav>
-      <th-page-nav :items="navItems"></th-page-nav>
-    </template>
-
-    <section class="th-card" id="before">
-      <div class="th-card-head">
-        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-        <h2 class="th-card-title">申請前必須先完成的事</h2>
-      </div>
-      <div class="th-card-body">
-        <!-- 先取消再退費是硬性前置，放在頁首第一個區塊。
-             使用者若先來這頁會白跑一趟，舊站也是把這段擺最前面。 -->
-        <th-callout type="warning">隊伍或隊員如果因故無法成行，務請自行於線上取消
-            「<a href="apply_2.html">資料線上異動/取消入園</a>」或以
-            <a href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。
-            <strong>如欲申請退費，請先取消入園後再提出申請。</strong></th-callout>
-      </div>
-    </section>
-
+    <template v-if="!verified">
     <section class="th-card" id="rules">
-      <div class="th-card-head">
-        <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
-        <h2 class="th-card-title">退費規定</h2>
-      </div>
-      <div class="th-card-body">
-        <h3 class="th-section-title">申請人資格</h3>
+      <div class="th-card-body grid gap-4">
+        <p>隊伍或隊員如果因故無法成行，務請自行於線上取消「\ 登山申請 \ <a href="apply_2.html">資料線上異動/取消入園</a>」或以<a href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。</p>
+        <p>如欲申請退還「排雲山莊使用規費」，請先取消入園後再提出申請。</p>
         <p>退費申請人應為原登山申請案之申請人、領隊或隊員等之任一員。如多個登山申請案之退費申請人及退費帳戶相同，得併案提出申請。</p>
-
-        <h3 class="th-section-title">申請退費原因</h3>
-        <!-- 五天與十四天是**依入園日切分的新舊制**，不是二選一，更不可合併成一條。
-             114-12-01 是分界日：當天起適用 5 天，之前適用 14 天。 -->
-        <th-data-table :columns="reasonColumns" :rows="reasonRows" row-key="no" table-class="th-table--zebra"></th-data-table>
-        <p class="th-table-note">第二、三款是依<strong>申請入園日</strong>切分的新舊制，不是擇一適用。</p>
-
-        <h3 class="th-section-title">退費方式與應備文件</h3>
+        <div>
+          <p>申請退費原因：</p>
+          <!-- 第 2、3 款是依申請入園日切分的新舊制（114-12-01 起 5 天、之前 14 天），不可合併；
+               規格截圖為舊版只有 14 天，雛形依較新的正式站正文保留兩款 -->
+          <ol class="list-decimal pl-6 mt-1 grid gap-1">
+            <li v-for="r in reasonRows" :key="r.no">{{ r.reason }}<span v-if="r.apply" class="text-slate-600">（{{ r.apply }}）</span></li>
+          </ol>
+        </div>
         <p>退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
-        <p>登山申請資料原則保留 2 年，如無法由線上申請退費，請依規以退費申請書提出申請。</p>
-        <th-callout>實退金額須扣除銀行手續費 30 元。</th-callout>
-
-        <h3 class="th-section-title">相關規定與說明</h3>
-        <th-link-list :items="refLinks"></th-link-list>
+        <p>登山申請資料原則保留2年，如無法由線上申請退費，請依規以退費申請書提出申請。</p>
+        <p>申請退還「排雲山莊」使用規費相關規定：<br /><a :href="refLinks.rule" target="_blank" rel="noopener noreferrer">{{ refLinks.rule }}</a></p>
+        <p>排雲山莊供餐及睡袋租賃等服務，因委外經營，相關退費規定請逕洽該公司。參考網址：<br /><a :href="refLinks.meal" target="_blank" rel="noopener noreferrer">{{ refLinks.meal }}</a></p>
       </div>
     </section>
 
@@ -105,7 +88,7 @@
             placeholder="請輸入退費申請人身分證字號"
             :value="sid"
             @input="sid = $event.target.value" />
-          <div class="th-field-hint">須為原登山申請案的申請人、領隊或隊員之一。</div>
+          <span v-if="errors.sid" class="th-field-error" role="alert">{{ errors.sid }}</span>
         </div>
 
         <div class="th-field">
@@ -126,6 +109,7 @@
               <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>寄送驗證密碼
             </button>
           </div>
+          <span v-if="errors.mobile" class="th-field-error" role="alert">{{ errors.mobile }}</span>
           <div class="th-field-hint" v-if="otpSent">已送出（雛形不發送真實簡訊，請直接填寫下方欄位）。</div>
         </div>
 
@@ -144,38 +128,46 @@
             @input="otp = $event.target.value" />
         </div>
 
-        <p class="th-field-hint">提醒：申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。</p>
-
-        <div class="flex flex-wrap gap-2 justify-end mt-2">
-          <button type="button" class="th-btn th-btn-secondary" @click="reset">
-            清除
-          </button>
-          <button type="button" class="th-btn th-btn-primary" @click="verified = true">
+        <div class="flex justify-end mt-2">
+          <button type="button" class="th-btn th-btn-primary" @click="verify">
             <i class="fa-solid fa-check" aria-hidden="true"></i>確定
           </button>
         </div>
-
-        <template v-if="verified">
-          <h3 class="th-section-title mt-6">退費申請人資訊</h3>
-          <th-data-table :columns="personColumns" :rows="demoPerson" row-key="sid" table-class="th-table--zebra"></th-data-table>
-
-          <h3 class="th-section-title mt-6">可辦理的動作</h3>
-          <div class="th-notice-grid items-stretch">
-            <section class="th-card flex flex-col" v-for="act in resultActions" :key="act.id">
-              <div class="th-card-head">
-                <i :class="act.icon" aria-hidden="true"></i>
-                <h4 class="th-card-title">{{ act.title }}</h4>
-              </div>
-              <div class="th-card-body flex flex-col gap-3 flex-1">
-                <p class="th-field-hint">{{ act.desc }}</p>
-                <th-todo-link :label="act.title" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
-              </div>
-            </section>
-          </div>
-        </template>
         </div>
       </div>
     </section>
+
+    <th-callout type="warning">提醒：申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。<br />
+      <a :href="refLinks.pdf" target="_blank" rel="noopener noreferrer">(下載「退費申請流程操作說明」操作流程範例)</a></th-callout>
+    </template>
+
+    <!-- 驗證通過：退費申請人資訊＋兩顆按鈕＋退費紀錄表（截圖「線上申請退費(排雲)-退費資訊」） -->
+    <template v-else>
+      <h3 class="th-section-title">退費申請人資訊</h3>
+      <section class="th-card" id="person">
+        <div class="th-card-body grid gap-4">
+          <th-data-table class="border border-slate-200 rounded-md" table-class="w-full whitespace-nowrap" :columns="personColumns" :rows="demoPerson" row-key="sid" caption="退費申請人資訊"></th-data-table>
+          <div class="flex flex-wrap justify-center gap-2">
+            <th-todo-link label="新增退費申請"></th-todo-link>
+            <button type="button" class="th-btn th-btn-ghost" @click="backToQuery">回查詢頁</button>
+          </div>
+          <th-data-table class="border border-slate-200 rounded-md" table-class="w-full" :columns="historyColumns" :rows="demoHistory" row-key="time" caption="退費申請紀錄">
+            <template #cell="{ row, column, value }">
+              <template v-if="column.key === 'bank'">({{ row.bankCode }})<br />{{ row.bankName }}</template>
+              <template v-else-if="column.key === 'account'">{{ row.holder }}<br />{{ row.accountNo }}<br />{{ row.branch }}</template>
+              <span v-else-if="column.key === 'copy'" class="th-todo-link">影本附件</span>
+              <span v-else-if="column.key === 'state'" :class="['th-flag', row.state === '審核完成' || row.state === '已退款' ? 'is-open' : 'is-proof']">{{ row.state }}</span>
+              <div v-else-if="column.key === 'fn'" class="flex flex-col gap-1 whitespace-nowrap">
+                <th-todo-link label="匯款帳戶維護"></th-todo-link>
+                <th-todo-link label="退款明細維護"></th-todo-link>
+              </div>
+              <template v-else>{{ value }}</template>
+            </template>
+          </th-data-table>
+          <p class="th-field-hint is-accent">實退金額＝所有退費總額－銀行手續費（同意貴處逕行扣收銀行手續費30元）</p>
+        </div>
+      </section>
+    </template>
   </th-page-shell>
 
   <th-quick-nav></th-quick-nav>

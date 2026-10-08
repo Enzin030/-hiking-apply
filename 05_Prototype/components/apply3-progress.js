@@ -22,7 +22,7 @@
    `con_apply_nation` 且併列。兩頁看起來像但不同構，不要為了統一而改任何一邊。
 
    ------------------------------------------------------------
-   columns 的 render 為什麼改走 slot
+   columns 的 render 為什麼改走 slot（以下為 2026-10-08 改結構前的說明，slot 分流做法沿用）
    ------------------------------------------------------------
    React 版三欄（隊伍／領隊、審核狀態、許可證）的 render 回傳 JSX 元素。
    th-data-table 的 render 只收字串（prop 傳函式再回 VNode 在 Vue 裡不自然），
@@ -32,37 +32,34 @@
 
 /* 大宗唯讀常數放模組層，不進 data()。
 
-   結果區示意資料（匿名假資料，非真實案件）。
-   欄位組成與狀態值皆 [待確認]——舊站查詢結果需真實案號才看得到。 */
-const DEMO_RESULTS = [
-  {
-    serial: "115090300127",
-    org: "玉山國家公園",
-    route: "玉山主峰線（塔塔加登山口）",
-    date: "2026-10-05 ～ 2026-10-06",
-    team: "晨曦登山隊",
-    leader: "王小明",
-    members: 6,
-    state: "已核准",
-    permit: true,
-  },
-  {
-    serial: "115082900461",
-    org: "林業及自然保育署",
-    route: "嘉明湖國家步道（向陽登山口）",
-    date: "2026-11-12 ～ 2026-11-14",
-    team: "山行者隊",
-    leader: "陳美芳",
-    members: 4,
-    state: "審核中",
-    permit: false,
-  },
+   結果區示意資料（匿名假資料，非真實案件）。2026-10-08 依規格截圖（02_Spec/06a「申請進度查詢-已通過／待處理」）改結構：
+   案件表頭（申請日期／案件編號／單位／申請項目）＋項目表（項目單位｜項目案件編號｜狀態｜功能，
+   狀態值照截圖「已通過／待處理」，已通過才有「下載許可證」）＋「國家公園行程計畫」＋「山屋及營地申請」。
+   示意案件含國家公園（已通過）與警政署入山證（待處理）兩個項目，兩種狀態一次看得到。 */
+const DEMO_CASE = {
+  applyDate: "2026-09-11",
+  caseSerial: "202609110001",
+  unit: "雪霸國家公園管理處",
+  item: "(3級) 雪山主峰(多日行程)",
+  team: "天眼1隊",
+  items: [
+    { unit: "國家公園", serial: "S115000019", state: "已通過" },
+    { unit: "警政署入山證", serial: "N115000233", state: "待處理" },
+  ],
+};
+const DEMO_PLAN = {
+  unit: "雪霸國家公園管理處",
+  start: "2026-09-16", end: "2026-09-17", days: "2 天", people: "4 人",
+  main: "雪山主峰線", sub: "(3級) 雪山主峰(多日行程)",
+  daysPlan: [["雪山登山口", "七卡山莊", "雪山東峰", "三六九山莊"], ["三六九山莊", "雪山東峰", "七卡山莊", "雪山登山口"]],
+};
+const DEMO_CAMP = [
+  { key: 1, date: "2026-09-16", place: "三六九山莊", need: 4, booked: 4, bed: "21、22、23、24" },
 ];
 
 const STATE_FLAG = {
-  已核准: "is-open",
-  審核中: "is-proof",
-  未通過: "is-closed",
+  已通過: "is-open",
+  待處理: "is-proof",
 };
 
 thPage({
@@ -74,48 +71,28 @@ thPage({
       vcode: "",
       submitted: false,
 
-      navItems: [
-        { id: "progress", label: "申請進度查詢" },
-        { id: "rules", label: "列印與退費規定" },
-      ],
-
-      // 表格欄位定義：label 逐字取自原 JSX，render 全數改由 cell slot 處理
       columns: [
-        { key: "serial", label: "申請編號" },
-        { key: "org", label: "受理機關" },
-        { key: "route", label: "申請路線" },
-        { key: "date", label: "入園（住宿）日期" },
-        { key: "team", label: "隊伍／領隊" },
-        { key: "state", label: "審核狀態" },
-        { key: "permit", label: "許可證" },
+        { key: "unit", label: "項目單位" },
+        { key: "serial", label: "項目案件編號" },
+        { key: "state", label: "狀態", align: "center" },
+        { key: "fn", label: "功能", align: "center" },
       ],
-
-      refundColumns: [
-        { key: "when", label: "取消時間（以起算日計）" },
-        { key: "refund", label: "退費比例" },
-      ],
-      refundRows: [
-        { when: "起算日前 5 日前取消成功", refund: "全額退還已付金額" },
-        { when: "起算日前 4 日取消成功", refund: "退還已付金額百分之五十" },
-        { when: "起算日前 3 日內取消，及住宿當日未到", refund: "不退還已付之金額" },
+      campColumns: [
+        { key: "date", label: "住宿日期" },
+        { key: "place", label: "住宿點" },
+        { key: "need", label: "需求床位數", align: "center" },
+        { key: "booked", label: "排定床位數", align: "center" },
+        { key: "bed", label: "床號" },
       ],
     };
   },
 
   computed: {
-    demoResults() { return DEMO_RESULTS; },
+    caseInfo() { return DEMO_CASE; },
+    plan() { return DEMO_PLAN; },
+    campRows() { return DEMO_CAMP; },
     stateFlag() { return STATE_FLAG; },
     /* window.* 一律在這裡取，不在模組層（載入先後無保證） */
     applyCrumb() { return window.TH_APPLY_CRUMB; },
-  },
-
-  methods: {
-    reset() {
-      this.serial = "";
-      this.nation = "";
-      this.sid = "";
-      this.vcode = "";
-      this.submitted = false;
-    },
   },
 });
