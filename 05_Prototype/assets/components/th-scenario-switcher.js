@@ -100,12 +100,10 @@
           { id: "camp", label: "山屋" },
         ];
       },
-      /* 複合情境：一趟多個子申請（設計稿 §0、§6） */
-      combos() {
-        return [
-          { id: "camp+npa", label: "山屋＋警政署入山證" },
-        ].concat(PARK_COMBOS.map(function (c) { return { id: c.id, label: c.label }; }));
-      },
+      /* 複合情境：一趟多個子申請（設計稿 §0、§6）。2026-10-08 使用者裁示「先統一步驟就好，不要呈現複合情境」——
+         面板不列（回傳空陣列，整組不顯示）；頁面上的複合程式（?npa=1、?camps=）保留未刪，要恢復把下面清單放回即可：
+         [{ id: "camp+npa", label: "山屋＋警政署入山證" }].concat(PARK_COMBOS.map(c => ({ id: c.id, label: c.label }))) */
+      combos() { return []; },
       needCabin() { return this.kind === "camp" || this.kind === "camp+npa"; },
       steps() {
         return [
@@ -232,8 +230,8 @@
                 <option v-for="a in areas" :key="a.id" :value="a.id">{{ a.label }}</option>
               </select>
             </template>
-            <div class="th-scn-label">複合情境</div>
-            <div class="th-chip-row">
+            <div v-if="combos.length" class="th-scn-label">複合情境</div>
+            <div v-if="combos.length" class="th-chip-row">
               <button v-for="k in combos" :key="k.id" type="button" class="th-chip" :class="{ 'is-active': kind === k.id }" @click="kind = k.id">{{ k.label }}</button>
             </div>
             <template v-if="needCabin">

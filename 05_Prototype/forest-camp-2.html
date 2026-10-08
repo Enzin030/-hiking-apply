@@ -44,8 +44,6 @@
          「尚需完成」改為按下一步時提示，同其他六步驟頁） -->
     <div class="th-form-layout mt-6">
       <main class="th-form-main" role="main">
-        <!-- 複合申請（山屋＋警政署入山證，2026-10-08）：兩段各自標出項目與審查機關；單一山屋申請時不顯示 -->
-        <h2 v-if="hasNpa" class="th-section-title">① {{ cabin.name }} 住宿申請<span class="th-section-title-sub">審查機關：{{ cabin.manager }}</span></h2>
         <!-- 行程摘要：改用摘要卡，與隊伍資料／確認頁同一張（th-summary-card，照片取路線列表同一張；使用者 2026-10-07）；
              出發人數改在隊伍資料決定，摘要不列 -->
         <div class="th-summary-card mb-5">
@@ -188,7 +186,7 @@
         </section>
 
         <template v-if="hasNpa">
-          <h2 class="th-section-title mt-10">② 警政署入山證申請<span class="th-section-title-sub">審查機關：內政部警政署（日期、天數同上方山屋申請）</span></h2>
+          <!-- 複合申請（山屋＋警政署入山證，2026-10-08）：入山證卡接在付款方式之後；原「①山屋／②入山證」段落標題使用者裁示拿掉 -->
           <section id="sec-npa" class="th-card mb-5">
             <div class="th-card-head">
               <h2 class="th-card-title">警政署入山證申請</h2>

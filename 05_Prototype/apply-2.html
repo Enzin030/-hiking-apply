@@ -75,26 +75,21 @@
           </div>
         </template>
 
-        <!-- 自然保護區域、山屋：勾選方式比照國家公園同意書（使用者 2026-10-08）——大標換成注意事項全名，
-             規定全文（含原勾選文字「以上說明，本人業已完全明瞭⋯」）為唯一一個可勾選的條目；
-             只有一項，不加右側閱讀定位（本頁內容）。預設已勾（必填預帶）。 -->
+        <!-- 自然保護區域、山屋：大標為注意事項全名（使用者 2026-10-08）；全文與勾選列維持卡片＋「＊以上說明，本人業已完全明瞭⋯」
+             勾選（粗體＋紅色星號，使用者 2026-10-07）——同日曾改為同意書式單一條目，使用者裁示改回、大標不變。
+             不加右側閱讀定位（本頁內容）。預設已勾（必填預帶）。 -->
         <template v-else>
           <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug th-consent-lead">
             {{ b.title }}
           </p>
-          <section :class="['th-consent-item', { 'is-acked': noticeAcked[b.id] }]"
-                   role="button" tabindex="0"
-                   :aria-pressed="noticeAcked[b.id] ? 'true' : 'false'"
-                   @click="$event.target.closest('a,button') || toggleNotice(b.id)"
-                   @keydown.enter="$event.target.closest('a,button') || ($event.preventDefault(), toggleNotice(b.id))"
-                   @keydown.space.prevent="toggleNotice(b.id)">
-            <div class="th-consent-item-lead" aria-hidden="true">
-              <span class="th-consent-item-box"><i class="fa-solid fa-check"></i></span>
-            </div>
-            <div class="th-consent-item-body">
-              <div class="th-consent-item-text grid gap-3">
-                <p v-for="(t, i) in b.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
-                <p class="font-semibold">{{ b.agree }}</p>
+          <section class="th-card">
+            <div class="th-card-body grid gap-3">
+              <p v-for="(t, i) in b.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
+              <div class="th-field pt-1">
+                <label class="flex items-start gap-2 font-semibold cursor-pointer">
+                  <input type="checkbox" v-model="noticeAcked[b.id]" class="mt-1" />
+                  <span><span class="req">*</span>{{ b.agree }}</span>
+                </label>
               </div>
             </div>
           </section>
@@ -174,25 +169,20 @@
             </div>
           </section>
 
-          <!-- 複合申請：國家公園路線＋林保署山屋（2026-10-08，?camps=）——各山屋注意事項為一個可勾選條目，
+          <!-- 複合申請：國家公園路線＋林保署山屋（2026-10-08，?camps=）——各山屋注意事項：大標＋全文卡片＋勾選列，
                呈現同同意聲明模式的山屋區塊；不列入右側閱讀定位（那是國家公園條文的導覽） -->
           <template v-for="b in campBlocks" :key="b.id">
             <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 mt-10 leading-snug th-consent-lead">
               {{ b.title }}
             </p>
-            <section :class="['th-consent-item', { 'is-acked': noticeAcked[b.id] }]"
-                     role="button" tabindex="0"
-                     :aria-pressed="noticeAcked[b.id] ? 'true' : 'false'"
-                     @click="$event.target.closest('a,button') || toggleNotice(b.id)"
-                     @keydown.enter="$event.target.closest('a,button') || ($event.preventDefault(), toggleNotice(b.id))"
-                     @keydown.space.prevent="toggleNotice(b.id)">
-              <div class="th-consent-item-lead" aria-hidden="true">
-                <span class="th-consent-item-box"><i class="fa-solid fa-check"></i></span>
-              </div>
-              <div class="th-consent-item-body">
-                <div class="th-consent-item-text grid gap-3">
-                  <p v-for="(t, i) in b.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
-                  <p class="font-semibold">{{ b.agree }}</p>
+            <section class="th-card">
+              <div class="th-card-body grid gap-3">
+                <p v-for="(t, i) in b.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
+                <div class="th-field pt-1">
+                  <label class="flex items-start gap-2 font-semibold cursor-pointer">
+                    <input type="checkbox" v-model="noticeAcked[b.id]" class="mt-1" />
+                    <span><span class="req">*</span>{{ b.agree }}</span>
+                  </label>
                 </div>
               </div>
             </section>
