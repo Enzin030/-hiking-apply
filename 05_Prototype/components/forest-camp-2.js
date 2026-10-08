@@ -99,6 +99,15 @@
    上面「nights／cabin 都只從網址讀一次」的敘述自此不成立。網址的 start／nights 仍當初值
    （從隊伍資料按上一步回來的 backUrl 會帶）。同意書頁帶 ?new=1 進來＝新的一張申請。
    元件總覽（?showcase=1）也一併在本頁：日期卡與概況表用總覽山屋。
+
+   ------------------------------------------------------------
+   複合申請：山屋＋警政署入山證（2026-10-08）
+   ------------------------------------------------------------
+   ?npa=1（同意書頁轉來，正式站 apply_forest_camp_1?hasNpa=1）或暫存 hasNpa：頁面分兩段，
+   「① 山屋住宿申請」（原有各卡）與「② 警政署入山證申請」（共用元件 th-npa-permit，同 apply_npa_2）。
+   入山證是附掛型項目，沿用山屋這段的出發日期與天數（設計稿方案 B：整趟預設），不另選日期。
+   入山證預帶示意資料（前往地點、路線圖、計畫書，下一步時檢核同 apply_npa_2），存進暫存 npa／hasNpa；
+   第 3～5 步據此顯示警政署委託文字、確認頁入山證區塊。單一山屋申請時完全不出現。
    ============================================================ */
 
 /* 付款方式照正式站 apply_forest_camp_2（2026-09-29 實走）：只有匯款／線上刷卡，畫面註明「訂房後不可更改」。
@@ -149,6 +158,25 @@ const FC2_NIGHTS = parseInt(FC2_P.get("nights") || "0", 10) || Math.min(2, FC2_C
 /* 第 1 步不再選出發人數（2026-10-07）：headcount 只當示意預帶的每晚數量，人數改在隊伍資料決定 */
 const FC2_HEADCOUNT = parseInt(FC2_P.get("headcount") || "4", 10);
 
+/* 複合申請：附掛警政署入山證（見檔頭） */
+const FC2_NPA = FC2_P.get("npa") === "1";
+/* 入山證示意預帶（必填預帶，使自動前進不被擋）：前往地點名稱取正式站開放狀態頁「警政署入山」的地點原文
+   （.scratch/outputs/official_con_line.json；該檔的 value 是開放狀態頁代碼、不是入山證地點代碼，所以代碼為示意 S-*），
+   路線圖取上河詞庫中涵蓋該山屋的圖幅，計畫書依山屋天數產生 */
+const FC2_NPA_PLACE = {
+  jiaming:   { name: "嘉明湖(臺東縣-海端鄉)",   sub: "TM19" },   // 南二段縱走（含向陽、嘉明湖）
+  xiangyang: { name: "向陽山(臺東縣-海端鄉)",   sub: "TM19" },
+  tianchi:   { name: "能高越嶺(花蓮縣-秀林鄉)", sub: "TM13" },   // 能高越嶺
+  guigu:     { name: "檜谷山莊(屏東縣-泰武鄉)", sub: "TM22" },   // 北大武山登峰
+};
+function fc2NpaDemo(cabin, nights) {
+  const m = FC2_NPA_PLACE[FC2_ROUTE_ID] || FC2_NPA_PLACE.jiaming;
+  const place = { code: "S-" + FC2_ROUTE_ID, name: m.name, desc: cabin.name + "，" + cabin.location };
+  const lines = [];
+  for (let i = 0; i <= nights; i++) lines.push("D" + (i + 1) + "：" + (i === 0 ? "登山口→" + cabin.name : i === nights ? cabin.name + "→登山口" : cabin.name + "周邊") + "。");
+  return { reason: "登山健行", places: [place], lib: "TM00", sub: m.sub, plan: lines.join("\n") };
+}
+
 /* 山屋/營地概況（原第 1 步，2026-10-07 改版）：原型用固定種子模擬每日剩餘數量與申請數，不是隨機——重新整理數字要一樣 */
 function fc2Seed(dateStr, fid) { return (dateStr + fid).split("").reduce((a, c) => a + c.charCodeAt(0), 0); }
 const FC2_WEEK = ["日", "一", "二", "三", "四", "五", "六"];
@@ -196,10 +224,13 @@ thPage({
     const demoAlloc = fc2MakeInitAlloc();
     const first = FC2_CABIN.facilities[0];
     if (first) Object.keys(demoAlloc).forEach(k => { demoAlloc[k][first.id] = Math.min(FC2_HEADCOUNT, first.max || FC2_HEADCOUNT); });
+    const hasNpa = FC2_NPA || !!st.hasNpa;
+    const npa = (hasNpa && st.npa) || fc2NpaDemo(FC2_CABIN, FC2_NIGHTS);
     if (FC2_SHOWCASE) {   // 總覽：第 1 晚已訂、其餘未訂；隊名留空
       Object.keys(demoAlloc).forEach(k => { if (k !== "0") FC2_CABIN.facilities.forEach(f => { demoAlloc[k][f.id] = 0; }); });
       return { teamName: "", payment: "remit", alloc: demoAlloc, stayAreas: [FC2_CABIN.stayAreas[1]], inArea: FC2_CABIN.gateAreas[0], outArea: FC2_CABIN.gateAreas[1],
-               startDate: FC2_START, days: FC2_NIGHTS + 1, month: FC2_START.slice(0, 7), room: {}, activeNavIndex: 0 };
+               startDate: FC2_START, days: FC2_NIGHTS + 1, month: FC2_START.slice(0, 7), room: {}, activeNavIndex: 0,
+               hasNpa: hasNpa, npa: npa };
     }
     return {
       teamName: same ? st.team || "" : "天眼1隊",
@@ -213,6 +244,8 @@ thPage({
       days: FC2_NIGHTS + 1,   // 行程天數（含下山日）；晚數＝天數－1（computed nights）
       month: FC2_START.slice(0, 7),   // 概況表目前顯示的月份 YYYY-MM
       room: {},   // 第 i 晚下拉選的房型（尚未填數量時記住選擇）
+      hasNpa: hasNpa,   // 複合：附掛警政署入山證
+      npa: npa,
       activeNavIndex: 0,   // 本頁內容導覽目前項目
     };
   },
@@ -252,7 +285,7 @@ thPage({
         { key: "basic", sec: "sec-basic", label: "路線與基本資料", ok: !!this.startDate && this.teamName.trim().length >= 2 && this.stayValid },
         { key: "room", sec: "sec-room", label: "山屋及營地申請", ok: this.nightsValid },
         { key: "pay", sec: "sec-pay", label: "付款方式", ok: this.payment !== "" },
-      ];
+      ].concat(this.hasNpa ? [{ key: "npa", sec: "sec-npa", label: "警政署入山證申請", ok: this.npaErrors().length === 0 }] : []);
     },
     completedSectionsCount() { return this.sideItems.filter(it => it.ok).length; },
     /* 交給隊伍資料的預設人數：每晚訂量的最大值（至少 1）；實際人數在隊伍資料增減 */
@@ -321,6 +354,17 @@ thPage({
     remain(f, d) { return Math.max(0, f.max - (fc2Seed(d, f.id) % (f.max + 1))); },
     applied(f, d) { return fc2Seed(d + "a", f.id) % (f.max * 2 + 1); },
 
+    /* 附掛入山證的檢核（同 apply_npa_2 check()） */
+    npaErrors() {
+      const e = [];
+      const n = this.npa;
+      if (!n.places.length) e.push("請至少加入一個前往地點");
+      if (n.places.some(p => !p.desc)) e.push("前往地點描述未填寫");
+      const lib = (window.TH_NPA_LIBS || []).find(l => l.id === n.lib);
+      if (!n.lib || (!n.sub && (!lib || lib.subs.length))) e.push("請選擇登山路線圖");
+      if (!n.plan) e.push("請填寫登山計畫書");
+      return e;
+    },
     /* 本頁內容導覽：捲到區塊（欄位則捲到所在 .th-field），同 apply_03 */
     scrollToSection(id, i) {
       this.activeNavIndex = i;
@@ -379,8 +423,10 @@ thPage({
       if (!this.stayValid) e.push("停留地點未選擇");
       if (!this.nightsValid) e.push("每晚至少選 1 個床位或營位");
       if (this.payment === "") e.push("請選擇付款方式");
+      if (this.hasNpa) e.push(...this.npaErrors());
       if (e.length) { window.thAlertList(e); return; }
       const back = new URLSearchParams({ route: FC2_ROUTE_ID, start: this.startDate, nights: this.nights, headcount: this.headcount });
+      if (this.hasNpa) back.set("npa", "1");
       window.thFcState.save({
         kind: "camp",
         title: "山屋住宿申請",
@@ -397,13 +443,17 @@ thPage({
         alloc: JSON.parse(JSON.stringify(this.alloc)),
         total: this.grandTotal,
         stayAreas: this.stayAreas.slice(), inArea: this.inArea, outArea: this.outArea,
+        /* 複合：附掛入山證（單一山屋時清掉，避免殘留） */
+        hasNpa: this.hasNpa, npa: this.hasNpa ? JSON.parse(JSON.stringify(this.npa)) : undefined,
       });
       window.location.href = "apply_03.html";
     },
 
     /* 上一步回第一步「閱讀同意書」（2026-10-08 同意聲明移到第一步、日期確認併入本頁） */
     goBack() {
-      window.location.href = "apply-2.html?" + new URLSearchParams({ kind: "camp", route: FC2_ROUTE_ID });
+      const q = new URLSearchParams({ kind: "camp", route: FC2_ROUTE_ID });
+      if (this.hasNpa) q.set("npa", "1");
+      window.location.href = "apply-2.html?" + q;
     },
   },
 });

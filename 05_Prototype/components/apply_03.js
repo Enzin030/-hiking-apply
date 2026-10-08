@@ -62,8 +62,9 @@ thPage({
     planRows() { return window.thApply6PlanRows(this.st, window.thTodayValue()); },
     /* 正式站 apply_03：只有山屋顯示「本案件申請人與領隊須為同一人」（提醒，不鎖定；2026-10-05 更正） */
     leaderNote() { return this.st.kind === "camp"; },
+    /* 正式站：有警政署入山資料時為「向警政署提出入山申請」——含複合申請（山屋＋入山證，2026-10-08） */
     consentText() {
-      return this.st.kind === "npa"
+      return this.st.kind === "npa" || this.st.npa
         ? "請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向警政署提出入山申請相關事宜，以免違反相關法令"
         : "請確認領隊或隊員同意委託申請人代理蒐集當事人個人資料，並委託其上網向國家公園管理處提出登山申請相關事宜，以免違反相關法令";
     },

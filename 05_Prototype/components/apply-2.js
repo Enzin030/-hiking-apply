@@ -176,7 +176,9 @@ const A2_PARK_UNITS = ["shei-pa", "taroko"];
      area ：?unit=&tmpc_id=<cId>&tmpf_id=<fId>       → apply_forest_area_2.html
      camp ：?route=<山屋鍵>                          → forest-camp-2.html
    聲明內容與勾選照原第 5 步 apply_05（現已不連入）。內容以 blocks[] 呈現，
-   一個區塊對一個子申請——日後複合申請（一趟多個項目）只是多幾個區塊。
+   一個區塊對一個子申請——複合申請（一趟多個項目）就是多幾個區塊：
+     山屋＋警政署入山證（2026-10-08，?kind=camp&route=…&npa=1，正式站對應 apply_forest_camp_1?hasNpa=1）
+     ＝山屋注意事項＋警政署條目兩個區塊，全部勾選才可同意；npa=1 原樣轉給行程規劃頁。
    **本頁不寫 thFcState**：行程規劃頁收到 new=1 會 reset，寫了也會被清掉；
    同意是進入申請的關卡，同國家公園，後續步驟不再檢查。
    取代原本到不了的「申請前摘要」模式（?unit=police／forestry-area，自創文案、正式站沒有）。 */
@@ -190,14 +192,14 @@ function a2NoticeBlocks(kind) {
   q.delete("kind");
   q.set("new", "1");
   const a6 = window.TH_APPLY6_NOTICES || { npa: {}, area: {}, areaAgree: "" };
+  /* 警政署條目：隱私權保護政策（連結）、作業使用說明（彈窗）、正式站 body 三段（含「我同意並了解以上⋯」） */
+  const npaBlock = () => ({ id: "npa", kind: "npa", items: [{ id: "privacy", type: "privacy" }, { id: "manual", type: "manual" }]
+    .concat(((a6.npa && a6.npa.body) || []).map((t, i) => ({ id: "body" + i, type: "text", text: t }))) });
   if (kind === "npa") {
-    /* 警政署條目：隱私權保護政策（連結）、作業使用說明（彈窗）、正式站 body 三段（含「我同意並了解以上⋯」） */
-    const items = [{ id: "privacy", type: "privacy" }, { id: "manual", type: "manual" }]
-      .concat(((a6.npa && a6.npa.body) || []).map((t, i) => ({ id: "body" + i, type: "text", text: t })));
     return {
       crumb: "警政署入山證",
       next: "apply_npa_2.html?" + q.toString(),
-      blocks: [{ id: "npa", kind: "npa", items: items }],
+      blocks: [npaBlock()],
     };
   }
   if (kind === "area") {
@@ -229,7 +231,7 @@ function a2NoticeBlocks(kind) {
       title: notice.title || "山屋/營地",   // 山屋注意事項全名直接當卡片標題（使用者 2026-10-07）
       paras: notice.paras,
       agree: a6.areaAgree,
-    }],
+    }].concat(q.get("npa") === "1" ? [npaBlock()] : []),   // 複合：山屋＋警政署入山證
   };
 }
 

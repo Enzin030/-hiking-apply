@@ -4,6 +4,7 @@
    左下角圓鈕（右下是快捷選單與回到頂端），展開後列出全部申請類別 × 五個步驟，點步驟即前往：
      類別：玉山／雪霸／太魯閣國家公園、警政署入山證、自然保護區域（23 區下拉）、山屋（4 間）
      步驟：閱讀同意書 → 行程規劃 → 隊伍資料 → 確認資料 → 申請完成（四類流程 2026-10-08 起相同）
+     複合情境（同日起陸續加入）：山屋＋警政署入山證（camp+npa，可選 4 間山屋）
    掛在申請流程各頁（apply-1～5、apply-2 兩種模式、六步驟行程規劃、apply_03、apply_06），其他頁不掛。
 
    **第 3 步以後靠「自動前進」，不手寫假資料**：先開該類別的行程規劃頁（帶 new=1，等同新的一張），
@@ -43,6 +44,7 @@
     if (page === "apply-2.html") {
       r.step = 1;
       r.kind = q.get("kind") || (PARKS.indexOf(q.get("unit")) >= 0 ? q.get("unit") : "yushan");
+      if (r.kind === "camp" && q.get("npa") === "1") r.kind = "camp+npa";
       r.area = q.get("tmpc_id") || "";
       r.cabin = q.get("route") || "";
     } else if (page === "apply-3.html" || page === "apply-4.html" || page === "apply-5.html") {
@@ -51,9 +53,10 @@
       r.kind = PARKS.indexOf(u) >= 0 ? u : "yushan";
     } else if (page === "apply_npa_2.html") { r.step = 2; r.kind = "npa"; }
     else if (page === "apply_forest_area_2.html") { r.step = 2; r.kind = "area"; r.area = q.get("tmpc_id") || st.areaCid || ""; }
-    else if (page === "forest-camp-2.html") { r.step = 2; r.kind = "camp"; r.cabin = q.get("route") || st.route || ""; }
+    else if (page === "forest-camp-2.html") { r.step = 2; r.kind = (q.get("npa") === "1" || st.hasNpa) ? "camp+npa" : "camp"; r.cabin = q.get("route") || st.route || ""; }
     else if (page === "apply_03.html" || page === "apply_06.html") {
       r.kind = st.kind || "camp";
+      if (r.kind === "camp" && st.hasNpa) r.kind = "camp+npa";
       r.area = st.areaCid || "";
       r.cabin = st.route || "";
       r.step = page === "apply_03.html" ? 3 : 4;   // 申請完成＝確認頁送出後的成功訊息（2026-10-08 起四類相同），沒有獨立畫面
@@ -86,6 +89,13 @@
           { id: "camp", label: "山屋" },
         ];
       },
+      /* 複合情境：一趟多個子申請（設計稿 §0、§6） */
+      combos() {
+        return [
+          { id: "camp+npa", label: "山屋＋警政署入山證" },
+        ];
+      },
+      needCabin() { return this.kind === "camp" || this.kind === "camp+npa"; },
       steps() {
         return [
           { n: 1, label: "閱讀同意書" },
@@ -104,7 +114,7 @@
         var c = this.cur;
         if (c.kind !== this.kind) return false;
         if (this.kind === "area") return c.area === this.area;
-        if (this.kind === "camp") return c.cabin === this.cabin;
+        if (this.needCabin) return c.cabin === this.cabin;
         return true;
       },
     },
@@ -142,7 +152,8 @@
           var aq = "tmpc_id=" + encodeURIComponent(this.area) + (area.fId ? "&tmpf_id=" + area.fId : "");
           return step === 1 ? "apply-2.html?kind=area&" + aq : "apply_forest_area_2.html?" + aq + "&new=1";
         }
-        return step === 1 ? "apply-2.html?kind=camp&route=" + this.cabin : "forest-camp-2.html?route=" + this.cabin + "&new=1";
+        var npa = k === "camp+npa" ? "&npa=1" : "";
+        return step === 1 ? "apply-2.html?kind=camp&route=" + this.cabin + npa : "forest-camp-2.html?route=" + this.cabin + npa + "&new=1";
       },
       go(step) {
         if (this.busy) return;
@@ -205,7 +216,11 @@
                 <option v-for="a in areas" :key="a.id" :value="a.id">{{ a.label }}</option>
               </select>
             </template>
-            <template v-if="kind === 'camp'">
+            <div class="th-scn-label">複合情境</div>
+            <div class="th-chip-row">
+              <button v-for="k in combos" :key="k.id" type="button" class="th-chip" :class="{ 'is-active': kind === k.id }" @click="kind = k.id">{{ k.label }}</button>
+            </div>
+            <template v-if="needCabin">
               <div class="th-scn-label">山屋</div>
               <div class="th-chip-row">
                 <button v-for="c in cabins" :key="c.id" type="button" class="th-chip" :class="{ 'is-active': cabin === c.id }" @click="cabin = c.id">{{ c.label }}</button>

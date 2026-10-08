@@ -47,9 +47,10 @@
       </template>
 
       <template v-for="b in notice.blocks" :key="b.id">
-        <!-- 警政署：大標＋整列可點的條目，逐項點閱全部勾選才可同意（同國家公園同意書） -->
+        <!-- 警政署：大標＋整列可點的條目，逐項點閱全部勾選才可同意（同國家公園同意書）；
+             複合申請時排在其他區塊之後，上方留間距（mt-10） -->
         <template v-if="b.kind === 'npa'">
-          <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug th-consent-lead">
+          <p :class="{ 'mt-10': notice.blocks.length > 1 && b !== notice.blocks[0] }" class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug th-consent-lead">
             須先點閱以下說明後，始可進行後續之申請作業
           </p>
           <div>
