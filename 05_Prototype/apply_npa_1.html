@@ -27,7 +27,7 @@
   <th-page-shell :trail="['登山申請', applyCrumb, '警政署入山證', '日期確認']" title="警政署入山證申請">
 
     <template #stepper>
-      <th-fc-stepper :current="1"></th-fc-stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
     <!-- 2026-10-02 使用者要求改為與其他路線（三管處行程規劃頁 apply-3）相同的元件樣式：
@@ -70,7 +70,7 @@
 
     <!-- 置底按鈕置中，比照 apply-3 -->
     <div class="flex flex-wrap justify-center gap-3 mt-12">
-      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</a>
+      <a class="th-btn th-btn-ghost" :href="backUrl"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</a>
       <button type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>

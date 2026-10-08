@@ -13,10 +13,12 @@
   components → pages），順序即層級。階段 4 前另有 styles/shared.css 排在
   它之前，該檔已於階段 4 退場，**不要再加回來**。
 
-  **本頁有兩種模式**，由 ?unit 決定，載入後不會再切換：
-    forestry-area／police → 申請前摘要（SummaryPage）
-    其餘（yushan／shei-pa／taroko／無）→ 逐條同意書（NationalParkConsent）
-  兩個模式各自是一個 <div data-screen-label="…">，與原 JSX 的結構相同。
+  **本頁有兩種模式**，由 ?kind 決定，載入後不會再切換：
+    kind＝npa／area／camp → 同意聲明（2026-10-08 由六步驟第 5 步 apply_05 移來，見 components/apply-2.js）
+    其餘（?unit＝yushan／shei-pa／taroko／無）→ 逐條同意書（NationalParkConsent）
+  兩個模式各自是一個 <div data-screen-label="…">。
+  （原「申請前摘要」模式 ?unit＝police／forestry-area 沒有連結可到，2026-10-08 由同意聲明模式取代；
+   pages.css 的 .p-apply2-sum-* 因此不再使用，未清理）
   **data-screen-label 沒有掛在 #th-app 上**：那是掛載容器，樣板改不到它的屬性，
   而這頁的標籤是兩種模式各一個字串。其餘單一模式的頁仍掛在 #th-app。
 
@@ -34,57 +36,86 @@
 <!-- 掛載契約見 assets/app-boot.js：容器 id 固定 #th-app、包住全頁、已遷移頁不留 #root -->
 <div id="th-app" v-cloak>
 
-  <!-- ============ 摘要模式（forestry-area／police）============ -->
-  <div v-if="mode === 'summary'" data-screen-label="02 申請前摘要">
+  <!-- ============ 同意聲明模式（kind＝npa／area／camp）============
+       2026-10-08 使用者裁示：警政署、自然保護區域、山屋的同意聲明由第 5 步移到第一步，與國家公園同意書整合在本頁。
+       內容、勾選照原 apply_05；一個區塊對一個子申請（blocks），按鈕照國家公園「不同意／同意」。 -->
+  <div v-if="mode === 'notice'" data-screen-label="六步驟-01 閱讀同意書">
     <th-header active="apply"></th-header>
-    <th-page-shell :trail="['登山申請', applyCrumb, '申請前摘要']" :title="cfg.title" :bare="true">
+    <th-page-shell :trail="['登山申請', applyCrumb, notice.crumb, '閱讀同意書']" title="閱讀同意書">
       <template #stepper>
-        <th-stepper :current="2"></th-stepper>
+        <th-fc-stepper :current="1"></th-fc-stepper>
       </template>
 
-      <!-- 路線資訊欄 -->
-      <div v-if="routeData" class="p-apply2-sum-routebar">
-        <span class="p-apply2-sum-routeicon" :style="{ background: cfg.color }">
-          <i :class="cfg.icon" class="p-apply2-sum-routeicon-i" aria-hidden="true"></i>
-        </span>
-        <div>
-          <div class="p-apply2-sum-routename">{{ routeData.name }}</div>
-          <div class="p-apply2-sum-routemeta">{{ cfg.agencyName }} · {{ routeData.subroute }}</div>
-        </div>
-      </div>
+      <template v-for="b in notice.blocks" :key="b.id">
+        <!-- 警政署：大標＋整列可點的條目，逐項點閱全部勾選才可同意（同國家公園同意書） -->
+        <template v-if="b.kind === 'npa'">
+          <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 leading-snug th-consent-lead">
+            須先點閱以下說明後，始可進行後續之申請作業
+          </p>
+          <div>
+            <section v-for="it in b.items" :key="it.id"
+                     :class="['th-consent-item', { 'is-acked': noticeAcked[b.id + ':' + it.id] }]"
+                     role="button" tabindex="0"
+                     :aria-pressed="noticeAcked[b.id + ':' + it.id] ? 'true' : 'false'"
+                     @click="$event.target.closest('a,button') || toggleNotice(b.id + ':' + it.id)"
+                     @keydown.enter="$event.target.closest('a,button') || ($event.preventDefault(), toggleNotice(b.id + ':' + it.id))"
+                     @keydown.space.prevent="toggleNotice(b.id + ':' + it.id)">
+              <div class="th-consent-item-lead" aria-hidden="true">
+                <span class="th-consent-item-box"><i class="fa-solid fa-check"></i></span>
+              </div>
+              <div class="th-consent-item-body">
+                <div class="th-consent-item-text">
+                  <a v-if="it.type === 'privacy'" class="th-inline-link" :href="npaText.privacyUrl" target="_blank" rel="noopener noreferrer" @click="ackNotice(b.id + ':' + it.id)">隱私權保護政策<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a>
+                  <button v-else-if="it.type === 'manual'" type="button" class="th-inline-link" @click="openManual(b.id + ':' + it.id)">作業使用說明</button>
+                  <template v-else>{{ it.text }}</template>
+                </div>
+              </div>
+            </section>
+          </div>
+        </template>
 
-      <!-- 注意事項列表 -->
-      <div class="p-apply2-sum-card">
-        <div class="p-apply2-sum-cardhead">
-          <i class="ph-bold ph-info p-apply2-sum-cardhead-i" :style="{ color: cfg.color }" aria-hidden="true"></i>
-          <span class="p-apply2-sum-cardtitle">申請前請確認以下事項</span>
-        </div>
+        <!-- 自然保護區域、山屋：規定全文＋勾選列（粗體＋紅色星號，使用者 2026-10-07） -->
+        <section v-else class="th-card">
+          <div class="th-card-head">
+            <i :class="b.icon" aria-hidden="true"></i>
+            <h2 class="th-card-title">{{ b.title }}</h2>
+          </div>
+          <div class="th-card-body grid gap-3">
+            <p v-for="(t, i) in b.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
+            <div class="th-field pt-1">
+              <label class="flex items-start gap-2 font-semibold cursor-pointer">
+                <input type="checkbox" v-model="noticeAcked[b.id]" class="mt-1" />
+                <span><span class="req">*</span>{{ b.agree }}</span>
+              </label>
+            </div>
+          </div>
+        </section>
+      </template>
 
-        <div v-for="(n, i) in cfg.notices" :key="i" class="p-apply2-sum-noticerow"
-             :style="{ borderBottom: i < cfg.notices.length - 1 ? '1px solid var(--slate-100)' : 'none',
-                       background: n.warn ? 'var(--warning-bg)' : 'var(--bg-1)' }">
-          <span class="p-apply2-sum-noticeicon"
-                :style="{ background: n.warn ? '#fef3c7' : 'var(--bg-mist-2)' }">
-            <i :class="n.icon" class="p-apply2-sum-noticeicon-i"
-               :style="{ color: n.warn ? 'var(--warning-fg)' : cfg.color }" aria-hidden="true"></i>
-          </span>
-          <!-- 原碼用 dangerouslySetInnerHTML：注意事項含 <strong> 標記 -->
-          <div class="p-apply2-sum-noticetext"
-               :style="{ color: n.warn ? 'var(--warning-fg)' : 'var(--fg-2)' }"
-               v-html="n.text"></div>
-        </div>
-      </div>
-
-      <!-- 操作按鈕 -->
-      <div class="p-apply2-sum-actions">
+      <div class="p-apply2-actions">
         <button class="th-btn th-btn-ghost" @click="goApply1">
-          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>不同意
         </button>
-        <button class="th-btn th-btn-primary" @click="goNext">我已了解，進入申請<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+        <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">
+          同意<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
       </div>
     </th-page-shell>
 
+    <!-- 警政署「作業使用說明」：正式站為彈窗（modal-TravelStep02Npa） -->
+    <th-modal v-if="manualOpen" title="作業使用說明" @close="manualOpen = false">
+      <div class="grid gap-2">
+        <p v-for="(t, i) in npaText.manual" :key="i">{{ t }}</p>
+      </div>
+      <template #foot>
+        <div class="bulletin-modal-foot">
+          <button type="button" class="th-btn th-btn-ghost" @click="manualOpen = false"><i class="fa-solid fa-xmark" aria-hidden="true"></i>關閉</button>
+        </div>
+      </template>
+    </th-modal>
+
     <th-quick-nav></th-quick-nav>
+    <th-back-to-top></th-back-to-top>
     <th-footer></th-footer>
   </div>
 
@@ -190,6 +221,10 @@
 <!-- 資料檔：階段 0 已改為一般 <script> -->
 <script src="components/RouteData.js"></script>
 <script src="components/ConsentData.generated.js"></script>
+<!-- notice 模式（kind＝npa／area／camp）的聲明原文與保護區設定；頁面腳本只在 data() 裡讀 -->
+<script src="components/ForestAreaData.js"></script>
+<script src="components/ForestCampNoticeData.js"></script>
+<script src="components/Apply6NoticeData.js"></script>
 
 <!-- 本頁已無 React／Babel（§5 階段 3 第 7 項） -->
 </body>

@@ -4,12 +4,12 @@
    ============================================================
 
    ------------------------------------------------------------
-   兩種模式，由 ?unit 決定，載入後不再切換
+   兩種模式，由 ?kind 決定，載入後不再切換
    ------------------------------------------------------------
-     forestry-area／police → 申請前摘要（原 SummaryPage）
-     其餘（yushan／shei-pa／taroko／無 unit）→ 逐條同意書（原 NationalParkConsent）
-   原碼是 Page2App 依 unit 回傳兩個不同元件；Vue 這裡是同一個 app 用
-   v-if／v-else 分兩個 <div>，兩者的 data-screen-label 與原 JSX 逐字相同。
+     kind＝npa／area／camp → notice：警政署、自然保護區域、山屋的同意聲明（2026-10-08 由第 5 步移來，見下方 notice 模式說明）
+     其餘（?unit＝yushan／shei-pa／taroko／無）→ 逐條同意書（原 NationalParkConsent）
+   同一個 app 用 v-if／v-else 分兩個 <div>，各自帶 data-screen-label。
+   （原「申請前摘要」模式 ?unit＝police／forestry-area 全站沒有連結可到，2026-10-08 由 notice 模式取代）
 
    ------------------------------------------------------------
    狀態形狀：acked 由 CONSENT_BY_ORG 動態產生
@@ -58,11 +58,6 @@
    （實際渲染走 window.CONSENT_BY_ORG）。不把死碼複製到新檔；
    舊的 Apply2.jsx 仍在原地保留，需要時查得到。
 
-   ------------------------------------------------------------
-   SummaryPage 的 inline style
-   ------------------------------------------------------------
-   依 2026-09-09 通則收成 .p-apply2-sum-* 進 pages.css；留在 :style 的只有
-   cfg.color、n.warn 的分支、依索引決定的 borderBottom（見 pages.css 該節）。
    ============================================================ */
 
 function getParam(key) {
@@ -167,57 +162,101 @@ function nextUrl(page) {
   return `${page}?${q.toString()}`;
 }
 
-const SUMMARY_CONFIG = {
-  "forestry-area": {
-    icon: "ph-bold ph-tree",
-    color: "var(--park-forestry)",
-    agencyName: "林業及自然保育署",
-    title: "自然保護區申請前摘要",
-    nextPage: "apply-3.html",
-    notices: [
-      { icon: "ph-bold ph-map-trifold",      text: "請確認您申請之路線在自然保護區或野生動物保護區範圍內，部分路段需另持有進入許可。" },
-      { icon: "ph-bold ph-buildings",        text: "管理機關為林業及自然保育署所屬各林區管理處，申請核准後不得擅自更改路線或日期。" },
-      { icon: "ph-bold ph-warning-octagon",  text: "進入保護區請落實無痕山林原則，嚴禁採集動植物或擾動生態。", warn: true },
-    ],
-  },
-  police: {
-    icon: "fa-solid fa-dove",
-    color: "var(--park-police)",
-    agencyName: "內政部警政署",
-    title: "入山許可申請前確認",
-    nextPage: "apply-3.html",
-    notices: [
-      { icon: "ph-bold ph-identification-card", text: "入山許可（警政署）與入園許可（國家公園）為不同證件，本次申請僅送警政署。" },
-      { icon: "ph-bold ph-user-circle",          text: "填寫之個人資料（姓名、身分證字號）將傳送至警政署審核，請確認資料正確。" },
-      { icon: "ph-bold ph-clock",               text: "入山許可申請請於入山日 <strong>3 天前</strong>提出，緊急情況請洽各地警察局山地管制站。" },
-    ],
-  },
-};
-
 /* 同意後一律進共用的 apply-3（2026-10-02 起三管處共用玉山 apply-3／4／5，機關由 park 參數切換，
    見 components/ParkApplyData.js 與 decisions.md）。雪霸、太魯閣補上 park，網址沒帶時也不會落成玉山。
    （2026-10-01 曾改導向 apply_1_3／apply_1_5，已由此取代；兩頁現為轉址） */
 const A2_PARK_UNITS = ["shei-pa", "taroko"];
 
+/* ------------------------------------------------------------
+   notice 模式（2026-10-08 使用者裁示：同意聲明移到第一步，與國家公園同意書整合在本頁）
+   ------------------------------------------------------------
+   ?kind=npa|area|camp 進入，其餘參數原樣轉給該類別的第 1 步（日期確認）：
+     npa  ：?unit=<機關代碼>                         → apply_npa_1.html
+     area ：?unit=&tmpc_id=<cId>&tmpf_id=<fId>       → apply_forest_area_1.html
+     camp ：?route=<山屋鍵>                          → forest-camp-1.html
+   聲明內容與勾選照原第 5 步 apply_05（現已不連入）。內容以 blocks[] 呈現，
+   一個區塊對一個子申請——日後複合申請（一趟多個項目）只是多幾個區塊。
+   **本頁不寫 thFcState**：各類別第 1 步帶 unit／route 進來時會 reset，寫了也會被清掉；
+   同意是進入申請的關卡，同國家公園，後續步驟不再檢查。
+   取代原本到不了的「申請前摘要」模式（?unit=police／forestry-area，自創文案、正式站沒有）。 */
+const A2_NOTICE_KINDS = ["npa", "area", "camp"];
+const A2_KIND = A2_NOTICE_KINDS.includes(getParam("kind")) ? getParam("kind") : "";
+
+/* 各類別的第 1 步、標題、麵包屑。**只在 data() 裡呼叫**：用到的資料檔在 <body> 底部載入，
+   與本腳本沒有保證的先後（專案 CLAUDE.md「頁面腳本不要在模組層讀 window.*」）。 */
+function a2NoticeBlocks(kind) {
+  const q = new URLSearchParams(window.location.search);
+  q.delete("kind");
+  const a6 = window.TH_APPLY6_NOTICES || { npa: {}, area: {}, areaAgree: "" };
+  if (kind === "npa") {
+    /* 警政署條目：隱私權保護政策（連結）、作業使用說明（彈窗）、正式站 body 三段（含「我同意並了解以上⋯」） */
+    const items = [{ id: "privacy", type: "privacy" }, { id: "manual", type: "manual" }]
+      .concat(((a6.npa && a6.npa.body) || []).map((t, i) => ({ id: "body" + i, type: "text", text: t })));
+    return {
+      crumb: "警政署入山證",
+      next: "apply_npa_1.html?" + q.toString(),
+      blocks: [{ id: "npa", kind: "npa", items: items }],
+    };
+  }
+  if (kind === "area") {
+    const cid = q.get("tmpc_id") || "630";
+    const area = (window.TH_FOREST_AREAS || {})[cid] || null;
+    const route = (window.ROUTE_DATA || []).find(r => r.cId === cid);
+    const n = a6.area[area ? area.typeCode : "85"] || a6.area["85"] || { lines: [], title: "" };
+    return {
+      crumb: area ? area.name : (route ? route.name : "自然保護區域"),
+      next: "apply_forest_area_1.html?" + q.toString(),
+      blocks: [{
+        id: "area", kind: "area", icon: "ph-bold ph-tree",
+        title: (area && area.type) || "自然保護區域",
+        /* 原文第一行即區域類型名稱，與卡片標題重複，略去（同原 apply_05） */
+        paras: n.lines[0] === n.title ? n.lines.slice(1) : n.lines,
+        agree: a6.areaAgree,
+      }],
+    };
+  }
+  const routeId = q.get("route") || "jiaming";
+  const fc = window.TH_FC_NOTICES || {};
+  const notice = fc[routeId] || fc.jiaming || { title: "", paras: [] };
+  const cabin = (window.TH_CABIN_DATA || {})[routeId];
+  return {
+    crumb: cabin ? cabin.name : "山屋住宿申請",
+    next: "forest-camp-1.html?" + q.toString(),
+    blocks: [{
+      id: "camp", kind: "camp", icon: "ph-bold ph-house",
+      title: notice.title || "山屋/營地",   // 山屋注意事項全名直接當卡片標題（使用者 2026-10-07）
+      paras: notice.paras,
+      agree: a6.areaAgree,
+    }],
+  };
+}
+
 /* 逐頁參數：全部從查詢字串推導，載入後不變，所以放模組層級而非 data() */
 const A2_UNIT = getParam("unit") || "yushan";
-const A2_MODE = (A2_UNIT === "forestry-area" || A2_UNIT === "police") ? "summary" : "consent";
-const A2_ROUTE = A2_MODE === "summary"
-  ? ((typeof ROUTE_DATA !== "undefined") ? ROUTE_DATA.find(r => r.id === getParam("route")) || null : null)
-  : getRouteFromQuery();
+const A2_MODE = A2_KIND ? "notice" : "consent";
+const A2_ROUTE = A2_MODE === "consent" ? getRouteFromQuery() : null;
 const A2_PARK = getParkConfig(A2_UNIT, A2_ROUTE);
 const A2_ORGID = getParam("orgId") || (A2_ROUTE && A2_ROUTE.orgId) || A2_PARK.orgId || A2_UNIT;
 const A2_SECTIONS = A2_MODE === "consent" ? getConsentItems(A2_ORGID, A2_PARK.unit) : [];
-const A2_CFG = A2_MODE === "summary"
-  ? SUMMARY_CONFIG[A2_UNIT]
-  : Object.assign({}, A2_PARK, { orgId: A2_ORGID, sections: A2_SECTIONS });
+const A2_CFG = Object.assign({}, A2_PARK, { orgId: A2_ORGID, sections: A2_SECTIONS });
 
 thPage({
   data() {
+    const notice = A2_MODE === "notice" ? a2NoticeBlocks(A2_KIND) : { crumb: "", next: "", blocks: [] };
+    /* notice 模式的勾選：警政署逐條、保護區／山屋整張一個勾；預設全勾（必填預帶，同原 apply_05） */
+    const noticeAcked = {};
+    notice.blocks.forEach(b => {
+      if (b.kind === "npa") b.items.forEach(it => { noticeAcked[b.id + ":" + it.id] = true; });
+      else noticeAcked[b.id] = true;
+    });
     return {
       /* 鍵的數量與名稱隨 orgId 不同，初始化時一次建好（見檔頭） */
       acked: Object.fromEntries(A2_SECTIONS.map(s => [s.id, Boolean(s.defaultChecked)])),
       activeIndex: 0,
+      notice: notice,
+      noticeAcked: noticeAcked,
+      npaText: (window.TH_APPLY6_NOTICES || {}).npa || {},
+      manualOpen: false,
     };
   },
 
@@ -232,7 +271,11 @@ thPage({
     total() { return this.sections.length; },
     ackedCount() { return Object.values(this.acked).filter(Boolean).length; },
     allAcked() { return this.ackedCount === this.total; },
-    canSubmit() { return this.allAcked; },
+    /* notice 模式：每個區塊的勾選都要完成（警政署逐條、其餘整張一個勾） */
+    canSubmit() {
+      if (this.mode === "notice") return Object.values(this.noticeAcked).every(Boolean);
+      return this.allAcked;
+    },
   },
 
   methods: {
@@ -277,7 +320,12 @@ thPage({
     },
 
     goApply1() { window.location.href = "apply-1.html"; },
+    /* notice 模式：條目可整列點擊切換；連結／按鈕本身點擊時視為已點閱 */
+    toggleNotice(key) { this.noticeAcked[key] = !this.noticeAcked[key]; },
+    ackNotice(key) { this.noticeAcked[key] = true; },
+    openManual(key) { this.ackNotice(key); this.manualOpen = true; },
     goNext() {
+      if (this.mode === "notice") { window.location.href = this.notice.next; return; }
       const q = new URLSearchParams(window.location.search);
       if (A2_PARK_UNITS.includes(this.cfg.unit)) q.set("park", this.cfg.unit);
       window.location.href = `${this.cfg.nextPage}?${q.toString()}`;

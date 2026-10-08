@@ -33,6 +33,12 @@ thPage({
     /* 離開日期（2026-10-07）：出發日＋天數－1 */
     endDate() { return this.start && this.days ? window.thAddDaysToDateValue(this.start, this.days - 1) : ""; },
     applyCrumb() { return window.TH_APPLY_CRUMB; },
+    /* 上一步回第一步「閱讀同意書」（2026-10-08 同意聲明移到第一步） */
+    backUrl() {
+      const q = new URLSearchParams(window.location.search);
+      q.set("kind", "npa");
+      return "apply-2.html?" + q.toString();
+    },
   },
   methods: {
     next() {

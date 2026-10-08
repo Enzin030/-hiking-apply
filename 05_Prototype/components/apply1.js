@@ -84,10 +84,12 @@ const UNIT_NEXT = {
   "forestry-camp":  null,   // 待開發：顯示提示
   /* 2026-09-30：原導向國家公園同意書 apply-2。正式站自然保護區域沒有同意書頁，直接進
      apply_forest_area_1.aspx?unit=<機關代碼>&tmpc_id=<cId>&tmpf_id=<fId>（02_Spec/05e） */
-  "forestry-area":  r => `apply_forest_area_1.html?${new URLSearchParams({ unit: r.orgId || "", tmpc_id: r.cId || "", tmpf_id: r.fId || "" })}`,
+  /* 2026-10-08：同意聲明移到第一步，先進 apply-2 的同意聲明模式，同意後才到 apply_forest_area_1（參數原樣轉過去） */
+  "forestry-area":  r => `apply-2.html?${new URLSearchParams({ kind: "area", unit: r.orgId || "", tmpc_id: r.cId || "", tmpf_id: r.fId || "" })}`,
   /* 2026-09-30：原導向國家公園同意書 apply-2（錯的流程）。正式站警政署沒有同意書頁，
      直接進 apply_npa_1.aspx?unit=<機關代碼>（02_Spec/05d） */
-  "police":         r => `apply_npa_1.html?unit=${encodeURIComponent(r.orgId || "")}`,
+  /* 2026-10-08：同上，先進 apply-2 同意聲明，同意後到 apply_npa_1 */
+  "police":         r => `apply-2.html?kind=npa&unit=${encodeURIComponent(r.orgId || "")}`,
   "suspended":      null,   // 顯示暫停 modal
 };
 
@@ -190,7 +192,8 @@ var pApply1RouteCard = {
         return;
       }
       if (unit === "forestry-camp") {
-        window.location.href = "forest-camp-1.html?route=" + this.r.id;
+        /* 2026-10-08：先進 apply-2 同意聲明（山屋注意事項），同意後到 forest-camp-1 */
+        window.location.href = "apply-2.html?kind=camp&route=" + this.r.id;
         return;
       }
       /* 有關聯路線就先開複合申請詢問框（正式站 OtherRoute），由頁面決定導向 */

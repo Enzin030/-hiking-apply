@@ -130,7 +130,7 @@ thPage({
       const e = this.check();
       if (e.length) { window.thAlertList(e); return; }
       this.persist();
-      window.location.href = "apply_05.html";   // 2026-10-06 拿掉附件上傳步驟，直接到同意聲明
+      window.location.href = "apply_06.html";   // 2026-10-08 同意聲明移到第一步（apply-2），隊伍資料後直接確認資料
     },
     prev() {
       this.persist();

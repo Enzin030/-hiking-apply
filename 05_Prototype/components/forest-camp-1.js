@@ -94,6 +94,7 @@ thPage({
       window.location.href = `forest-camp-2.html?${params}`;
     },
 
-    goBack() { window.location.href = "apply-1.html"; },
+    /* 上一步回第一步「閱讀同意書」（2026-10-08 同意聲明移到第一步） */
+    goBack() { window.location.href = "apply-2.html?" + new URLSearchParams({ kind: "camp", route: FC1_ROUTE_ID }); },
   },
 });

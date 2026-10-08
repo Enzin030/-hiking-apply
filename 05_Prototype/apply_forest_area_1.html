@@ -28,7 +28,7 @@
   <th-page-shell :trail="['登山申請', applyCrumb, crumb, '日期確認']" title="自然保護區域申請">
 
     <template #stepper>
-      <th-fc-stepper :current="1"></th-fc-stepper>
+      <th-fc-stepper :current="2"></th-fc-stepper>
     </template>
 
     <th-callout v-if="!area">查無此區域的申請資料，請回路線列表重新選擇。</th-callout>
@@ -74,7 +74,7 @@
 
     <!-- 置底按鈕置中，比照 apply-3 -->
     <div class="flex flex-wrap justify-center gap-3 mt-12">
-      <a class="th-btn th-btn-ghost" href="apply-1.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</a>
+      <a class="th-btn th-btn-ghost" :href="backUrl"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>上一步</a>
       <button v-if="area" type="button" class="th-btn th-btn-primary" @click="next">下一步<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
   </th-page-shell>
