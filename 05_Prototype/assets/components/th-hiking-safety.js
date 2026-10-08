@@ -102,22 +102,24 @@ window.thComponents = window.thComponents || {};
           <p v-for="(p, pi) in s.text || []" :key="pi" class="text-slate-700 leading-relaxed">{{ p }}</p>
         </div>
 
-        <!-- 5 每日行程時間節點規劃：依路線規劃結果，逐日逐節點填到達時間 -->
+        <!-- 5 每日行程時間節點規劃：依路線規劃結果，逐日逐節點填到達時間。
+             2026-10-08 使用者：用路線規劃的逐日卡片包裹（共用 .th-plan-days／.th-plan-day／.th-plan-day-tag，同 apply-3 路線規劃）；
+             時間欄縮小（Tailwind min-h-0 h-8 py-1 px-2 蓋過 .th-input 的最小高度與內距），不搶過地點名稱 -->
         <div class="th-field">
           <span class="th-label"><span><span class="req">*</span>每日行程時間節點規劃（24小時制 00:00～23:59）</span></span>
-          <div class="grid gap-3">
-            <div v-for="(d, di) in days" :key="di" class="flex flex-wrap items-center gap-x-2 gap-y-2">
-              <span class="font-semibold text-slate-800 whitespace-nowrap">第{{ di + 1 }}天行程（{{ d.date }}）</span>
+          <ul class="th-plan-days">
+            <li v-for="(d, di) in days" :key="di" class="th-plan-day">
+              <span class="th-plan-day-tag">第 {{ di + 1 }} 天行程（{{ d.date }}）：</span>
               <template v-for="(n, ni) in d.nodes" :key="ni">
                 <i v-if="ni" class="fa-solid fa-arrow-right text-slate-400" aria-hidden="true"></i>
                 <span class="inline-flex items-center gap-1.5 whitespace-nowrap">
-                  <span class="text-slate-800">{{ n }}</span>
+                  <span>{{ n }}</span>
                   <!-- 24 小時制文字欄（原生 type=time 會依語系顯示上午／下午，與正式站 24 小時制不符） -->
-                  <input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" class="th-input w-20 text-center" :value="time(di, ni)" @input="setTime(di, ni, $event.target.value)" :aria-label="'第' + (di + 1) + '天 ' + n + ' 到達時間'" />
+                  <input type="text" inputmode="numeric" maxlength="5" placeholder="HH:mm" class="th-input w-16 min-h-0 h-8 py-1 px-2 text-center" :value="time(di, ni)" @input="setTime(di, ni, $event.target.value)" :aria-label="'第' + (di + 1) + '天 ' + n + ' 到達時間'" />
                 </span>
               </template>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
 
         <!-- 6 自主安全管理事項：應變路線 -->
@@ -137,12 +139,13 @@ window.thComponents = window.thComponents || {};
         <!-- 8 留守計畫 -->
         <div class="th-field">
           <span class="th-label"><span><span class="req">*</span>留守計畫（留守人必須清楚掌握登山計畫與隊員狀況）</span></span>
-          <div class="grid gap-2 text-slate-800">
+          <!-- 2026-10-08 使用者：太突出——字級降為 text-sm、文字色同說明段落（slate-700），時數欄縮成與上方時間欄相同的小尺寸 -->
+          <div class="grid gap-2 text-sm text-slate-700">
             <label class="flex flex-wrap items-center gap-2">失聯超過
-              <input type="text" inputmode="numeric" class="th-input w-20 text-center" :value="v.lostHours == null ? '' : v.lostHours" @input="set({ lostHours: $event.target.value })" aria-label="失聯時數" />
+              <input type="text" inputmode="numeric" class="th-input w-12 min-h-0 h-8 py-1 px-2 text-center" :value="v.lostHours == null ? '' : v.lostHours" @input="set({ lostHours: $event.target.value })" aria-label="失聯時數" />
               小時，留守人會進行通報</label>
             <label class="flex flex-wrap items-center gap-2">最後一天預計抵達登山口時間超過
-              <input type="text" inputmode="numeric" class="th-input w-20 text-center" :value="v.lastDayHours == null ? '' : v.lastDayHours" @input="set({ lastDayHours: $event.target.value })" aria-label="最後一天延誤時數" />
+              <input type="text" inputmode="numeric" class="th-input w-12 min-h-0 h-8 py-1 px-2 text-center" :value="v.lastDayHours == null ? '' : v.lastDayHours" @input="set({ lastDayHours: $event.target.value })" aria-label="最後一天延誤時數" />
               小時，未與留守人聯繫，則需留意並準備後續救援計畫。</label>
           </div>
           <textarea class="th-textarea mt-2" rows="3" :value="v.stayNote || ''" @input="set({ stayNote: $event.target.value })" aria-label="留守計畫說明"></textarea>
