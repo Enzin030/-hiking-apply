@@ -13,6 +13,7 @@
    - placeholder（預設 true）：天數、日期下拉首項「請選擇」，未選天數前日期停用（警政署、保護區）；
      山屋為 false（兩欄一律有值，同原 forest-camp-1）
    - title（預設「路線與基本資料」）：卡片有編號的頁面傳入含編號的標題（保護區「1. 路線與基本資料」，其後卡片順延）
+   - compact（預設 false）：複合申請的子項目（2026-10-08，國家公園路線＋山屋）不重複顯示系統時間與受理時段提示
    - 預設 slot 放在日期欄位下方、同一張卡內（山屋的隊名、天池停留地點）
    - 離開日期＝出發日期＋天數－1（系統計算、純文字；未選前顯示「──（系統自動計算）」，使用者 2026-10-07）
    - 受理時段提示照原三頁原文（「國家公園路線…」照抄自國家公園頁，對非國家公園類別不準確，
@@ -28,6 +29,7 @@ window.thComponents["th-trip-basics"] = {
     placeholder: { type: Boolean, default: true },
     startHint: { type: String, default: "" },
     title: { type: String, default: "路線與基本資料" },
+    compact: { type: Boolean, default: false },
   },
   emits: ["update:days", "update:start"],
   data() {
@@ -48,10 +50,10 @@ window.thComponents["th-trip-basics"] = {
     <section class="th-card">
       <div class="th-card-head">
         <h2 class="th-card-title">{{ title }}</h2>
-        <span class="th-flag is-snow th-systime ml-auto"><i class="fa-regular fa-clock" aria-hidden="true"></i><span class="th-systime-label">目前系統時間：</span>{{ nowTime }}</span>
+        <span v-if="!compact" class="th-flag is-snow th-systime ml-auto"><i class="fa-regular fa-clock" aria-hidden="true"></i><span class="th-systime-label">目前系統時間：</span>{{ nowTime }}</span>
       </div>
       <div class="th-card-body grid gap-4">
-        <div class="th-callout">
+        <div v-if="!compact" class="th-callout">
           <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
           <div><strong>請注意：</strong>國家公園路線<strong>於每日 23:00 至隔日 07:00 暫停受理申請</strong>。</div>
         </div>

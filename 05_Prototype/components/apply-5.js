@@ -181,6 +181,10 @@ thPage({
         plan: "D1:排雲登山服務中心→塔塔加登山口→排雲山莊。\nD2:排雲山莊→玉山主峰→塔塔加登山口→排雲登山服務中心。"
       },
 
+      /* 複合申請：林保署山屋（apply-3 ?camps= 存進步驟三暫存，2026-10-08）；每間一張申請單明細，元件同山屋確認頁 */
+      camps: (step3.camps || []).filter(c => window.TH_CABIN_DATA[c.route]),
+      campPayment: step3.campPayment || "",
+
       // 送件驗證碼
       captchaInput: "4N8P",
       captchaCode: "4N8P",
@@ -194,7 +198,7 @@ thPage({
         { id: "sec-stay", label: "留守人資料" },
         { id: "sec-npa", label: "入山證申請資訊" },
         { id: "sec-captcha", label: "送件驗證碼" }
-      ]
+      ].concat((step3.camps || []).filter(c => window.TH_CABIN_DATA[c.route]).map(c => ({ id: "sec-camp-" + c.route, label: window.TH_CABIN_DATA[c.route].name + "申請單明細" })))
     };
   },
 
@@ -388,6 +392,9 @@ thPage({
       }
     },
 
+    /* 複合山屋 */
+    cabinOf(c) { return window.TH_CABIN_DATA[c.route]; },
+    cabinName(c) { return window.TH_CABIN_DATA[c.route].name; },
     submitApply() {
       if (!this.captchaInput) {
         window.thAlert("請輸入驗證碼。");
@@ -399,7 +406,9 @@ thPage({
         return;
       }
       this.isSubmitted = true;
-      window.thAlert("【登山申請成功】\n您的申請已成功送出！申請編號為：YUS-" + Date.now().toString().slice(-6) + "\n審核結果將寄發至申請人電子郵件信箱。", "success")
+      /* 複合：林保署山屋一併送出（2026-10-08） */
+      const campText = this.camps.length ? "\n" + this.camps.map(c => window.TH_CABIN_DATA[c.route].name).join("、") + "住宿申請已一併送出林業及自然保育署，住宿日前 30 日下午 3 時抽籤，結果以電子郵件通知。" : "";
+      window.thAlert("【登山申請成功】\n您的申請已成功送出！申請編號為：YUS-" + Date.now().toString().slice(-6) + "\n審核結果將寄發至申請人電子郵件信箱。" + campText, "success")
         .then(() => { window.location.href = "applySearch.html"; });
     }
   }

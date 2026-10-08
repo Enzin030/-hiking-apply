@@ -444,6 +444,106 @@
   color: var(--fg-1);
 }
 
+/* ------------------------------------------------------------
+   th-camp-booking 系列（2026-10-08，assets/components/th-camp-booking.js）
+   ------------------------------------------------------------
+   原 forest-camp-2 頁面專用樣式，複合申請（國家公園路線＋山屋）要在 apply-3 用同一套，依「二次即提升」
+   改名搬到本層，宣告逐字未改：.p-fc2-facility-holiday→.th-holiday-tag、.p-fc2-payment-*→.th-pay-*、
+   .p-fc2-stepper-input→.th-qty-stepper-input（加在 .fc-stepper-input 之上的寬度修飾，該規則無 width，順序不影響）。
+   .th-pay-card.is-selected 的 rgba 陰影為原規則既有值，非本次新增。 */
+
+.th-holiday-tag {
+  margin-left: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--warning-border);
+  border-radius: var(--r-sm);
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  font-size: var(--fs-3xs);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.th-pay-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-md);
+  background: var(--bg-mist-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--park-forestry);
+  font-size: var(--fs-lg);
+}
+
+.th-pay-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--fg-1);
+}
+
+.th-pay-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--national-700);
+  color: var(--fg-on-dark);
+  font-size: var(--fs-3xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.th-pay-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.th-pay-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--bg-1);
+}
+
+.th-pay-card:hover {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+}
+
+.th-pay-card.is-selected {
+  border-color: var(--national-700);
+  background: var(--bg-mist);
+  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.12);
+}
+
+.th-pay-radio {
+  display: none;
+}
+
+.th-qty-stepper-input {
+  width: 120px;
+}
+
+@media (max-width: 560px) {
+  .th-pay-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 .fc-aside {
   display: flex;
   flex-direction: column;

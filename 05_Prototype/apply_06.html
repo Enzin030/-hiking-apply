@@ -69,16 +69,9 @@
           <h2 class="th-card-title">山屋及營地申請單明細（林業及自然保育署）</h2>
         </div>
         <div class="th-card-body grid gap-3">
-          <!-- 多筆資料表比照玉山確認頁：外框圓角、不換行、窄螢幕水平捲動（使用者 2026-10-06） -->
-          <th-data-table class="border border-slate-200 rounded-md" table-class="w-full whitespace-nowrap" :columns="bookingColumns" :rows="bookingRows" row-key="key" caption="山屋及營地申請單明細" empty="尚未選擇床位或營位"></th-data-table>
-          <dl class="grid grid-cols-1 sm:grid-cols-[8rem_1fr] gap-x-4 gap-y-2">
-            <dt class="th-label">費用明細</dt>
-            <dd><span v-for="n in nightCosts" :key="n.date" class="mr-3">【{{ n.date }}】{{ n.cost.toLocaleString() }}元</span></dd>
-            <dt class="th-label">總金額</dt>
-            <dd><strong>本申請單總金額為：NT${{ total.toLocaleString() }}元</strong></dd>
-            <dt class="th-label">付款方式</dt>
-            <dd>{{ paymentLabel }}</dd>
-          </dl>
+          <!-- 多筆資料表比照玉山確認頁：外框圓角、不換行、窄螢幕水平捲動（使用者 2026-10-06）；
+               2026-10-08 起為共用元件 th-camp-booking-detail（國家公園確認頁 apply-5 的複合山屋用同一個） -->
+          <th-camp-booking-detail :cabin="cabin" :start="st.start" :nights="nights" :alloc="st.alloc || {}" :payment="st.payment"></th-camp-booking-detail>
         </div>
       </section>
 

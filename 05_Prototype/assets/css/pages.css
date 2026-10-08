@@ -728,35 +728,8 @@
 
 /* 假日級距標記（2026-09-16，二價改動）。沿用既有 warning token 組，
    不新增顏色；只在該夜落在週五六時出現，讓使用者看得出單價為何較高。 */
-.p-fc2-facility-holiday {
-  margin-left: 6px;
-  padding: 0 5px;
-  border: 1px solid var(--warning-border);
-  border-radius: var(--r-sm);
-  background: var(--warning-bg);
-  color: var(--warning-fg);
-  font-size: var(--fs-3xs);
-  font-weight: 600;
-  line-height: 1.6;
-}
 
-.p-fc2-payment-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--r-md);
-  background: var(--bg-mist-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--park-forestry);
-  font-size: var(--fs-lg);
-}
 
-.p-fc2-payment-label {
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--fg-1);
-}
 
 .p-fc2-payment-note {
   font-size: var(--fs-xxs);
@@ -764,20 +737,6 @@
   line-height: 1.5;
 }
 
-.p-fc2-payment-check {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--national-700);
-  color: var(--fg-on-dark);
-  font-size: var(--fs-3xs);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .p-fc2-cost-card {
   background: var(--bg-1);
@@ -942,37 +901,9 @@
   border-bottom-color: var(--bg-mist-3);
 }
 
-.p-fc2-payment-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
 
-.p-fc2-payment-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 18px 12px;
-  border: 1.5px solid var(--slate-200);
-  border-radius: var(--r-lg);
-  cursor: pointer;
-  text-align: center;
-  transition: border-color 0.15s, background 0.15s;
-  background: var(--bg-1);
-}
 
-.p-fc2-payment-card:hover {
-  border-color: var(--national-700);
-  background: var(--bg-mist);
-}
 
-.p-fc2-payment-card.is-selected {
-  border-color: var(--national-700);
-  background: var(--bg-mist);
-  box-shadow: 0 0 0 3px rgba(88, 122, 104, 0.12);
-}
 
 .p-fc2-cost-label {
   display: flex;
@@ -1002,11 +933,6 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 560px) {
-  .p-fc2-payment-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 .p-notice-actions {
   display: flex;
@@ -2343,6 +2269,8 @@ button.p-open-filter-badge.is-active {
    **只收靜態的**。forest-camp-1 的可用量長條（width 依百分比、底色依狀態）
    是算出來的，收成 class 會改變行為，那些維持 :style 綁定。
 
+   （2026-10-08：.p-fc2-payment-radio、.p-fc2-stepper-input 連同付款卡片、假日標記已提升到 components.css，
+    改名 .th-pay-*／.th-qty-stepper-input／.th-holiday-tag，見該檔 th-camp-booking 系列；以下為原說明）
    .p-fc2-stepper-input 是加在既有的 .fc-stepper-input 之上的修飾 class，
    不改 .fc-stepper-input 本身——那支兩頁共用（見 forest-camp-1.html 檔頭）。
    pages.css 在 index.css 的 @import 順序中最後，所以這條的 width 勝出。
@@ -2357,17 +2285,11 @@ button.p-open-filter-badge.is-active {
   color: var(--danger-fg);
 }
 
-.p-fc2-payment-radio {
-  display: none;
-}
 
 .p-fc2-cost-dash {
   color: var(--fg-4);
 }
 
-.p-fc2-stepper-input {
-  width: 120px;
-}
 
 
 /* ############################################################

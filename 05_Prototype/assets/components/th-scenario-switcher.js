@@ -4,7 +4,9 @@
    左下角圓鈕（右下是快捷選單與回到頂端），展開後列出全部申請類別 × 五個步驟，點步驟即前往：
      類別：玉山／雪霸／太魯閣國家公園、警政署入山證、自然保護區域（23 區下拉）、山屋（4 間）
      步驟：閱讀同意書 → 行程規劃 → 隊伍資料 → 確認資料 → 申請完成（四類流程 2026-10-08 起相同）
-     複合情境（同日起陸續加入）：山屋＋警政署入山證（camp+npa，可選 4 間山屋）
+     複合情境（同日起陸續加入）：山屋＋警政署入山證（camp+npa，可選 4 間山屋）；
+       國家公園路線＋山屋：玉山南二段線＋向陽山屋＋嘉明湖山屋、太魯閣奇萊南峰＋天池山莊
+       （配對取自 01_Raw_Input/raw/關聯申請.csv，測試機 Fixedclimb_relation 快照）
    掛在申請流程各頁（apply-1～5、apply-2 兩種模式、六步驟行程規劃、apply_03、apply_06），其他頁不掛。
 
    **第 3 步以後靠「自動前進」，不手寫假資料**：先開該類別的行程規劃頁（帶 new=1，等同新的一張），
@@ -21,7 +23,11 @@
   var OPEN_KEY = "th_scn_open";
   var NPA_ORG = "8F7C09DC-AFEB-4708-A7BB-B20DA2A24648";
   var PARKS = ["yushan", "shei-pa", "taroko"];
-  var STEP2 = { "apply-3.html": 1, "apply_npa_2.html": 1, "apply_forest_area_2.html": 1, "forest-camp-2.html": 1 };
+  /* 國家公園路線＋山屋的情境：park、次路線 cid、山屋代碼（apply-2／3 的 ?camps=） */
+  var PARK_COMBOS = [
+    { id: "ys89+camps", label: "玉山南二段線＋向陽山屋＋嘉明湖山屋", park: "yushan", cid: "89", camps: "xiangyang,jiaming" },
+    { id: "tr25+tianchi", label: "太魯閣奇萊南峰＋天池山莊", park: "taroko", cid: "25", camps: "tianchi" },
+  ];
 
   function store(kind, key, val) {
     try {
@@ -51,6 +57,11 @@
       r.step = { "apply-3.html": 2, "apply-4.html": 3, "apply-5.html": 4 }[page];
       var u = q.get("park") || q.get("unit");
       r.kind = PARKS.indexOf(u) >= 0 ? u : "yushan";
+    }
+    /* 國家公園路線＋山屋（apply-2～5 網址帶 camps） */
+    if (q.get("camps") && PARKS.indexOf(r.kind) >= 0) {
+      var combo = PARK_COMBOS.filter(function (c) { return c.park === r.kind && c.camps === q.get("camps"); })[0];
+      if (combo) r.kind = combo.id;
     } else if (page === "apply_npa_2.html") { r.step = 2; r.kind = "npa"; }
     else if (page === "apply_forest_area_2.html") { r.step = 2; r.kind = "area"; r.area = q.get("tmpc_id") || st.areaCid || ""; }
     else if (page === "forest-camp-2.html") { r.step = 2; r.kind = (q.get("npa") === "1" || st.hasNpa) ? "camp+npa" : "camp"; r.cabin = q.get("route") || st.route || ""; }
@@ -93,7 +104,7 @@
       combos() {
         return [
           { id: "camp+npa", label: "山屋＋警政署入山證" },
-        ];
+        ].concat(PARK_COMBOS.map(function (c) { return { id: c.id, label: c.label }; }));
       },
       needCabin() { return this.kind === "camp" || this.kind === "camp+npa"; },
       steps() {
@@ -143,6 +154,11 @@
       entryUrl(step) {
         var k = this.kind;
         var area = (window.TH_FOREST_AREAS || {})[this.area] || {};
+        var combo = PARK_COMBOS.filter(function (c) { return c.id === k; })[0];
+        if (combo) {
+          var cq = "unit=" + combo.park + (combo.park === "yushan" ? "" : "&park=" + combo.park) + "&cid=" + combo.cid + "&camps=" + combo.camps;
+          return (step === 1 ? "apply-2.html?" : "apply-3.html?") + cq;
+        }
         if (PARKS.indexOf(k) >= 0) {
           if (step === 1) return "apply-2.html?unit=" + k;
           return "apply-3.html?unit=" + k + (k === "yushan" ? "" : "&park=" + k);
@@ -157,7 +173,7 @@
       },
       go(step) {
         if (this.busy) return;
-        try { window.sessionStorage.removeItem("th_fc_apply"); } catch (e) { /* 略過 */ }
+        try { window.sessionStorage.removeItem("th_fc_apply"); window.sessionStorage.removeItem("th_apply_step3_payload"); } catch (e) { /* 略過 */ }
         if (step >= 3) store("session", AUTO_KEY, { target: step, n: 0, t: Date.now() });
         else store("session", AUTO_KEY, null);
         window.location.href = this.entryUrl(step);

@@ -244,20 +244,36 @@ const A2_ORGID = getParam("orgId") || (A2_ROUTE && A2_ROUTE.orgId) || A2_PARK.or
 const A2_SECTIONS = A2_MODE === "consent" ? getConsentItems(A2_ORGID, A2_PARK.unit) : [];
 const A2_CFG = Object.assign({}, A2_PARK, { orgId: A2_ORGID, sections: A2_SECTIONS });
 
+/* 複合申請：國家公園路線＋林保署山屋（2026-10-08，?camps=xiangyang,jiaming）——國家公園條文之後，
+   每間山屋多一個注意事項條目（同 notice 模式山屋區塊的呈現），全部勾選才可同意；camps 原樣轉給 apply-3。
+   **只在 data() 裡讀資料檔**（TH_FC_NOTICES 在 <body> 底部載入）。 */
+function a2CampBlocks() {
+  const fc = window.TH_FC_NOTICES || {};
+  const a6 = window.TH_APPLY6_NOTICES || { areaAgree: "" };
+  /* 同一份注意事項只列一次（向陽山屋與嘉明湖山屋共用「嘉明湖國家步道暨附屬山屋⋯注意事項」） */
+  const seen = {};
+  return (getParam("camps") || "").split(",").filter(k => k && fc[k] && !seen[fc[k].title] && (seen[fc[k].title] = 1)).map(k => ({
+    id: "camp-" + k, kind: "camp", title: fc[k].title, paras: fc[k].paras, agree: a6.areaAgree,
+  }));
+}
+
 thPage({
   data() {
     const notice = A2_MODE === "notice" ? a2NoticeBlocks(A2_KIND) : { crumb: "", next: "", blocks: [] };
+    const campBlocks = A2_MODE === "consent" ? a2CampBlocks() : [];
     /* notice 模式的勾選：警政署逐條、保護區／山屋整張一個勾；預設全勾（必填預帶，同原 apply_05） */
     const noticeAcked = {};
     notice.blocks.forEach(b => {
       if (b.kind === "npa") b.items.forEach(it => { noticeAcked[b.id + ":" + it.id] = true; });
       else noticeAcked[b.id] = true;
     });
+    campBlocks.forEach(b => { noticeAcked[b.id] = true; });   // 預設已勾（必填預帶）
     return {
       /* 鍵的數量與名稱隨 orgId 不同，初始化時一次建好（見檔頭） */
       acked: Object.fromEntries(A2_SECTIONS.map(s => [s.id, Boolean(s.defaultChecked)])),
       activeIndex: 0,
       notice: notice,
+      campBlocks: campBlocks,
       noticeAcked: noticeAcked,
       npaText: (window.TH_APPLY6_NOTICES || {}).npa || {},
       manualOpen: false,
@@ -278,7 +294,7 @@ thPage({
     /* notice 模式：每個區塊的勾選都要完成（警政署逐條、其餘整張一個勾） */
     canSubmit() {
       if (this.mode === "notice") return Object.values(this.noticeAcked).every(Boolean);
-      return this.allAcked;
+      return this.allAcked && this.campBlocks.every(b => this.noticeAcked[b.id]);
     },
   },
 

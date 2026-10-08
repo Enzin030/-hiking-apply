@@ -154,30 +154,15 @@
           </div>
         </section>
 
-        <!-- 費用參考：只列單價（使用者 2026-10-07：費用拆成「參考」在上、「計算」在逐晚選擇之下）；表格樣式同確認頁 -->
+        <!-- 費用參考：只列單價（使用者 2026-10-07：費用拆成「參考」在上、「計算」在逐晚選擇之下）；表格樣式同確認頁。
+             2026-10-08 起卡內為共用元件 th-camp-fee／th-camp-rooms／th-camp-payment（assets/components/th-camp-booking.js），
+             複合申請的國家公園行程規劃頁 apply-3 用同一套 -->
         <section id="sec-fee" class="th-card mb-5">
           <div class="th-card-head">
             <h2 class="th-card-title">費用參考</h2>
           </div>
           <div class="th-card-body">
-            <div class="th-table-wrap border border-slate-200 rounded-md">
-              <table class="th-table w-full whitespace-nowrap">
-                <thead>
-                  <tr>
-                    <th scope="col">床位／營位</th>
-                    <th scope="col" class="is-center">平日</th>
-                    <th scope="col" class="is-center">假日</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="f in cabin.facilities" :key="f.id">
-                    <td>{{ f.label }}</td>
-                    <td class="is-center">NT$ {{ f.price.weekday }} / 晚</td>
-                    <td class="is-center">NT$ {{ f.price.holiday }} / 晚</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <th-camp-fee :cabin="cabin"></th-camp-fee>
           </div>
         </section>
 
@@ -188,50 +173,7 @@
             <h2 class="th-card-title">山屋及營地申請</h2>
           </div>
           <div class="th-card-body">
-          <div class="th-table-wrap border border-slate-200 rounded-md">
-            <table class="th-table w-full whitespace-nowrap">
-              <thead>
-                <tr>
-                  <th scope="col" class="is-center">晚次</th>
-                  <th scope="col">日期</th>
-                  <th scope="col">山屋／營地</th>
-                  <th scope="col" class="is-center">床位數量</th>
-                  <th scope="col" class="is-right">單價</th>
-                  <th scope="col" class="is-right">小計</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="i in nightIndexes" :key="i">
-                  <td class="is-center">第 {{ i + 1 }} 晚</td>
-                  <td>{{ fmtDate(nightDate(i)) }}</td>
-                  <template v-for="f in cabin.facilities.filter(x => x.id === roomOf(i))" :key="f.id">
-                    <td class="min-w-[220px]">
-                      <th-hybrid-select><select class="th-select w-full" :value="f.id" @change="setRoom(i, $event.target.value)" :aria-label="'第 ' + (i + 1) + ' 晚山屋或營地'">
-                        <option v-for="o in cabin.facilities" :key="o.id" :value="o.id">{{ o.label }}</option>
-                      </select></th-hybrid-select>
-                    </td>
-                    <td>
-                      <!-- 數量上限：設施上限與山屋人數上限取小（第 1 步不再選出發人數，2026-10-07） -->
-                      <div class="flex justify-center">
-                        <p-fc2-stepper :value="qtyOf(i, f.id)" :min="0"
-                                       :max="Math.min(f.max, peopleMax)"
-                                       @change="setQty(i, f.id, $event)"></p-fc2-stepper>
-                      </div>
-                    </td>
-                    <!-- 二價（2026-09-16）：單價按**當夜日期**取，走 priceOf() 不直接讀 price.weekday -->
-                    <td class="is-right">NT$ {{ priceOf(f, i).toLocaleString() }} / {{ f.unit }}<span v-if="isHoliday(i)" class="p-fc2-facility-holiday">假日</span></td>
-                    <td class="is-right font-bold text-national-800">{{ qtyOf(i, f.id) > 0 ? 'NT$ ' + (qtyOf(i, f.id) * priceOf(f, i)).toLocaleString() : '—' }}</td>
-                  </template>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="flex justify-end mt-4">
-            <div class="inline-flex items-baseline gap-4">
-              <span class="font-semibold text-slate-800">預估總費用</span>
-              <span class="text-xl font-bold text-national-800">NT$ {{ grandTotal.toLocaleString() }}</span>
-            </div>
-          </div>
+          <th-camp-rooms :cabin="cabin" :start="startDate" :nights="nights" :alloc="alloc" :people-max="peopleMax"></th-camp-rooms>
           </div>
         </section>
 
@@ -241,22 +183,7 @@
             <h2 class="th-card-title">付款方式<span class="req text-rose-600 ml-1">*</span><span class="text-rose-600 text-base font-medium ml-2">（訂房後不可更改）</span></h2>
           </div>
           <div class="th-card-body">
-          <div class="p-fc2-payment-grid">
-            <label v-for="opt in paymentOptions" :key="opt.id"
-                   :class="['p-fc2-payment-card', { 'is-selected': payment === opt.id }]">
-              <input type="radio" name="payment" :value="opt.id"
-                     :checked="payment === opt.id"
-                     @change="payment = opt.id"
-                     class="p-fc2-payment-radio" />
-              <div class="p-fc2-payment-icon">
-                <i :class="opt.icon" aria-hidden="true"></i>
-              </div>
-              <div class="p-fc2-payment-label">{{ opt.label }}</div>
-              <div v-if="payment === opt.id" class="p-fc2-payment-check">
-                <i class="fa-solid fa-check" aria-hidden="true"></i>
-              </div>
-            </label>
-          </div>
+          <th-camp-payment v-model="payment"></th-camp-payment>
           </div>
         </section>
 

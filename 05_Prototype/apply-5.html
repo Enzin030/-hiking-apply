@@ -134,6 +134,16 @@
       </div>
     </section>
 
+    <!-- 複合申請：林保署山屋申請單明細（每間一張，元件同山屋確認頁 apply_06；2026-10-08） -->
+    <section v-for="c in camps" :key="c.route" class="th-card" :id="'sec-camp-' + c.route">
+      <div class="th-card-head">
+        <h2 class="th-card-title">{{ cabinName(c) }} 山屋及營地申請單明細（{{ cabinOf(c).manager }}）</h2>
+      </div>
+      <div class="th-card-body grid gap-3">
+        <th-camp-booking-detail :cabin="cabinOf(c)" :start="c.start" :nights="c.nights" :alloc="c.alloc" :payment="campPayment"></th-camp-booking-detail>
+      </div>
+    </section>
+
     <!-- 2. 隊伍資料表格（11欄，滿版自適應不滾動，字級維持原版） -->
     <section class="th-card" id="sec-team">
       <div class="th-card-head">

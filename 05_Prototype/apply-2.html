@@ -173,6 +173,30 @@
               <div class="th-consent-item-text p-apply2-item-text" v-html="clauseHtml(s)"></div>
             </div>
           </section>
+
+          <!-- 複合申請：國家公園路線＋林保署山屋（2026-10-08，?camps=）——各山屋注意事項為一個可勾選條目，
+               呈現同同意聲明模式的山屋區塊；不列入右側閱讀定位（那是國家公園條文的導覽） -->
+          <template v-for="b in campBlocks" :key="b.id">
+            <p class="font-bold text-[length:var(--fs-lg)] text-slate-900 border-l-4 border-[var(--national-700)] pl-3 mb-3 mt-10 leading-snug th-consent-lead">
+              {{ b.title }}
+            </p>
+            <section :class="['th-consent-item', { 'is-acked': noticeAcked[b.id] }]"
+                     role="button" tabindex="0"
+                     :aria-pressed="noticeAcked[b.id] ? 'true' : 'false'"
+                     @click="$event.target.closest('a,button') || toggleNotice(b.id)"
+                     @keydown.enter="$event.target.closest('a,button') || ($event.preventDefault(), toggleNotice(b.id))"
+                     @keydown.space.prevent="toggleNotice(b.id)">
+              <div class="th-consent-item-lead" aria-hidden="true">
+                <span class="th-consent-item-box"><i class="fa-solid fa-check"></i></span>
+              </div>
+              <div class="th-consent-item-body">
+                <div class="th-consent-item-text grid gap-3">
+                  <p v-for="(t, i) in b.paras" :key="i" class="whitespace-pre-line">{{ t }}</p>
+                  <p class="font-semibold">{{ b.agree }}</p>
+                </div>
+              </div>
+            </section>
+          </template>
         </div>
 
         <!-- 側欄：無底無框，純清單 -->

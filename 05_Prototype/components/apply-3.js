@@ -138,6 +138,20 @@ function parkDateOptions() {
   return out;
 }
 
+/* ------------------------------------------------------------
+   複合申請：國家公園路線＋林保署山屋（2026-10-08，設計稿 M05、方案 B）
+   ------------------------------------------------------------
+   ?camps=xiangyang,jiaming（山屋代碼，逗號分隔，可多間）時，本頁在國家公園各區塊之後，
+   每間山屋多一段「② ○○山屋 住宿申請」（審查機關＝山屋的 manager）：日期卡（th-trip-basics compact，
+   各山屋各自的入住日與天數，預設＝入園日＋第幾間，可改）、費用參考、逐晚床位（th-camp-fee／th-camp-rooms，
+   與山屋行程規劃頁 forest-camp-2 同一套元件），最後一張林保署山屋的付款方式（整趟一個，Case_Main.payment_default）。
+   配對來源：01_Raw_Input/raw/關聯申請.csv（測試機 Fixedclimb_relation 快照）——南二段線 89、新康山線 61 → 向陽山屋 158、
+   嘉明湖山屋 159；奇萊南峰 25 → 天池山莊 161。正式站目前只剩 1 筆關聯（decisions 2026-10-01），屬示意配對。
+   下一步把各山屋存進步驟三暫存 camps／campPayment，確認頁 apply-5 據此列出各山屋申請單明細。
+   沒有 camps 參數時本段完全不出現，國家公園單一申請不受影響。 */
+const A3_CAMPS = (getParam("camps") || "").split(",").filter(k => k && window.TH_CABIN_DATA && window.TH_CABIN_DATA[k]);
+const A3_PARK_AGENCY = { yushan: "玉山國家公園管理處", "shei-pa": "雪霸國家公園管理處", taroko: "太魯閣國家公園管理處" };
+
 thPage({
   data() {
     const qRoute = getParam("route");
@@ -211,6 +225,10 @@ thPage({
       sumday: other ? other.sumday : (qSumday || (defaultClimb === "2" ? "2" : "1")),
       applystart: other ? other.start : (qStart || demoStart),
       dateOptions: dateOptions,
+
+      // 複合：林保署山屋（見模組層說明）；初值在 created() 依入園日產生，從隊伍資料回來時沿用暫存
+      camps: [],
+      campPayment: "remit",
 
       mainRoutes: other ? park.mains : [
         { value: "1", text: "玉山線" },
@@ -349,7 +367,17 @@ thPage({
       return this.park.graphs[this.climbline] || GENERIC_PLANNER_GRAPH;
     },
     /* 本頁區塊數（側欄「本頁內容」分母）：無入山證的機關少一塊 */
-    sectionCount() { return 2 + (this.safetyOn ? 1 : 0) + (this.npaOn ? 1 : 0); },
+    sectionCount() { return 2 + (this.safetyOn ? 1 : 0) + (this.npaOn ? 1 : 0) + (this.camps.length ? this.camps.length + 1 : 0); },
+    /* 複合山屋：側欄編號從國家公園各區塊之後接續 */
+    campNavBase() { return 2 + (this.safetyOn ? 1 : 0) + (this.npaOn ? 1 : 0); },
+    campOk() { return this.camps.map(c => { const cab = window.TH_CABIN_DATA[c.route]; return !!c.start && window.thFcAllocTotals(cab, c.alloc, c.start, c.days - 1).nightsValid; }); },
+    campsOk() { return this.campOk.every(Boolean) && (!this.camps.length || !!this.campPayment); },
+    campDateOptions() {
+      const out = [], t = window.thTodayValue();
+      for (let i = 5; i <= 60; i++) out.push(window.thAddDaysToDateValue(t, i));
+      return out;
+    },
+    parkAgency() { return A3_PARK_AGENCY[this.park.key] || "國家公園管理處"; },
     /* 登山安全管理：管理處設定了 ParkApplyData.hikingSafety 才出現（雪霸全部次路線，is_hiking_safety 見該檔） */
     safetyOn() { return !this.textPlan && !!this.park.hikingSafety; },
     safetyDays() { return this.planDays.filter(d => d.length).map((d, i) => ({ date: this.dayDate(i), nodes: d })); },
@@ -651,15 +679,52 @@ thPage({
       if (this.secPlannerOk) count++;
       if (this.safetyOn && this.secSafetyOk) count++;
       if (this.npaOn && this.secNpaOk) count++;
+      this.campOk.forEach(ok => { if (ok) count++; });
+      if (this.camps.length && this.campPayment) count++;
       return count;
     },
 
     canSubmit() {
-      return this.secRouteOk && this.secPlannerOk && this.secSafetyOk && this.secNpaOk;
+      return this.secRouteOk && this.secPlannerOk && this.secSafetyOk && this.secNpaOk && this.campsOk;
     }
   },
 
+  /* 複合山屋初值（方案 B「整趟預設、項目可改」）：第 k 間入住日＝入園日＋k、住 1 晚、每晚預帶 4 床；
+     從隊伍資料按上一步回來（網址帶 applystart、暫存的山屋與網址相同）就沿用暫存 */
+  created() {
+    if (!A3_CAMPS.length) return;
+    let saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem("th_apply_step3_payload") || "null"); } catch (e) { /* 略過 */ }
+    /* 只有從隊伍資料按上一步回來（網址帶 applystart，apply-3 下一步時加上）才沿用；從同意書新進來一律重新預設 */
+    const same = !!getParam("applystart") && saved && Array.isArray(saved.camps) && saved.camps.map(c => c.route).join(",") === A3_CAMPS.join(",");
+    this.camps = A3_CAMPS.map((route, k) => {
+      const cab = window.TH_CABIN_DATA[route];
+      if (same) { const c = saved.camps[k]; return { route: route, start: c.start, days: c.nights + 1, alloc: c.alloc }; }
+      return { route: route, start: window.thAddDaysToDateValue(this.applystart, k), days: 2, alloc: window.thFcAllocInit(cab, 1, 4) };
+    });
+    if (same && saved.campPayment) this.campPayment = saved.campPayment;
+  },
+
   watch: {
+    /* 複合山屋：改天數時 alloc 依晚數增減，保留仍存在的晚上，新增的晚上沿用前一晚（同 forest-camp-2） */
+    camps: {
+      deep: true,
+      handler(list) {
+        list.forEach(c => {
+          const cab = window.TH_CABIN_DATA[c.route];
+          const n = c.days - 1;
+          for (let i = 0; i < n; i++) {
+            if (c.alloc[i]) continue;
+            const row = {};
+            cab.facilities.forEach(f => { row[f.id] = 0; });
+            if (c.alloc[i - 1]) Object.assign(row, c.alloc[i - 1]);
+            else if (cab.facilities[0]) row[cab.facilities[0].id] = Math.min(4, cab.facilities[0].max || 4);
+            c.alloc[i] = row;
+          }
+          Object.keys(c.alloc).forEach(k => { if (Number(k) >= n) delete c.alloc[k]; });
+        });
+      },
+    },
     /* 登山安全管理：規劃結果或路線變動時補上到達時間的預帶值 */
     planDays: { deep: true, handler() { this.fillSafetyTimes(); } },
     safetyOn: { immediate: true, handler() { this.fillSafetyTimes(); } },
@@ -920,6 +985,10 @@ thPage({
       this.accordionOpen.npa = this.allAccordionExpanded;
     },
 
+    /* 複合山屋 */
+    cabinOf(c) { return window.TH_CABIN_DATA[c.route]; },
+    circled(n) { return "①②③④⑤⑥⑦⑧⑨"[n - 1] || n + "."; },
+
     goPrev() {
       const q = new URLSearchParams(window.location.search);
       window.location.href = `apply-2.html?${q.toString()}`;
@@ -976,6 +1045,9 @@ thPage({
           frequency: this.frequency ? this.frequency : "無",
           note_user: this.note_user ? this.note_user : "無"
         },
+        /* 複合：林保署山屋（apply-5 列出各山屋申請單明細） */
+        camps: this.camps.map(c => ({ route: c.route, start: c.start, nights: c.days - 1, alloc: JSON.parse(JSON.stringify(c.alloc)) })),
+        campPayment: this.camps.length ? this.campPayment : "",
         npa: {
           reason: npaReasonText,
           places: npaPlacesText,

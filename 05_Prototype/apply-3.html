@@ -46,6 +46,9 @@
       <!-- 主欄表單內容 -->
       <div class="p-apply3-main">
 
+        <!-- 複合申請（國家公園路線＋山屋，2026-10-08）：各項目標出審查機關；單一國家公園申請時不顯示 -->
+        <h2 v-if="camps.length" class="th-section-title mb-0">① {{ park.key === 'yushan' ? '玉山' : park.key === 'taroko' ? '太魯閣' : '雪霸' }}國家公園 入園申請<span class="th-section-title-sub">審查機關：{{ parkAgency }}</span></h2>
+
         <!-- 區塊 1：路線與基本資料 -->
         <section id="sec-route" class="th-card">
           <div class="th-card-head">
@@ -548,6 +551,39 @@
           </div>
         </section>
 
+        <!-- 複合申請：林保署山屋（每間一段，元件同山屋行程規劃頁 forest-camp-2；見 components/apply-3.js 模組層說明） -->
+        <template v-for="(c, ci) in camps" :key="c.route">
+          <h2 class="th-section-title mb-0 mt-6">{{ circled(ci + 2) }} {{ cabinOf(c).name }} 住宿申請<span class="th-section-title-sub">審查機關：{{ cabinOf(c).manager }}（入住日期與天數可與入園日不同）</span></h2>
+          <th-trip-basics :id="'sec-camp-' + c.route" title="入住日期" compact v-model:days="c.days" v-model:start="c.start"
+                          :day-options="Array.from({ length: cabinOf(c).maxDays - cabinOf(c).minDays + 1 }, (_, i) => cabinOf(c).minDays + 1 + i)"
+                          :date-options="campDateOptions" :placeholder="false"
+                          start-hint="※因作業規定，最晚須於5天前申請。"></th-trip-basics>
+          <section class="th-card">
+            <div class="th-card-head">
+              <h2 class="th-card-title">費用參考</h2>
+            </div>
+            <div class="th-card-body">
+              <th-camp-fee :cabin="cabinOf(c)"></th-camp-fee>
+            </div>
+          </section>
+          <section class="th-card">
+            <div class="th-card-head">
+              <h2 class="th-card-title">山屋及營地申請</h2>
+            </div>
+            <div class="th-card-body">
+              <th-camp-rooms :cabin="cabinOf(c)" :start="c.start" :nights="c.days - 1" :alloc="c.alloc" :people-max="cabinOf(c).peopleMax || 12"></th-camp-rooms>
+            </div>
+          </section>
+        </template>
+        <section v-if="camps.length" id="sec-camp-pay" class="th-card">
+          <div class="th-card-head">
+            <h2 class="th-card-title">山屋付款方式<span class="req text-rose-600 ml-1">*</span><span class="text-rose-600 text-base font-medium ml-2">（訂房後不可更改）</span></h2>
+          </div>
+          <div class="th-card-body">
+            <th-camp-payment v-model="campPayment" name="camp-payment"></th-camp-payment>
+          </div>
+        </section>
+
       </div>
 
       <!-- 側欄頁內目錄導覽（比照 .th-pagenav 視覺語言） -->
@@ -581,6 +617,19 @@
             <li v-if="npaOn" :class="{ 'is-acked': secNpaOk, 'is-active': activeNavIndex === (safetyOn ? 3 : 2) }">
               <button type="button" @click="scrollToSection('sec-npa', safetyOn ? 3 : 2)">
                 <span class="p-apply3-side-text">{{ safetyOn ? 4 : 3 }}. 警政署入山證</span>
+                <span class="p-apply3-side-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+            <!-- 複合申請：林保署山屋各一項＋山屋付款方式 -->
+            <li v-for="(c, ci) in camps" :key="c.route" :class="{ 'is-acked': campOk[ci], 'is-active': activeNavIndex === campNavBase + ci }">
+              <button type="button" @click="scrollToSection('sec-camp-' + c.route, campNavBase + ci)">
+                <span class="p-apply3-side-text">{{ campNavBase + ci + 1 }}. {{ cabinOf(c).name }}住宿</span>
+                <span class="p-apply3-side-tick" aria-hidden="true"></span>
+              </button>
+            </li>
+            <li v-if="camps.length" :class="{ 'is-acked': !!campPayment, 'is-active': activeNavIndex === campNavBase + camps.length }">
+              <button type="button" @click="scrollToSection('sec-camp-pay', campNavBase + camps.length)">
+                <span class="p-apply3-side-text">{{ campNavBase + camps.length + 1 }}. 山屋付款方式</span>
                 <span class="p-apply3-side-tick" aria-hidden="true"></span>
               </button>
             </li>
