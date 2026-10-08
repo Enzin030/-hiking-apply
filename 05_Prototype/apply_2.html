@@ -43,12 +43,16 @@
     :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '資料線上異動/取消入園']"
     title="資料線上異動/取消入園">
 
-    <!-- 三條權限規則逐字保留（決定「誰登入、能動到誰」） -->
+    <!-- 權限規則（決定「誰登入、能動到誰」）：2026-10-08 使用者要求改成更好理解的寫法——依登入身分分條，意思與正式站原文相同：
+         原文「領隊如點選 取消入園，將取消整個隊伍之所有資料。／隊員可自行「取消個人入園」，僅取消個人之申請資料。
+         欲取消隊員，請以該員身分證字號及登山申請編號登入，方可取消該員入園資格。／申請人可以申請領隊異動。」 -->
     <th-callout type="warning" id="notes">
-      領隊如點選 取消入園，將取消整個隊伍之所有資料。<br />
-      隊員可自行「取消個人入園」，僅取消個人之申請資料。<br />
-      欲取消隊員，請以該員身分證字號及登山申請編號登入，方可取消該員入園資格。<br />
-      申請人可以申請領隊異動。
+      <strong class="block mb-1">依登入身分可辦理的事項</strong>
+      <ul class="list-disc pl-5 grid gap-0.5">
+        <li><strong>領隊</strong>：可「取消入園」，會取消整個隊伍的所有資料。</li>
+        <li><strong>隊員</strong>：可「取消個人入園」，只取消自己的申請資料。要取消某位隊員，請用該隊員的身分證字號及登山申請編號登入。</li>
+        <li><strong>申請人</strong>：可申請領隊異動。</li>
+      </ul>
     </th-callout>
 
     <section class="th-card" id="query">
@@ -106,7 +110,7 @@
         <!-- 驗證碼設定同線上申請確認頁（apply-5／apply_06）：可換碼、上下排列、不顯示提示（使用者 2026-10-08） -->
         <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
-        <div class="flex justify-end mt-2">
+        <div class="flex justify-center mt-2">
           <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
