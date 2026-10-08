@@ -8,7 +8,11 @@
      「本申請單總金額為：NT$N元」；付款方式
    - 隊伍資料：NO.／姓名／身分／證號／電話／聯絡地址／緊急連絡人／緊急連絡電話；
      **申請人與領隊各列一行**（同一人），**證號遮罩**（A******789）
-   - 附件資料：無須上傳附件；送件驗證碼**在本頁**（國家公園流程在人員資料頁）
+   - 附件資料：只在有附件時顯示（2026-10-08 使用者：無須上傳附件就不用顯示）——目前只有保護區依申請目的需附件，
+     列出所選目的已上傳的檔名（原本一律顯示空表「無須上傳附件」，保護區有上傳也列不出來）；
+     送件驗證碼**在本頁**（國家公園流程在人員資料頁）
+   - 送出後只跳 SweetAlert 成功訊息（2026-10-08 使用者：申請完成跳 SWAL 就好，比照國家公園 apply-5），
+     按確定前往申請進度查詢；原本在同頁切換的「申請完成」卡片拿掉
    費用一律走 window.thFcPriceOf（假日二價），與第 2 步同一出口。
    ============================================================ */
 
@@ -67,12 +71,24 @@ thPage({
       fileColumns: FC6_FILE_COLUMNS,
       vcode: "7K4M",   // 預設帶入示意驗證碼（2026-10-02）
       captchaCode: "7K4M",
-      done: false,
       draftOpen: false,
     };
   },
 
   computed: {
+    /* 附件資料（保護區）：第 2 步暫存 areaPlan.attachFiles＝{ "目的#第幾件": 檔名 }，只列目前所選目的的檔案；
+       名稱同第 2 步附件表「<目的>相關證明文件（附件 N）」 */
+    fileRows() {
+      const plan = this.st.kind === "area" ? this.st.areaPlan : null;
+      if (!plan || !plan.attachFiles) return [];
+      const chosen = (plan.purposes && plan.purposes.length) ? plan.purposes : (plan.purpose ? [plan.purpose] : []);
+      const keys = Object.keys(plan.attachFiles).filter(k => plan.attachFiles[k] && chosen.indexOf(k.split("#")[0]) >= 0);
+      return keys.map((k, i) => {
+        const purpose = k.split("#")[0];
+        const many = keys.filter(x => x.split("#")[0] === purpose).length > 1;
+        return { no: i + 1, name: purpose + "相關證明文件" + (many ? "（附件 " + k.split("#")[1] + "）" : ""), file: plan.attachFiles[k] };
+      });
+    },
     applyCrumb() { return window.TH_APPLY_CRUMB; },
     planRows() { return window.thApply6PlanRows(this.st, window.thTodayValue()); },
     plan() {
@@ -225,13 +241,14 @@ thPage({
     prev() { window.location.href = "apply_03.html"; },   // 2026-10-08 同意聲明移到第一步，上一步回隊伍資料
     submit() {
       const e = [];
-      /* 2026-10-08 步驟改為 閱讀同意書→行程規劃→隊伍資料→確認資料→申請完成；同意聲明是進入申請的關卡，這裡不再檢查 */
+      /* 2026-10-08 步驟改為 閱讀同意書→行程規劃→隊伍資料→確認資料（→申請完成以成功訊息呈現）；同意聲明是進入申請的關卡，這裡不再檢查 */
       if (this.st.kind === "camp" && !this.bookingRows.length) e.push("尚未選擇床位或營位，請回第 2 步");
       if (!(this.st.applicant && this.st.applicant.name)) e.push("尚未填寫申請人資料，請回第 3 步");
       if (!this.vcode) e.push("請輸入送件驗證碼");
       if (e.length) { window.thAlertList(e); return; }
-      this.done = true;
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      /* 比照國家公園 apply-5：成功訊息＋後續說明，確定後前往申請進度查詢 */
+      window.thAlert("【申請成功】\n" + this.doneText, "success")
+        .then(() => { window.location.href = "applySearch.html"; });
     },
   },
 });

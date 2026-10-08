@@ -23,13 +23,13 @@
 
   <th-header active="apply"></th-header>
 
-  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, done ? '申請完成' : '確認資料']" :title="st.title">
+  <th-page-shell :trail="['登山申請', applyCrumb, st.crumb, '確認資料']" :title="st.title">
 
     <template #stepper>
-      <th-fc-stepper :current="done ? 5 : 4"></th-fc-stepper>
+      <th-fc-stepper :current="4"></th-fc-stepper>
     </template>
 
-    <div v-if="!done" class="grid gap-6">
+    <div class="grid gap-6">
       <th-callout type="warning">請確認資料正確無誤後，再確認送出！</th-callout>
 
       <!-- 行程摘要（照片取路線列表同一張；警政署入山行程計畫摘要卡片） -->
@@ -142,12 +142,13 @@
         </div>
       </section>
 
-      <section class="th-card">
+      <!-- 附件資料：只在有附件時顯示（2026-10-08 使用者：無須上傳附件就不用顯示） -->
+      <section v-if="fileRows.length" class="th-card">
         <div class="th-card-head">
           <h2 class="th-card-title">附件資料</h2>
         </div>
         <div class="th-card-body">
-          <th-data-table :columns="fileColumns" :rows="[]" row-key="no" caption="附件資料" empty="無須上傳附件"></th-data-table>
+          <th-data-table :columns="fileColumns" :rows="fileRows" row-key="no" caption="附件資料"></th-data-table>
         </div>
       </section>
 
@@ -180,15 +181,7 @@
       </div>
     </div>
 
-    <section v-else class="th-card">
-      <div class="th-card-head">
-        <h2 class="th-card-title">申請完成</h2>
-      </div>
-      <div class="th-card-body grid gap-3">
-        <p>{{ doneText }}</p>
-        <div><a class="th-btn th-btn-ghost" href="applySearch.html">前往申請進度查詢</a></div>
-      </div>
-    </section>
+    <!-- 送出後只跳 SweetAlert 成功訊息（2026-10-08 使用者：申請完成跳 SWAL 就好），原「申請完成」卡片拿掉 -->
   </th-page-shell>
 
 

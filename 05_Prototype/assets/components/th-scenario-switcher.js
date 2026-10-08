@@ -9,7 +9,7 @@
    **第 3 步以後靠「自動前進」，不手寫假資料**：先開該類別的行程規劃頁（帶 new=1，等同新的一張），
    每頁掛載後由本元件按「同意／下一步」直到目標步驟（同意書頁先把未勾的條目勾滿）。
    各頁的必填欄位本來就預帶示意資料（2026-10-02），所以一路的暫存都是真實流程寫出來的，
-   與 tools/verify/prefill_chain.mjs 走的是同一條路。目標為「申請完成」時最後按「確認送出／送出申請」。
+   與 tools/verify/prefill_chain.mjs 走的是同一條路。目標為「申請完成」時最後按「確認送出／送出申請」，停在成功訊息（四類送出後都只跳 SweetAlert，沒有獨立完成畫面）。
    進度記在 sessionStorage（th_scn_auto）；遇到警告彈窗、找不到按鈕或逾時即停止並清掉，畫面停在該頁。
    面板開合記在 localStorage（th_scn_open，讀寫皆 try/catch）。
 
@@ -56,11 +56,7 @@
       r.kind = st.kind || "camp";
       r.area = st.areaCid || "";
       r.cabin = st.route || "";
-      r.step = page === "apply_03.html" ? 3 : 4;
-      if (page === "apply_06.html") {
-        var cur = document.querySelector(".fc-step.is-current .fc-step-label");
-        if (cur && cur.textContent.trim() === "申請完成") r.step = 5;
-      }
+      r.step = page === "apply_03.html" ? 3 : 4;   // 申請完成＝確認頁送出後的成功訊息（2026-10-08 起四類相同），沒有獨立畫面
     }
     return r;
   }
