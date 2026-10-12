@@ -696,13 +696,6 @@ thPage({
         window.thAlert("已取消全隊入園。", "success").then(() => { window.location.href = "apply_2.html"; });
       });
     },
-    /* 異動模式：領隊取消入園＝取消整個隊伍（權限規則「領隊如點選 取消入園，將取消整個隊伍之所有資料」） */
-    cancelLeader() {
-      window.thConfirm("領隊取消入園，將取消整個隊伍之所有資料。確定要取消嗎？").then(ok => {
-        if (!ok) return;
-        window.thAlert("已取消全隊入園。", "success").then(() => { window.location.href = "apply_2.html"; });
-      });
-    },
     /* 異動模式：隊員取消個人入園，確認後自名單移除 */
     cancelMember(index) {
       const m = this.members[index] || {};

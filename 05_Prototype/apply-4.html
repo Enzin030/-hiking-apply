@@ -254,10 +254,6 @@
               </h2>
               <i class="fa-solid fa-chevron-down th-accordion-icon" :class="{ 'is-open': accordionOpen.leader }" aria-hidden="true"></i>
             </button>
-            <!-- 異動模式：領隊取消入園（＝取消全隊） -->
-            <button v-if="isEdit" type="button" class="th-member-del ml-auto shrink-0" @click="cancelLeader" title="領隊取消入園將取消整個隊伍">
-              <i class="fa-solid fa-user-xmark mr-1" aria-hidden="true"></i>取消入園
-            </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.leader">
             <!-- 同申請人核取方塊（原本框限樣式） -->
