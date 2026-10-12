@@ -106,12 +106,15 @@
              寬螢幕（lg 以上）國家公園／林保署左右並排、平板以下上下疊；字級 text-sm（同欄位提示），內容逐字未改 -->
         <hr class="border-t border-slate-200 sm:col-span-2" />
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:col-span-2 text-sm">
-        <th-callout type="warning">
+        <!-- 2026-10-12 使用者覺得並排不和諧：兩塊改同一色（資訊色，不再一黃一綠）、同樣「標題＋條列」結構，圖示區分機關；
+             國家公園許可證列印期限仍粗體。文字內容未改，只把國家公園三句改條列 -->
+        <th-callout icon="fa-solid fa-mountain">
           <strong class="block mb-1">國家公園</strong>
-          <strong>入園許可證：請領隊於入園日(含)前5日內始可列印；</strong><br />
-          <strong>入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份，謝謝。</strong><br />
-          登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前1日天氣預報不佳或身體有不適狀況，考量不成行請儘速線上取消申請，避免入園當日無法取消。<br />
-          <strong>線上取消登山申請：</strong><a href="apply_2.html">申請資料異動及取消</a>
+          <ul class="list-disc pl-5 grid gap-0.5">
+            <li><strong>入園許可證：請領隊於入園日(含)前5日內始可列印；入園日後，將不提供列印及查詢，如需入園許可證副本，請自行備份，謝謝。</strong></li>
+            <li>登山活動應事先查看天氣預報及掌握成員身體狀況，如入園日前1日天氣預報不佳或身體有不適狀況，考量不成行請儘速線上取消申請，避免入園當日無法取消。</li>
+            <li>線上取消登山申請：<a href="apply_2.html">申請資料異動及取消</a></li>
+          </ul>
         </th-callout>
         <th-callout icon="ph-bold ph-tree">
           <strong class="block mb-1">林保署</strong>
