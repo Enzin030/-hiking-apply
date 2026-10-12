@@ -36,7 +36,7 @@
 
   <!-- 2026-10-08 使用者：內容照規格截圖調整（02_Spec/06b「線上繳費(排雲)-繳費頁／過期提示」），用現有元件——
        標題照截圖「(排雲)」；查詢通過後為「線上繳費(玉管處)」：基本資料（2×3 鍵值）、費用明細（兩層表頭、總計列）、
-       繳費方式單選＋繳納金額（方式五行內「產生超商繳費單」）、※ 說明；過期案件以 SweetAlert 提示（示意編號見 apply4-pay.js）。
+       繳費方式單選＋繳納金額、※ 說明、「確認」（繳費單於確認後產生，雛形為建置中提示）；過期案件以 SweetAlert 提示（示意編號見 apply4-pay.js）。
        原「適用範圍」「可辦理的動作」「相關功能」為截圖沒有的內容，拿掉；查詢表單依規格文字保留。 -->
   <th-page-shell
     :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '列印繳費說明單/線上繳費(排雲)']"
@@ -121,22 +121,23 @@
           <h2 class="th-card-title">費用明細</h2>
         </div>
         <div class="th-card-body grid gap-4">
-          <!-- 兩層表頭（中華民國人費用／外國人費用各跨三欄）：th-data-table 只支援單層，這張表直接用 .th-table（同 forest-camp-2 表格） -->
+          <!-- 兩層表頭（中華民國人費用／外國人費用各跨三欄）：th-data-table 只支援單層，這張表直接用 .th-table（同 forest-camp-2 表格）。
+               兩組費用與單日合計之間加直分隔線（border-l，使用者 2026-10-12：要明確分隔） -->
           <div class="th-table-wrap border border-slate-200 rounded-md">
             <table class="th-table w-full whitespace-nowrap">
               <thead>
                 <tr>
                   <th scope="col" rowspan="2">住宿日期</th>
                   <th scope="col" rowspan="2">宿營地</th>
-                  <th scope="colgroup" colspan="3" class="is-center">中華民國人費用</th>
-                  <th scope="colgroup" colspan="3" class="is-center">外國人費用</th>
-                  <th scope="col" rowspan="2" class="is-right">單日合計</th>
+                  <th scope="colgroup" colspan="3" class="is-center border-l border-l-slate-300">中華民國人費用</th>
+                  <th scope="colgroup" colspan="3" class="is-center border-l border-l-slate-300">外國人費用</th>
+                  <th scope="col" rowspan="2" class="is-right border-l border-l-slate-300">單日合計</th>
                 </tr>
                 <tr>
-                  <th scope="col" class="is-center">單價</th>
+                  <th scope="col" class="is-center border-l border-l-slate-300">單價</th>
                   <th scope="col" class="is-center">人數</th>
                   <th scope="col" class="is-center">小計</th>
-                  <th scope="col" class="is-center">單價</th>
+                  <th scope="col" class="is-center border-l border-l-slate-300">單價</th>
                   <th scope="col" class="is-center">人數</th>
                   <th scope="col" class="is-center">小計</th>
                 </tr>
@@ -145,23 +146,26 @@
                 <tr v-for="f in fees" :key="f.date">
                   <td>{{ f.date }}</td>
                   <td>{{ f.camp }}</td>
-                  <td class="is-center">{{ f.priceLocal }}</td>
+                  <td class="is-center border-l border-l-slate-300">{{ f.priceLocal }}</td>
                   <td class="is-center">{{ f.peopleLocal }}</td>
                   <td class="is-center">{{ f.subLocal }}</td>
-                  <td class="is-center">{{ f.priceForeign }}</td>
+                  <td class="is-center border-l border-l-slate-300">{{ f.priceForeign }}</td>
                   <td class="is-center">{{ f.peopleForeign }}</td>
                   <td class="is-center">{{ f.subForeign }}</td>
-                  <td class="is-right">{{ f.dayTotal.toLocaleString() }}</td>
+                  <td class="is-right border-l border-l-slate-300">{{ f.dayTotal.toLocaleString() }}</td>
                 </tr>
                 <tr>
                   <th scope="row" colspan="8" class="is-right">總計</th>
-                  <td class="is-right font-bold">{{ feeTotal.toLocaleString() }}</td>
+                  <td class="is-right font-bold border-l border-l-slate-300">{{ feeTotal.toLocaleString() }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- 繳費方式：單選，每個方式顯示繳納金額（總計＋該方式內含手續費） -->
+          <hr class="border-t border-slate-200" />
+
+          <!-- 繳費方式：單選，每個方式顯示繳納金額（總計＋該方式內含手續費）。
+               超商繳費單不在選項列產生，改為選定後按下方「確認」才出現（使用者 2026-10-12） -->
           <div class="th-table-wrap border border-slate-200 rounded-md">
             <table class="th-table w-full">
               <thead>
@@ -175,8 +179,7 @@
                   <td>
                     <label class="flex items-start gap-2 cursor-pointer">
                       <input type="radio" name="pay-method" class="mt-1" :value="m.no" v-model="method" />
-                      <span>{{ m.no }}：{{ m.name }}<span v-if="m.feeNote" :class="{ 'text-rose-600': m.noteAccent }">{{ m.feeNote }}</span>
-                        <template v-if="m.cvs"> <span class="th-todo-link">產生超商繳費單</span></template></span>
+                      <span>{{ m.no }}：{{ m.name }}<span v-if="m.feeNote" :class="{ 'text-rose-600': m.noteAccent }">{{ m.feeNote }}</span></span>
                     </label>
                   </td>
                   <td class="is-right whitespace-nowrap">{{ (feeTotal + m.add).toLocaleString() }}</td>
@@ -191,6 +194,12 @@
           </div>
         </div>
       </section>
+
+      <div class="th-form-actions">
+        <button type="button" class="th-btn th-btn-primary" @click="confirmPay">
+          <i class="fa-solid fa-check" aria-hidden="true"></i>確認
+        </button>
+      </div>
     </template>
   </th-page-shell>
 

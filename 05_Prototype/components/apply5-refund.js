@@ -68,10 +68,10 @@ const DEMO_HISTORY = [
 thPage({
   data() {
     return {
-      sid: "",
-      mobile: "",
-      otp: "",
-      otpSent: false,
+      /* 驗證身分預帶示意值（使用者 2026-10-12：預填資料），與驗證後顯示的 DEMO_PERSON 遮罩值一致 */
+      sid: "A123456789",
+      mobile: "0912345123",
+      otp: "123456",
       verified: false,
       errors: { sid: "", mobile: "" },
 
@@ -104,10 +104,14 @@ thPage({
   },
 
   methods: {
-    /* 雛形不發簡訊，只翻一個旗標讓畫面顯示「已送出」提示。
+    /* 雛形不發簡訊；「已送出」提示已依使用者 2026-10-12 拿掉，改以 SweetAlert 告知已寄送。
        不要改成看起來會倒數的樣子——那會讓驗收的人以為 OTP 已接上。 */
     sendOtp() {
-      this.otpSent = true;
+      window.thAlert("驗證密碼已寄送至您的手機。", "success");
+    },
+    /* 未建置功能（新增退費申請、影本附件、帳戶／明細維護）：SweetAlert 建置中，同申請進度查詢的下載許可證 */
+    building() {
+      window.thAlert("此功能建置中", "info");
     },
 
     /* 確定：欄位檢核（訊息照規格 06c），通過才顯示退費資訊 */

@@ -91,5 +91,10 @@ thPage({
       }
       this.submitted = true;
     },
+    /* 確認繳費方式：未選先提醒；繳費單（含超商繳費單）於確認後產生，雛形以建置中提示代替（使用者 2026-10-12） */
+    confirmPay() {
+      if (!this.method) { window.thAlert("請選擇繳費方式"); return; }
+      window.thAlert("此功能建置中", "info");
+    },
   },
 });

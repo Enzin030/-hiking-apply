@@ -109,7 +109,6 @@
             </button>
           </div>
           <span v-if="errors.mobile" class="th-field-error" role="alert">{{ errors.mobile }}</span>
-          <div class="th-field-hint" v-if="otpSent">已送出（雛形不發送真實簡訊，請直接填寫下方欄位）。</div>
         </div>
 
         <div class="th-field">
@@ -146,19 +145,15 @@
       <section class="th-card" id="person">
         <div class="th-card-body grid gap-4">
           <th-data-table class="border border-slate-200 rounded-md" table-class="w-full whitespace-nowrap" :columns="personColumns" :rows="demoPerson" row-key="sid" caption="退費申請人資訊"></th-data-table>
-          <div class="flex flex-wrap justify-center gap-2">
-            <th-todo-link label="新增退費申請"></th-todo-link>
-            <button type="button" class="th-btn th-btn-ghost" @click="backToQuery">回查詢頁</button>
-          </div>
           <th-data-table class="border border-slate-200 rounded-md" table-class="w-full" :columns="historyColumns" :rows="demoHistory" row-key="time" caption="退費申請紀錄">
             <template #cell="{ row, column, value }">
               <template v-if="column.key === 'bank'">({{ row.bankCode }})<br />{{ row.bankName }}</template>
               <template v-else-if="column.key === 'account'">{{ row.holder }}<br />{{ row.accountNo }}<br />{{ row.branch }}</template>
-              <span v-else-if="column.key === 'copy'" class="th-todo-link">影本附件</span>
+              <button v-else-if="column.key === 'copy'" type="button" class="th-btn th-btn-ghost th-btn-sm" @click="building">影本附件</button>
               <span v-else-if="column.key === 'state'" :class="['th-flag', row.state === '審核完成' || row.state === '已退款' ? 'is-open' : 'is-proof']">{{ row.state }}</span>
               <div v-else-if="column.key === 'fn'" class="flex flex-col gap-1 whitespace-nowrap">
-                <th-todo-link label="匯款帳戶維護"></th-todo-link>
-                <th-todo-link label="退款明細維護"></th-todo-link>
+                <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="building">匯款帳戶維護</button>
+                <button type="button" class="th-btn th-btn-ghost th-btn-sm" @click="building">退款明細維護</button>
               </div>
               <template v-else>{{ value }}</template>
             </template>
@@ -166,6 +161,14 @@
           <p class="th-field-hint is-accent">實退金額＝所有退費總額－銀行手續費（同意貴處逕行扣收銀行手續費30元）</p>
         </div>
       </section>
+
+      <!-- 兩顆按鈕移到最下方置中；未建置功能一律為按鈕＋SweetAlert 建置中（使用者 2026-10-12） -->
+      <div class="th-form-actions">
+        <button type="button" class="th-btn th-btn-primary" @click="building">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>新增退費申請
+        </button>
+        <button type="button" class="th-btn th-btn-ghost" @click="backToQuery">回查詢頁</button>
+      </div>
     </template>
   </th-page-shell>
 
