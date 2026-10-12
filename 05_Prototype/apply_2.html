@@ -112,28 +112,12 @@
         <th-captcha v-model="vcode" v-model:code="vcodeCode" :refreshable="true" input-id="f-vcode" layout="stack" hide-hint></th-captcha>
 
         <div class="flex justify-center mt-2 sm:col-span-2">
-          <button type="button" class="th-btn th-btn-primary" @click="submitted = true">
+          <!-- 查詢後直接進入異動頁（使用者 2026-10-12：不顯示查詢結果，直接跳轉） -->
+          <button type="button" class="th-btn th-btn-primary" @click="enterEdit(demoResults[0])">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>查詢
           </button>
         </div>
 
-        <div v-if="submitted" class="sm:col-span-2 flex flex-col gap-4">
-          <!-- 查詢表單與查詢結果之間的分隔線（使用者 2026-10-12，同正式站） -->
-          <hr class="border-t border-slate-200" />
-          <h3 class="th-section-title">查詢結果</h3>
-          <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra"></th-data-table>
-
-          <!-- 2026-10-12 使用者：改為進入申請步驟——按「線上資料異動」進國家公園行程規劃頁（異動模式 ?edit=），
-               異動、取消個人入園（隊伍資料頁領隊／隊員列）、取消全隊入園（各步驟下方）都在步驟頁辦理 -->
-          <div class="flex justify-center">
-            <button type="button" class="th-btn th-btn-primary" @click="enterEdit(demoResults[0])">
-              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>線上資料異動
-            </button>
-          </div>
-
-          <th-callout>取消入園後若要申請退還已繳規費，請另行前往
-            <a href="apply_5.html">線上申請退費</a>；本頁不重述退費比例與期限規定。</th-callout>
-        </div>
         </div>
       </div>
     </section>
