@@ -117,17 +117,19 @@
           <label class="th-label" for="f-mobile">
             <span class="req">*</span>手機號碼
           </label>
-          <div class="flex flex-col sm:flex-row gap-2 items-start">
+          <!-- 手機號碼＋寄送驗證密碼接成 input group（使用者 2026-10-12）：相鄰兩側圓角拿掉、按鈕左移 1px 疊掉重複框線，
+               輸入框聚焦時浮上層，焦點框不被按鈕蓋住 -->
+          <div class="flex items-stretch">
             <input
               id="f-mobile"
               name="aplymobile"
               type="tel"
-              class="th-input flex-1"
+              class="th-input flex-1 min-w-0 rounded-r-none relative focus:z-10"
               autocomplete="off"
               placeholder="請輸入可接收簡訊的手機號碼"
               :value="mobile"
               @input="mobile = $event.target.value" />
-            <button type="button" class="th-btn th-btn-secondary shrink-0" @click="sendOtp">
+            <button type="button" class="th-btn th-btn-secondary shrink-0 py-0 rounded-l-none -ml-px shadow-none" @click="sendOtp">
               <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>寄送驗證密碼
             </button>
           </div>
