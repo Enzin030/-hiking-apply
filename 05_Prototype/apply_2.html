@@ -118,7 +118,9 @@
         </div>
 
         <div v-if="submitted" class="sm:col-span-2 flex flex-col gap-4">
-          <h3 class="th-section-title mt-6">查詢結果</h3>
+          <!-- 查詢表單與查詢結果之間的分隔線（使用者 2026-10-12，同正式站） -->
+          <hr class="border-t border-slate-200" />
+          <h3 class="th-section-title">查詢結果</h3>
           <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra"></th-data-table>
 
           <!-- 卡片要求：異動與取消是兩種結果動作，畫面上必須分開。
