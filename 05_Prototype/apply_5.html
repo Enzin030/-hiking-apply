@@ -45,13 +45,14 @@
 
     <template v-if="!verified">
     <!-- 退費申請須知：比照本站使用說明的編號格狀卡片（.th-info-*，使用者 2026-10-12）；
-         原本表單下方的「如實填寫」提醒與操作說明下載併入本卡底部。各格標題為分組用，內文為正式站原句。 -->
+         原本表單下方的「如實填寫」提醒與操作說明下載改為第 6 格；書面申請與相關規定併入第 4 格（使用者 2026-10-12）。
+         各格標題為分組用，內文為正式站原句。 -->
     <section class="th-card" id="rules">
       <div class="th-card-head">
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         <h2 class="th-card-title">退費申請須知</h2>
       </div>
-      <div class="th-card-body grid gap-4">
+      <div class="th-card-body">
         <ol class="th-info-grid">
           <li class="th-info-item">
             <div class="th-info-head"><span class="th-info-no" aria-hidden="true">1</span><h3 class="th-info-title">先取消入園</h3></div>
@@ -72,21 +73,18 @@
           <li class="th-info-item">
             <div class="th-info-head"><span class="th-info-no" aria-hidden="true">4</span><h3 class="th-info-title">退款方式與文件</h3></div>
             <p class="th-info-body">退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
-          </li>
-          <li class="th-info-item">
-            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">5</span><h3 class="th-info-title">無法線上申請時</h3></div>
             <p class="th-info-body">登山申請資料原則保留2年，如無法由線上申請退費，請依規以退費申請書提出申請。<a class="th-inline-link" :href="refLinks.rule" target="_blank" rel="noopener noreferrer">申請退還「排雲山莊」使用規費相關規定<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
           </li>
           <li class="th-info-item">
-            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">6</span><h3 class="th-info-title">供餐及睡袋租賃</h3></div>
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">5</span><h3 class="th-info-title">供餐及睡袋租賃</h3></div>
             <p class="th-info-body">排雲山莊供餐及睡袋租賃等服務，因委外經營，相關退費規定請逕洽該公司。<a class="th-inline-link" :href="refLinks.meal" target="_blank" rel="noopener noreferrer">參考網址<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
           </li>
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">6</span><h3 class="th-info-title">填寫提醒</h3></div>
+            <p class="th-info-body">申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。</p>
+            <p class="th-info-body"><a class="th-inline-link" :href="refLinks.pdf" target="_blank" rel="noopener noreferrer">(下載「退費申請流程操作說明」操作流程範例)<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+          </li>
         </ol>
-        <!-- 包一層 div：.th-card-body > .th-callout 自帶 margin-bottom，直接放會在卡片底部多出空白 -->
-        <div>
-          <th-callout type="warning">提醒：申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。<br />
-            <a :href="refLinks.pdf" target="_blank" rel="noopener noreferrer">(下載「退費申請流程操作說明」操作流程範例)</a></th-callout>
-        </div>
       </div>
     </section>
 
