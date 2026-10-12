@@ -63,7 +63,16 @@
    放前面會讓四層 @import 整組失效。
 
    配套：各頁的 #th-app 要加 v-cloak 屬性；Vue 掛載完成會自動移除該屬性。
+
+   **#th-app[v-cloak] 那一條不能拿掉**（2026-10-12 首頁破版與載入慢的根因）：
+   首頁的 #th-app 帶 Tailwind 的 `flex`，`.flex{display:flex}` 與 `[v-cloak]` 權重相同，
+   而 Tailwind CDN 的 <style> 是執行期插在 head 最後，同權重後者勝 → v-cloak 失效，
+   掛載前整份原始模板（{{ m.text }} 等）被排版、繪製出來。
+   提高到 #th-app[v-cloak]（1,1,0）壓過任何單一 utility，不必用 !important。
+   實測（Live Server，中位數）：掛載完成 1420→824ms；CPU 降速 4 倍 9743→3849ms；
+   看得到 {{ }} 的影格 5～10 幀→0。省下的就是排版、繪製那份原始模板的成本。
    ============================================================ */
-[v-cloak] {
+[v-cloak],
+#th-app[v-cloak] {
   display: none;
 }
