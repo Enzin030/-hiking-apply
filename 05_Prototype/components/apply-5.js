@@ -206,7 +206,7 @@ thPage({
   computed: {
     /* 草稿模式（?draft=，2026-10-08 草稿編輯步驟改同線上申請）：麵包屑第二層為「草稿編輯」，連回草稿清單 */
     applyCrumb() {
-      if (getParam("edit")) return { label: "資料線上異動/取消入園", href: "apply_2.html" };   // 異動模式（2026-10-12）
+      if (getParam("edit")) return { label: "申請資料異動及取消", href: "apply_2.html" };   // 異動模式（2026-10-12）
       return getParam("draft") ? { label: "草稿編輯", href: "apply_2_1.html?list=1" } : this.park.crumb;
     },
     /* 摘要卡的路線照片與難度：玉山沿用原值；其他機關取路線清單（RouteData）該次路線 */

@@ -2,7 +2,7 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
-<title>線上申請退費（玉山國家公園） — 臺灣登山申請一站式服務網</title>
+<title>國家公園線上退費 — 臺灣登山申請一站式服務網</title>
 <!--
   ============================================================
   apply_5 — 線上申請退費（玉山國家公園）（舊站 apply_5.aspx）
@@ -40,13 +40,13 @@
        原「申請前必須先完成的事」「退費規定」分卡、「實退金額須扣除銀行手續費 30 元」callout、清除鈕、欄位提示、
        「可辦理的動作」卡為截圖沒有的組織方式或內容，拿掉。 -->
   <th-page-shell
-    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '線上申請退費(排雲)']"
-    title="線上申請退費(排雲)">
+    :trail="[applyCrumb, { label: '申請進度查詢/繳費/異動/取消', href: 'applySearch.html' }, '國家公園線上退費']"
+    title="國家公園線上退費">
 
     <template v-if="!verified">
     <section class="th-card" id="rules">
       <div class="th-card-body grid gap-4">
-        <p>隊伍或隊員如果因故無法成行，務請自行於線上取消「<a class="th-inline-link" href="apply_2.html">資料線上異動/取消入園</a>」或以<a class="th-inline-link" href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。</p>
+        <p>隊伍或隊員如果因故無法成行，務請自行於線上取消「<a class="th-inline-link" href="apply_2.html">申請資料異動及取消</a>」或以<a class="th-inline-link" href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。</p>
         <p>如欲申請退還「排雲山莊使用規費」，請先取消入園後再提出申請。</p>
         <p>退費申請人應為原登山申請案之申請人、領隊或隊員等之任一員。如多個登山申請案之退費申請人及退費帳戶相同，得併案提出申請。</p>
         <div>
@@ -141,8 +141,10 @@
 
     <!-- 驗證通過：退費申請人資訊＋兩顆按鈕＋退費紀錄表（截圖「線上申請退費(排雲)-退費資訊」） -->
     <template v-else>
-      <h3 class="th-section-title">退費申請人資訊</h3>
       <section class="th-card" id="person">
+        <div class="th-card-head">
+          <h2 class="th-card-title">退費申請人資訊</h2>
+        </div>
         <div class="th-card-body grid gap-4">
           <th-data-table class="border border-slate-200 rounded-md" table-class="w-full whitespace-nowrap" :columns="personColumns" :rows="demoPerson" row-key="sid" caption="退費申請人資訊"></th-data-table>
           <th-data-table class="border border-slate-200 rounded-md" table-class="w-full" :columns="historyColumns" :rows="demoHistory" row-key="time" caption="退費申請紀錄">
@@ -165,7 +167,7 @@
       <!-- 兩顆按鈕移到最下方置中；未建置功能一律為按鈕＋SweetAlert 建置中（使用者 2026-10-12） -->
       <div class="th-form-actions">
         <button type="button" class="th-btn th-btn-primary" @click="building">
-          <i class="fa-solid fa-plus" aria-hidden="true"></i>新增退費申請
+          <i class="fa-solid fa-hand-holding-dollar" aria-hidden="true"></i>新增退費申請
         </button>
         <button type="button" class="th-btn th-btn-ghost" @click="backToQuery">回查詢頁</button>
       </div>

@@ -18,18 +18,21 @@ window.thComponents = window.thComponents || {};
 window.thComponents["th-apply-stepper"] = {
   props: {
     current: { type: Number, required: true },
+    /* 異動模式（?edit=）沒有同意書步驟：拿掉第 1 步、其餘重新編號，current 仍傳原步驟號（使用者 2026-10-12） */
+    noConsent: { type: Boolean, default: false },
   },
   computed: {
     /* 唯讀常數，放 computed 而不是 data()，避免被包成 reactive proxy */
     steps() {
-      return [
+      const all = [
         { n: 1, title: "閱讀同意書" },
         { n: 2, title: "行程規劃" },
         { n: 3, title: "隊伍資料" },   // 2026-10-06 使用者裁示步驟名稱統一為「隊伍資料」
         { n: 4, title: "確認資料" },
         { n: 5, title: "申請完成" },
       ];
+      return this.noConsent ? all.slice(1).map((s, i) => ({ n: i + 1, title: s.title })) : all;
     },
   },
-  template: `<th-stepper :current="current" :steps="steps"></th-stepper>`,
+  template: `<th-stepper :current="noConsent ? current - 1 : current" :steps="steps"></th-stepper>`,
 };
