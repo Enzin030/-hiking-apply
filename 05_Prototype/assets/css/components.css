@@ -2128,6 +2128,55 @@
 .th-input-group .th-input {
   padding-left: 36px;
 }
+/* th-captcha：輸入框｜驗證碼｜換一組 接成一個 input group（2026-10-12 使用者）。
+   相鄰格以 -1px 疊掉重複框線，只留兩端圓角；輸入框聚焦時浮到上層，焦點框不被鄰格蓋住。 */
+.th-captcha-group {
+  display: flex;
+  align-items: stretch;
+}
+.th-captcha-group > * {
+  border-radius: 0;
+}
+.th-captcha-group > * + * {
+  margin-left: -1px;
+}
+.th-captcha-group > :first-child {
+  border-radius: var(--r-md) 0 0 var(--r-md);
+}
+.th-captcha-group > :last-child {
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.th-captcha-input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+.th-captcha-input:focus {
+  position: relative;
+  z-index: 1;
+}
+.th-captcha-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 7rem;
+  padding-left: 0.25em;   /* 補 letter-spacing 留在字尾的空白，字樣才置中 */
+  border: 1px solid var(--border-ui);
+  background: var(--bg-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--fg-1);
+  user-select: none;
+}
+.th-captcha-refresh {
+  flex: 0 0 auto;
+  min-width: 42px;
+  padding: 0 12px;
+  gap: 0;
+  box-shadow: none;
+}
 .th-input--date {
   flex: 0 0 auto;
   width: 165px;
