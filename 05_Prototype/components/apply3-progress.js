@@ -47,10 +47,11 @@ const DEMO_CASE = {
     { unit: "警政署入山證", serial: "N115000233", state: "待處理" },
   ],
 };
+/* 摘要卡（2026-10-12 改用 th-summary-card、拿掉單位）：照片與難度取路線列表同一條（RouteData np-99 雪山主峰(多日行程)，第 3 級） */
 const DEMO_PLAN = {
-  unit: "雪霸國家公園管理處",
-  start: "2026-09-16", end: "2026-09-17", days: "2 天", people: "4 人",
-  main: "雪山主峰線", sub: "(3級) 雪山主峰(多日行程)",
+  image: "assets/route-wuling.png", diff: 3,
+  start: "2026-09-16", end: "2026-09-17", days: 2, people: 4,
+  main: "雪山主峰線", sub: "雪山主峰(多日行程)",
   daysPlan: [["雪山登山口", "七卡山莊", "雪山東峰", "三六九山莊"], ["三六九山莊", "雪山東峰", "七卡山莊", "雪山登山口"]],
 };
 const DEMO_CAMP = [
