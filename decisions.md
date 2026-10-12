@@ -309,3 +309,4 @@
 - [2026-10-12] 查詢表單與查詢結果之間加分隔線（hr，沿用站內 border-t border-slate-200 寫法），apply_3／apply_4／apply_2 同步；分隔線後第一個標題拿掉多餘上邊距 — 使用者裁示（結果維持同頁，同正式站）
 - [2026-10-12] 節點標籤鏈提升為共用：.p-apply3-plan-nodes／.p-apply3-node-badge（is-green／is-red／is-blue）／.p-apply3-node-arrow 改名 .th-plan-nodes／.th-node-badge／.th-node-arrow 搬到 components.css（宣告不變），唯讀標籤鏈收成元件 th-plan-nodes（apply-5、apply_3 共用，顏色依名稱判定同原 apply-5）；apply-3 規劃器只換 class，可點選修飾留 pages.css；申請進度查詢（apply_3）逐日行程改用節點標籤、隊伍名稱移入摘要卡（山屋區不重複） — 使用者：行程沒用宿營地 badge、隊伍名稱也放摘要卡
 - [2026-10-12] 申請進度查詢（apply_3）「下載許可證」改為按鈕（th-btn-primary th-btn-sm，僅已通過項目），點擊跳 SweetAlert「此功能建置中」 — 使用者裁示
+- [2026-10-12] 申請進度查詢（apply_3）查詢鈕下方提醒：上方加分隔線；「線上取消登山申請」併入國家公園那塊（三塊變兩塊）；lg 以上國家公園／林保署左右並排、平板以下上下疊；字級 text-sm；內容逐字未改。桌機提醒高度 489→231px — 使用者：callout 上加 hr、佔比太大（選並排而非收合，避免藏起許可證列印期限等關鍵提醒）
