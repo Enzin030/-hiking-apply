@@ -157,6 +157,11 @@ const A3_PARK_AGENCY = { yushan: "玉山國家公園管理處", "shei-pa": "雪�
    隊伍資料、確認資料頁的按鈕本來就與草稿相同（上一步／儲存草稿／下一步、確認送出），draft 參數隨網址帶過去。 */
 const A3_DRAFT = getParam("draft");
 
+/* 異動模式（2026-10-12 使用者：資料線上異動/取消入園改為進入申請步驟）：apply_2 查詢後按「線上資料異動」帶 ?edit=<申請編號> 進來，
+   頁面與線上申請相同；按鈕為「取消全隊入園／下一步」（同規格 06d 截圖步驟一），不出現儲存草稿；
+   隊伍資料頁另有領隊、隊員的「取消入園」（見 apply-4）；edit 參數隨網址帶到後續步驟。 */
+const A3_EDIT = getParam("edit");
+
 thPage({
   data() {
     const qRoute = getParam("route");
@@ -232,6 +237,7 @@ thPage({
       dateOptions: dateOptions,
 
       isDraft: !!A3_DRAFT,   // 草稿模式（見模組層說明）
+      isEdit: !!A3_EDIT,     // 異動模式（見模組層說明）
 
       // 複合：林保署山屋（見模組層說明）；初值在 created() 依入園日產生，從隊伍資料回來時沿用暫存
       camps: [],
@@ -622,6 +628,7 @@ thPage({
 
     /* 草稿模式（?draft=，2026-10-08 草稿編輯步驟改同線上申請）：麵包屑第二層為「草稿編輯」，連回草稿清單 */
     applyCrumb() {
+      if (getParam("edit")) return { label: "資料線上異動/取消入園", href: "apply_2.html" };   // 異動模式（2026-10-12）
       return getParam("draft") ? { label: "草稿編輯", href: "apply_2_1.html?list=1" } : this.park.crumb;
     },
 
@@ -997,6 +1004,13 @@ thPage({
     cabinOf(c) { return window.TH_CABIN_DATA[c.route]; },
     circled(n) { return "①②③④⑤⑥⑦⑧⑨"[n - 1] || n + "."; },
 
+    /* 異動模式（?edit=，2026-10-12）：取消全隊入園——確認後提示並回到資料線上異動/取消入園 */
+    cancelAll() {
+      window.thConfirm("確定要取消全隊入園嗎？將取消整個隊伍之所有資料，取消後不可復原，需重新提出申請。").then(ok => {
+        if (!ok) return;
+        window.thAlert("已取消全隊入園。", "success").then(() => { window.location.href = "apply_2.html"; });
+      });
+    },
     /* 草稿模式按鈕（見模組層說明） */
     draftBack() { window.location.href = "apply_2_1.html?list=1"; },
     draftDelete() {

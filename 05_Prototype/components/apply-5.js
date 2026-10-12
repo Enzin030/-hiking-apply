@@ -164,6 +164,7 @@ thPage({
         ];
 
     return {
+      isEdit: !!getParam("edit"),   // 異動模式（2026-10-12，見 apply-3.js 模組層說明）
       park: park,
       summary: summary,
       step3: step3,
@@ -205,6 +206,7 @@ thPage({
   computed: {
     /* 草稿模式（?draft=，2026-10-08 草稿編輯步驟改同線上申請）：麵包屑第二層為「草稿編輯」，連回草稿清單 */
     applyCrumb() {
+      if (getParam("edit")) return { label: "資料線上異動/取消入園", href: "apply_2.html" };   // 異動模式（2026-10-12）
       return getParam("draft") ? { label: "草稿編輯", href: "apply_2_1.html?list=1" } : this.park.crumb;
     },
     /* 摘要卡的路線照片與難度：玉山沿用原值；其他機關取路線清單（RouteData）該次路線 */
@@ -385,6 +387,13 @@ thPage({
     /* 複合山屋 */
     cabinOf(c) { return window.TH_CABIN_DATA[c.route]; },
     cabinName(c) { return window.TH_CABIN_DATA[c.route].name; },
+    /* 異動模式（?edit=，2026-10-12）：取消全隊入園——確認後提示並回到資料線上異動/取消入園 */
+    cancelAll() {
+      window.thConfirm("確定要取消全隊入園嗎？將取消整個隊伍之所有資料，取消後不可復原，需重新提出申請。").then(ok => {
+        if (!ok) return;
+        window.thAlert("已取消全隊入園。", "success").then(() => { window.location.href = "apply_2.html"; });
+      });
+    },
     submitApply() {
       if (!this.captchaInput) {
         window.thAlert("請輸入驗證碼。");
@@ -396,6 +405,11 @@ thPage({
         return;
       }
       this.isSubmitted = true;
+      if (this.isEdit) {   // 異動模式：送出異動
+        window.thAlert("【資料異動成功】\n您的資料異動已送出，審核結果將寄發至申請人電子郵件信箱。", "success")
+          .then(() => { window.location.href = "apply_2.html"; });
+        return;
+      }
       /* 複合：林保署山屋一併送出（2026-10-08） */
       const campText = this.camps.length ? "\n" + this.camps.map(c => window.TH_CABIN_DATA[c.route].name).join("、") + "住宿申請已一併送出林業及自然保育署，住宿日前 30 日下午 3 時抽籤，結果以電子郵件通知。" : "";
       window.thAlert("【登山申請成功】\n您的申請已成功送出！申請編號為：YUS-" + Date.now().toString().slice(-6) + "\n審核結果將寄發至申請人電子郵件信箱。" + campText, "success")

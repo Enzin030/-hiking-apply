@@ -283,11 +283,15 @@
         <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
           <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
         </button>
-        <button type="button" class="th-btn th-btn-secondary" @click="saveDraft" id="con_btnbak">
+        <!-- 異動模式（?edit=，2026-10-12）：不出現儲存草稿，改為取消全隊入園；送出鈕為「確認修改」（規格 06d） -->
+        <button v-if="isEdit" type="button" class="th-btn th-btn-ghost is-danger" @click="cancelAll">
+          <i class="fa-solid fa-user-xmark mr-1" aria-hidden="true"></i>取消全隊入園
+        </button>
+        <button v-else type="button" class="th-btn th-btn-secondary" @click="saveDraft" id="con_btnbak">
           <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
         </button>
         <button type="button" class="th-btn th-btn-primary" @click="submitApply" id="con_btnSubmit">
-          <i class="fa-solid fa-check mr-1.5" aria-hidden="true"></i>確認送出
+          <i class="fa-solid fa-check mr-1.5" aria-hidden="true"></i>{{ isEdit ? '確認修改' : '確認送出' }}
         </button>
       </div>
     </template>

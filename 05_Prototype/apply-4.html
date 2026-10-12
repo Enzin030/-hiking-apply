@@ -254,6 +254,10 @@
               </h2>
               <i class="fa-solid fa-chevron-down th-accordion-icon" :class="{ 'is-open': accordionOpen.leader }" aria-hidden="true"></i>
             </button>
+            <!-- 異動模式：領隊取消入園（＝取消全隊） -->
+            <button v-if="isEdit" type="button" class="th-member-del ml-auto shrink-0" @click="cancelLeader" title="領隊取消入園將取消整個隊伍">
+              <i class="fa-solid fa-user-xmark mr-1" aria-hidden="true"></i>取消入園
+            </button>
           </div>
           <div class="th-card-body grid gap-4" v-show="accordionOpen.leader">
             <!-- 同申請人核取方塊（原本框限樣式） -->
@@ -426,7 +430,11 @@
                     <span v-if="m.name" class="text-slate-500 font-normal text-xs sm:text-sm">（{{ m.name }}）</span>
                   </h3>
                   <div class="flex items-center gap-2">
-                    <button type="button" class="th-member-del" @click.stop="removeMember(idx)" title="移除此隊員">
+                    <!-- 異動模式：既有隊員為「取消入園」（取消個人入園），一般申請為刪除 -->
+                    <button v-if="isEdit" type="button" class="th-member-del" @click.stop="cancelMember(idx)" title="取消此隊員入園">
+                      <i class="fa-solid fa-user-xmark mr-1" aria-hidden="true"></i>取消入園
+                    </button>
+                    <button v-else type="button" class="th-member-del" @click.stop="removeMember(idx)" title="移除此隊員">
                       <i class="fa-solid fa-trash-can mr-1" aria-hidden="true"></i>刪除
                     </button>
                     <i :class="['fa-solid', isMemberOpen(idx) ? 'fa-chevron-up' : 'fa-chevron-down', 'text-xs text-slate-400 ml-1']" aria-hidden="true"></i>
@@ -884,7 +892,11 @@
       <button type="button" class="th-btn th-btn-ghost" @click="goPrev">
         <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>上一步
       </button>
-      <button type="button" class="th-btn th-btn-secondary" @click="saveDraft" id="con_btnbak">
+      <!-- 異動模式：不出現儲存草稿，改為取消全隊入園 -->
+      <button v-if="isEdit" type="button" class="th-btn th-btn-ghost is-danger" @click="cancelAll">
+        <i class="fa-solid fa-user-xmark mr-1" aria-hidden="true"></i>取消全隊入園
+      </button>
+      <button v-else type="button" class="th-btn th-btn-secondary" @click="saveDraft" id="con_btnbak">
         <i class="fa-regular fa-floppy-disk mr-1" aria-hidden="true"></i>儲存草稿
       </button>
       <button type="button" class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext" id="con_btnToStep31">

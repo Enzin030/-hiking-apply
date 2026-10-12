@@ -232,6 +232,7 @@ thPage({
     const isSingleDay = String(qDays) === "1" || subName.includes("單日往返");
 
     return {
+      isEdit: !!getParam("edit"),   // 異動模式（2026-10-12，見 apply-3.js 模組層說明）
       park: park,
       memberConsent: true,   // 隊員區委託同意（僅 park.memberConsent 的機關顯示；預設帶入勾選）
       campPick: {},          // 其他機關宿營地表的宿營地點選擇（太魯閣可改自備搭帳）
@@ -368,6 +369,7 @@ thPage({
   computed: {
     /* 草稿模式（?draft=，2026-10-08 草稿編輯步驟改同線上申請）：麵包屑第二層為「草稿編輯」，連回草稿清單 */
     applyCrumb() {
+      if (getParam("edit")) return { label: "資料線上異動/取消入園", href: "apply_2.html" };   // 異動模式（2026-10-12）
       return getParam("draft") ? { label: "草稿編輯", href: "apply_2_1.html?list=1" } : this.park.crumb;
     },
     isYushan() { return this.park.key === "yushan"; },
@@ -687,6 +689,29 @@ thPage({
       this.campPick = Object.assign({}, this.campPick, { [i]: v });
     },
 
+    /* 異動模式（?edit=，2026-10-12）：取消全隊入園——確認後提示並回到資料線上異動/取消入園 */
+    cancelAll() {
+      window.thConfirm("確定要取消全隊入園嗎？將取消整個隊伍之所有資料，取消後不可復原，需重新提出申請。").then(ok => {
+        if (!ok) return;
+        window.thAlert("已取消全隊入園。", "success").then(() => { window.location.href = "apply_2.html"; });
+      });
+    },
+    /* 異動模式：領隊取消入園＝取消整個隊伍（權限規則「領隊如點選 取消入園，將取消整個隊伍之所有資料」） */
+    cancelLeader() {
+      window.thConfirm("領隊取消入園，將取消整個隊伍之所有資料。確定要取消嗎？").then(ok => {
+        if (!ok) return;
+        window.thAlert("已取消全隊入園。", "success").then(() => { window.location.href = "apply_2.html"; });
+      });
+    },
+    /* 異動模式：隊員取消個人入園，確認後自名單移除 */
+    cancelMember(index) {
+      const m = this.members[index] || {};
+      window.thConfirm("確定要取消 No." + (index + 1) + " 隊員" + (m.name ? "（" + m.name + "）" : "") + "的入園資格嗎？").then(ok => {
+        if (!ok) return;
+        this.removeMember(index);
+        window.thAlert("已取消該隊員入園。", "success");
+      });
+    },
     removeMember(index) {
       this.members.splice(index, 1);
       this.memberOpenStates.splice(index, 1);

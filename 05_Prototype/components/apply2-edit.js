@@ -90,6 +90,13 @@ thPage({
   },
 
   methods: {
+    /* 進入申請步驟（異動模式，2026-10-12）：帶申請編號、管理處、隊名、入園日期與天數到國家公園行程規劃頁 */
+    enterEdit(row) {
+      const park = { "玉山國家公園": "yushan", "雪霸國家公園": "shei-pa", "太魯閣國家公園": "taroko" }[row.org] || "yushan";
+      const q = new URLSearchParams({ unit: park, edit: row.serial, teams_name: row.team, applystart: row.dateIn });
+      if (park !== "yushan") q.set("park", park);
+      window.location.href = "apply-3.html?" + q.toString();
+    },
     reset() {
       this.serial = "";
       this.nation = "中華民國";

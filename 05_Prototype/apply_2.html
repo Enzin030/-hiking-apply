@@ -123,21 +123,12 @@
           <h3 class="th-section-title">查詢結果</h3>
           <th-data-table :columns="columns" :rows="demoResults" row-key="serial" table-class="th-table--zebra"></th-data-table>
 
-          <!-- 卡片要求：異動與取消是兩種結果動作，畫面上必須分開。
-               兩者的期限規則依各國家公園管理處自治條例，規格 06d 未列具體天數，故標待確認。 -->
-          <h3 class="th-section-title mt-6">可辦理的動作</h3>
-          <div class="th-notice-grid items-stretch">
-            <section class="th-card flex flex-col" v-for="act in resultActions" :key="act.id">
-              <div class="th-card-head">
-                <i :class="act.icon" aria-hidden="true"></i>
-                <h4 class="th-card-title">{{ act.title }}</h4>
-              </div>
-              <div class="th-card-body flex flex-col gap-3 flex-1">
-                <p class="th-field-hint">{{ act.desc }}</p>
-                <p v-if="act.limit" class="th-table-note">{{ act.limit }}</p>
-                <th-todo-link :label="act.title" extra-class="th-btn-block justify-center mt-auto"></th-todo-link>
-              </div>
-            </section>
+          <!-- 2026-10-12 使用者：改為進入申請步驟——按「線上資料異動」進國家公園行程規劃頁（異動模式 ?edit=），
+               異動、取消個人入園（隊伍資料頁領隊／隊員列）、取消全隊入園（各步驟下方）都在步驟頁辦理 -->
+          <div class="flex justify-center">
+            <button type="button" class="th-btn th-btn-primary" @click="enterEdit(demoResults[0])">
+              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>線上資料異動
+            </button>
           </div>
 
           <th-callout>取消入園後若要申請退還已繳規費，請另行前往

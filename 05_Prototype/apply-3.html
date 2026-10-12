@@ -640,7 +640,16 @@
 
     <!-- 置底列：隨頁面流動，按鈕置中、無上方分隔線 -->
     <!-- 草稿模式（?draft=，2026-10-08）：按鈕照草稿原本的「返回／刪除草稿／儲存草稿／下一步」，其餘同線上申請 -->
-    <div v-if="isDraft" class="p-apply3-actions">
+    <!-- 異動模式（?edit=，2026-10-12）：取消全隊入園／下一步，不出現草稿按鈕 -->
+    <div v-if="isEdit" class="p-apply3-actions">
+      <button type="button" class="th-btn th-btn-ghost is-danger" @click="cancelAll">
+        <i class="fa-solid fa-user-xmark mr-1" aria-hidden="true"></i>取消全隊入園
+      </button>
+      <button class="th-btn th-btn-primary" :disabled="!canSubmit" @click="goNext">
+        下一步<i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div v-else-if="isDraft" class="p-apply3-actions">
       <button class="th-btn th-btn-ghost" @click="draftBack">
         <i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i>返回
       </button>
