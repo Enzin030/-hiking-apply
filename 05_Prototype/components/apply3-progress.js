@@ -97,4 +97,9 @@ thPage({
     /* window.* 一律在這裡取，不在模組層（載入先後無保證） */
     applyCrumb() { return window.TH_APPLY_CRUMB; },
   },
+
+  methods: {
+    /* 下載許可證：尚未建置，跳 SweetAlert 提示（使用者 2026-10-12） */
+    downloadPermit() { window.thAlert("此功能建置中", "info"); },
+  },
 });

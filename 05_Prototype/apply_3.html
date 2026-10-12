@@ -142,7 +142,7 @@
           <th-data-table class="border border-slate-200 rounded-md" table-class="w-full whitespace-nowrap" :columns="columns" :rows="caseInfo.items" row-key="serial" caption="申請項目">
             <template #cell="{ row, column, value }">
               <span v-if="column.key === 'state'" :class="['th-flag', stateFlag[row.state] || '']">{{ row.state }}</span>
-              <template v-else-if="column.key === 'fn'"><span v-if="row.state === '已通過'" class="th-todo-link">下載許可證</span></template>
+              <template v-else-if="column.key === 'fn'"><!-- 下載許可證：按鈕，點擊跳 SweetAlert 建置中（使用者 2026-10-12） --><button v-if="row.state === '已通過'" type="button" class="th-btn th-btn-primary th-btn-sm" @click="downloadPermit"><i class="fa-solid fa-download" aria-hidden="true"></i>下載許可證</button></template>
               <template v-else>{{ value }}</template>
             </template>
           </th-data-table>
