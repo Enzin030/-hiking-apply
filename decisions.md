@@ -307,3 +307,4 @@
 - [2026-10-08] 查詢類四頁查詢欄位改桌機兩欄、手機一欄（apply_2／3：申請編號｜身分證號；apply_4：申請編號｜隊伍名稱；apply_5：身分證字號｜手機號碼），驗證碼／驗證密碼佔左半，按鈕與提醒跨兩欄 — 使用者同意建議
 - [2026-10-12] 申請進度查詢（apply_3）查詢結果：國家公園行程計畫的出發／離開日期、天數、人數、主／次路線改用摘要卡（th-summary-card，同確認頁），拿掉「單位」；逐日行程改 .th-plan-days 逐日卡（地點文字＋箭頭；確認頁地點標籤為 apply-3 專用 .p-apply3-node-badge，未提升不借用）；山屋及營地申請的隊伍名稱移到表格上方；查詢結果維持與查詢表單同頁（同正式站） — 使用者裁示
 - [2026-10-12] 查詢表單與查詢結果之間加分隔線（hr，沿用站內 border-t border-slate-200 寫法），apply_3／apply_4／apply_2 同步；分隔線後第一個標題拿掉多餘上邊距 — 使用者裁示（結果維持同頁，同正式站）
+- [2026-10-12] 節點標籤鏈提升為共用：.p-apply3-plan-nodes／.p-apply3-node-badge（is-green／is-red／is-blue）／.p-apply3-node-arrow 改名 .th-plan-nodes／.th-node-badge／.th-node-arrow 搬到 components.css（宣告不變），唯讀標籤鏈收成元件 th-plan-nodes（apply-5、apply_3 共用，顏色依名稱判定同原 apply-5）；apply-3 規劃器只換 class，可點選修飾留 pages.css；申請進度查詢（apply_3）逐日行程改用節點標籤、隊伍名稱移入摘要卡（山屋區不重複） — 使用者：行程沒用宿營地 badge、隊伍名稱也放摘要卡

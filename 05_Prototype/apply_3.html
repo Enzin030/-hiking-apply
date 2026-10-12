@@ -151,8 +151,7 @@
       </section>
 
       <!-- 國家公園行程計畫（使用者 2026-10-12）：日期、天數、人數、主／次路線改用摘要卡（th-summary-card，同確認頁 apply-5），
-           拿掉「單位」；逐日行程用 .th-plan-days 逐日卡（同確認頁、登山安全管理），地點以文字＋箭頭呈現
-           （確認頁的地點標籤是 apply-3 專用 .p-apply3-node-badge，未提升為共用，不借用） -->
+           拿掉「單位」，隊伍名稱也放進摘要卡（同日）；逐日行程用 .th-plan-days 逐日卡＋共用節點標籤 th-plan-nodes（同確認頁） -->
       <h3 class="th-section-title mt-6">國家公園行程計畫</h3>
       <div class="th-summary-card" id="plan">
         <div class="summary-thumb-box">
@@ -163,6 +162,11 @@
         <div class="summary-info-box">
           <h2 class="th-summary-title">{{ plan.sub }}</h2>
           <div class="summary-date-row">
+            <span class="date-item">
+              <span class="date-title">隊伍名稱：</span>
+              <span class="date-value font-bold text-slate-900">{{ caseInfo.team }}</span>
+            </span>
+            <span class="summary-meta-sep" aria-hidden="true">|</span>
             <span class="date-item">
               <span class="date-title">出發人數：</span>
               <span class="date-value">{{ plan.people }} 人</span>
@@ -190,10 +194,7 @@
           <ul class="th-plan-days">
             <li v-for="(d, i) in plan.daysPlan" :key="i" class="th-plan-day">
               <span class="th-plan-day-tag">第 {{ i + 1 }} 天行程：</span>
-              <template v-for="(n, ni) in d" :key="ni">
-                <i v-if="ni" class="fa-solid fa-arrow-right text-slate-400" aria-hidden="true"></i>
-                <span>{{ n }}</span>
-              </template>
+              <th-plan-nodes :nodes="d"></th-plan-nodes>
             </li>
           </ul>
         </div>
@@ -202,10 +203,7 @@
       <h3 class="th-section-title mt-6">山屋及營地申請</h3>
       <section class="th-card" id="camp">
         <div class="th-card-body grid gap-4">
-          <!-- 隊伍名稱放在表格上方（使用者 2026-10-12） -->
-          <dl class="grid grid-cols-[6rem_1fr] gap-x-4">
-            <dt class="th-label">隊伍名稱</dt><dd>{{ caseInfo.team }}</dd>
-          </dl>
+          <!-- 隊伍名稱已放進上方摘要卡（使用者 2026-10-12），這裡不重複 -->
           <th-data-table class="border border-slate-200 rounded-md" table-class="w-full whitespace-nowrap" :columns="campColumns" :rows="campRows" row-key="key" caption="山屋及營地申請"></th-data-table>
         </div>
       </section>

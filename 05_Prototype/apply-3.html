@@ -291,29 +291,29 @@
               <ul class="th-plan-days">
                 <li class="th-plan-day">
                   <span class="th-plan-day-tag">第 1 天行程：</span>
-                  <div class="p-apply3-plan-nodes" v-if="climbline === '3'">
-                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>玉山前峰</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                  <div class="th-plan-nodes" v-if="climbline === '3'">
+                    <span class="th-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>玉山前峰</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
                   </div>
-                  <div class="p-apply3-plan-nodes" v-else>
-                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-blue"><i class="fa-solid fa-bed" aria-hidden="true"></i><span>排雲山莊</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>玉山主峰</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
-                    <span class="p-apply3-node-arrow">→</span>
-                    <span class="p-apply3-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                  <div class="th-plan-nodes" v-else>
+                    <span class="th-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-blue"><i class="fa-solid fa-bed" aria-hidden="true"></i><span>排雲山莊</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>玉山主峰</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-red"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>塔塔加登山口</span></span>
+                    <span class="th-node-arrow">→</span>
+                    <span class="th-node-badge is-green"><i class="fa-solid fa-person-walking" aria-hidden="true"></i><span>排雲登山服務中心</span></span>
                   </div>
                 </li>
               </ul>
@@ -325,9 +325,9 @@
                 <!-- 還沒選起點的那天不顯示（正式站選起點前沒有「第 1 天行程」這列） -->
                 <li v-for="(dayNodes, idx) in planDays" v-show="dayNodes.length" :key="idx" class="th-plan-day">
                   <span class="th-plan-day-tag">第 {{ idx + 1 }} 天行程：</span>
-                  <div class="p-apply3-plan-nodes">
+                  <div class="th-plan-nodes">
                     <template v-for="(node, nIdx) in dayNodes" :key="nIdx">
-                      <span :class="['p-apply3-node-badge', 'is-' + nodeBadgeType(node)]">
+                      <span :class="['th-node-badge', 'is-' + nodeBadgeType(node)]">
                         <i :class="nodeBadgeIcon(node)" aria-hidden="true"></i>
                         <span>{{ node }}</span>
                         <!-- 具備 close 按鈕：點擊直接移除此點（取代返回上個地點按鈕） -->
@@ -335,7 +335,7 @@
                           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                       </span>
-                      <span v-if="nIdx < dayNodes.length - 1" class="p-apply3-node-arrow" aria-hidden="true">→</span>
+                      <span v-if="nIdx < dayNodes.length - 1" class="th-node-arrow" aria-hidden="true">→</span>
                     </template>
                   </div>
                 </li>
@@ -347,7 +347,7 @@
                 <div class="p-apply3-node-chips flex flex-wrap items-center gap-2">
                   <span class="text-sm font-semibold text-slate-700 whitespace-nowrap">{{ here ? '請選擇下一個地點：' : '請選擇起點：' }}</span>
                   <button v-for="node in options" :key="node" type="button"
-                          :class="['p-apply3-node-badge', 'is-' + nodeBadgeType(node), 'p-apply3-node-choice']"
+                          :class="['th-node-badge', 'is-' + nodeBadgeType(node), 'p-apply3-node-choice']"
                           @click="pickNode(node)">
                     <i :class="nodeBadgeIcon(node)" aria-hidden="true"></i>
                     <span>{{ node }}</span>

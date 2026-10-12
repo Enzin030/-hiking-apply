@@ -331,18 +331,7 @@ thPage({
   },
 
   methods: {
-    getNodeType(node) {
-      if (!node) return "red";
-      if (node.includes("服務中心")) return "green";
-      if (node.includes("山莊") || node.includes("山屋") || node.includes("營地")) return "blue";
-      return "red";
-    },
-    getNodeIcon(node) {
-      if (!node) return "fa-solid fa-location-dot";
-      if (node.includes("服務中心")) return "fa-solid fa-person-walking";
-      if (node.includes("山莊") || node.includes("山屋") || node.includes("營地")) return "fa-solid fa-bed";
-      return "fa-solid fa-location-dot";
-    },
+    /* 節點標籤的顏色判定 2026-10-12 搬到共用元件 th-plan-nodes（window.thNodeBadgeType／Icon），算法不變 */
     refreshCaptcha() {
       const captcha = this.$refs.captchaField;
       if (captcha && typeof captcha.refresh === "function") {

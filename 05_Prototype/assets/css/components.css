@@ -6177,3 +6177,66 @@ a.th-linkrow:hover .th-linkrow-icon {
   color: var(--national-700);
   white-space: nowrap;
 }
+
+/* ------------------------------------------------------------
+   th-plan-nodes 系列（2026-10-12，assets/components/th-plan-nodes.js）
+   ------------------------------------------------------------
+   原 apply-3 頁面專用的節點徽章鏈（.p-apply3-plan-nodes／.p-apply3-node-badge／.p-apply3-node-arrow），
+   apply-3、apply-5 之外申請進度查詢 apply_3 也要用，依「二次即提升」改名搬到本層，宣告逐字未改。
+   綠：起終點、服務中心；紅：一般節點、山峰、登山口；藍：宿營地。 */
+
+.th-plan-nodes {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.th-node-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  transition: all .15s ease;
+}
+
+.th-node-badge.is-green {
+  background: var(--national-50);
+  border: 1px solid var(--national-300);
+  color: var(--national-800);
+}
+
+.th-node-badge.is-green i {
+  color: var(--national-700);
+}
+
+.th-node-badge.is-red {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-fg);
+}
+
+.th-node-badge.is-red i {
+  color: var(--danger-fg);
+}
+
+.th-node-badge.is-blue {
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  color: var(--info-fg);
+}
+
+.th-node-badge.is-blue i {
+  color: var(--info-fg);
+}
+
+.th-node-arrow {
+  color: var(--slate-400);
+  font-size: var(--fs-xs);
+  user-select: none;
+}
+

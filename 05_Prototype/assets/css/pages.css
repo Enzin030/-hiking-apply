@@ -6460,90 +6460,45 @@ body:where(.p-indexb-body):before {
 /* 逐日列 .p-apply3-plan-days／-plan-day-item／.day-tag 於 2026-10-07 提升為共用 .th-plan-days／.th-plan-day／.th-plan-day-tag
    （components.css；apply-3、apply-5、山屋第 2 步三處使用，宣告不變） */
 
-/* 節點徽章鏈 */
-.p-apply3-plan-nodes {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
+/* 節點徽章鏈：基底樣式 2026-10-12 提升為共用 .th-plan-nodes／.th-node-badge／.th-node-arrow（components.css）；
+   這裡只留 apply-3 規劃器「可點選節點」的修飾 */
 
-.p-apply3-node-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: var(--r-pill);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  line-height: var(--lh-tight);
-  transition: all .15s ease;
-}
 
 /* 綠色：起點、終點、服務中心（05a t_list_s） */
-.p-apply3-node-badge.is-green {
-  background: var(--national-50);
-  border: 1px solid var(--national-300);
-  color: var(--national-800);
-}
 
-.p-apply3-node-badge.is-green i {
-  color: var(--national-700);
-}
 
 /* 紅色：一般步道節點、山峰、登山口（05a t_list_p） */
-.p-apply3-node-badge.is-red {
-  background: var(--danger-bg);
-  border: 1px solid var(--danger-border);
-  color: var(--danger-fg);
-}
 
-.p-apply3-node-badge.is-red i {
-  color: var(--danger-fg);
-}
 
 /* 藍色：宿營地（05a t_list_e） */
-.p-apply3-node-badge.is-blue {
-  background: var(--info-bg);
-  border: 1px solid var(--info-border);
-  color: var(--info-fg);
-}
 
-.p-apply3-node-badge.is-blue i {
-  color: var(--info-fg);
-}
 
 /* 選項按鈕比照上面 badge 樣式（大小完全統一） */
-.p-apply3-node-badge.p-apply3-node-choice {
+.th-node-badge.p-apply3-node-choice {
   cursor: pointer;
   user-select: none;
 }
 
-.p-apply3-node-badge.p-apply3-node-choice:hover {
+.th-node-badge.p-apply3-node-choice:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-.p-apply3-node-badge.p-apply3-node-choice.is-green:hover {
+.th-node-badge.p-apply3-node-choice.is-green:hover {
   background: var(--national-100);
   border-color: var(--national-700);
 }
 
-.p-apply3-node-badge.p-apply3-node-choice.is-red:hover {
+.th-node-badge.p-apply3-node-choice.is-red:hover {
   background: var(--red-100, var(--danger-bg));
   border-color: var(--danger-soft);
 }
 
-.p-apply3-node-badge.p-apply3-node-choice.is-blue:hover {
+.th-node-badge.p-apply3-node-choice.is-blue:hover {
   background: var(--blue-100, var(--info-bg));
   border-color: var(--blue-700);
 }
 
-.p-apply3-node-arrow {
-  color: var(--slate-400);
-  font-size: var(--fs-xs);
-  user-select: none;
-}
 
 .p-apply3-joined-input {
   border-top-right-radius: 0;
