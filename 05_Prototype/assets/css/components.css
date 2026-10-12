@@ -6240,3 +6240,69 @@ a.th-linkrow:hover .th-linkrow-icon {
   user-select: none;
 }
 
+/* ############################################################
+   th-info — 編號格狀說明卡（2026-10-12 由 web_illustrate 的 .p-illustrate-faq-* 提升）
+   本站使用說明「首次使用常見問題」與國家公園線上退費「退費申請須知」共用：
+   卡片內兩欄格子，每格＝編號膠囊＋小標題＋內文；窄版改單欄、內文不縮排。
+   規則與提升前逐字相同，只改名（grid、item、q→head、no、title、a→body）。
+   ############################################################ */
+.th-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.th-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg);
+  background: var(--bg-1);
+}
+.th-info-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.th-info-no {
+  flex: none;
+  min-width: 36px;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  background: var(--national-50);
+  color: var(--national-700);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: var(--lh-base);
+  text-align: center;
+}
+.th-info-title {
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+.th-info-body {
+  margin: 0;
+  padding-left: 48px;
+  color: var(--fg-2);
+  line-height: var(--lh-base);
+  text-align: justify;
+}
+@media (max-width: 640px) {
+  .th-info-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .th-info-item {
+    padding: 16px;
+  }
+  .th-info-body {
+    padding-left: 0;
+  }
+}

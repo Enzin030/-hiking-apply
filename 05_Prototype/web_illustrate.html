@@ -65,20 +65,21 @@
       </div>
       <div class="th-card-body">
         <!--
+          格狀卡片是共用的 .th-info-*（2026-10-12 提升，規則見 components.css「th-info」段）；
           .p-illustrate-* 是本頁專用樣式，規則見 assets/css/pages.css。
           2026-09-17 改為卡片格狀、全部展開，連結嵌在解答句中（片段由
           components/web-illustrate.js 的 splitAnswer 切好）。
           模板裡片段之間不留換行：Vue 的 whitespace: 'condense' 會把換行折成空白，
           句中就會多出空格。
         -->
-        <ol class="p-illustrate-faq-grid">
-          <li v-for="(f, i) in faqs" :key="f.q" class="p-illustrate-faq-item">
-            <div class="p-illustrate-faq-q">
-              <span class="p-illustrate-faq-no" aria-hidden="true">Q{{ i + 1 }}</span>
-              <h3 class="p-illustrate-faq-title">{{ f.q }}</h3>
+        <ol class="th-info-grid">
+          <li v-for="(f, i) in faqs" :key="f.q" class="th-info-item">
+            <div class="th-info-head">
+              <span class="th-info-no" aria-hidden="true">Q{{ i + 1 }}</span>
+              <h3 class="th-info-title">{{ f.q }}</h3>
             </div>
-            <p class="p-illustrate-faq-a"><template v-for="(p, j) in f.parts" :key="j"><template v-if="!p.link">{{ p.text }}</template><span v-else-if="p.link.todo" class="p-illustrate-faq-link is-todo">{{ p.text }}<span class="th-todo-tag">待建置</span></span><a v-else class="th-inline-link" :href="p.link.href" :title="p.link.label" target="_blank" rel="noopener noreferrer">{{ p.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></template></p>
-            <p v-if="f.tail.length" class="p-illustrate-faq-a"><template v-for="t in f.tail" :key="t.text"><a class="th-inline-link" :href="t.link.href" target="_blank" rel="noopener noreferrer">{{ t.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a> </template></p>
+            <p class="th-info-body"><template v-for="(p, j) in f.parts" :key="j"><template v-if="!p.link">{{ p.text }}</template><span v-else-if="p.link.todo" class="p-illustrate-faq-link is-todo">{{ p.text }}<span class="th-todo-tag">待建置</span></span><a v-else class="th-inline-link" :href="p.link.href" :title="p.link.label" target="_blank" rel="noopener noreferrer">{{ p.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a></template></p>
+            <p v-if="f.tail.length" class="th-info-body"><template v-for="t in f.tail" :key="t.text"><a class="th-inline-link" :href="t.link.href" target="_blank" rel="noopener noreferrer">{{ t.text }}<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i></a> </template></p>
           </li>
         </ol>
       </div>

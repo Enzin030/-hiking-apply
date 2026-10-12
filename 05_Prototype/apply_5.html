@@ -44,23 +44,49 @@
     title="國家公園線上退費">
 
     <template v-if="!verified">
+    <!-- 退費申請須知：比照本站使用說明的編號格狀卡片（.th-info-*，使用者 2026-10-12）；
+         原本表單下方的「如實填寫」提醒與操作說明下載併入本卡底部。各格標題為分組用，內文為正式站原句。 -->
     <section class="th-card" id="rules">
+      <div class="th-card-head">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <h2 class="th-card-title">退費申請須知</h2>
+      </div>
       <div class="th-card-body grid gap-4">
-        <p>隊伍或隊員如果因故無法成行，務請自行於線上取消「<a class="th-inline-link" href="apply_2.html">申請資料異動及取消</a>」或以<a class="th-inline-link" href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。</p>
-        <p>如欲申請退還「排雲山莊使用規費」，請先取消入園後再提出申請。</p>
-        <p>退費申請人應為原登山申請案之申請人、領隊或隊員等之任一員。如多個登山申請案之退費申請人及退費帳戶相同，得併案提出申請。</p>
+        <ol class="th-info-grid">
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">1</span><h3 class="th-info-title">先取消入園</h3></div>
+            <p class="th-info-body">隊伍或隊員如果因故無法成行，務請自行於線上取消「<a class="th-inline-link" href="apply_2.html">申請資料異動及取消</a>」或以<a class="th-inline-link" href="mail.html" target="_blank" rel="noopener noreferrer">入園信箱</a>告知。如欲申請退還「排雲山莊使用規費」，請先取消入園後再提出申請。</p>
+          </li>
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">2</span><h3 class="th-info-title">退費申請人</h3></div>
+            <p class="th-info-body">退費申請人應為原登山申請案之申請人、領隊或隊員等之任一員。如多個登山申請案之退費申請人及退費帳戶相同，得併案提出申請。</p>
+          </li>
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">3</span><h3 class="th-info-title">申請退費原因</h3></div>
+            <!-- 第 2、3 款是依申請入園日切分的新舊制（114-12-01 起 5 天、之前 14 天），不可合併；
+                 規格截圖為舊版只有 14 天，雛形依較新的正式站正文保留兩款 -->
+            <ol class="th-info-body list-decimal pl-6 sm:pl-[72px] grid gap-1">
+              <li v-for="r in reasonRows" :key="r.no">{{ r.reason }}<span v-if="r.apply" class="text-slate-600">（{{ r.apply }}）</span></li>
+            </ol>
+          </li>
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">4</span><h3 class="th-info-title">退款方式與文件</h3></div>
+            <p class="th-info-body">退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
+          </li>
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">5</span><h3 class="th-info-title">無法線上申請時</h3></div>
+            <p class="th-info-body">登山申請資料原則保留2年，如無法由線上申請退費，請依規以退費申請書提出申請。<a class="th-inline-link" :href="refLinks.rule" target="_blank" rel="noopener noreferrer">申請退還「排雲山莊」使用規費相關規定<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+          </li>
+          <li class="th-info-item">
+            <div class="th-info-head"><span class="th-info-no" aria-hidden="true">6</span><h3 class="th-info-title">供餐及睡袋租賃</h3></div>
+            <p class="th-info-body">排雲山莊供餐及睡袋租賃等服務，因委外經營，相關退費規定請逕洽該公司。<a class="th-inline-link" :href="refLinks.meal" target="_blank" rel="noopener noreferrer">參考網址<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
+          </li>
+        </ol>
+        <!-- 包一層 div：.th-card-body > .th-callout 自帶 margin-bottom，直接放會在卡片底部多出空白 -->
         <div>
-          <p>申請退費原因：</p>
-          <!-- 第 2、3 款是依申請入園日切分的新舊制（114-12-01 起 5 天、之前 14 天），不可合併；
-               規格截圖為舊版只有 14 天，雛形依較新的正式站正文保留兩款 -->
-          <ol class="list-decimal pl-6 mt-1 grid gap-1">
-            <li v-for="r in reasonRows" :key="r.no">{{ r.reason }}<span v-if="r.apply" class="text-slate-600">（{{ r.apply }}）</span></li>
-          </ol>
+          <th-callout type="warning">提醒：申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。<br />
+            <a :href="refLinks.pdf" target="_blank" rel="noopener noreferrer">(下載「退費申請流程操作說明」操作流程範例)</a></th-callout>
         </div>
-        <p>退費一律採金融帳戶轉帳退款。請提供原登山申請案之申請人、領隊或隊員等任一員之《存摺》影本，否則請填寫《委託書》。《委託書》之委託人或受託人如為法人，請一併提供法人登記證影本。</p>
-        <p>登山申請資料原則保留2年，如無法由線上申請退費，請依規以退費申請書提出申請。</p>
-        <p><a class="th-inline-link" :href="refLinks.rule" target="_blank" rel="noopener noreferrer">申請退還「排雲山莊」使用規費相關規定<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
-        <p>排雲山莊供餐及睡袋租賃等服務，因委外經營，相關退費規定請逕洽該公司。<a class="th-inline-link" :href="refLinks.meal" target="_blank" rel="noopener noreferrer">參考網址<i class="fa-solid fa-arrow-up-right-from-square th-ext-icon" aria-hidden="true"></i><span class="sr-only">（另開新視窗）</span></a></p>
       </div>
     </section>
 
@@ -135,8 +161,6 @@
       </div>
     </section>
 
-    <th-callout type="warning">提醒：申請人請如實填寫或提供各項資料及文件，如有不實自負相關法律責任。<br />
-      <a :href="refLinks.pdf" target="_blank" rel="noopener noreferrer">(下載「退費申請流程操作說明」操作流程範例)</a></th-callout>
     </template>
 
     <!-- 驗證通過：退費申請人資訊＋兩顆按鈕＋退費紀錄表（截圖「線上申請退費(排雲)-退費資訊」） -->

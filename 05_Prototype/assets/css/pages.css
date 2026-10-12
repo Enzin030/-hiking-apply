@@ -1012,55 +1012,8 @@
   margin: 16px 0 0;
 }
 
-/* 首次使用常見問題：卡片格狀、全部展開、連結嵌在解答句中（2026-09-17 改版，取代 <details> 摺疊） */
-.p-illustrate-faq-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.p-illustrate-faq-item {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  border: 1px solid var(--slate-200);
-  border-radius: var(--r-lg);
-  background: var(--bg-1);
-}
-.p-illustrate-faq-q {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-.p-illustrate-faq-no {
-  flex: none;
-  min-width: 36px;
-  padding: 2px 8px;
-  border-radius: var(--r-pill);
-  background: var(--national-50);
-  color: var(--national-700);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  line-height: var(--lh-base);
-  text-align: center;
-}
-.p-illustrate-faq-title {
-  margin: 0;
-  font-size: var(--fs-md);
-  font-weight: 700;
-  line-height: var(--lh-snug);
-  color: var(--fg-1);
-}
-.p-illustrate-faq-a {
-  margin: 0;
-  padding-left: 48px;
-  color: var(--fg-2);
-  line-height: var(--lh-base);
-  text-align: justify;
-}
+/* 首次使用常見問題的格狀卡片（原 .p-illustrate-faq-grid／-item／-q／-no／-title／-a）2026-10-12 退費頁也要用，
+   依「二次即提升」搬到 components.css 並改名 .th-info-*（見該檔「th-info」段）；本頁只留下面兩條。 */
 .p-illustrate-faq-link.is-todo {
   color: var(--fg-3);
   cursor: default;
@@ -1073,16 +1026,6 @@
 }
 
 @media (max-width: 640px) {
-  .p-illustrate-faq-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-  }
-  .p-illustrate-faq-item {
-    padding: 16px;
-  }
-  .p-illustrate-faq-a {
-    padding-left: 0;
-  }
   .p-illustrate-cta {
     padding: 8px 0 16px;
   }
